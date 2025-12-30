@@ -1,203 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>RUGLY — Built to the Plan</title>
+<section class="rug-builder">
+  <h2>Design Your Rug</h2>
 
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+  <div class="preview">
+    <img src="rug-base.jpg" alt="Rug" />
+    <div class="rug-overlay" id="rugOverlay"></div>
+    <div class="paint-overlay" id="paintOverlay"></div>
+  </div>
 
-<style>
-:root {
-  --rugly-blue: #4B74F2;
-  --rugly-orange: #E4572E;
-  --rugly-dark: #111111;
-  --rugly-gray: #6E6E6E;
-  --rugly-light: #F6F6F6;
-  --rugly-success: #9BEF8F;
-}
+  <div class="controls">
+    <label>
+      Rug Color
+      <select id="rugColor">
+        <option value="#d6b98c">Sand</option>
+        <option value="#8b5e3c">Walnut</option>
+        <option value="#3b3b3b">Charcoal</option>
+        <option value="#c94a38">Rust</option>
+      </select>
+    </label>
 
-/* RESET */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Poppins', sans-serif;
-  color: var(--rugly-dark);
-  background: white;
-  line-height: 1.6;
-}
-
-/* LAYOUT */
-.container {
-  max-width: 1100px;
-  margin: auto;
-  padding: 60px 20px;
-}
-
-/* HEADER */
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 80px;
-}
-
-.logo {
-  font-weight: 600;
-  font-size: 22px;
-  color: var(--rugly-blue);
-}
-
-/* HERO */
-.hero h1 {
-  font-size: 56px;
-  line-height: 1.1;
-  margin-bottom: 20px;
-  font-family: 'Poppins', sans-serif; /* swap to New Astro if loaded */
-}
-
-.hero p {
-  font-size: 18px;
-  color: var(--rugly-gray);
-  max-width: 600px;
-  margin-bottom: 40px;
-}
-
-/* CTA */
-.cta {
-  display: inline-block;
-  background: var(--rugly-orange);
-  color: white;
-  padding: 18px 34px;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.cta:hover {
-  opacity: 0.9;
-}
-
-/* TRUST */
-.trust {
-  margin-top: 14px;
-  font-size: 14px;
-  color: var(--rugly-gray);
-}
-
-/* FEATURES */
-.features {
-  background: var(--rugly-light);
-  margin-top: 100px;
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 40px;
-}
-
-.feature h3 {
-  font-size: 20px;
-  margin-bottom: 10px;
-  font-weight: 600; /* swap to Magistral if loaded */
-}
-
-.feature p {
-  color: var(--rugly-gray);
-}
-
-/* QUOTE */
-.quote {
-  margin: 100px 0;
-  font-family: 'Playfair Display', serif;
-  font-size: 28px;
-  max-width: 800px;
-}
-
-/* FOOTER */
-footer {
-  background: var(--rugly-dark);
-  color: white;
-  padding: 40px 20px;
-}
-
-.footer-inner {
-  max-width: 1100px;
-  margin: auto;
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.footer-inner a {
-  color: #bbb;
-  text-decoration: none;
-  font-size: 14px;
-}
-</style>
-</head>
-
-<body>
-
-<header class="container">
-  <div class="logo">RUGLY</div>
-</header>
-
-<section class="container hero">
-  <h1>Built to the plan.</h1>
-  <p>
-    RUGLY delivers structured, no-nonsense execution so you know exactly
-    what you’re getting — and exactly when.
-  </p>
-
-  <!-- 🔴 REPLACE STRIPE LINK BELOW -->
-  <a class="cta" href="https://buy.stripe.com/REPLACE_ME" target="_blank">
-    Pay Securely
-  </a>
-
-  <div class="trust">
-    Secure checkout powered by Stripe · No card data stored
+    <label>
+      Paint Color
+      <select id="paintColor">
+        <option value="#f5f5f5">Soft White</option>
+        <option value="#cfd8dc">Cool Gray</option>
+        <option value="#e3d5ca">Warm Beige</option>
+        <option value="#a3b18a">Muted Green</option>
+      </select>
+    </label>
   </div>
 </section>
-
-<section class="features">
-  <div class="container features-grid">
-    <div class="feature">
-      <h3>Clear Scope</h3>
-      <p>No surprises. Every deliverable is defined up front.</p>
-    </div>
-    <div class="feature">
-      <h3>Predictable Timelines</h3>
-      <p>Built around execution, not endless iteration.</p>
-    </div>
-    <div class="feature">
-      <h3>Professional Delivery</h3>
-      <p>What you see is what you get — clean, credible, complete.</p>
-    </div>
-  </div>
-</section>
-
-<section class="container">
-  <div class="quote">
-    “Professional doesn’t need to be complicated.  
-    It just needs to be done right.”
-  </div>
-</section>
-
-<footer>
-  <div class="footer-inner">
-    <div>© RUGLY</div>
-    <div>
-      <a href="#">Privacy</a> ·
-      <a href="#">Terms</a> ·
-      <a href="#">Contact</a>
-    </div>
-  </div>
-</footer>
-
-</body>
-</html>
