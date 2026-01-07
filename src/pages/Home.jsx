@@ -45,7 +45,7 @@ export default function Home() {
             </Link>
             <Link to={createPageUrl('Commission')}>
               <Button size="lg" variant="outline" className="text-lg px-8">
-                Commission Design
+                Commission Design and Commercial Clients
               </Button>
             </Link>
           </div>
