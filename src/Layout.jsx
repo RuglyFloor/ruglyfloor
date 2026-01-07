@@ -19,23 +19,22 @@ export default function Layout({ children, currentPageName }) {
   return (
     <div className="min-h-screen bg-gray-50">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,700;0,900;1,100;1,700&display=swap');
+
         :root {
           /* Primary Brand Color - Change this to customize your accent color */
           --primary: 37 99 235; /* Blue (rgb format for Tailwind) */
           --primary-hover: 29 78 216;
-          
+
           /* You can change to other colors like:
              --primary: 147 51 234; (Purple)
              --primary: 34 197 94; (Green)
              --primary: 239 68 68; (Red)
           */
-          
-          /* Typography - Using Google Fonts alternatives for the requested fonts */
-          --font-heading: 'Montserrat', sans-serif; /* Alternative to New Astro/Magistral */
-          --font-body: 'Playfair Display', serif; /* Playfair Display */
+
+          /* Typography */
+          --font-heading: 'Barlow Condensed', sans-serif;
+          --font-body: 'Barlow Condensed', sans-serif;
         }
         
         body {
