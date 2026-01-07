@@ -17,7 +17,7 @@ export default function Home() {
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
         >
-          <source src="YOUR_VIDEO_URL_HERE.mp4" type="video/mp4" />
+          <source src="https://new.express.adobe.com/publishedV2/urn:aaid:sc:US:ed03a672-d1fe-4540-a0bb-30a65980ffd9?promoid=Y69SGM5H&mv=other" type="video/mp4" />
         </video>
         
         {/* Overlay */}
