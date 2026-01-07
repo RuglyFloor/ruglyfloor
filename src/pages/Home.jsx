@@ -43,6 +43,11 @@ export default function Home() {
                 Shop Originals
               </Button>
             </Link>
+            <Link to={createPageUrl('Commission')}>
+              <Button size="lg" variant="outline" className="text-lg px-8">
+                Commission Design
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
