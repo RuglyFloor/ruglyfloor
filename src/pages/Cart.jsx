@@ -109,7 +109,7 @@ export default function Cart() {
                       <p className="text-sm text-gray-600">Size: {item.size}</p>
                       {item.baseColor && <p className="text-sm text-gray-600">Base: {item.baseColor}</p>}
                       {item.numColors && <p className="text-sm text-gray-600">Colors: {item.numColors}</p>}
-                      <p className="text-xl font-bold text-purple-600 mt-2">${item.price}</p>
+                      <p className="text-xl font-bold text-blue-600 mt-2">${item.price}</p>
                     </div>
                     <Button
                       variant="ghost"
@@ -187,10 +187,10 @@ export default function Cart() {
                 <div className="border-t pt-4 mt-4">
                   <div className="flex justify-between items-center mb-4">
                     <span className="text-lg font-semibold">Total:</span>
-                    <span className="text-3xl font-bold text-purple-600">${totalAmount}</span>
+                    <span className="text-3xl font-bold text-blue-600">${totalAmount}</span>
                   </div>
                   <Button 
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600"
+                    className="w-full bg-blue-600 hover:bg-blue-700"
                     onClick={handleCheckout}
                     disabled={submitting}
                   >

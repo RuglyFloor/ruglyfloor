@@ -78,12 +78,12 @@ export default function Shop() {
                   <p className="text-gray-600 text-sm mb-2">{product.description}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-sm text-gray-500">{product.size}</span>
-                    <span className="text-2xl font-bold text-purple-600">${product.price}</span>
+                    <span className="text-2xl font-bold text-blue-600">${product.price}</span>
                   </div>
                 </CardContent>
                 <CardFooter className="p-4 pt-0">
                   <Button 
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600"
+                    className="w-full bg-blue-600 hover:bg-blue-700"
                     onClick={() => addToCart(product)}
                   >
                     <ShoppingCart className="w-4 h-4 mr-2" />

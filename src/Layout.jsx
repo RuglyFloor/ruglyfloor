@@ -21,9 +21,11 @@ export default function Layout({ children, currentPageName }) {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <Link to={createPageUrl('Home')} className="flex items-center gap-2">
-              <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                Rugly
-              </div>
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/91fa687b5_RUGLYMASTERLOGO-61.png" 
+                alt="Rugly" 
+                className="h-10"
+              />
             </Link>
 
             {/* Desktop Nav */}
@@ -33,7 +35,7 @@ export default function Layout({ children, currentPageName }) {
                   key={link.page}
                   to={createPageUrl(link.page)}
                   className={`text-gray-700 hover:text-purple-600 transition-colors ${
-                    currentPageName === link.page ? 'text-purple-600 font-semibold' : ''
+                    currentPageName === link.page ? 'text-blue-600 font-semibold' : ''
                   }`}
                 >
                   {link.name}
@@ -64,7 +66,7 @@ export default function Layout({ children, currentPageName }) {
                   key={link.page}
                   to={createPageUrl(link.page)}
                   className={`text-gray-700 hover:text-purple-600 transition-colors py-2 ${
-                    currentPageName === link.page ? 'text-purple-600 font-semibold' : ''
+                    currentPageName === link.page ? 'text-blue-600 font-semibold' : ''
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -88,9 +90,11 @@ export default function Layout({ children, currentPageName }) {
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-300 py-8 px-6 mt-20">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-4">
-            Rugly
-          </div>
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/91fa687b5_RUGLYMASTERLOGO-61.png" 
+            alt="Rugly" 
+            className="h-8 mx-auto mb-4"
+          />
           <p className="mb-2">Homesteads, LLC</p>
           <p className="text-sm text-gray-400">www.ruglyfloor.com</p>
           <p className="text-sm text-gray-400 mt-4">Custom-painted rugs for spaces that inspire</p>

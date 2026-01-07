@@ -91,11 +91,11 @@ export default function CustomBuilder() {
           {[1, 2, 3].map((s) => (
             <div key={s} className="flex items-center gap-2">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                step >= s ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-500'
+                step >= s ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'
               }`}>
                 {step > s ? <CheckCircle className="w-5 h-5" /> : s}
               </div>
-              {s < 3 && <div className={`w-16 h-1 ${step > s ? 'bg-purple-600' : 'bg-gray-200'}`} />}
+              {s < 3 && <div className={`w-16 h-1 ${step > s ? 'bg-blue-600' : 'bg-gray-200'}`} />}
             </div>
           ))}
         </div>
@@ -144,7 +144,7 @@ export default function CustomBuilder() {
                     key={color.name}
                     onClick={() => setConfig(prev => ({ ...prev, baseColor: color.name }))}
                     className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
-                      config.baseColor === color.name ? 'border-purple-600 bg-purple-50' : 'border-gray-200 hover:border-gray-300'
+                      config.baseColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
                     <div 
@@ -206,7 +206,7 @@ export default function CustomBuilder() {
                     />
                   </div>
                   {uploading && (
-                    <div className="flex items-center justify-center gap-2 mt-2 text-purple-600">
+                    <div className="flex items-center justify-center gap-2 mt-2 text-blue-600">
                       <Loader2 className="w-4 h-4 animate-spin" />
                       <span>Uploading...</span>
                     </div>
@@ -238,10 +238,10 @@ export default function CustomBuilder() {
                   </RadioGroup>
                 </div>
 
-                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-semibold">Total Price:</span>
-                    <span className="text-2xl font-bold text-purple-600">${currentPrice()}</span>
+                    <span className="text-2xl font-bold text-blue-600">${currentPrice()}</span>
                   </div>
                   <p className="text-sm text-gray-600">
                     {config.size} • {config.baseColor} base • {config.numColors} color(s)
