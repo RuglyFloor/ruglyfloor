@@ -90,7 +90,8 @@ export default function CustomBuilder() {
       
       setConfig(prev => ({ ...prev, previewUrl: url }));
     } catch (error) {
-      alert('Failed to generate preview');
+      console.error('Preview generation error:', error);
+      alert(`Failed to generate preview: ${error.message || 'Unknown error'}`);
     } finally {
       setProcessing(false);
     }
