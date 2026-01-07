@@ -22,21 +22,21 @@ const get3DPrice = (size) => {
 };
 
 const BASE_COLORS = [
-  { name: 'Navy', hex: '#1e3a5f' },
-  { name: 'Charcoal', hex: '#36454f' },
-  { name: 'Burgundy', hex: '#800020' },
-  { name: 'Forest Green', hex: '#228b22' },
-  { name: 'Tan', hex: '#d2b48c' },
-  { name: 'Gray', hex: '#808080' }
+  { name: 'Yellow', hex: '#f4d03f' },
+  { name: 'Pink', hex: '#f8c9d4' },
+  { name: 'White', hex: '#ffffff' },
+  { name: 'Burnt Orange', hex: '#cc5500' },
+  { name: 'Grey', hex: '#9ca3af' },
+  { name: 'Green', hex: '#86cb92' }
 ];
 
 const PAINT_COLORS = [
-  { name: 'White', hex: '#ffffff' },
   { name: 'Black', hex: '#000000' },
-  { name: 'Red', hex: '#ff0000' },
-  { name: 'Blue', hex: '#0000ff' },
-  { name: 'Yellow', hex: '#ffff00' },
-  { name: 'Green', hex: '#00ff00' }
+  { name: 'Navy', hex: '#1e3a5f' },
+  { name: 'Burgundy', hex: '#800020' },
+  { name: 'Forest Green', hex: '#0f4d2a' },
+  { name: 'Charcoal', hex: '#36454f' },
+  { name: 'Dark Brown', hex: '#3e2723' }
 ];
 
 export default function CustomBuilder() {
