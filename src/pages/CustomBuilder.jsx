@@ -37,21 +37,26 @@ const get3DPrice = (size) => {
 };
 
 const BASE_COLORS = [
-  { name: 'Yellow', hex: '#f4d03f' },
-  { name: 'Pink', hex: '#f8c9d4' },
-  { name: 'White', hex: '#ffffff' },
-  { name: 'Burnt Orange', hex: '#cc5500' },
-  { name: 'Grey', hex: '#9ca3af' },
-  { name: 'Green', hex: '#86cb92' }
+  { name: 'Yellow', hex: '#f4d03f', type: 'light' },
+  { name: 'Pink', hex: '#f8c9d4', type: 'light' },
+  { name: 'White', hex: '#ffffff', type: 'light' },
+  { name: 'Burnt Orange', hex: '#cc5500', type: 'dark' },
+  { name: 'Grey', hex: '#9ca3af', type: 'light' },
+  { name: 'Green', hex: '#86cb92', type: 'light' }
 ];
 
 const PAINT_COLORS = [
-  { name: 'Black', hex: '#000000' },
-  { name: 'Navy', hex: '#1e3a5f' },
-  { name: 'Burgundy', hex: '#800020' },
-  { name: 'Forest Green', hex: '#0f4d2a' },
-  { name: 'Charcoal', hex: '#36454f' },
-  { name: 'Dark Brown', hex: '#3e2723' }
+  { name: 'Black', hex: '#000000', type: 'dark' },
+  { name: 'Navy', hex: '#1e3a5f', type: 'dark' },
+  { name: 'Burgundy', hex: '#800020', type: 'dark' },
+  { name: 'Forest Green', hex: '#0f4d2a', type: 'dark' },
+  { name: 'Charcoal', hex: '#36454f', type: 'dark' },
+  { name: 'Dark Brown', hex: '#3e2723', type: 'dark' },
+  { name: 'White', hex: '#ffffff', type: 'light' },
+  { name: 'Cream', hex: '#fffdd0', type: 'light' },
+  { name: 'Light Blue', hex: '#add8e6', type: 'light' },
+  { name: 'Light Grey', hex: '#d3d3d3', type: 'light' },
+  { name: 'Beige', hex: '#f5f5dc', type: 'light' }
 ];
 
 export default function CustomBuilder() {
@@ -233,7 +238,13 @@ export default function CustomBuilder() {
                 <div>
                   <Label className="text-lg mb-3 block">Paint Color for Design</Label>
                   <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-                    {PAINT_COLORS.map((color) => (
+                    {PAINT_COLORS.filter(color => {
+                      if (!config.baseColor) return true;
+                      const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
+                      if (!selectedBase) return true;
+                      // If base is light, show dark paints; if base is dark, show light paints
+                      return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
+                    }).map((color) => (
                       <button
                         key={color.name}
                         onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}

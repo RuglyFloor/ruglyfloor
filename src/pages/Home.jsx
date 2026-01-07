@@ -34,17 +34,17 @@ export default function Home() {
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link to={createPageUrl('Shop')}>
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-10 py-7 shadow-lg">
+              <Button size="lg" className="bg-orange-600 hover:bg-orange-700 text-white font-bold text-lg px-10 py-7 shadow-xl">
                 SHOP PREMIUM ORIGINALS
               </Button>
             </Link>
             <Link to={createPageUrl('CustomBuilder')}>
-              <Button size="lg" className="bg-white hover:bg-gray-100 text-slate-900 text-lg px-10 py-7 shadow-lg">
+              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg px-10 py-7 shadow-xl">
                 CREATE A CRUGLY (CUSTOM)
               </Button>
             </Link>
             <Link to={createPageUrl('Commission')}>
-              <Button size="lg" variant="outline" className="text-lg px-10 py-7 border-2 border-white text-white hover:bg-white hover:text-slate-900 shadow-lg">
+              <Button size="lg" className="bg-white hover:bg-gray-100 text-slate-900 font-bold text-lg px-10 py-7 shadow-xl">
                 COMMISSION A DESIGNER
               </Button>
             </Link>
