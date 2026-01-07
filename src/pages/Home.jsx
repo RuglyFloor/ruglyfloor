@@ -13,7 +13,7 @@ export default function Home() {
         <div className="absolute inset-0 z-0">
           <iframe
             className="absolute inset-0 w-full h-full object-cover"
-            src="https://www.youtube.com/embed/1UQgEW5Svtc?autoplay=1&mute=1&loop=1&playlist=1UQgEW5Svtc&controls=0&showinfo=0&rel=0&modestbranding=1"
+            src="https://www.youtube.com/embed/oGBsu7bQMAE?autoplay=1&mute=1&loop=1&playlist=oGBsu7bQMAE&controls=0&showinfo=0&rel=0&modestbranding=1"
             allow="autoplay; encrypted-media"
             style={{ pointerEvents: 'none' }}
           />
