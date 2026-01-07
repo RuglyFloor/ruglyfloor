@@ -101,13 +101,14 @@ export default function Cart() {
               <Card key={index}>
                 <CardContent className="p-4">
                   <div className="flex gap-4">
-                    {item.imageUrl && (
-                      <img src={item.imageUrl} alt={item.name} className="w-24 h-24 object-cover rounded" />
+                    {item.previewUrl && (
+                      <img src={item.previewUrl} alt={item.name} className="w-24 h-24 object-cover rounded" />
                     )}
                     <div className="flex-1">
                       <h3 className="font-bold text-lg">{item.name}</h3>
                       <p className="text-sm text-gray-600">Size: {item.size}</p>
                       {item.baseColor && <p className="text-sm text-gray-600">Base: {item.baseColor}</p>}
+                      {item.paintColor && <p className="text-sm text-gray-600">Paint: {item.paintColor}</p>}
                       {item.numColors && <p className="text-sm text-gray-600">Colors: {item.numColors}</p>}
                       <p className="text-xl font-bold text-blue-600 mt-2">${item.price}</p>
                     </div>

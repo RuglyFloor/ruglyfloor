@@ -8,13 +8,15 @@ import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 
-const SIZES = [
-  { id: 's', label: 'Small (4x6)', value: '4x6', price: 900 },
-  { id: 'm', label: 'Medium (5x7)', value: '5x7', price: 1000 },
-  { id: 'l', label: 'Large (6x9)', value: '6x9', price: 1200 },
-  { id: 'h', label: 'Huge (9x12)', value: '9x12', price: 1500 },
-  { id: 'r', label: 'Round (5ft)', value: '5ft Round', price: 950 }
-];
+const WIDTH_OPTIONS = ['4ft', '5ft', '6ft', '8ft', '9ft'];
+const LENGTH_OPTIONS = ['6ft', '7ft', '8ft', '9ft', '10ft', '12ft'];
+
+const calculatePrice = (width, length) => {
+  const widthNum = parseInt(width);
+  const lengthNum = parseInt(length);
+  const area = widthNum * lengthNum;
+  return Math.round(700 + (area * 15));
+};
 
 const BASE_COLORS = [
   { name: 'Navy', hex: '#1e3a5f' },
@@ -25,14 +27,26 @@ const BASE_COLORS = [
   { name: 'Gray', hex: '#808080' }
 ];
 
+const PAINT_COLORS = [
+  { name: 'White', hex: '#ffffff' },
+  { name: 'Black', hex: '#000000' },
+  { name: 'Red', hex: '#ff0000' },
+  { name: 'Blue', hex: '#0000ff' },
+  { name: 'Yellow', hex: '#ffff00' },
+  { name: 'Green', hex: '#00ff00' }
+];
+
 export default function CustomBuilder() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [config, setConfig] = useState({
-    size: '',
+    width: '',
+    length: '',
     baseColor: '',
+    paintColor: '',
     imageFile: null,
     imageUrl: '',
+    previewUrl: '',
     numColors: 1
   });
   const [uploading, setUploading] = useState(false);
@@ -53,18 +67,42 @@ export default function CustomBuilder() {
     }
   };
 
+  const generatePreview = async () => {
+    if (!config.imageUrl || !config.baseColor || !config.paintColor) return;
+    
+    setProcessing(true);
+    try {
+      const prompt = `Create a realistic mockup image showing a ${config.width} x ${config.length} carpet rug in ${config.baseColor} color lying on a floor at a slight angle (perspective view from above). 
+      The design from the uploaded image should be painted/stenciled onto the rug in ${config.paintColor} color as a simplified 1-2 color outline/stencil style. 
+      The rug should have visible texture and the design should look hand-painted on the rug surface. 
+      Make it look professional and realistic, as if photographed in a room with natural lighting.`;
+      
+      const { url } = await base44.integrations.Core.GenerateImage({
+        prompt: prompt,
+        existing_image_urls: [config.imageUrl]
+      });
+      
+      setConfig(prev => ({ ...prev, previewUrl: url }));
+    } catch (error) {
+      alert('Failed to generate preview');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   const handleAddToCart = () => {
-    const selectedSize = SIZES.find(s => s.value === config.size);
-    const price = selectedSize.price + (config.numColors === 2 ? 100 : 0);
+    const price = calculatePrice(config.width, config.length) + (config.numColors === 2 ? 100 : 0);
     
     const cartItem = {
       type: 'custom',
-      size: config.size,
+      size: `${config.width} x ${config.length}`,
       baseColor: config.baseColor,
+      paintColor: config.paintColor,
       imageUrl: config.imageUrl,
+      previewUrl: config.previewUrl,
       numColors: config.numColors,
       price: price,
-      name: `Custom Rug - ${config.size}`
+      name: `Custom Rug - ${config.width} x ${config.length}`
     };
 
     const cart = JSON.parse(localStorage.getItem('rugly_cart') || '[]');
@@ -75,9 +113,8 @@ export default function CustomBuilder() {
   };
 
   const currentPrice = () => {
-    const selectedSize = SIZES.find(s => s.value === config.size);
-    if (!selectedSize) return 0;
-    return selectedSize.price + (config.numColors === 2 ? 100 : 0);
+    if (!config.width || !config.length) return 0;
+    return calculatePrice(config.width, config.length) + (config.numColors === 2 ? 100 : 0);
   };
 
   return (
@@ -107,23 +144,51 @@ export default function CustomBuilder() {
               <CardTitle>Step 1: Choose Your Size</CardTitle>
             </CardHeader>
             <CardContent>
-              <RadioGroup value={config.size} onValueChange={(value) => setConfig(prev => ({ ...prev, size: value }))}>
-                <div className="grid md:grid-cols-2 gap-4">
-                  {SIZES.map((size) => (
-                    <div key={size.id} className="flex items-center space-x-2 border rounded-lg p-4 hover:bg-gray-50 cursor-pointer">
-                      <RadioGroupItem value={size.value} id={size.id} />
-                      <Label htmlFor={size.id} className="flex-1 cursor-pointer">
-                        <div className="font-semibold">{size.label}</div>
-                        <div className="text-sm text-gray-600">Starting at ${size.price}</div>
-                      </Label>
-                    </div>
-                  ))}
+              <div className="space-y-6">
+                <div>
+                  <Label className="text-lg mb-3 block">Width</Label>
+                  <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
+                    {WIDTH_OPTIONS.map((width) => (
+                      <button
+                        key={width}
+                        onClick={() => setConfig(prev => ({ ...prev, width }))}
+                        className={`p-3 border-2 rounded-lg font-semibold transition-all ${
+                          config.width === width ? 'border-blue-600 bg-blue-50 text-blue-600' : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        {width}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </RadioGroup>
+                <div>
+                  <Label className="text-lg mb-3 block">Length</Label>
+                  <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+                    {LENGTH_OPTIONS.map((length) => (
+                      <button
+                        key={length}
+                        onClick={() => setConfig(prev => ({ ...prev, length }))}
+                        className={`p-3 border-2 rounded-lg font-semibold transition-all ${
+                          config.length === length ? 'border-blue-600 bg-blue-50 text-blue-600' : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        {length}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {config.width && config.length && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                    <p className="text-sm text-gray-600">Selected Size</p>
+                    <p className="text-2xl font-bold text-blue-600">{config.width} x {config.length}</p>
+                    <p className="text-sm text-gray-600 mt-1">Starting at ${calculatePrice(config.width, config.length)}</p>
+                  </div>
+                )}
+              </div>
               <Button 
                 className="w-full mt-6" 
                 onClick={() => setStep(2)} 
-                disabled={!config.size}
+                disabled={!config.width || !config.length}
               >
                 Continue to Colors
               </Button>
@@ -135,34 +200,59 @@ export default function CustomBuilder() {
         {step === 2 && (
           <Card>
             <CardHeader>
-              <CardTitle>Step 2: Choose Base Color</CardTitle>
+              <CardTitle>Step 2: Choose Colors</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-6">
-                {BASE_COLORS.map((color) => (
-                  <button
-                    key={color.name}
-                    onClick={() => setConfig(prev => ({ ...prev, baseColor: color.name }))}
-                    className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
-                      config.baseColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <div 
-                      className="w-12 h-12 rounded-full border-2 border-white shadow-md"
-                      style={{ backgroundColor: color.hex }}
-                    />
-                    <span className="text-xs text-center">{color.name}</span>
-                  </button>
-                ))}
+              <div className="space-y-6">
+                <div>
+                  <Label className="text-lg mb-3 block">Rug Base Color</Label>
+                  <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
+                    {BASE_COLORS.map((color) => (
+                      <button
+                        key={color.name}
+                        onClick={() => setConfig(prev => ({ ...prev, baseColor: color.name }))}
+                        className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                          config.baseColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <div 
+                          className="w-12 h-12 rounded-full border-2 border-white shadow-md"
+                          style={{ backgroundColor: color.hex }}
+                        />
+                        <span className="text-xs text-center">{color.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <Label className="text-lg mb-3 block">Paint Color for Design</Label>
+                  <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
+                    {PAINT_COLORS.map((color) => (
+                      <button
+                        key={color.name}
+                        onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
+                        className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                          config.paintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <div 
+                          className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
+                          style={{ backgroundColor: color.hex }}
+                        />
+                        <span className="text-xs text-center">{color.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-3 mt-6">
                 <Button variant="outline" onClick={() => setStep(1)}>
                   Back
                 </Button>
                 <Button 
                   className="flex-1" 
                   onClick={() => setStep(3)} 
-                  disabled={!config.baseColor}
+                  disabled={!config.baseColor || !config.paintColor}
                 >
                   Continue to Design
                 </Button>
