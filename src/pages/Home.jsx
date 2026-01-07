@@ -27,7 +27,7 @@ export default function Home() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentProduct((prev) => (prev + 1) % products.length);
-    }, 5000);
+    }, 4000);
     return () => clearInterval(interval);
   }, []);
 
@@ -140,8 +140,64 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Before Ordering Section */}
+      {/* CTA Section */}
+      <section className="py-20 px-6 bg-blue-600">
+        <div className="max-w-4xl mx-auto text-center text-white">
+          <h2 className="text-4xl font-bold mb-4">Ready to Create Something Unique?</h2>
+          <p className="text-xl mb-8 opacity-90">Custom Cruglys starting at $199. Premium originals from $700.</p>
+          <Link to={createPageUrl('CustomBuilder')}>
+            <Button size="lg" variant="secondary" className="text-lg px-10 py-7">
+              Start Designing Now
+            </Button>
+          </Link>
+        </div>
+      </section>
+
+      {/* Our Process Section */}
       <section className="py-16 px-6 bg-slate-50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-center">FROM CONCEPT TO CREATION</h2>
+          <div className="relative h-96 bg-slate-100 rounded-lg overflow-hidden">
+            {[
+              {
+                image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/40e12a1d2_Screenshot2025-12-19at235301.png",
+                caption: "1. Choose Your Design"
+              },
+              {
+                image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg",
+                caption: "2. Create the Stencil"
+              },
+              {
+                image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png",
+                caption: "3. Hand-Paint on Rug"
+              },
+              {
+                image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/ebb74119a_Madonna.jpg",
+                caption: "4. Ready for Your Space"
+              }
+            ].map((step, index) => (
+              <div
+                key={index}
+                className={`absolute inset-0 transition-opacity duration-1000 ${
+                  Math.floor(currentProduct / 1.25) % 4 === index ? 'opacity-100' : 'opacity-0'
+                }`}
+              >
+                <img 
+                  src={step.image}
+                  alt={step.caption}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+                  <p className="text-white text-2xl font-bold text-center">{step.caption}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Before Ordering Section */}
+      <section className="py-16 px-6 bg-white">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold mb-8 text-center">READ THIS BEFORE ORDERING</h2>
           <div className="space-y-4 mb-8">
@@ -204,8 +260,15 @@ export default function Home() {
       </section>
 
       {/* Studio Story */}
-      <section className="py-20 px-6 bg-slate-900 text-white">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="py-20 px-6 bg-slate-900 text-white relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg" 
+            alt="Rugly Background" 
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="max-w-4xl mx-auto text-center relative z-10">
           <h2 className="text-4xl font-bold mb-6">FROM THE STUDIO TO YOUR LIVING ROOM.</h2>
           <div className="space-y-4 text-lg text-slate-300 mb-8">
             <p>
@@ -230,19 +293,6 @@ export default function Home() {
               className="h-16"
             />
           </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-6 bg-blue-600">
-        <div className="max-w-4xl mx-auto text-center text-white">
-          <h2 className="text-4xl font-bold mb-4">Ready to Create Something Unique?</h2>
-          <p className="text-xl mb-8 opacity-90">Custom Cruglys starting at $199. Premium originals from $700.</p>
-          <Link to={createPageUrl('CustomBuilder')}>
-            <Button size="lg" variant="secondary" className="text-lg px-10 py-7">
-              Start Designing Now
-            </Button>
-          </Link>
         </div>
       </section>
     </div>
