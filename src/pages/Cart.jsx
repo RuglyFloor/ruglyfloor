@@ -42,39 +42,30 @@ export default function Cart() {
       return;
     }
 
+    // Check if running in iframe (preview mode)
+    if (window.self !== window.top) {
+      alert('⚠️ Checkout only works in the published app. Please publish your app and open it in a new tab to complete the purchase.');
+      return;
+    }
+
     setSubmitting(true);
     try {
-      const orderNumber = 'RUG-' + Date.now();
-      
-      const orderData = {
-        order_number: orderNumber,
-        customer_name: customerInfo.name,
-        customer_email: customerInfo.email,
-        customer_phone: customerInfo.phone,
-        shipping_address: {
-          street: customerInfo.street,
-          city: customerInfo.city,
-          state: customerInfo.state,
-          zip: customerInfo.zip,
-          country: customerInfo.country
-        },
-        items: cart,
-        total_amount: totalAmount,
-        status: 'pending',
-        payment_status: 'pending'
-      };
+      const response = await base44.functions.invoke('createCheckout', { 
+        cart, 
+        customerInfo 
+      });
 
-      await base44.entities.Order.create(orderData);
-
-      // Send notification email
-      await base44.functions.invoke('notifyNewOrder', { orderData });
-
-      localStorage.removeItem('rugly_cart');
-      alert('Order placed! We will contact you for payment and next steps.');
-      navigate(createPageUrl('Orders'));
+      if (response.data.url) {
+        // Clear cart before redirecting
+        localStorage.removeItem('rugly_cart');
+        // Redirect to Stripe checkout
+        window.location.href = response.data.url;
+      } else {
+        throw new Error('No checkout URL received');
+      }
     } catch (error) {
-      alert('Failed to place order. Please try again.');
-    } finally {
+      console.error('Checkout error:', error);
+      alert('Failed to create checkout. Please try again.');
       setSubmitting(false);
     }
   };
