@@ -60,33 +60,38 @@ export default function Home() {
             <h2 className="text-3xl font-bold">READY TO SHIP NOW</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="group cursor-pointer">
-              <div className="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-4">
+            <div className="group cursor-pointer relative">
+              <div className="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-4 relative">
                 <img 
                   src="https://ruglyfloor.com/_next/image?url=%2Fimages%2Fready-to-ship-1.jpg&w=3840&q=75" 
                   alt="Pan Am Vintage Logo" 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  className="w-full h-full object-cover opacity-60"
                 />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="bg-red-600 text-white font-bold text-3xl px-8 py-4 rounded-lg transform rotate-12">
+                    SOLD
+                  </div>
+                </div>
               </div>
               <h3 className="text-xl font-bold mb-2">Pan Am Vintage Logo</h3>
               <p className="text-slate-600 mb-3">A classic aviation icon, hand-painted with precision on a low-pile base.</p>
               <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold text-blue-600">$299</span>
-                <Button>GRAB IT</Button>
+                <span className="text-2xl font-bold text-red-600">SOLD OUT</span>
+                <Button disabled className="opacity-50">SOLD</Button>
               </div>
             </div>
             <div className="group cursor-pointer">
               <div className="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-4">
                 <img 
-                  src="https://ruglyfloor.com/_next/image?url=%2Fimages%2Fready-to-ship-2.jpg&w=3840&q=75" 
-                  alt="Madonna Portrait" 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/736432943_ChicagoRug.png" 
+                  alt="Chicago Skyline" 
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
-              <h3 className="text-xl font-bold mb-2">Madonna Portrait</h3>
-              <p className="text-slate-600 mb-3">Bold, high-contrast pop art portrait. A statement piece for any room.</p>
+              <h3 className="text-xl font-bold mb-2">Chicago Skyline</h3>
+              <p className="text-slate-600 mb-3">Hand-painted using dye and fabric paint. Features Chicago's iconic skyline with all current buildings plus two under construction — a timeless cityscape that won't get dated.</p>
               <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold text-blue-600">$349</span>
+                <span className="text-2xl font-bold text-blue-600">$400</span>
                 <Button>GRAB IT</Button>
               </div>
             </div>
