@@ -14,12 +14,14 @@ const PAINT_COLORS = [
   { name: 'Dark Brown', hex: '#3e2723' }
 ];
 
-export default function StencilCreator({ onSaveStencil }) {
+export default function StencilCreator({ onSaveStencil, onConfigChange }) {
   const [originalImage, setOriginalImage] = useState(null);
   const [threshold, setThreshold] = useState(128);
   const [selectedColor, setSelectedColor] = useState(PAINT_COLORS[0]);
-  const [blur, setBlur] = useState(2);
-  const [layers, setLayers] = useState(2);
+  const [colors, setColors] = useState(2);
+  const [shaveBorders, setShaveBorders] = useState(false);
+  
+  const blur = 5; // Always at max
   
   const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -40,13 +42,19 @@ export default function StencilCreator({ onSaveStencil }) {
   };
 
   useEffect(() => {
+    if (onConfigChange) {
+      onConfigChange({ colors, shaveBorders });
+    }
+  }, [colors, shaveBorders, onConfigChange]);
+
+  useEffect(() => {
     if (!originalImage || !canvasRef.current) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
     
     // Set canvas size
-    const maxSize = 800;
+    const maxSize = 600;
     const scale = Math.min(maxSize / originalImage.width, maxSize / originalImage.height);
     canvas.width = originalImage.width * scale;
     canvas.height = originalImage.height * scale;
@@ -66,13 +74,11 @@ export default function StencilCreator({ onSaveStencil }) {
       data[i + 2] = gray;
     }
 
-    // Apply blur for smoother edges
-    if (blur > 0) {
-      imageData = applyGaussianBlur(imageData, blur);
-    }
+    // Apply max blur for smoothest edges
+    imageData = applyGaussianBlur(imageData, blur);
 
-    // Apply threshold with layers
-    const layerStep = 255 / layers;
+    // Apply threshold with colors/layers
+    const layerStep = 255 / colors;
     for (let i = 0; i < imageData.data.length; i += 4) {
       const gray = imageData.data[i];
       const layerValue = Math.floor(gray / layerStep) * layerStep;
@@ -91,7 +97,7 @@ export default function StencilCreator({ onSaveStencil }) {
     }
 
     ctx.putImageData(imageData, 0, 0);
-  }, [originalImage, threshold, selectedColor, blur, layers]);
+  }, [originalImage, threshold, selectedColor, colors]);
 
   const applyGaussianBlur = (imageData, radius) => {
     const width = imageData.width;
@@ -188,8 +194,8 @@ export default function StencilCreator({ onSaveStencil }) {
   const handleReset = () => {
     setOriginalImage(null);
     setThreshold(128);
-    setBlur(2);
-    setLayers(2);
+    setColors(2);
+    setShaveBorders(false);
     setSelectedColor(PAINT_COLORS[0]);
   };
 
@@ -223,52 +229,56 @@ export default function StencilCreator({ onSaveStencil }) {
           </CardContent>
         </Card>
       ) : (
-        <div className="space-y-6">
+        <div className="grid lg:grid-cols-2 gap-6">
           {/* Canvas Preview */}
-          <Card>
-            <CardContent className="p-6">
-              <div className="bg-white rounded-lg shadow-inner p-4 flex items-center justify-center min-h-[400px]">
-                <canvas
-                  ref={canvasRef}
-                  className="max-w-full max-h-[600px] rounded shadow-lg"
-                />
-              </div>
-            </CardContent>
-          </Card>
+          <div className="lg:sticky lg:top-6 h-fit">
+            <Card>
+              <CardContent className="p-4">
+                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-4 flex items-center justify-center">
+                  <canvas
+                    ref={canvasRef}
+                    className="max-w-full rounded shadow-2xl"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Controls */}
-          <Card>
-            <CardContent className="p-6 space-y-6">
-              {/* Color Selection */}
-              <div>
-                <Label className="text-base font-semibold mb-3 block">Paint Color</Label>
-                <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+          <div className="space-y-4">
+            {/* Color Selection */}
+            <Card>
+              <CardContent className="p-4">
+                <Label className="text-sm font-bold mb-3 block">Paint Color</Label>
+                <div className="grid grid-cols-3 gap-2">
                   {PAINT_COLORS.map((color) => (
                     <button
                       key={color.name}
                       type="button"
                       onClick={() => setSelectedColor(color)}
-                      className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                      className={`flex flex-col items-center gap-1.5 p-2 rounded-lg border-2 transition-all ${
                         selectedColor.hex === color.hex
-                          ? 'border-blue-600 bg-blue-50 scale-105'
-                          : 'border-gray-200 hover:border-gray-300'
+                          ? 'border-blue-600 bg-blue-50 scale-105 shadow-md'
+                          : 'border-gray-200 hover:border-gray-400 hover:scale-102'
                       }`}
                     >
                       <div
-                        className="w-12 h-12 rounded-full shadow-md border-2 border-white"
+                        className="w-10 h-10 rounded-full shadow border-2 border-white ring-2 ring-gray-200"
                         style={{ backgroundColor: color.hex }}
                       />
                       <span className="text-xs font-medium text-center">{color.name}</span>
                     </button>
                   ))}
                 </div>
-              </div>
+              </CardContent>
+            </Card>
 
-              {/* Threshold */}
-              <div>
+            {/* Contrast */}
+            <Card>
+              <CardContent className="p-4">
                 <div className="flex justify-between items-center mb-2">
-                  <Label className="text-base font-semibold">Contrast</Label>
-                  <span className="text-sm text-gray-600">{threshold}</span>
+                  <Label className="text-sm font-bold">Contrast</Label>
+                  <span className="text-xs font-mono bg-blue-100 text-blue-800 px-2 py-1 rounded">{threshold}</span>
                 </div>
                 <Slider
                   value={[threshold]}
@@ -278,44 +288,64 @@ export default function StencilCreator({ onSaveStencil }) {
                   step={1}
                   className="w-full"
                 />
-                <p className="text-xs text-gray-500 mt-1">Adjust to control detail level</p>
-              </div>
+                <p className="text-xs text-gray-500 mt-1.5">More detail vs. cleaner look</p>
+              </CardContent>
+            </Card>
 
-              {/* Layers */}
-              <div>
+            {/* Colors/Layers */}
+            <Card>
+              <CardContent className="p-4">
                 <div className="flex justify-between items-center mb-2">
-                  <Label className="text-base font-semibold">Detail Layers</Label>
-                  <span className="text-sm text-gray-600">{layers}</span>
+                  <Label className="text-sm font-bold">Number of Colors</Label>
+                  <span className="text-xs font-mono bg-blue-100 text-blue-800 px-2 py-1 rounded">{colors} colors</span>
                 </div>
-                <Slider
-                  value={[layers]}
-                  onValueChange={(val) => setLayers(val[0])}
-                  min={1}
-                  max={3}
-                  step={1}
-                  className="w-full"
-                />
-                <p className="text-xs text-gray-500 mt-1">More layers = smoother gradients</p>
-              </div>
+                <div className="flex gap-2 mb-2">
+                  {[2, 3, 4].map(num => (
+                    <button
+                      key={num}
+                      type="button"
+                      onClick={() => setColors(num)}
+                      className={`flex-1 py-2 px-3 rounded-lg border-2 font-semibold text-sm transition-all ${
+                        colors === num
+                          ? 'border-blue-600 bg-blue-600 text-white shadow-md scale-105'
+                          : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                      }`}
+                    >
+                      {num}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500">Paint + background (2 min)</p>
+              </CardContent>
+            </Card>
 
-              {/* Smoothing */}
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <Label className="text-base font-semibold">Edge Smoothing</Label>
-                  <span className="text-sm text-gray-600">{blur}</span>
-                </div>
-                <Slider
-                  value={[blur]}
-                  onValueChange={(val) => setBlur(val[0])}
-                  min={0}
-                  max={5}
-                  step={1}
-                  className="w-full"
-                />
-                <p className="text-xs text-gray-500 mt-1">Smooths edges for cleaner paint lines</p>
-              </div>
-            </CardContent>
-          </Card>
+            {/* Border Shaving */}
+            <Card>
+              <CardContent className="p-4">
+                <button
+                  type="button"
+                  onClick={() => setShaveBorders(!shaveBorders)}
+                  className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
+                    shaveBorders
+                      ? 'border-blue-600 bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-400'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-bold text-sm">Shave Borders</div>
+                      <div className="text-xs text-gray-600 mt-0.5">Clean edge finish</div>
+                    </div>
+                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                      shaveBorders ? 'bg-blue-600 border-blue-600' : 'border-gray-300'
+                    }`}>
+                      {shaveBorders && <span className="text-white text-xs">✓</span>}
+                    </div>
+                  </div>
+                </button>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Action Buttons */}
           <div className="flex gap-3 flex-wrap">
