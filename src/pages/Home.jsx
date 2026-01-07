@@ -172,12 +172,17 @@ export default function Home() {
               Whether it's a <strong>Rugly Premium</strong> original or a custom <strong>Crugly</strong> of your own design, you're getting a piece of hand-painted art that is built to be lived on.
             </p>
           </div>
-          <div className="flex items-center justify-center gap-4 mt-8">
-            <div className="text-3xl font-bold">RH</div>
-            <div className="text-left">
-              <div className="font-bold">RYAN HENSLEY</div>
-              <div className="text-sm text-slate-400">FOUNDER & ARTIST</div>
-            </div>
+          <div className="flex items-center justify-center gap-8 mt-8">
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/f4f7d59d4_Screenshot2026-01-07at180950.png" 
+              alt="Ryan Hensley - Founder & Artist" 
+              className="h-16"
+            />
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/90995324f_RUGLYMASTERLOGO-6.png" 
+              alt="Rugly Logo" 
+              className="h-16"
+            />
           </div>
         </div>
       </section>
