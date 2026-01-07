@@ -6,7 +6,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Upload, CheckCircle, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
-import { createPageUrl } from './utils';
+import { createPageUrl } from '../utils';
 
 const SIZES = [
   { id: 's', label: 'Small (4x6)', value: '4x6', price: 900 },
