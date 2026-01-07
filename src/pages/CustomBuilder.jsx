@@ -8,14 +8,17 @@ import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 
-const WIDTH_OPTIONS = ['4ft', '5ft', '6ft', '8ft', '9ft'];
-const LENGTH_OPTIONS = ['6ft', '7ft', '8ft', '9ft', '10ft', '12ft'];
+const SIZES = [
+  { id: 'sm', label: 'Small', value: 'small', price: 199 },
+  { id: 'md', label: 'Medium', value: 'medium', price: 299 },
+  { id: 'lg', label: 'Large', value: 'large', price: 399 },
+  { id: 'hg', label: 'Huge', value: 'huge', price: 499 },
+  { id: 'rd', label: '4 Foot Round', value: '4ft round', price: 199 }
+];
 
-const calculatePrice = (width, length) => {
-  const widthNum = parseInt(width);
-  const lengthNum = parseInt(length);
-  const area = widthNum * lengthNum;
-  return Math.round(700 + (area * 15));
+const get3DPrice = (size) => {
+  const sizeMap = { small: 200, medium: 250, large: 300, huge: 350, '4ft round': 200 };
+  return sizeMap[size] || 200;
 };
 
 const BASE_COLORS = [
@@ -40,14 +43,13 @@ export default function CustomBuilder() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [config, setConfig] = useState({
-    width: '',
-    length: '',
+    size: '',
     baseColor: '',
     paintColor: '',
     imageFile: null,
     imageUrl: '',
     previewUrl: '',
-    numColors: 1
+    is3D: false
   });
   const [uploading, setUploading] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -72,10 +74,13 @@ export default function CustomBuilder() {
     
     setProcessing(true);
     try {
-      const prompt = `Create a realistic mockup image showing a ${config.width} x ${config.length} carpet rug in ${config.baseColor} color lying on a floor at a slight angle (perspective view from above). 
-      The design from the uploaded image should be painted/stenciled onto the rug in ${config.paintColor} color as a simplified 1-2 color outline/stencil style. 
-      The rug should have visible texture and the design should look hand-painted on the rug surface. 
-      Make it look professional and realistic, as if photographed in a room with natural lighting.`;
+      const sizeLabel = SIZES.find(s => s.value === config.size)?.label || config.size;
+      const colorDescription = config.is3D ? '2 colors creating depth and dimension' : '1-2 color stencil style';
+      
+      const prompt = `Create a realistic mockup image showing a ${sizeLabel} carpet rug in ${config.baseColor} color lying on a floor at a slight angle (perspective view from above). 
+      The design from the uploaded image should be painted onto the rug in ${config.paintColor} color as a simplified ${colorDescription}. 
+      The rug should have visible carpet texture and the design should look professionally hand-painted on the rug surface. 
+      Make it look professional and realistic, as if photographed in a well-lit room.`;
       
       const { url } = await base44.integrations.Core.GenerateImage({
         prompt: prompt,
@@ -91,18 +96,20 @@ export default function CustomBuilder() {
   };
 
   const handleAddToCart = () => {
-    const price = calculatePrice(config.width, config.length) + (config.numColors === 2 ? 100 : 0);
+    const selectedSize = SIZES.find(s => s.value === config.size);
+    const basePrice = selectedSize.price;
+    const price = basePrice + (config.is3D ? get3DPrice(config.size) : 0);
     
     const cartItem = {
       type: 'custom',
-      size: `${config.width} x ${config.length}`,
+      size: selectedSize.label,
       baseColor: config.baseColor,
       paintColor: config.paintColor,
       imageUrl: config.imageUrl,
       previewUrl: config.previewUrl,
-      numColors: config.numColors,
+      is3D: config.is3D,
       price: price,
-      name: `Custom Rug - ${config.width} x ${config.length}`
+      name: `Custom Rug - ${selectedSize.label}`
     };
 
     const cart = JSON.parse(localStorage.getItem('rugly_cart') || '[]');
@@ -113,8 +120,10 @@ export default function CustomBuilder() {
   };
 
   const currentPrice = () => {
-    if (!config.width || !config.length) return 0;
-    return calculatePrice(config.width, config.length) + (config.numColors === 2 ? 100 : 0);
+    if (!config.size) return 0;
+    const selectedSize = SIZES.find(s => s.value === config.size);
+    const basePrice = selectedSize.price;
+    return basePrice + (config.is3D ? get3DPrice(config.size) : 0);
   };
 
   return (
@@ -144,51 +153,24 @@ export default function CustomBuilder() {
               <CardTitle>Step 1: Choose Your Size</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-6">
-                <div>
-                  <Label className="text-lg mb-3 block">Width</Label>
-                  <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
-                    {WIDTH_OPTIONS.map((width) => (
-                      <button
-                        key={width}
-                        onClick={() => setConfig(prev => ({ ...prev, width }))}
-                        className={`p-3 border-2 rounded-lg font-semibold transition-all ${
-                          config.width === width ? 'border-blue-600 bg-blue-50 text-blue-600' : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        {width}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-lg mb-3 block">Length</Label>
-                  <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
-                    {LENGTH_OPTIONS.map((length) => (
-                      <button
-                        key={length}
-                        onClick={() => setConfig(prev => ({ ...prev, length }))}
-                        className={`p-3 border-2 rounded-lg font-semibold transition-all ${
-                          config.length === length ? 'border-blue-600 bg-blue-50 text-blue-600' : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        {length}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                {config.width && config.length && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-                    <p className="text-sm text-gray-600">Selected Size</p>
-                    <p className="text-2xl font-bold text-blue-600">{config.width} x {config.length}</p>
-                    <p className="text-sm text-gray-600 mt-1">Starting at ${calculatePrice(config.width, config.length)}</p>
-                  </div>
-                )}
+              <div className="grid md:grid-cols-2 gap-4">
+                {SIZES.map((size) => (
+                  <button
+                    key={size.id}
+                    onClick={() => setConfig(prev => ({ ...prev, size: size.value }))}
+                    className={`flex flex-col items-center p-6 border-2 rounded-lg transition-all ${
+                      config.size === size.value ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div className="font-bold text-xl mb-1">{size.label}</div>
+                    <div className="text-2xl font-bold text-blue-600">${size.price}</div>
+                  </button>
+                ))}
               </div>
               <Button 
                 className="w-full mt-6" 
                 onClick={() => setStep(2)} 
-                disabled={!config.width || !config.length}
+                disabled={!config.size}
               >
                 Continue to Colors
               </Button>
@@ -304,28 +286,31 @@ export default function CustomBuilder() {
                 </div>
 
                 <div>
-                  <Label>Number of Colors in Design</Label>
-                  <RadioGroup 
-                    value={config.numColors.toString()} 
-                    onValueChange={(value) => setConfig(prev => ({ ...prev, numColors: parseInt(value) }))}
-                  >
-                    <div className="flex gap-4 mt-2">
-                      <div className="flex items-center space-x-2 border rounded-lg p-4 flex-1">
-                        <RadioGroupItem value="1" id="one-color" />
-                        <Label htmlFor="one-color" className="cursor-pointer">
-                          <div className="font-semibold">1 Color</div>
-                          <div className="text-sm text-gray-600">Included</div>
-                        </Label>
+                  <Label className="text-lg mb-3 block">Design Style</Label>
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <button
+                      onClick={() => setConfig(prev => ({ ...prev, is3D: false }))}
+                      className={`p-4 border-2 rounded-lg text-left transition-all ${
+                        !config.is3D ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="font-semibold text-lg">Standard</div>
+                      <div className="text-sm text-gray-600">Flat stencil design</div>
+                      <div className="text-sm font-semibold text-gray-700 mt-1">Included</div>
+                    </button>
+                    <button
+                      onClick={() => setConfig(prev => ({ ...prev, is3D: true }))}
+                      className={`p-4 border-2 rounded-lg text-left transition-all ${
+                        config.is3D ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="font-semibold text-lg">3-D Effect</div>
+                      <div className="text-sm text-gray-600">Multiple colors for depth</div>
+                      <div className="text-sm font-semibold text-blue-600 mt-1">
+                        +${config.size ? get3DPrice(config.size) : 200}
                       </div>
-                      <div className="flex items-center space-x-2 border rounded-lg p-4 flex-1">
-                        <RadioGroupItem value="2" id="two-colors" />
-                        <Label htmlFor="two-colors" className="cursor-pointer">
-                          <div className="font-semibold">2 Colors</div>
-                          <div className="text-sm text-gray-600">+$100</div>
-                        </Label>
-                      </div>
-                    </div>
-                  </RadioGroup>
+                    </button>
+                  </div>
                 </div>
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">

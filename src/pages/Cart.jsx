@@ -109,7 +109,7 @@ export default function Cart() {
                       <p className="text-sm text-gray-600">Size: {item.size}</p>
                       {item.baseColor && <p className="text-sm text-gray-600">Base: {item.baseColor}</p>}
                       {item.paintColor && <p className="text-sm text-gray-600">Paint: {item.paintColor}</p>}
-                      {item.numColors && <p className="text-sm text-gray-600">Colors: {item.numColors}</p>}
+                      {item.is3D && <p className="text-sm text-gray-600">Style: 3-D Effect</p>}
                       <p className="text-xl font-bold text-blue-600 mt-2">${item.price}</p>
                     </div>
                     <Button
