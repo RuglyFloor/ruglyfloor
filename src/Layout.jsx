@@ -34,7 +34,7 @@ export default function Layout({ children, currentPageName }) {
                 <Link
                   key={link.page}
                   to={createPageUrl(link.page)}
-                  className={`text-gray-700 hover:text-purple-600 transition-colors ${
+                  className={`text-gray-700 hover:text-blue-600 transition-colors ${
                     currentPageName === link.page ? 'text-blue-600 font-semibold' : ''
                   }`}
                 >
@@ -65,7 +65,7 @@ export default function Layout({ children, currentPageName }) {
                 <Link
                   key={link.page}
                   to={createPageUrl(link.page)}
-                  className={`text-gray-700 hover:text-purple-600 transition-colors py-2 ${
+                  className={`text-gray-700 hover:text-blue-600 transition-colors py-2 ${
                     currentPageName === link.page ? 'text-blue-600 font-semibold' : ''
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
