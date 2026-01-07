@@ -8,26 +8,44 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-32 px-6 overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
+      <section className="relative py-32 px-6 overflow-hidden">
+        {/* Background Video */}
+        <div className="absolute inset-0 z-0">
+          <iframe
+            className="absolute inset-0 w-full h-full object-cover"
+            src="https://www.youtube.com/embed/1UQgEW5Svtc?autoplay=1&mute=1&loop=1&playlist=1UQgEW5Svtc&controls=0&showinfo=0&rel=0&modestbranding=1"
+            allow="autoplay; encrypted-media"
+            style={{ pointerEvents: 'none' }}
+          />
+          <div className="absolute inset-0 bg-black/50" />
+        </div>
+
         <div className="max-w-6xl mx-auto text-center relative z-10">
-          <h1 className="text-5xl md:text-8xl font-bold text-white mb-4">
-            RUGLY.
-          </h1>
-          <h2 className="text-4xl md:text-6xl font-bold mb-8">
-            <span className="text-blue-400">ART FOR YOUR FLOOR.</span>
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/7e922323a_RUGLYMASTERLOGO-61.png"
+            alt="RUGLY"
+            className="h-32 md:h-48 mx-auto mb-6"
+          />
+          <h2 className="text-3xl md:text-5xl font-bold mb-12 text-white">
+            ART FOR YOUR FLOOR.
           </h2>
-          <p className="text-xl text-slate-300 mb-12 max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-white mb-12 max-w-3xl mx-auto">
             Hand-painted rugs from the studio of Ryan Hensley. Choose a Rugly Premium original or create your own Crugly.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link to={createPageUrl('Shop')}>
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-10 py-7">
+              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-10 py-7 shadow-lg">
                 SHOP PREMIUM ORIGINALS
               </Button>
             </Link>
             <Link to={createPageUrl('CustomBuilder')}>
-              <Button size="lg" variant="outline" className="text-lg px-10 py-7 border-2 border-white text-white hover:bg-white hover:text-slate-900">
+              <Button size="lg" className="bg-white hover:bg-gray-100 text-slate-900 text-lg px-10 py-7 shadow-lg">
                 CREATE A CRUGLY (CUSTOM)
+              </Button>
+            </Link>
+            <Link to={createPageUrl('Commission')}>
+              <Button size="lg" variant="outline" className="text-lg px-10 py-7 border-2 border-white text-white hover:bg-white hover:text-slate-900 shadow-lg">
+                COMMISSION A DESIGNER
               </Button>
             </Link>
           </div>
