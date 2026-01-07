@@ -7,6 +7,7 @@ import { Upload, CheckCircle, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
+import StencilCreator from '../components/custom/StencilCreator';
 
 const SIZES = [
   { id: 'sm', label: 'Small', value: 'small', price: 199 },
@@ -245,116 +246,62 @@ export default function CustomBuilder() {
           </Card>
         )}
 
-        {/* Step 3: Image Upload */}
+        {/* Step 3: Create Stencil Design */}
         {step === 3 && (
           <Card>
             <CardHeader>
-              <CardTitle>Step 3: Upload Your Design</CardTitle>
+              <CardTitle>Step 3: Create Your Stencil Design</CardTitle>
+              <p className="text-sm text-gray-600 mt-2">
+                Upload any image and turn it into a perfect rug stencil with adjustable details and colors
+              </p>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                <div>
-                  <Label>Upload Image (logo, text, artwork)</Label>
-                  <div className="mt-2 border-2 border-dashed rounded-lg p-8 text-center hover:bg-gray-50 transition-colors">
-                    {config.imageUrl ? (
-                      <div>
-                        <img src={config.imageUrl} alt="Uploaded design" className="max-h-64 mx-auto mb-4" />
-                        <Button variant="outline" size="sm" onClick={() => document.getElementById('file-upload').click()}>
-                          Change Image
-                        </Button>
-                      </div>
-                    ) : (
-                      <label htmlFor="file-upload" className="cursor-pointer">
-                        <Upload className="w-12 h-12 mx-auto text-gray-400 mb-2" />
-                        <p className="text-gray-600">Click to upload or drag and drop</p>
-                        <p className="text-sm text-gray-400 mt-1">PNG, JPG, SVG up to 10MB</p>
-                      </label>
-                    )}
-                    <input
-                      id="file-upload"
-                      type="file"
-                      className="hidden"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      disabled={uploading}
-                    />
-                  </div>
-                  {uploading && (
-                    <div className="flex items-center justify-center gap-2 mt-2 text-blue-600">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Uploading...</span>
-                    </div>
-                  )}
-                </div>
-
-                <div>
-                  <Label className="text-lg mb-3 block">Design Style</Label>
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <button
-                      onClick={() => setConfig(prev => ({ ...prev, is3D: false }))}
-                      className={`p-4 border-2 rounded-lg text-left transition-all ${
-                        !config.is3D ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="font-semibold text-lg">Standard</div>
-                      <div className="text-sm text-gray-600">Flat stencil design</div>
-                      <div className="text-sm font-semibold text-gray-700 mt-1">Included</div>
-                    </button>
-                    <button
-                      onClick={() => setConfig(prev => ({ ...prev, is3D: true }))}
-                      className={`p-4 border-2 rounded-lg text-left transition-all ${
-                        config.is3D ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <div className="font-semibold text-lg">3-D Effect</div>
-                      <div className="text-sm text-gray-600">Multiple colors for depth</div>
-                      <div className="text-sm font-semibold text-blue-600 mt-1">
-                        +${config.size ? get3DPrice(config.size) : 200}
-                      </div>
-                    </button>
-                  </div>
-                </div>
-
-                {config.imageUrl && !config.previewUrl && (
-                  <Button 
-                    className="w-full bg-blue-600 hover:bg-blue-700" 
-                    onClick={generatePreview}
-                    disabled={processing || !config.paintColor}
-                  >
-                    {processing ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Generating Preview...
-                      </>
-                    ) : (
-                      'Generate Preview on Rug'
-                    )}
-                  </Button>
-                )}
+                <StencilCreator
+                  onSaveStencil={(stencilUrl) => {
+                    setConfig(prev => ({ ...prev, previewUrl: stencilUrl }));
+                  }}
+                />
 
                 {config.previewUrl && (
-                  <div className="border rounded-lg p-4 bg-white">
-                    <Label className="block mb-2 font-semibold">Your Custom Rug Preview</Label>
-                    <img src={config.previewUrl} alt="Rug preview" className="w-full rounded-lg shadow-md" />
-                    <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-3 mt-3">
-                      ⚠️ Dark base rug colors may result in a darker paint color
-                    </p>
-                    <Button 
-                      variant="outline" 
-                      className="w-full mt-3"
-                      onClick={generatePreview}
-                      disabled={processing}
-                    >
-                      {processing ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Regenerating...
-                        </>
-                      ) : (
-                        'Regenerate Preview'
-                      )}
-                    </Button>
-                  </div>
+                  <>
+                    <div>
+                      <Label className="text-lg mb-3 block">Design Style</Label>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <button
+                          type="button"
+                          onClick={() => setConfig(prev => ({ ...prev, is3D: false }))}
+                          className={`p-4 border-2 rounded-lg text-left transition-all ${
+                            !config.is3D ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="font-semibold text-lg">Standard</div>
+                          <div className="text-sm text-gray-600">Flat stencil design</div>
+                          <div className="text-sm font-semibold text-gray-700 mt-1">Included</div>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setConfig(prev => ({ ...prev, is3D: true }))}
+                          className={`p-4 border-2 rounded-lg text-left transition-all ${
+                            config.is3D ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="font-semibold text-lg">3-D Effect</div>
+                          <div className="text-sm text-gray-600">Multiple colors for depth</div>
+                          <div className="text-sm font-semibold text-blue-600 mt-1">
+                            +${config.size ? get3DPrice(config.size) : 200}
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                      <Label className="block mb-2 font-semibold text-green-900">✨ Your Stencil is Ready!</Label>
+                      <p className="text-sm text-green-700">
+                        This design is ready to be painted on your rug. Adjust the style option above if needed.
+                      </p>
+                    </div>
+                  </>
                 )}
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
