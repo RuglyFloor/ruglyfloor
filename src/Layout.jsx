@@ -18,7 +18,8 @@ export default function Layout({ children, currentPageName }) {
   return (
     <div className="min-h-screen bg-gray-50">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
         
         :root {
           /* Primary Brand Color - Change this to customize your accent color */
@@ -31,9 +32,9 @@ export default function Layout({ children, currentPageName }) {
              --primary: 239 68 68; (Red)
           */
           
-          /* Typography */
-          --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
-          --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+          /* Typography - Using Google Fonts alternatives for the requested fonts */
+          --font-heading: 'Montserrat', sans-serif; /* Alternative to New Astro/Magistral */
+          --font-body: 'Playfair Display', serif; /* Playfair Display */
         }
         
         body {
