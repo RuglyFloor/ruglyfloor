@@ -16,6 +16,39 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        
+        :root {
+          /* Primary Brand Color - Change this to customize your accent color */
+          --primary: 37 99 235; /* Blue (rgb format for Tailwind) */
+          --primary-hover: 29 78 216;
+          
+          /* You can change to other colors like:
+             --primary: 147 51 234; (Purple)
+             --primary: 34 197 94; (Green)
+             --primary: 239 68 68; (Red)
+          */
+          
+          /* Typography */
+          --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+          --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+          font-family: var(--font-body);
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+          font-family: var(--font-heading);
+        }
+        
+        /* Custom primary color classes */
+        .bg-primary { background-color: rgb(var(--primary)); }
+        .text-primary { color: rgb(var(--primary)); }
+        .border-primary { border-color: rgb(var(--primary)); }
+        .hover\\:bg-primary-hover:hover { background-color: rgb(var(--primary-hover)); }
+      `}</style>
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
