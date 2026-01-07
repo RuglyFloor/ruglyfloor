@@ -17,6 +17,20 @@ const SIZES = [
   { id: 'rd', label: '4 Foot Round', value: '4ft round', price: 199 }
 ];
 
+const getColorPrice = (size, numColors) => {
+  if (numColors === 2) return 0;
+  const sizeMap = { small: 0, medium: 50, large: 100, huge: 150, '4ft round': 0 };
+  const sizeUpcharge = sizeMap[size] || 0;
+  if (numColors === 3) return 49 + sizeUpcharge;
+  if (numColors === 4) return (49 + sizeUpcharge) * 2;
+  return 0;
+};
+
+const getBorderPrice = (size) => {
+  const sizeMap = { small: 99, medium: 149, large: 199, huge: 249, '4ft round': 99 };
+  return sizeMap[size] || 99;
+};
+
 const get3DPrice = (size) => {
   const sizeMap = { small: 200, medium: 250, large: 300, huge: 350, '4ft round': 200 };
   return sizeMap[size] || 200;
@@ -50,7 +64,9 @@ export default function CustomBuilder() {
     imageFile: null,
     imageUrl: '',
     previewUrl: '',
-    is3D: false
+    is3D: false,
+    numColors: 2,
+    shaveBorders: false
   });
   const [uploading, setUploading] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -111,6 +127,8 @@ export default function CustomBuilder() {
       imageUrl: config.imageUrl,
       previewUrl: config.previewUrl,
       is3D: config.is3D,
+      numColors: config.numColors,
+      shaveBorders: config.shaveBorders,
       price: price,
       name: `Custom Rug - ${selectedSize.label}`
     };
@@ -126,7 +144,10 @@ export default function CustomBuilder() {
     if (!config.size) return 0;
     const selectedSize = SIZES.find(s => s.value === config.size);
     const basePrice = selectedSize.price;
-    return basePrice + (config.is3D ? get3DPrice(config.size) : 0);
+    const colorPrice = getColorPrice(config.size, config.numColors);
+    const borderPrice = config.shaveBorders ? getBorderPrice(config.size) : 0;
+    const threeDPrice = config.is3D ? get3DPrice(config.size) : 0;
+    return basePrice + colorPrice + borderPrice + threeDPrice;
   };
 
   return (
@@ -261,6 +282,9 @@ export default function CustomBuilder() {
                   onSaveStencil={(stencilUrl) => {
                     setConfig(prev => ({ ...prev, previewUrl: stencilUrl }));
                   }}
+                  onConfigChange={({ colors, shaveBorders }) => {
+                    setConfig(prev => ({ ...prev, numColors: colors, shaveBorders }));
+                  }}
                 />
 
                 {config.previewUrl && (
@@ -305,13 +329,34 @@ export default function CustomBuilder() {
                 )}
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <div className="flex justify-between items-center mb-2">
+                  <div className="flex justify-between items-center mb-3">
                     <span className="font-semibold">Total Price:</span>
-                    <span className="text-2xl font-bold text-blue-600">${currentPrice()}</span>
+                    <span className="text-3xl font-bold text-blue-600">${currentPrice()}</span>
                   </div>
-                  <p className="text-sm text-gray-600">
-                    {SIZES.find(s => s.value === config.size)?.label} • {config.baseColor} base • {config.paintColor} paint • {config.is3D ? '3-D Effect' : 'Standard'}
-                  </p>
+                  <div className="text-xs text-gray-700 space-y-1">
+                    <div className="flex justify-between">
+                      <span>{SIZES.find(s => s.value === config.size)?.label} Base:</span>
+                      <span className="font-semibold">${SIZES.find(s => s.value === config.size)?.price}</span>
+                    </div>
+                    {config.numColors > 2 && (
+                      <div className="flex justify-between">
+                        <span>{config.numColors} Colors:</span>
+                        <span className="font-semibold">+${getColorPrice(config.size, config.numColors)}</span>
+                      </div>
+                    )}
+                    {config.shaveBorders && (
+                      <div className="flex justify-between">
+                        <span>Shaved Borders:</span>
+                        <span className="font-semibold">+${getBorderPrice(config.size)}</span>
+                      </div>
+                    )}
+                    {config.is3D && (
+                      <div className="flex justify-between">
+                        <span>3-D Effect:</span>
+                        <span className="font-semibold">+${get3DPrice(config.size)}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="flex gap-3">
