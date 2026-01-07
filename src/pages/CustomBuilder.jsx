@@ -335,6 +335,9 @@ export default function CustomBuilder() {
                   <div className="border rounded-lg p-4 bg-white">
                     <Label className="block mb-2 font-semibold">Your Custom Rug Preview</Label>
                     <img src={config.previewUrl} alt="Rug preview" className="w-full rounded-lg shadow-md" />
+                    <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-md p-3 mt-3">
+                      ⚠️ Dark base rug colors may result in a darker paint color
+                    </p>
                     <Button 
                       variant="outline" 
                       className="w-full mt-3"
