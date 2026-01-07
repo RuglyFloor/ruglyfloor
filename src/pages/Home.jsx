@@ -1,10 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { Palette, Sparkles, Package, CheckCircle } from 'lucide-react';
 
 export default function Home() {
+  const [currentProduct, setCurrentProduct] = useState(0);
+  
+  const products = [
+    {
+      image: "https://ruglyfloor.com/_next/image?url=%2Fimages%2Fready-to-ship-1.jpg&w=3840&q=75",
+      title: "Pan Am Vintage Logo",
+      description: "A classic aviation icon, hand-painted with precision on a low-pile base.",
+      price: 299,
+      sold: true
+    },
+    {
+      image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/736432943_ChicagoRug.png",
+      title: "Chicago Skyline",
+      description: "Hand-painted using dye and fabric paint. Features Chicago's iconic skyline with all current buildings plus two under construction.",
+      price: 400,
+      sold: false
+    }
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentProduct((prev) => (prev + 1) % products.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -35,7 +61,7 @@ export default function Home() {
           <div className="flex gap-4 justify-center flex-wrap">
             <Link to={createPageUrl('Shop')}>
               <Button size="lg" className="bg-orange-600 hover:bg-orange-700 text-white font-bold text-lg px-10 py-7 shadow-xl">
-                SHOP PREMIUM ORIGINALS
+                SHOP FOR ORIGINAL RUGLYS
               </Button>
             </Link>
             <Link to={createPageUrl('CustomBuilder')}>
@@ -52,19 +78,19 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Ready to Ship Section */}
+      {/* Shop for Original Ruglys Section */}
       <section className="py-16 px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center gap-3 mb-8 justify-center">
             <Package className="w-8 h-8 text-blue-600" />
-            <h2 className="text-3xl font-bold">READY TO SHIP NOW</h2>
+            <h2 className="text-3xl font-bold">SHOP FOR ORIGINAL RUGLYS</h2>
           </div>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="group cursor-pointer relative">
-              <div className="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-4 relative">
+          <div className="relative">
+            <div className={`group cursor-pointer transition-opacity duration-500 ${currentProduct === 0 ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}`}>
+              <div className="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-4 relative max-w-2xl mx-auto">
                 <img 
-                  src="https://ruglyfloor.com/_next/image?url=%2Fimages%2Fready-to-ship-1.jpg&w=3840&q=75" 
-                  alt="Pan Am Vintage Logo" 
+                  src={products[0].image}
+                  alt={products[0].title}
                   className="w-full h-full object-cover opacity-60"
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -73,28 +99,43 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <h3 className="text-xl font-bold mb-2">Pan Am Vintage Logo</h3>
-              <p className="text-slate-600 mb-3">A classic aviation icon, hand-painted with precision on a low-pile base.</p>
-              <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold text-red-600">SOLD OUT</span>
-                <Button disabled className="opacity-50">SOLD</Button>
+              <div className="text-center max-w-2xl mx-auto">
+                <h3 className="text-2xl font-bold mb-3">{products[0].title}</h3>
+                <p className="text-slate-600 mb-4">{products[0].description}</p>
+                <div className="flex items-center justify-center gap-4">
+                  <span className="text-3xl font-bold text-red-600">SOLD OUT</span>
+                  <Button disabled className="opacity-50">SOLD</Button>
+                </div>
               </div>
             </div>
-            <div className="group cursor-pointer">
-              <div className="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-4">
+            <div className={`group cursor-pointer transition-opacity duration-500 ${currentProduct === 1 ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}`}>
+              <div className="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-4 max-w-2xl mx-auto">
                 <img 
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/736432943_ChicagoRug.png" 
-                  alt="Chicago Skyline" 
+                  src={products[1].image}
+                  alt={products[1].title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
-              <h3 className="text-xl font-bold mb-2">Chicago Skyline</h3>
-              <p className="text-slate-600 mb-3">Hand-painted using dye and fabric paint. Features Chicago's iconic skyline with all current buildings plus two under construction — a timeless cityscape that won't get dated.</p>
-              <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold text-blue-600">$400</span>
-                <Button>GRAB IT</Button>
+              <div className="text-center max-w-2xl mx-auto">
+                <h3 className="text-2xl font-bold mb-3">{products[1].title}</h3>
+                <p className="text-slate-600 mb-4">{products[1].description}</p>
+                <div className="flex items-center justify-center gap-4">
+                  <span className="text-3xl font-bold text-blue-600">${products[1].price}</span>
+                  <Button>GRAB IT</Button>
+                </div>
               </div>
             </div>
+          </div>
+          <div className="flex justify-center gap-2 mt-6">
+            {products.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentProduct(index)}
+                className={`w-3 h-3 rounded-full transition-all ${
+                  currentProduct === index ? 'bg-blue-600 w-8' : 'bg-gray-300'
+                }`}
+              />
+            ))}
           </div>
         </div>
       </section>
