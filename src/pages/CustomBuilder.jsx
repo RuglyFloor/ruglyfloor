@@ -313,13 +313,52 @@ export default function CustomBuilder() {
                   </div>
                 </div>
 
+                {config.imageUrl && !config.previewUrl && (
+                  <Button 
+                    className="w-full bg-blue-600 hover:bg-blue-700" 
+                    onClick={generatePreview}
+                    disabled={processing || !config.paintColor}
+                  >
+                    {processing ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Generating Preview...
+                      </>
+                    ) : (
+                      'Generate Preview on Rug'
+                    )}
+                  </Button>
+                )}
+
+                {config.previewUrl && (
+                  <div className="border rounded-lg p-4 bg-white">
+                    <Label className="block mb-2 font-semibold">Your Custom Rug Preview</Label>
+                    <img src={config.previewUrl} alt="Rug preview" className="w-full rounded-lg shadow-md" />
+                    <Button 
+                      variant="outline" 
+                      className="w-full mt-3"
+                      onClick={generatePreview}
+                      disabled={processing}
+                    >
+                      {processing ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Regenerating...
+                        </>
+                      ) : (
+                        'Regenerate Preview'
+                      )}
+                    </Button>
+                  </div>
+                )}
+
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-semibold">Total Price:</span>
                     <span className="text-2xl font-bold text-blue-600">${currentPrice()}</span>
                   </div>
                   <p className="text-sm text-gray-600">
-                    {config.size} • {config.baseColor} base • {config.numColors} color(s)
+                    {SIZES.find(s => s.value === config.size)?.label} • {config.baseColor} base • {config.paintColor} paint • {config.is3D ? '3-D Effect' : 'Standard'}
                   </p>
                 </div>
 
@@ -328,9 +367,9 @@ export default function CustomBuilder() {
                     Back
                   </Button>
                   <Button 
-                    className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600" 
+                    className="flex-1 bg-blue-600 hover:bg-blue-700" 
                     onClick={handleAddToCart}
-                    disabled={!config.imageUrl}
+                    disabled={!config.previewUrl}
                   >
                     Add to Cart
                   </Button>
