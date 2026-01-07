@@ -8,13 +8,27 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-purple-50 via-white to-blue-50 py-20 px-6">
-        <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6">
+      <section className="relative py-20 px-6 overflow-hidden">
+        {/* Background Video */}
+        <video 
+          autoPlay 
+          loop 
+          muted 
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        >
+          <source src="YOUR_VIDEO_URL_HERE.mp4" type="video/mp4" />
+        </video>
+        
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-black/40"></div>
+        
+        <div className="max-w-6xl mx-auto text-center relative z-10">
+          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg">
             Transform Your Space with
-            <span className="text-blue-600"> Rugly</span>
+            <span className="text-blue-300"> Rugly</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-white mb-8 max-w-2xl mx-auto drop-shadow-md">
             Custom-painted rugs designed by you. From logos to artwork, bring your vision to life on premium carpet-like rugs.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
