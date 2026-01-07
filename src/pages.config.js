@@ -1,21 +1,21 @@
+import About from './pages/About';
 import Cart from './pages/Cart';
+import Commission from './pages/Commission';
 import CustomBuilder from './pages/CustomBuilder';
 import Home from './pages/Home';
 import Orders from './pages/Orders';
 import Shop from './pages/Shop';
-import About from './pages/About';
-import Commission from './pages/Commission';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "About": About,
     "Cart": Cart,
+    "Commission": Commission,
     "CustomBuilder": CustomBuilder,
     "Home": Home,
     "Orders": Orders,
     "Shop": Shop,
-    "About": About,
-    "Commission": Commission,
 }
 
 export const pagesConfig = {

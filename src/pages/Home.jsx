@@ -2,79 +2,164 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import { Palette, Sparkles, TrendingUp } from 'lucide-react';
+import { Palette, Sparkles, Package, CheckCircle } from 'lucide-react';
 
 export default function Home() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative py-20 px-6 overflow-hidden">
-        {/* Background Video */}
-        <video 
-          autoPlay 
-          loop 
-          muted 
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-        >
-          <source src="https://new.express.adobe.com/publishedV2/urn:aaid:sc:US:ed03a672-d1fe-4540-a0bb-30a65980ffd9?promoid=Y69SGM5H&mv=other" type="video/mp4" />
-        </video>
-        
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/40"></div>
-        
+      <section className="relative py-32 px-6 overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
         <div className="max-w-6xl mx-auto text-center relative z-10">
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-lg">
-            Transform Your Space with
-            <span className="text-blue-300"> Rugly</span>
+          <h1 className="text-5xl md:text-8xl font-bold text-white mb-4">
+            RUGLY.
           </h1>
-          <p className="text-xl text-white mb-8 max-w-2xl mx-auto drop-shadow-md">
-            Custom-painted rugs designed by you. From logos to artwork, bring your vision to life on premium carpet-like rugs.
+          <h2 className="text-4xl md:text-6xl font-bold mb-8">
+            <span className="text-blue-400">ART FOR YOUR FLOOR.</span>
+          </h2>
+          <p className="text-xl text-slate-300 mb-12 max-w-3xl mx-auto">
+            Hand-painted rugs from the studio of Ryan Hensley. Choose a Rugly Premium original or create your own Crugly.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
-            <Link to={createPageUrl('CustomBuilder')}>
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8">
-                <Palette className="w-5 h-5 mr-2" />
-                Design Your Rug
-              </Button>
-            </Link>
             <Link to={createPageUrl('Shop')}>
-              <Button size="lg" variant="outline" className="text-lg px-8">
-                Shop Originals
+              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-10 py-7">
+                SHOP PREMIUM ORIGINALS
               </Button>
             </Link>
-            <Link to={createPageUrl('Commission')}>
-              <Button size="lg" variant="outline" className="text-lg px-8">
-                Commission Design and Commercial Clients
+            <Link to={createPageUrl('CustomBuilder')}>
+              <Button size="lg" variant="outline" className="text-lg px-10 py-7 border-2 border-white text-white hover:bg-white hover:text-slate-900">
+                CREATE A CRUGLY (CUSTOM)
               </Button>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Features */}
+      {/* Ready to Ship Section */}
       <section className="py-16 px-6 bg-white">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
-          <div className="text-center p-6">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Palette className="w-8 h-8 text-blue-600" />
-            </div>
-            <h3 className="text-xl font-bold mb-2">Fully Customizable</h3>
-            <p className="text-gray-600">Choose your size, color, and upload any design. We'll hand-paint it perfectly.</p>
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-center gap-3 mb-8">
+            <Package className="w-8 h-8 text-blue-600" />
+            <h2 className="text-3xl font-bold">READY TO SHIP NOW</h2>
           </div>
-          <div className="text-center p-6">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Sparkles className="w-8 h-8 text-blue-600" />
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="group cursor-pointer">
+              <div className="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-4">
+                <img 
+                  src="https://ruglyfloor.com/_next/image?url=%2Fimages%2Fready-to-ship-1.jpg&w=3840&q=75" 
+                  alt="Pan Am Vintage Logo" 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Pan Am Vintage Logo</h3>
+              <p className="text-slate-600 mb-3">A classic aviation icon, hand-painted with precision on a low-pile base.</p>
+              <div className="flex items-center justify-between">
+                <span className="text-2xl font-bold text-blue-600">$299</span>
+                <Button>GRAB IT</Button>
+              </div>
             </div>
-            <h3 className="text-xl font-bold mb-2">Artist Quality</h3>
-            <p className="text-gray-600">Each rug is hand-painted by our founder, a former artist with a unique technique.</p>
+            <div className="group cursor-pointer">
+              <div className="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-4">
+                <img 
+                  src="https://ruglyfloor.com/_next/image?url=%2Fimages%2Fready-to-ship-2.jpg&w=3840&q=75" 
+                  alt="Madonna Portrait" 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                />
+              </div>
+              <h3 className="text-xl font-bold mb-2">Madonna Portrait</h3>
+              <p className="text-slate-600 mb-3">Bold, high-contrast pop art portrait. A statement piece for any room.</p>
+              <div className="flex items-center justify-between">
+                <span className="text-2xl font-bold text-blue-600">$349</span>
+                <Button>GRAB IT</Button>
+              </div>
+            </div>
           </div>
-          <div className="text-center p-6">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <TrendingUp className="w-8 h-8 text-green-600" />
+        </div>
+      </section>
+
+      {/* Before Ordering Section */}
+      <section className="py-16 px-6 bg-slate-50">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-center">READ THIS BEFORE ORDERING</h2>
+          <div className="space-y-4 mb-8">
+            <div className="flex items-start gap-3">
+              <CheckCircle className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
+              <p className="text-lg text-slate-700">Rugs are painted, not printed. This is hand work.</p>
             </div>
-            <h3 className="text-xl font-bold mb-2">Commercial Ready</h3>
-            <p className="text-gray-600">Perfect for businesses needing branded flooring without the $5,000 price tag.</p>
+            <div className="flex items-start gap-3">
+              <CheckCircle className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
+              <p className="text-lg text-slate-700">Bold designs work best. High contrast = clean edges.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <CheckCircle className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
+              <p className="text-lg text-slate-700">Thin lines & gradients may be simplified for the stencil.</p>
+            </div>
+          </div>
+          <div className="bg-blue-50 border-l-4 border-blue-600 p-6 rounded">
+            <p className="text-lg italic text-slate-700">
+              "The preview is accurate — but this is still hand work. Each rug has character. That's the point."
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Base Rug Details */}
+      <section className="py-16 px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-center">BASE RUG DETAILS</h2>
+          <div className="grid md:grid-cols-4 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Palette className="w-8 h-8 text-blue-600" />
+              </div>
+              <h3 className="font-bold mb-2">LOW-PILE</h3>
+              <p className="text-slate-600 text-sm">Flat weave for clean paint lines</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="w-8 h-8 text-blue-600" />
+              </div>
+              <h3 className="font-bold mb-2">MATTE FINISH</h3>
+              <p className="text-slate-600 text-sm">No glare, just pure color</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className="font-bold mb-2">WASHABLE</h3>
+              <p className="text-slate-600 text-sm">Easy to clean and maintain</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-blue-600" />
+              </div>
+              <h3 className="font-bold mb-2">NON-SLIP</h3>
+              <p className="text-slate-600 text-sm">Stays exactly where you put it</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Studio Story */}
+      <section className="py-20 px-6 bg-slate-900 text-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-bold mb-6">FROM THE STUDIO TO YOUR LIVING ROOM.</h2>
+          <div className="space-y-4 text-lg text-slate-300 mb-8">
+            <p>
+              Rugly was born at the intersection of fine art and functional design. Founder Ryan Hensley brings years of experience in commercial space design, building unique Airbnbs, and creating brand identities to the most overlooked canvas in your home: the floor.
+            </p>
+            <p>
+              As a canvas artist with a background in interior design, he realized that flooring was either mass-produced and soulless, or custom-tufted and prohibitively expensive. Rugly is the middle ground. We use high-quality base rugs as our canvas and hand-paint every design in our studio.
+            </p>
+            <p>
+              Whether it's a <strong>Rugly Premium</strong> original or a custom <strong>Crugly</strong> of your own design, you're getting a piece of hand-painted art that is built to be lived on.
+            </p>
+          </div>
+          <div className="flex items-center justify-center gap-4 mt-8">
+            <div className="text-3xl font-bold">RH</div>
+            <div className="text-left">
+              <div className="font-bold">RYAN HENSLEY</div>
+              <div className="text-sm text-slate-400">FOUNDER & ARTIST</div>
+            </div>
           </div>
         </div>
       </section>
@@ -83,9 +168,9 @@ export default function Home() {
       <section className="py-20 px-6 bg-blue-600">
         <div className="max-w-4xl mx-auto text-center text-white">
           <h2 className="text-4xl font-bold mb-4">Ready to Create Something Unique?</h2>
-          <p className="text-xl mb-8 opacity-90">Custom rugs starting at $900. Original designs from $700.</p>
+          <p className="text-xl mb-8 opacity-90">Custom Cruglys starting at $199. Premium originals from $700.</p>
           <Link to={createPageUrl('CustomBuilder')}>
-            <Button size="lg" variant="secondary" className="text-lg px-8">
+            <Button size="lg" variant="secondary" className="text-lg px-10 py-7">
               Start Designing Now
             </Button>
           </Link>
