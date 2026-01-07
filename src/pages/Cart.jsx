@@ -46,7 +46,7 @@ export default function Cart() {
     try {
       const orderNumber = 'RUG-' + Date.now();
       
-      await base44.entities.Order.create({
+      const orderData = {
         order_number: orderNumber,
         customer_name: customerInfo.name,
         customer_email: customerInfo.email,
@@ -62,7 +62,12 @@ export default function Cart() {
         total_amount: totalAmount,
         status: 'pending',
         payment_status: 'pending'
-      });
+      };
+
+      await base44.entities.Order.create(orderData);
+
+      // Send notification email
+      await base44.functions.invoke('notifyNewOrder', { orderData });
 
       localStorage.removeItem('rugly_cart');
       alert('Order placed! We will contact you for payment and next steps.');
