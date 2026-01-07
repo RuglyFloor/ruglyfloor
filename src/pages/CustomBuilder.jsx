@@ -79,6 +79,7 @@ export default function CustomBuilder() {
       
       const prompt = `Create a realistic mockup image showing a ${sizeLabel} carpet rug in ${config.baseColor} color lying on a floor at a slight angle (perspective view from above). 
       The design from the uploaded image should be painted onto the rug in ${config.paintColor} color as a simplified ${colorDescription}. 
+      IMPORTANT: If the uploaded image contains text, words, or letters, reproduce them clearly and legibly on the rug - the text must be readable and accurate.
       The rug should have visible carpet texture and the design should look professionally hand-painted on the rug surface. 
       Make it look professional and realistic, as if photographed in a well-lit room.`;
       
