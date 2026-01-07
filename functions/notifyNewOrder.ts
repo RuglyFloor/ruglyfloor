@@ -26,7 +26,8 @@ Deno.serve(async (req) => {
                         Base Color: ${item.baseColor}, Paint Color: ${item.paintColor}<br>
                         ${item.is3D ? '3-D Effect' : 'Standard'}<br>
                         Price: $${item.price}
-                        ${item.previewUrl ? `<br><img src="${item.previewUrl}" style="max-width: 300px; margin-top: 10px;">` : ''}
+                        ${item.imageUrl ? `<br><strong>Original Uploaded Image:</strong><br><img src="${item.imageUrl}" style="max-width: 300px; margin-top: 10px; background: white; padding: 10px;">` : ''}
+                        ${item.previewUrl ? `<br><strong>Preview on Rug:</strong><br><img src="${item.previewUrl}" style="max-width: 300px; margin-top: 10px;">` : ''}
                     </li>
                 `).join('')}
                 </ul>
