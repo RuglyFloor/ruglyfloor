@@ -19,7 +19,7 @@ export default function Layout({ children, currentPageName }) {
   return (
     <div className="min-h-screen bg-gray-50">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,700;0,900;1,100;1,700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,700;0,900;1,100;1,700&family=Baumans&family=Boldonse&family=Kameron:wght@400..700&family=Qwitcher+Grypen:wght@400;700&display=swap');
 
         :root {
           /* Primary Brand Color - Change this to customize your accent color */
@@ -35,6 +35,10 @@ export default function Layout({ children, currentPageName }) {
           /* Typography */
           --font-heading: 'Barlow Condensed', sans-serif;
           --font-body: 'Barlow Condensed', sans-serif;
+          --font-accent: 'Baumans', sans-serif;
+          --font-display: 'Boldonse', sans-serif;
+          --font-serif: 'Kameron', serif;
+          --font-script: 'Qwitcher Grypen', cursive;
         }
         
         body {
