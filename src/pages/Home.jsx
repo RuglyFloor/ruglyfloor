@@ -60,18 +60,18 @@ export default function Home() {
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link to={createPageUrl('Shop')}>
-              <button className="bg-transparent border border-white text-white font-black text-4xl px-12 py-6 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Boldonse, sans-serif', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
-                Shop for Original Ruglys
+              <button className="bg-transparent border border-white text-white font-black text-4xl px-12 py-6 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Major Mono Display, monospace', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
+                Shop Ruglys
               </button>
             </Link>
             <Link to={createPageUrl('CustomBuilder')}>
-              <button className="bg-transparent border border-white text-white font-black text-4xl px-12 py-6 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Boldonse, sans-serif', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
-                Create a Crugly (Custom)
+              <button className="bg-transparent border border-white text-white font-black text-4xl px-12 py-6 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Major Mono Display, monospace', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
+                Create a Crugly
               </button>
             </Link>
             <Link to={createPageUrl('Commission')}>
-              <button className="bg-transparent border border-white text-white font-black text-4xl px-12 py-6 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Boldonse, sans-serif', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
-                Commission a Designer
+              <button className="bg-transparent border border-white text-white font-black text-4xl px-12 py-6 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Major Mono Display, monospace', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
+                Fine Art to your taste
               </button>
             </Link>
           </div>
