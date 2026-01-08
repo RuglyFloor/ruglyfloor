@@ -8,6 +8,7 @@ import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import StencilCreator from '../components/custom/StencilCreator';
+import UpsellOptions from '../components/custom/UpsellOptions';
 
 const SIZES = [
   { id: 'sm', label: 'Small', value: 'small', price: 200, originalPrice: 225, measurement: '4x6' },
@@ -71,7 +72,17 @@ export default function CustomBuilder() {
     previewUrl: '',
     is3D: false,
     numColors: 2,
-    shaveBorders: false
+    shaveBorders: false,
+    upsells: {
+      is3D: false,
+      thirdColor: '',
+      fourthColor: '',
+      secondImageUrl: '',
+      bevelLines: false,
+      backgroundRelief: false,
+      carveOut: false
+    },
+    upsellTotal: 0
   });
   const [uploading, setUploading] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -122,7 +133,9 @@ export default function CustomBuilder() {
   const handleAddToCart = () => {
     const selectedSize = SIZES.find(s => s.value === config.size);
     const basePrice = selectedSize.price;
-    const price = basePrice + (config.is3D ? get3DPrice(config.size) : 0);
+    const colorPrice = getColorPrice(config.size, config.numColors);
+    const borderPrice = config.shaveBorders ? getBorderPrice(config.size) : 0;
+    const price = basePrice + colorPrice + borderPrice + config.upsellTotal;
     
     const cartItem = {
       type: 'custom',
@@ -131,9 +144,9 @@ export default function CustomBuilder() {
       paintColor: config.paintColor,
       imageUrl: config.imageUrl,
       previewUrl: config.previewUrl,
-      is3D: config.is3D,
       numColors: config.numColors,
       shaveBorders: config.shaveBorders,
+      upsells: config.upsells,
       price: price,
       name: `Custom Rug - ${selectedSize.label}`
     };
@@ -151,8 +164,7 @@ export default function CustomBuilder() {
     const basePrice = selectedSize.price;
     const colorPrice = getColorPrice(config.size, config.numColors);
     const borderPrice = config.shaveBorders ? getBorderPrice(config.size) : 0;
-    const threeDPrice = config.is3D ? get3DPrice(config.size) : 0;
-    return basePrice + colorPrice + borderPrice + threeDPrice;
+    return basePrice + colorPrice + borderPrice + config.upsellTotal;
   };
 
   return (
@@ -163,14 +175,14 @@ export default function CustomBuilder() {
 
         {/* Progress Indicator */}
         <div className="flex items-center justify-center gap-4 mb-12">
-          {[1, 2, 3].map((s) => (
+          {[1, 2, 3, 4].map((s) => (
             <div key={s} className="flex items-center gap-2">
               <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
                 step >= s ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'
               }`}>
                 {step > s ? <CheckCircle className="w-5 h-5" /> : s}
               </div>
-              {s < 3 && <div className={`w-16 h-1 ${step > s ? 'bg-blue-600' : 'bg-gray-200'}`} />}
+              {s < 4 && <div className={`w-16 h-1 ${step > s ? 'bg-blue-600' : 'bg-gray-200'}`} />}
             </div>
           ))}
         </div>
@@ -303,49 +315,17 @@ export default function CustomBuilder() {
                 />
 
                 {config.previewUrl && (
-                  <>
-                    <div>
-                      <Label className="text-lg mb-3 block">Design Style</Label>
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <button
-                          type="button"
-                          onClick={() => setConfig(prev => ({ ...prev, is3D: false }))}
-                          className={`p-4 border-2 rounded-lg text-left transition-all ${
-                            !config.is3D ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                        >
-                          <div className="font-semibold text-lg">Standard</div>
-                          <div className="text-sm text-gray-600">Flat stencil design</div>
-                          <div className="text-sm font-semibold text-gray-700 mt-1">Included</div>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setConfig(prev => ({ ...prev, is3D: true }))}
-                          className={`p-4 border-2 rounded-lg text-left transition-all ${
-                            config.is3D ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                        >
-                          <div className="font-semibold text-lg">3-D Effect</div>
-                          <div className="text-sm text-gray-600">Multiple colors for depth</div>
-                          <div className="text-sm font-semibold text-blue-600 mt-1">
-                            +${config.size ? get3DPrice(config.size) : 200}
-                          </div>
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                      <Label className="block mb-2 font-semibold text-green-900">✨ Your Stencil is Ready!</Label>
-                      <p className="text-sm text-green-700">
-                        This design is ready to be painted on your rug. Adjust the style option above if needed.
-                      </p>
-                    </div>
-                  </>
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <Label className="block mb-2 font-semibold text-green-900">✨ Your Stencil is Ready!</Label>
+                    <p className="text-sm text-green-700">
+                      Your design is ready! Continue to see premium upgrade options.
+                    </p>
+                  </div>
                 )}
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <div className="flex justify-between items-center mb-3">
-                    <span className="font-semibold">Total Price:</span>
+                    <span className="font-semibold">Base Price:</span>
                     <span className="text-3xl font-bold text-blue-600">${currentPrice()}</span>
                   </div>
                   <div className="text-xs text-gray-700 space-y-1">
@@ -365,12 +345,6 @@ export default function CustomBuilder() {
                         <span className="font-semibold">+${getBorderPrice(config.size)}</span>
                       </div>
                     )}
-                    {config.is3D && (
-                      <div className="flex justify-between">
-                        <span>3-D Effect:</span>
-                        <span className="font-semibold">+${get3DPrice(config.size)}</span>
-                      </div>
-                    )}
                   </div>
                 </div>
 
@@ -380,17 +354,37 @@ export default function CustomBuilder() {
                   </Button>
                   <Button 
                     className="flex-1 bg-blue-600 hover:bg-blue-700" 
-                    onClick={handleAddToCart}
+                    onClick={() => setStep(4)}
                     disabled={!config.previewUrl}
                   >
-                    Add to Cart
+                    Continue to Upgrades
                   </Button>
                 </div>
               </div>
             </CardContent>
           </Card>
         )}
-      </div>
-    </div>
-  );
-}
+
+        {/* Step 4: Upsell Options */}
+        {step === 4 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Step 4: Premium Upgrades (Optional)</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <UpsellOptions
+                size={config.size}
+                baseColor={config.baseColor}
+                onContinue={(upsells, upsellTotal) => {
+                  setConfig(prev => ({ ...prev, upsells, upsellTotal }));
+                  handleAddToCart();
+                }}
+                onBack={() => setStep(3)}
+              />
+            </CardContent>
+          </Card>
+        )}
+        </div>
+        </div>
+        );
+        }
