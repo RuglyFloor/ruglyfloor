@@ -21,7 +21,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Commission Design', page: 'Commission' },
     { name: 'About', page: 'About' },
     { name: 'My Orders', page: 'Orders' },
-    ...(user?.role === 'admin' ? [{ name: 'Admin Orders', page: 'AdminOrders' }] : [])
+    ...(user?.role === 'admin' ? [{ name: 'Admin', page: 'AdminDashboard' }] : [])
   ];
 
   return (
