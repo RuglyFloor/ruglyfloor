@@ -10,11 +10,11 @@ import { createPageUrl } from '../utils';
 import StencilCreator from '../components/custom/StencilCreator';
 
 const SIZES = [
-  { id: 'sm', label: 'Small', value: 'small', price: 199 },
-  { id: 'md', label: 'Medium', value: 'medium', price: 299 },
-  { id: 'lg', label: 'Large', value: 'large', price: 399 },
-  { id: 'hg', label: 'Huge', value: 'huge', price: 499 },
-  { id: 'rd', label: '4 Foot Round', value: '4ft round', price: 199 }
+  { id: 'sm', label: 'Small', value: 'small', price: 200, originalPrice: 225, measurement: '4x6' },
+  { id: 'md', label: 'Medium', value: 'medium', price: 300, originalPrice: 350, measurement: '5x7' },
+  { id: 'lg', label: 'Large', value: 'large', price: 400, originalPrice: 450, measurement: '8x10' },
+  { id: 'hg', label: 'Huge', value: 'huge', price: 500, originalPrice: 550, measurement: '9x11' },
+  { id: 'rd', label: '4 Foot Round', value: '4ft round', price: 200, originalPrice: 225, measurement: '4 feet round' }
 ];
 
 const getColorPrice = (size, numColors) => {
@@ -191,8 +191,12 @@ export default function CustomBuilder() {
                       config.size === size.value ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    <div className="font-bold text-xl mb-1">{size.label}</div>
-                    <div className="text-2xl font-bold text-blue-600">${size.price}</div>
+                    <div className="font-medium text-xl mb-1">{size.label}</div>
+                    <div className="text-lg mb-2" style={{ fontFamily: 'Qwitcher Grypen, cursive' }}>{size.measurement}</div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl line-through text-gray-400" style={{ fontFamily: 'Qwitcher Grypen, cursive' }}>${size.originalPrice}</span>
+                      <span className="text-2xl font-bold text-blue-600" style={{ fontFamily: 'Qwitcher Grypen, cursive' }}>${size.price}</span>
+                    </div>
                   </button>
                 ))}
               </div>
