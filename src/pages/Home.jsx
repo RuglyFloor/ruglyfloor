@@ -6,6 +6,7 @@ import { Palette, Sparkles, Package, CheckCircle } from 'lucide-react';
 
 export default function Home() {
   const [currentProduct, setCurrentProduct] = useState(0);
+  const [currentStep, setCurrentStep] = useState(0);
   
   const products = [
     {
@@ -29,6 +30,13 @@ export default function Home() {
       setCurrentProduct((prev) => (prev + 1) % products.length);
     }, 4000);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const stepInterval = setInterval(() => {
+      setCurrentStep((prev) => (prev + 1) % 3);
+    }, 2000);
+    return () => clearInterval(stepInterval);
   }, []);
 
   return (
@@ -58,9 +66,9 @@ export default function Home() {
           <p className="text-lg md:text-xl text-white mb-12 max-w-3xl mx-auto">
             Hand Painted, Dyed, and Stencilled Area Rugs to your design, your color, at your price
           </p>
-          <div className="flex gap-4 justify-center flex-wrap">
+          <div className="flex gap-4 justify-center flex-wrap items-center">
             <Link to={createPageUrl('Shop')}>
-              <button className="bg-transparent border border-white text-white font-black px-12 py-6 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Major Mono Display, monospace', fontSize: '1.575rem', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
+              <button className="bg-transparent border border-white text-white font-black px-8 py-4 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Major Mono Display, monospace', fontSize: '1.1rem', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
                 Shop Ruglys
               </button>
             </Link>
@@ -70,8 +78,8 @@ export default function Home() {
               </button>
             </Link>
             <Link to={createPageUrl('Commission')}>
-              <button className="bg-transparent border border-white text-white font-black px-12 py-6 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Major Mono Display, monospace', fontSize: '1.575rem', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
-                Fine Art to your taste
+              <button className="bg-transparent border border-white text-white font-black px-8 py-4 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Major Mono Display, monospace', fontSize: '1.1rem', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
+                Fine Art; Your Style
               </button>
             </Link>
           </div>
@@ -165,21 +173,17 @@ export default function Home() {
               },
               {
                 image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg",
-                caption: "2. Create the Stencil"
+                caption: "2. We Create the Stencil"
               },
               {
                 image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png",
-                caption: "3. Hand-Paint on Rug"
-              },
-              {
-                image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/ebb74119a_Madonna.jpg",
-                caption: "4. Ready for Your Space"
+                caption: "3. Hand-Paint Your Rug"
               }
             ].map((step, index) => (
               <div
                 key={index}
                 className={`absolute inset-0 transition-opacity duration-1000 ${
-                  Math.floor(currentProduct / 1.25) % 4 === index ? 'opacity-100' : 'opacity-0'
+                  currentStep === index ? 'opacity-100' : 'opacity-0'
                 }`}
               >
                 <img 
