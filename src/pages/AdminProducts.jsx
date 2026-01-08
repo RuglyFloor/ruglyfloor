@@ -15,6 +15,7 @@ export default function AdminProducts() {
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [generatingAI, setGeneratingAI] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -87,6 +88,68 @@ export default function AdminProducts() {
       alert('Failed to upload image');
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleAIGenerate = async () => {
+    if (!formData.image_url) {
+      alert('Please upload an image first');
+      return;
+    }
+
+    setGeneratingAI(true);
+    try {
+      // Generate product info using AI
+      const productInfo = await base44.integrations.Core.InvokeLLM({
+        prompt: `Analyze this rug image and provide comprehensive product information. Extract or infer:
+        1. A catchy product name (concise, descriptive)
+        2. A compelling sales description (2-3 sentences highlighting unique features, style, and appeal)
+        3. Suggested price in USD (based on size, complexity, and market value for custom hand-painted rugs)
+        4. Dominant colors and design style
+        
+        Be professional and sales-oriented. Make it sound premium and artistic.`,
+        file_urls: [formData.image_url],
+        response_json_schema: {
+          type: "object",
+          properties: {
+            name: { type: "string" },
+            description: { type: "string" },
+            suggested_price: { type: "number" },
+            colors: { type: "string" },
+            style: { type: "string" }
+          }
+        }
+      });
+
+      // Generate marketing images
+      const [livingRoomImage, measurementImage] = await Promise.all([
+        // Contemporary living room setting
+        base44.integrations.Core.GenerateImage({
+          prompt: `Create a photorealistic interior design mockup showing this rug placed in a modern, contemporary living room with natural lighting. The room should have minimalist furniture, neutral walls, hardwood floors, and the rug should be the focal point. Make it look like a professional interior design photo.`,
+          existing_image_urls: [formData.image_url]
+        }),
+        // Measurement overlay
+        base44.integrations.Core.GenerateImage({
+          prompt: `Create a clean product image of this rug on a white background with clear measurement annotations. Show the dimensions (${formData.size}) marked with professional arrows and labels. Make it look like a technical product specification sheet with measurements clearly visible.`,
+          existing_image_urls: [formData.image_url]
+        })
+      ]);
+
+      // Update form with AI-generated data
+      setFormData(prev => ({
+        ...prev,
+        name: productInfo.name,
+        description: `${productInfo.description}\n\nStyle: ${productInfo.style}\nColors: ${productInfo.colors}`,
+        price: productInfo.suggested_price.toString(),
+        images: [livingRoomImage.url, measurementImage.url]
+      }));
+
+      alert('✨ AI generation complete! Review and adjust as needed.');
+    } catch (error) {
+      console.error('AI generation error:', error);
+      alert('Failed to generate AI content. Please try again.');
+    } finally {
+      setGeneratingAI(false);
     }
   };
 
@@ -215,7 +278,7 @@ export default function AdminProducts() {
 
                 <div>
                   <Label>Main Image</Label>
-                  <div className="flex gap-4 items-center">
+                  <div className="flex gap-4 items-center mb-3">
                     <Button
                       type="button"
                       variant="outline"
@@ -237,6 +300,39 @@ export default function AdminProducts() {
                       <img src={formData.image_url} alt="Preview" className="w-20 h-20 object-cover rounded" />
                     )}
                   </div>
+                  
+                  {formData.image_url && (
+                    <Button
+                      type="button"
+                      onClick={handleAIGenerate}
+                      disabled={generatingAI}
+                      className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 gap-2"
+                    >
+                      {generatingAI ? (
+                        <>⏳ Generating AI Content...</>
+                      ) : (
+                        <>✨ Auto-Fill with AI (Description, Price, Marketing Images)</>
+                      )}
+                    </Button>
+                  )}
+                  
+                  {formData.images.length > 0 && (
+                    <div className="mt-4">
+                      <Label className="text-sm text-gray-600">AI-Generated Marketing Images</Label>
+                      <div className="grid grid-cols-2 gap-3 mt-2">
+                        {formData.images.map((img, idx) => (
+                          <div key={idx} className="relative group">
+                            <img src={img} alt={`Generated ${idx + 1}`} className="w-full h-32 object-cover rounded border" />
+                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded flex items-center justify-center">
+                              <span className="text-white text-xs">
+                                {idx === 0 ? 'Living Room' : 'Measurements'}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div>
