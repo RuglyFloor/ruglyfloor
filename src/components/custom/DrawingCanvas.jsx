@@ -11,7 +11,7 @@ export default function DrawingCanvas({ onSaveDrawing }) {
   const [isDrawing, setIsDrawing] = useState(false);
   const [tool, setTool] = useState('pen'); // pen, eraser, text, rectangle, circle
   const [color, setColor] = useState('#000000');
-  const [brushSize, setBrushSize] = useState(5);
+  const [brushSize, setBrushSize] = useState(15);
   const [history, setHistory] = useState([]);
   const [textInput, setTextInput] = useState('');
   const [showTextInput, setShowTextInput] = useState(false);
@@ -66,12 +66,14 @@ export default function DrawingCanvas({ onSaveDrawing }) {
       ctx.strokeStyle = color;
       ctx.lineWidth = brushSize;
       ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
       ctx.lineTo(x, y);
       ctx.stroke();
     } else if (tool === 'eraser') {
       ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = brushSize * 2;
+      ctx.lineWidth = brushSize * 3;
       ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
       ctx.lineTo(x, y);
       ctx.stroke();
     }
@@ -89,7 +91,7 @@ export default function DrawingCanvas({ onSaveDrawing }) {
     
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    ctx.font = `${brushSize * 8}px Arial`;
+    ctx.font = `bold ${brushSize * 5}px Arial`;
     ctx.fillStyle = color;
     ctx.fillText(textInput, textPosition.x, textPosition.y);
     
@@ -105,10 +107,12 @@ export default function DrawingCanvas({ onSaveDrawing }) {
     const y = (e.clientY || e.touches[0].clientY) - rect.top;
     const ctx = canvas.getContext('2d');
 
-    const size = brushSize * 10;
+    const size = brushSize * 8;
 
     ctx.strokeStyle = color;
     ctx.lineWidth = brushSize;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
 
     if (shapeType === 'rectangle') {
       ctx.strokeRect(x - size/2, y - size/2, size, size);
@@ -239,14 +243,15 @@ export default function DrawingCanvas({ onSaveDrawing }) {
 
             {/* Brush Size */}
             <div>
-              <Label className="mb-2 block">Size: {brushSize}</Label>
+              <Label className="mb-2 block">Thickness: {brushSize}px (Stencil-Friendly)</Label>
               <Slider
                 value={[brushSize]}
                 onValueChange={(val) => setBrushSize(val[0])}
-                min={1}
-                max={20}
-                step={1}
+                min={8}
+                max={40}
+                step={2}
               />
+              <p className="text-xs text-gray-500 mt-1">Thicker lines work better for stencils</p>
             </div>
 
             {/* Actions */}
