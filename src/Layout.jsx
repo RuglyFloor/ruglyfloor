@@ -3,9 +3,16 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { ShoppingCart, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { base44 } from '@/api/base44Client';
 
 export default function Layout({ children, currentPageName }) {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+
+  const [user, setUser] = React.useState(null);
+
+  React.useEffect(() => {
+    base44.auth.me().then(setUser).catch(() => setUser(null));
+  }, []);
 
   const navLinks = [
     { name: 'Home', page: 'Home' },
@@ -13,7 +20,8 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Shop Originals', page: 'Shop' },
     { name: 'Commission Design', page: 'Commission' },
     { name: 'About', page: 'About' },
-    { name: 'My Orders', page: 'Orders' }
+    { name: 'My Orders', page: 'Orders' },
+    ...(user?.role === 'admin' ? [{ name: 'Admin Orders', page: 'AdminOrders' }] : [])
   ];
 
   return (
