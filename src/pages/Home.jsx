@@ -56,7 +56,7 @@ export default function Home() {
             ART FOR YOUR FLOOR.
           </h2>
           <p className="text-lg md:text-xl text-white mb-12 max-w-3xl mx-auto">
-            Hand-painted rugs from the studio of Ryan Hensley. Choose a Rugly Premium original or create your own Crugly.
+            Hand Painted, Dyed, and Stencilled Area Rugs to your design, your color, at your price
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link to={createPageUrl('Shop')}>
