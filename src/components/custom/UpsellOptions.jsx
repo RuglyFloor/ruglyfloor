@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Upload, Sparkles, Palette } from 'lucide-react';
+import { Upload, Sparkles, Palette, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 const PAINT_COLORS = [
@@ -49,7 +49,7 @@ const getCarveOutPrice = (size) => {
   return sizeMap[size] || 125;
 };
 
-export default function UpsellOptions({ size, baseColor, onContinue, onBack }) {
+export default function UpsellOptions({ size, baseColor, currentPreview, isGenerating, onPreviewUpdate, onContinue, onBack }) {
   const [upsells, setUpsells] = useState({
     is3D: false,
     thirdColor: '',
@@ -90,8 +90,42 @@ export default function UpsellOptions({ size, baseColor, onContinue, onBack }) {
 
   const selectedBase = { type: baseColor === 'Yellow' || baseColor === 'Pink' || baseColor === 'White' || baseColor === 'Grey' || baseColor === 'Green' ? 'light' : 'dark' };
 
+  const handleUpsellChange = (changes) => {
+    const newUpsells = { ...upsells, ...changes };
+    setUpsells(newUpsells);
+    if (onPreviewUpdate) {
+      onPreviewUpdate(newUpsells);
+    }
+  };
+
   return (
     <div className="space-y-6">
+      {/* Live Preview */}
+      {currentPreview && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Live Preview</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="relative">
+              {isGenerating && (
+                <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-10 rounded-lg">
+                  <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+                </div>
+              )}
+              <img 
+                src={currentPreview} 
+                alt="Rug preview" 
+                className="w-full rounded-lg shadow-lg"
+              />
+            </div>
+            <p className="text-xs text-gray-500 text-center mt-2">
+              {isGenerating ? 'Updating preview with selected effects...' : 'Preview updates as you select options below'}
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Skip or Enhance Banner */}
       <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-6 text-center">
         <h3 className="text-2xl font-bold mb-2">✨ Enhance Your Design</h3>
@@ -112,7 +146,7 @@ export default function UpsellOptions({ size, baseColor, onContinue, onBack }) {
           <div className="grid md:grid-cols-2 gap-4">
             <button
               type="button"
-              onClick={() => setUpsells(prev => ({ ...prev, is3D: false }))}
+              onClick={() => handleUpsellChange({ is3D: false })}
               className={`p-4 border-2 rounded-lg text-left transition-all ${
                 !upsells.is3D ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
               }`}
@@ -123,7 +157,7 @@ export default function UpsellOptions({ size, baseColor, onContinue, onBack }) {
             </button>
             <button
               type="button"
-              onClick={() => setUpsells(prev => ({ ...prev, is3D: true }))}
+              onClick={() => handleUpsellChange({ is3D: true })}
               className={`p-4 border-2 rounded-lg text-left transition-all ${
                 upsells.is3D ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
               }`}
@@ -276,7 +310,7 @@ export default function UpsellOptions({ size, baseColor, onContinue, onBack }) {
           <div className="space-y-4">
             {/* Bevel Lines */}
             <div 
-              onClick={() => setUpsells(prev => ({ ...prev, bevelLines: !prev.bevelLines }))}
+              onClick={() => handleUpsellChange({ bevelLines: !upsells.bevelLines })}
               className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
                 upsells.bevelLines ? 'border-purple-600 bg-purple-50' : 'border-gray-200 hover:border-gray-300'
               }`}
@@ -299,7 +333,7 @@ export default function UpsellOptions({ size, baseColor, onContinue, onBack }) {
 
             {/* Background Relief */}
             <div 
-              onClick={() => setUpsells(prev => ({ ...prev, backgroundRelief: !prev.backgroundRelief }))}
+              onClick={() => handleUpsellChange({ backgroundRelief: !upsells.backgroundRelief })}
               className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
                 upsells.backgroundRelief ? 'border-purple-600 bg-purple-50' : 'border-gray-200 hover:border-gray-300'
               }`}
@@ -322,7 +356,7 @@ export default function UpsellOptions({ size, baseColor, onContinue, onBack }) {
 
             {/* Carve Out */}
             <div 
-              onClick={() => setUpsells(prev => ({ ...prev, carveOut: !prev.carveOut }))}
+              onClick={() => handleUpsellChange({ carveOut: !upsells.carveOut })}
               className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
                 upsells.carveOut ? 'border-purple-600 bg-purple-50' : 'border-gray-200 hover:border-gray-300'
               }`}

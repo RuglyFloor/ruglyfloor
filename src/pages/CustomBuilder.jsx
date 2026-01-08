@@ -102,23 +102,59 @@ export default function CustomBuilder() {
     }
   };
 
-  const generatePreview = async () => {
+  const generatePreview = async (upsellOptions = null) => {
     if (!config.imageUrl || !config.baseColor || !config.paintColor) return;
     
     setProcessing(true);
     try {
       const sizeLabel = SIZES.find(s => s.value === config.size)?.label || config.size;
-      const colorDescription = config.is3D ? '2 colors creating depth and dimension' : '1-2 color stencil style';
+      const upsells = upsellOptions || config.upsells;
       
-      const prompt = `Create a realistic mockup image showing a ${sizeLabel} carpet rug in ${config.baseColor} color lying on a floor at a slight angle (perspective view from above). 
-      The design from the uploaded image should be painted onto the rug in ${config.paintColor} color as a simplified ${colorDescription}. 
+      // Build effect descriptions
+      let effectDescription = '';
+      if (upsells.is3D) {
+        effectDescription += '3D depth effect with multiple tones and shading for dimension. ';
+      }
+      if (upsells.bevelLines) {
+        effectDescription += 'Beveled raised edges with dimensional depth on the lines. ';
+      }
+      if (upsells.backgroundRelief) {
+        effectDescription += 'Textured relief background creating a pop-out effect for the design. ';
+      }
+      if (upsells.carveOut) {
+        effectDescription += 'Bold carved-out sections with negative space cut into the rug. ';
+      }
+      
+      if (!effectDescription) {
+        effectDescription = '1-2 color flat stencil style';
+      }
+      
+      // Build color description
+      let colorInfo = `painted in ${config.paintColor}`;
+      if (upsells.thirdColor) {
+        colorInfo += ` and ${upsells.thirdColor}`;
+      }
+      if (upsells.fourthColor) {
+        colorInfo += ` and ${upsells.fourthColor}`;
+      }
+      
+      const imageUrls = [config.imageUrl];
+      let secondImageNote = '';
+      if (upsells.secondImageUrl) {
+        imageUrls.push(upsells.secondImageUrl);
+        secondImageNote = 'Additionally, blend in a second design from the second uploaded image in a complementary way. ';
+      }
+      
+      const prompt = `Create a realistic mockup image showing a ${sizeLabel} carpet rug in ${config.baseColor} base color lying on a floor at a slight angle (perspective view from above). 
+      The design from the uploaded image should be ${colorInfo} with these effects: ${effectDescription}
+      ${secondImageNote}
       IMPORTANT: If the uploaded image contains text, words, or letters, reproduce them clearly and legibly on the rug - the text must be readable and accurate.
-      The rug should have visible carpet texture and the design should look professionally hand-painted on the rug surface. 
+      The rug should have visible carpet texture and the design should look professionally hand-painted on the rug surface with the specified effects clearly visible.
       Make it look professional and realistic, as if photographed in a well-lit room.`;
       
       const { url } = await base44.integrations.Core.GenerateImage({
         prompt: prompt,
-        existing_image_urls: [config.imageUrl]
+        existing_image_urls: imageUrls
       });
       
       setConfig(prev => ({ ...prev, previewUrl: url }));
@@ -375,6 +411,9 @@ export default function CustomBuilder() {
               <UpsellOptions
                 size={config.size}
                 baseColor={config.baseColor}
+                currentPreview={config.previewUrl}
+                isGenerating={processing}
+                onPreviewUpdate={(upsells) => generatePreview(upsells)}
                 onContinue={(upsells, upsellTotal) => {
                   setConfig(prev => ({ ...prev, upsells, upsellTotal }));
                   handleAddToCart();
