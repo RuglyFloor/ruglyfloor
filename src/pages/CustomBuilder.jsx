@@ -280,10 +280,10 @@ export default function CustomBuilder() {
                         ? 'bg-white/20 backdrop-blur-sm' 
                         : 'bg-white/50 group-hover:bg-white/70'
                     }`}>
-                      <div className={`text-5xl font-black ${
+                      <div className={`${size.id === 'rd' ? 'text-2xl' : 'text-5xl'} font-black ${
                         config.size === size.value ? 'text-white' : 'text-gray-700'
                       }`}>
-                        {size.id === 'rd' ? 'π' : size.label.charAt(0)}
+                        {size.id === 'rd' ? '3.141592' : size.label.charAt(0)}
                       </div>
                     </div>
 
