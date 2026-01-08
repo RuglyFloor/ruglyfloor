@@ -3,12 +3,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Upload, CheckCircle, Loader2 } from 'lucide-react';
+import { Upload, CheckCircle, Loader2, Pencil } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import StencilCreator from '../components/custom/StencilCreator';
 import UpsellOptions from '../components/custom/UpsellOptions';
+import DrawingCanvas from '../components/custom/DrawingCanvas';
 
 const SIZES = [
   { id: 'sm', label: 'Small', value: 'small', price: 200, originalPrice: 225, measurement: '4x6' },
@@ -63,6 +64,7 @@ const PAINT_COLORS = [
 export default function CustomBuilder() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [designMode, setDesignMode] = useState('upload'); // 'upload' or 'draw'
   const [config, setConfig] = useState({
     size: '',
     baseColor: '',
@@ -97,6 +99,18 @@ export default function CustomBuilder() {
       setConfig(prev => ({ ...prev, imageFile: file, imageUrl: file_url }));
     } catch (error) {
       alert('Failed to upload image');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleDrawingSave = async (drawingFile) => {
+    setUploading(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file: drawingFile });
+      setConfig(prev => ({ ...prev, imageFile: drawingFile, imageUrl: file_url }));
+    } catch (error) {
+      alert('Failed to save drawing');
     } finally {
       setUploading(false);
     }
@@ -410,21 +424,53 @@ export default function CustomBuilder() {
         {step === 3 && (
           <Card>
             <CardHeader>
-              <CardTitle>Step 3: Create Your Stencil Design</CardTitle>
+              <CardTitle>Step 3: Create Your Design</CardTitle>
               <p className="text-sm text-gray-600 mt-2">
-                Upload any image and turn it into a perfect rug stencil with adjustable details and colors
+                Choose how you want to create your design
               </p>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                <StencilCreator
-                  onSaveStencil={(stencilUrl) => {
-                    setConfig(prev => ({ ...prev, previewUrl: stencilUrl }));
-                  }}
-                  onConfigChange={({ colors, shaveBorders }) => {
-                    setConfig(prev => ({ ...prev, numColors: colors, shaveBorders }));
-                  }}
-                />
+                {/* Mode Selection */}
+                <div className="grid md:grid-cols-2 gap-4 mb-6">
+                  <button
+                    onClick={() => setDesignMode('upload')}
+                    className={`p-6 rounded-lg border-2 transition-all ${
+                      designMode === 'upload' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <Upload className="w-8 h-8 mx-auto mb-3 text-blue-600" />
+                    <div className="font-semibold text-lg mb-1">Upload & Convert</div>
+                    <div className="text-sm text-gray-600">Upload an image and convert to stencil</div>
+                  </button>
+                  <button
+                    onClick={() => setDesignMode('draw')}
+                    className={`p-6 rounded-lg border-2 transition-all ${
+                      designMode === 'draw' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <Pencil className="w-8 h-8 mx-auto mb-3 text-blue-600" />
+                    <div className="font-semibold text-lg mb-1">Draw Your Own</div>
+                    <div className="text-sm text-gray-600">Create with our drawing tools</div>
+                  </button>
+                </div>
+
+                {/* Upload Mode */}
+                {designMode === 'upload' && (
+                  <StencilCreator
+                    onSaveStencil={(stencilUrl) => {
+                      setConfig(prev => ({ ...prev, previewUrl: stencilUrl }));
+                    }}
+                    onConfigChange={({ colors, shaveBorders }) => {
+                      setConfig(prev => ({ ...prev, numColors: colors, shaveBorders }));
+                    }}
+                  />
+                )}
+
+                {/* Drawing Mode */}
+                {designMode === 'draw' && (
+                  <DrawingCanvas onSaveDrawing={handleDrawingSave} />
+                )}
 
                 {config.imageUrl && (
                   <div className="space-y-4">
