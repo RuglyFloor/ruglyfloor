@@ -283,7 +283,7 @@ export default function CustomBuilder() {
                       <div className={`text-5xl font-black ${
                         config.size === size.value ? 'text-white' : 'text-gray-700'
                       }`}>
-                        {size.label.charAt(0)}
+                        {size.id === 'rd' ? 'π' : size.label.charAt(0)}
                       </div>
                     </div>
 
