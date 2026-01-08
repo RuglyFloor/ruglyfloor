@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Upload, Sparkles, Palette, Loader2 } from 'lucide-react';
+import { Upload, Sparkles, Palette, Loader2, ChevronDown } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 import { base44 } from '@/api/base44Client';
 
 const PAINT_COLORS = [
@@ -60,6 +61,7 @@ export default function UpsellOptions({ size, baseColor, currentPreview, isGener
     carveOut: false
   });
   const [uploading, setUploading] = useState(false);
+  const [expandedSections, setExpandedSections] = useState({});
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -98,6 +100,10 @@ export default function UpsellOptions({ size, baseColor, currentPreview, isGener
     }
   };
 
+  const toggleSection = (section) => {
+    setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
+
   return (
     <div className="space-y-6">
       {/* Live Preview */}
@@ -127,258 +133,286 @@ export default function UpsellOptions({ size, baseColor, currentPreview, isGener
       )}
 
       {/* Skip or Enhance Banner */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-6 text-center">
-        <h3 className="text-2xl font-bold mb-2">✨ Enhance Your Design</h3>
-        <p className="text-gray-700">
-          Your basic design is ready! Add premium features below, or skip to checkout if you're budget-conscious.
+      <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4 text-center">
+        <h3 className="text-xl font-bold mb-1">✨ Optional Upgrades</h3>
+        <p className="text-sm text-gray-700">
+          Your design is ready! Add premium features or skip to checkout.
         </p>
       </div>
 
-      {/* 3D Effect */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-purple-600" />
-            3D Effect
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-2 gap-4">
-            <button
-              type="button"
-              onClick={() => handleUpsellChange({ is3D: false })}
-              className={`p-4 border-2 rounded-lg text-left transition-all ${
-                !upsells.is3D ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              <div className="font-semibold text-lg">Standard Flat</div>
-              <div className="text-sm text-gray-600">Classic stencil design</div>
-              <div className="text-sm font-semibold text-gray-700 mt-1">Included</div>
-            </button>
-            <button
-              type="button"
-              onClick={() => handleUpsellChange({ is3D: true })}
-              className={`p-4 border-2 rounded-lg text-left transition-all ${
-                upsells.is3D ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              <div className="font-semibold text-lg">3D Depth Effect</div>
-              <div className="text-sm text-gray-600">Multiple tones for dimension</div>
-              <div className="text-sm font-semibold text-blue-600 mt-1">
-                +${get3DPrice(size)}
-              </div>
-            </button>
-          </div>
-          <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png"
-            alt="3D Effect Example"
-            className="w-full h-48 object-cover rounded-lg mt-4"
-          />
-        </CardContent>
-      </Card>
-
-      {/* Additional Colors */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Palette className="w-5 h-5 text-pink-600" />
-            Add More Colors
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <div className="flex justify-between items-center mb-3">
-                <Label className="text-base">Third Paint Color</Label>
-                <span className="text-sm font-semibold text-blue-600">
-                  +${getAdditionalColorPrice(size)}
-                </span>
-              </div>
-              <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
-                <button
-                  onClick={() => setUpsells(prev => ({ ...prev, thirdColor: '' }))}
-                  className={`p-3 rounded-lg border-2 transition-all ${
-                    !upsells.thirdColor ? 'border-blue-600 bg-blue-50' : 'border-gray-200'
-                  }`}
-                >
-                  <span className="text-xs">None</span>
-                </button>
-                {PAINT_COLORS.filter(color => selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light').map((color) => (
-                  <button
-                    key={color.name}
-                    onClick={() => setUpsells(prev => ({ ...prev, thirdColor: color.name }))}
-                    className={`flex flex-col items-center gap-2 p-2 rounded-lg border-2 transition-all ${
-                      upsells.thirdColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200'
-                    }`}
-                  >
-                    <div 
-                      className="w-8 h-8 rounded-full border-2 border-gray-300 shadow-sm"
-                      style={{ backgroundColor: color.hex }}
-                    />
-                    <span className="text-xs text-center leading-tight">{color.name}</span>
-                  </button>
-                ))}
+      {/* Compact Upgrade List */}
+      <div className="space-y-3">
+        {/* 3D Effect */}
+        <div className="border-2 rounded-lg overflow-hidden bg-white">
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-3">
+              <Checkbox
+                checked={upsells.is3D}
+                onCheckedChange={(checked) => {
+                  handleUpsellChange({ is3D: checked });
+                  if (checked) toggleSection('3d');
+                }}
+              />
+              <div>
+                <div className="font-semibold">3D Depth Effect</div>
+                <div className="text-xs text-gray-600">Multiple tones for dimension</div>
               </div>
             </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-blue-600">+${get3DPrice(size)}</span>
+              <button 
+                onClick={() => toggleSection('3d')}
+                className="p-1 hover:bg-gray-100 rounded"
+              >
+                <ChevronDown className={`w-4 h-4 transition-transform ${expandedSections['3d'] ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+          </div>
+          {expandedSections['3d'] && (
+            <div className="px-4 pb-4 border-t">
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png"
+                alt="3D Effect"
+                className="w-full h-32 object-cover rounded-lg mt-3"
+              />
+            </div>
+          )}
+        </div>
 
-            {upsells.thirdColor && (
+        {/* Additional Colors */}
+        <div className="border-2 rounded-lg overflow-hidden bg-white">
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-3">
+              <Checkbox
+                checked={!!upsells.thirdColor}
+                onCheckedChange={(checked) => {
+                  if (!checked) setUpsells(prev => ({ ...prev, thirdColor: '', fourthColor: '' }));
+                  toggleSection('colors');
+                }}
+              />
               <div>
-                <div className="flex justify-between items-center mb-3">
-                  <Label className="text-base">Fourth Paint Color</Label>
-                  <span className="text-sm font-semibold text-blue-600">
-                    +${getAdditionalColorPrice(size)}
-                  </span>
-                </div>
-                <div className="grid grid-cols-4 md:grid-cols-6 gap-3">
+                <div className="font-semibold">Extra Paint Colors</div>
+                <div className="text-xs text-gray-600">Add 3rd or 4th color</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-blue-600">+${getAdditionalColorPrice(size)}+</span>
+              <button 
+                onClick={() => toggleSection('colors')}
+                className="p-1 hover:bg-gray-100 rounded"
+              >
+                <ChevronDown className={`w-4 h-4 transition-transform ${expandedSections['colors'] ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+          </div>
+          {expandedSections['colors'] && (
+            <div className="px-4 pb-4 border-t pt-3 space-y-3">
+              <div>
+                <Label className="text-sm mb-2 block">Third Color (+${getAdditionalColorPrice(size)})</Label>
+                <div className="flex gap-2 flex-wrap">
                   <button
-                    onClick={() => setUpsells(prev => ({ ...prev, fourthColor: '' }))}
-                    className={`p-3 rounded-lg border-2 transition-all ${
-                      !upsells.fourthColor ? 'border-blue-600 bg-blue-50' : 'border-gray-200'
-                    }`}
+                    onClick={() => setUpsells(prev => ({ ...prev, thirdColor: '' }))}
+                    className={`px-3 py-1 text-xs rounded border-2 ${!upsells.thirdColor ? 'border-blue-600 bg-blue-50' : 'border-gray-200'}`}
                   >
-                    <span className="text-xs">None</span>
+                    None
                   </button>
-                  {PAINT_COLORS.filter(color => selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light').map((color) => (
+                  {PAINT_COLORS.filter(color => selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light').slice(0, 6).map((color) => (
                     <button
                       key={color.name}
-                      onClick={() => setUpsells(prev => ({ ...prev, fourthColor: color.name }))}
-                      className={`flex flex-col items-center gap-2 p-2 rounded-lg border-2 transition-all ${
-                        upsells.fourthColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200'
-                      }`}
+                      onClick={() => setUpsells(prev => ({ ...prev, thirdColor: color.name }))}
+                      className={`px-3 py-1 text-xs rounded border-2 flex items-center gap-1 ${upsells.thirdColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200'}`}
                     >
-                      <div 
-                        className="w-8 h-8 rounded-full border-2 border-gray-300 shadow-sm"
-                        style={{ backgroundColor: color.hex }}
-                      />
-                      <span className="text-xs text-center leading-tight">{color.name}</span>
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color.hex }} />
+                      {color.name}
                     </button>
                   ))}
                 </div>
               </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Second Image */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Upload className="w-5 h-5 text-green-600" />
-            Add Second Image
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-gray-600 mb-4">
-            Combine two designs on your rug for a unique layered look.
-          </p>
-          <div className="flex justify-between items-center mb-4">
-            <Label htmlFor="second-image" className="cursor-pointer text-blue-600 hover:text-blue-700 flex items-center gap-2">
-              <Upload className="w-4 h-4" />
-              {upsells.secondImageUrl ? 'Change Second Image' : 'Upload Second Image'}
-            </Label>
-            <span className="text-sm font-semibold text-blue-600">
-              +${getSecondImagePrice(size)}
-            </span>
-          </div>
-          <input
-            id="second-image"
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            className="hidden"
-            disabled={uploading}
-          />
-          {uploading && <p className="text-sm text-gray-500">Uploading...</p>}
-          {upsells.secondImageUrl && (
-            <div className="mt-3">
-              <img src={upsells.secondImageUrl} alt="Second design" className="w-full h-32 object-cover rounded-lg" />
+              {upsells.thirdColor && (
+                <div>
+                  <Label className="text-sm mb-2 block">Fourth Color (+${getAdditionalColorPrice(size)})</Label>
+                  <div className="flex gap-2 flex-wrap">
+                    <button
+                      onClick={() => setUpsells(prev => ({ ...prev, fourthColor: '' }))}
+                      className={`px-3 py-1 text-xs rounded border-2 ${!upsells.fourthColor ? 'border-blue-600 bg-blue-50' : 'border-gray-200'}`}
+                    >
+                      None
+                    </button>
+                    {PAINT_COLORS.filter(color => selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light').slice(0, 6).map((color) => (
+                      <button
+                        key={color.name}
+                        onClick={() => setUpsells(prev => ({ ...prev, fourthColor: color.name }))}
+                        className={`px-3 py-1 text-xs rounded border-2 flex items-center gap-1 ${upsells.fourthColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200'}`}
+                      >
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color.hex }} />
+                        {color.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Advanced 3D Effects */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-purple-600" />
-            Advanced 3D Effects
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {/* Bevel Lines */}
-            <div 
-              onClick={() => handleUpsellChange({ bevelLines: !upsells.bevelLines })}
-              className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                upsells.bevelLines ? 'border-purple-600 bg-purple-50' : 'border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <div className="font-semibold text-lg">Beveled Lines</div>
-                  <div className="text-sm text-gray-600">Raised edges with dimensional depth</div>
-                </div>
-                <span className="text-sm font-semibold text-purple-600">
-                  +${getBevelPrice(size)}
-                </span>
-              </div>
-              <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg"
-                alt="Beveled Lines Example"
-                className="w-full h-32 object-cover rounded-lg mt-2"
+        {/* Second Image */}
+        <div className="border-2 rounded-lg overflow-hidden bg-white">
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-3">
+              <Checkbox
+                checked={!!upsells.secondImageUrl}
+                onCheckedChange={(checked) => {
+                  if (!checked) setUpsells(prev => ({ ...prev, secondImageUrl: '' }));
+                  toggleSection('image');
+                }}
               />
+              <div>
+                <div className="font-semibold">Second Design Layer</div>
+                <div className="text-xs text-gray-600">Blend two images together</div>
+              </div>
             </div>
-
-            {/* Background Relief */}
-            <div 
-              onClick={() => handleUpsellChange({ backgroundRelief: !upsells.backgroundRelief })}
-              className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                upsells.backgroundRelief ? 'border-purple-600 bg-purple-50' : 'border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <div className="font-semibold text-lg">Background Relief</div>
-                  <div className="text-sm text-gray-600">Textured background creates pop-out effect</div>
-                </div>
-                <span className="text-sm font-semibold text-purple-600">
-                  +${getBackgroundReliefPrice(size)}
-                </span>
-              </div>
-              <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png"
-                alt="Background Relief Example"
-                className="w-full h-32 object-cover rounded-lg mt-2"
-              />
-            </div>
-
-            {/* Carve Out */}
-            <div 
-              onClick={() => handleUpsellChange({ carveOut: !upsells.carveOut })}
-              className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                upsells.carveOut ? 'border-purple-600 bg-purple-50' : 'border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <div className="font-semibold text-lg">Carve Out Effect</div>
-                  <div className="text-sm text-gray-600">Remove sections for bold negative space</div>
-                </div>
-                <span className="text-sm font-semibold text-purple-600">
-                  +${getCarveOutPrice(size)}
-                </span>
-              </div>
-              <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/40e12a1d2_Screenshot2025-12-19at235301.png"
-                alt="Carve Out Example"
-                className="w-full h-32 object-cover rounded-lg mt-2"
-              />
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-blue-600">+${getSecondImagePrice(size)}</span>
+              <button 
+                onClick={() => toggleSection('image')}
+                className="p-1 hover:bg-gray-100 rounded"
+              >
+                <ChevronDown className={`w-4 h-4 transition-transform ${expandedSections['image'] ? 'rotate-180' : ''}`} />
+              </button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+          {expandedSections['image'] && (
+            <div className="px-4 pb-4 border-t pt-3">
+              <Label htmlFor="second-image" className="cursor-pointer text-blue-600 hover:text-blue-700 flex items-center gap-2 text-sm">
+                <Upload className="w-4 h-4" />
+                {upsells.secondImageUrl ? 'Change Image' : 'Upload Image'}
+              </Label>
+              <input
+                id="second-image"
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+                disabled={uploading}
+              />
+              {upsells.secondImageUrl && (
+                <img src={upsells.secondImageUrl} alt="Second design" className="w-full h-24 object-cover rounded-lg mt-2" />
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Beveled Lines */}
+        <div className="border-2 rounded-lg overflow-hidden bg-white">
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-3">
+              <Checkbox
+                checked={upsells.bevelLines}
+                onCheckedChange={(checked) => {
+                  handleUpsellChange({ bevelLines: checked });
+                  if (checked) toggleSection('bevel');
+                }}
+              />
+              <div>
+                <div className="font-semibold">Beveled Lines</div>
+                <div className="text-xs text-gray-600">Raised edges with depth</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-blue-600">+${getBevelPrice(size)}</span>
+              <button 
+                onClick={() => toggleSection('bevel')}
+                className="p-1 hover:bg-gray-100 rounded"
+              >
+                <ChevronDown className={`w-4 h-4 transition-transform ${expandedSections['bevel'] ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+          </div>
+          {expandedSections['bevel'] && (
+            <div className="px-4 pb-4 border-t">
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg"
+                alt="Beveled Lines"
+                className="w-full h-32 object-cover rounded-lg mt-3"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Background Relief */}
+        <div className="border-2 rounded-lg overflow-hidden bg-white">
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-3">
+              <Checkbox
+                checked={upsells.backgroundRelief}
+                onCheckedChange={(checked) => {
+                  handleUpsellChange({ backgroundRelief: checked });
+                  if (checked) toggleSection('relief');
+                }}
+              />
+              <div>
+                <div className="font-semibold">Background Relief</div>
+                <div className="text-xs text-gray-600">Textured pop-out effect</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-blue-600">+${getBackgroundReliefPrice(size)}</span>
+              <button 
+                onClick={() => toggleSection('relief')}
+                className="p-1 hover:bg-gray-100 rounded"
+              >
+                <ChevronDown className={`w-4 h-4 transition-transform ${expandedSections['relief'] ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+          </div>
+          {expandedSections['relief'] && (
+            <div className="px-4 pb-4 border-t">
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png"
+                alt="Background Relief"
+                className="w-full h-32 object-cover rounded-lg mt-3"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Carve Out */}
+        <div className="border-2 rounded-lg overflow-hidden bg-white">
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-3">
+              <Checkbox
+                checked={upsells.carveOut}
+                onCheckedChange={(checked) => {
+                  handleUpsellChange({ carveOut: checked });
+                  if (checked) toggleSection('carve');
+                }}
+              />
+              <div>
+                <div className="font-semibold">Carve Out Effect</div>
+                <div className="text-xs text-gray-600">Bold negative space cuts</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-blue-600">+${getCarveOutPrice(size)}</span>
+              <button 
+                onClick={() => toggleSection('carve')}
+                className="p-1 hover:bg-gray-100 rounded"
+              >
+                <ChevronDown className={`w-4 h-4 transition-transform ${expandedSections['carve'] ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+          </div>
+          {expandedSections['carve'] && (
+            <div className="px-4 pb-4 border-t">
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/40e12a1d2_Screenshot2025-12-19at235301.png"
+                alt="Carve Out"
+                className="w-full h-32 object-cover rounded-lg mt-3"
+              />
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* Total & Actions */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
