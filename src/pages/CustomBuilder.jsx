@@ -210,53 +210,129 @@ export default function CustomBuilder() {
         <p className="text-center text-gray-600 mb-8">Create a one-of-a-kind piece in three simple steps</p>
 
         {/* Progress Indicator */}
-        <div className="flex items-center justify-center gap-4 mb-12">
-          {[1, 2, 3, 4].map((s) => (
-            <div key={s} className="flex items-center gap-2">
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${
-                step >= s ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'
-              }`}>
-                {step > s ? <CheckCircle className="w-5 h-5" /> : s}
+        <div className="relative mb-12">
+          <div className="flex items-center justify-between max-w-2xl mx-auto">
+            {[
+              { num: 1, label: 'Size' },
+              { num: 2, label: 'Colors' },
+              { num: 3, label: 'Design' },
+              { num: 4, label: 'Upgrades' }
+            ].map((s, idx) => (
+              <div key={s.num} className="flex flex-col items-center flex-1">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all ${
+                  step >= s.num 
+                    ? 'bg-gradient-to-br from-blue-600 to-purple-600 text-white shadow-lg scale-110' 
+                    : 'bg-gray-100 text-gray-400'
+                }`}>
+                  {step > s.num ? <CheckCircle className="w-6 h-6" /> : s.num}
+                </div>
+                <span className={`text-xs mt-2 font-medium ${step >= s.num ? 'text-blue-600' : 'text-gray-400'}`}>
+                  {s.label}
+                </span>
+                {idx < 3 && (
+                  <div className="absolute top-6 left-0 right-0 h-0.5 -z-10" style={{ 
+                    left: `${(idx * 33.33) + 16.66}%`, 
+                    width: '33.33%',
+                    background: step > s.num ? 'linear-gradient(to right, #2563eb, #9333ea)' : '#e5e7eb'
+                  }} />
+                )}
               </div>
-              {s < 4 && <div className={`w-16 h-1 ${step > s ? 'bg-blue-600' : 'bg-gray-200'}`} />}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         {/* Step 1: Size Selection */}
         {step === 1 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Step 1: Choose Your Size</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid md:grid-cols-2 gap-4">
-                {SIZES.map((size) => (
-                  <button
-                    key={size.id}
-                    onClick={() => setConfig(prev => ({ ...prev, size: size.value }))}
-                    className={`flex flex-col items-center p-6 border-2 rounded-lg transition-all ${
-                      config.size === size.value ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="font-medium text-4xl mb-1">{size.label}</div>
-                    <div className="text-lg mb-2" style={{ fontFamily: 'Qwitcher Grypen, cursive' }}>{size.measurement}</div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl line-through text-gray-400" style={{ fontFamily: 'Qwitcher Grypen, cursive' }}>${size.originalPrice}</span>
-                      <span className="text-2xl font-bold text-blue-600" style={{ fontFamily: 'Qwitcher Grypen, cursive' }}>${size.price}</span>
+          <div className="space-y-6">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold mb-3 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Pick Your Perfect Size
+              </h2>
+              <p className="text-gray-600 text-lg">All sizes come with our signature hand-painted quality</p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {SIZES.map((size) => (
+                <button
+                  key={size.id}
+                  onClick={() => setConfig(prev => ({ ...prev, size: size.value }))}
+                  className={`group relative overflow-hidden rounded-2xl transition-all duration-300 ${
+                    config.size === size.value 
+                      ? 'ring-4 ring-blue-500 shadow-2xl scale-105' 
+                      : 'hover:shadow-xl hover:scale-102 shadow-md'
+                  }`}
+                >
+                  <div className={`absolute inset-0 transition-opacity ${
+                    config.size === size.value 
+                      ? 'bg-gradient-to-br from-blue-500 to-purple-500 opacity-100' 
+                      : 'bg-gradient-to-br from-gray-100 to-gray-200 opacity-100 group-hover:from-blue-50 group-hover:to-purple-50'
+                  }`} />
+
+                  <div className="relative p-8 flex flex-col items-center">
+                    {config.size === size.value && (
+                      <div className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                        <CheckCircle className="w-5 h-5 text-blue-600" />
+                      </div>
+                    )}
+
+                    <div className={`w-24 h-24 mb-4 rounded-xl flex items-center justify-center transition-all ${
+                      config.size === size.value 
+                        ? 'bg-white/20 backdrop-blur-sm' 
+                        : 'bg-white/50 group-hover:bg-white/70'
+                    }`}>
+                      <div className={`text-5xl font-black ${
+                        config.size === size.value ? 'text-white' : 'text-gray-700'
+                      }`}>
+                        {size.label.charAt(0)}
+                      </div>
                     </div>
-                  </button>
-                ))}
-              </div>
+
+                    <div className={`font-bold text-2xl mb-2 ${
+                      config.size === size.value ? 'text-white' : 'text-gray-900'
+                    }`}>
+                      {size.label}
+                    </div>
+
+                    <div className={`text-sm mb-4 ${
+                      config.size === size.value ? 'text-white/90' : 'text-gray-600'
+                    }`}>
+                      {size.measurement}
+                    </div>
+
+                    <div className="flex items-baseline gap-2">
+                      <span className={`text-lg line-through ${
+                        config.size === size.value ? 'text-white/60' : 'text-gray-400'
+                      }`}>
+                        ${size.originalPrice}
+                      </span>
+                      <span className={`text-3xl font-black ${
+                        config.size === size.value ? 'text-white' : 'text-blue-600'
+                      }`}>
+                        ${size.price}
+                      </span>
+                    </div>
+
+                    <div className={`mt-3 text-xs font-semibold ${
+                      config.size === size.value ? 'text-white/80' : 'text-green-600'
+                    }`}>
+                      SAVE ${size.originalPrice - size.price}
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            <div className="text-center mt-8">
               <Button 
-                className="w-full mt-6" 
+                size="lg"
+                className="px-12 py-6 text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg" 
                 onClick={() => setStep(2)} 
                 disabled={!config.size}
               >
-                Continue to Colors
+                {config.size ? '✨ Continue to Colors' : 'Choose a size to continue'}
               </Button>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
         {/* Step 2: Color Selection */}
