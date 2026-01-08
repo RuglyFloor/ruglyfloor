@@ -192,10 +192,10 @@ export default function CustomBuilder() {
                     }`}
                   >
                     <div className="font-medium text-xl mb-1">{size.label}</div>
-                    <div className="text-lg mb-2" style={{ fontFamily: 'Qwitcher Grypen, cursive' }}>{size.measurement}</div>
+                    <div className="mb-2" style={{ fontFamily: 'Qwitcher Grypen, cursive', fontSize: '3.375rem' }}>{size.measurement}</div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xl line-through text-gray-400" style={{ fontFamily: 'Qwitcher Grypen, cursive' }}>${size.originalPrice}</span>
-                      <span className="text-2xl font-bold text-blue-600" style={{ fontFamily: 'Qwitcher Grypen, cursive' }}>${size.price}</span>
+                      <span className="line-through text-gray-400" style={{ fontFamily: 'Qwitcher Grypen, cursive', fontSize: '3.75rem' }}>${size.originalPrice}</span>
+                      <span className="font-bold text-blue-600" style={{ fontFamily: 'Qwitcher Grypen, cursive', fontSize: '4.5rem' }}>${size.price}</span>
                     </div>
                   </button>
                 ))}
