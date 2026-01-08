@@ -15,7 +15,7 @@ const SIZES = [
   { id: 'md', label: 'Medium', value: 'medium', price: 300, originalPrice: 350, measurement: '5x7' },
   { id: 'lg', label: 'Large', value: 'large', price: 400, originalPrice: 450, measurement: '8x10' },
   { id: 'hg', label: 'Huge', value: 'huge', price: 500, originalPrice: 550, measurement: '9x11' },
-  { id: 'rd', label: 'Pie', value: '4ft round', price: 200, originalPrice: 225, measurement: '3.1415926' }
+  { id: 'rd', label: '3.14', value: '4ft round', price: 250, originalPrice: 275, measurement: '4 foot round' }
 ];
 
 const getColorPrice = (size, numColors) => {

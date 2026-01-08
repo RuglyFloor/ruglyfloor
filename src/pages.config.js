@@ -1,27 +1,27 @@
 import About from './pages/About';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminOrders from './pages/AdminOrders';
+import AdminProducts from './pages/AdminProducts';
 import Cart from './pages/Cart';
 import Commission from './pages/Commission';
 import CustomBuilder from './pages/CustomBuilder';
 import Home from './pages/Home';
 import Orders from './pages/Orders';
 import Shop from './pages/Shop';
-import AdminOrders from './pages/AdminOrders';
-import AdminDashboard from './pages/AdminDashboard';
-import AdminProducts from './pages/AdminProducts';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "About": About,
+    "AdminDashboard": AdminDashboard,
+    "AdminOrders": AdminOrders,
+    "AdminProducts": AdminProducts,
     "Cart": Cart,
     "Commission": Commission,
     "CustomBuilder": CustomBuilder,
     "Home": Home,
     "Orders": Orders,
     "Shop": Shop,
-    "AdminOrders": AdminOrders,
-    "AdminDashboard": AdminDashboard,
-    "AdminProducts": AdminProducts,
 }
 
 export const pagesConfig = {
