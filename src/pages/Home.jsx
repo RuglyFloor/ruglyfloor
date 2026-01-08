@@ -60,17 +60,17 @@ export default function Home() {
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link to={createPageUrl('Shop')}>
-              <button className="bg-transparent border-4 border-green-400 text-white font-black text-xl px-12 py-6 hover:bg-green-400/10 transition-all uppercase tracking-wide" style={{ fontFamily: 'Magistral, Barlow Condensed, sans-serif', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
+              <button className="bg-transparent border border-white text-white font-black text-xl px-12 py-6 hover:bg-white/10 transition-all uppercase tracking-wide" style={{ fontFamily: 'Kameron, serif', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
                 SHOP FOR ORIGINAL RUGLYS
               </button>
             </Link>
             <Link to={createPageUrl('CustomBuilder')}>
-              <button className="bg-transparent border-4 border-blue-400 text-white font-black text-xl px-12 py-6 hover:bg-blue-400/10 transition-all uppercase tracking-wide" style={{ fontFamily: 'Magistral, Barlow Condensed, sans-serif', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
+              <button className="bg-transparent border border-white text-white font-black text-xl px-12 py-6 hover:bg-white/10 transition-all uppercase tracking-wide" style={{ fontFamily: 'Kameron, serif', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
                 CREATE A CRUGLY (CUSTOM)
               </button>
             </Link>
             <Link to={createPageUrl('Commission')}>
-              <button className="bg-transparent border-4 border-red-400 text-white font-black text-xl px-12 py-6 hover:bg-red-400/10 transition-all uppercase tracking-wide" style={{ fontFamily: 'Magistral, Barlow Condensed, sans-serif', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
+              <button className="bg-transparent border border-white text-white font-black text-xl px-12 py-6 hover:bg-white/10 transition-all uppercase tracking-wide" style={{ fontFamily: 'Kameron, serif', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
                 COMMISSION A DESIGNER
               </button>
             </Link>
