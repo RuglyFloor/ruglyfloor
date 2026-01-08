@@ -261,18 +261,12 @@ export default function AdminProducts() {
                   </div>
                   <div>
                     <Label>Size *</Label>
-                    <Select value={formData.size} onValueChange={(value) => setFormData(prev => ({ ...prev, size: value }))}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="4x6">4x6</SelectItem>
-                        <SelectItem value="5x7">5x7</SelectItem>
-                        <SelectItem value="6x9">6x9</SelectItem>
-                        <SelectItem value="9x12">9x12</SelectItem>
-                        <SelectItem value="5ft Round">5ft Round</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Input
+                      value={formData.size}
+                      onChange={(e) => setFormData(prev => ({ ...prev, size: e.target.value }))}
+                      placeholder="e.g., 8x10, 5ft Round, 3x5"
+                      required
+                    />
                   </div>
                 </div>
 
