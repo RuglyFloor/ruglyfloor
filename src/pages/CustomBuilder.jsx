@@ -350,12 +350,42 @@ export default function CustomBuilder() {
                   }}
                 />
 
-                {config.previewUrl && (
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <Label className="block mb-2 font-semibold text-green-900">✨ Your Stencil is Ready!</Label>
-                    <p className="text-sm text-green-700">
-                      Your design is ready! Continue to see premium upgrade options.
-                    </p>
+                {config.imageUrl && (
+                  <div className="space-y-4">
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <Label className="block mb-2 font-semibold text-blue-900">🎨 Generate Realistic Preview</Label>
+                      <p className="text-sm text-gray-700 mb-3">
+                        See what your rug will actually look like with AI-generated preview
+                      </p>
+                      <Button
+                        onClick={generatePreview}
+                        disabled={processing || !config.imageUrl}
+                        className="w-full bg-blue-600 hover:bg-blue-700"
+                      >
+                        {processing ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Generating Preview...
+                          </>
+                        ) : (
+                          'Generate AI Preview'
+                        )}
+                      </Button>
+                    </div>
+                    
+                    {config.previewUrl && (
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <Label className="block mb-2 font-semibold text-green-900">✨ Preview Ready!</Label>
+                        <img 
+                          src={config.previewUrl} 
+                          alt="Rug preview" 
+                          className="w-full rounded-lg shadow-lg mb-3"
+                        />
+                        <p className="text-sm text-green-700">
+                          Your realistic preview is ready! Continue to see premium upgrade options.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
 
