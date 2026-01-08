@@ -60,19 +60,19 @@ export default function Home() {
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
             <Link to={createPageUrl('Shop')}>
-              <Button size="lg" className="bg-orange-600 hover:bg-orange-700 text-white font-bold text-lg px-10 py-7 shadow-xl">
+              <button className="bg-transparent border-4 border-green-400 text-white font-black text-xl px-12 py-6 hover:bg-green-400/10 transition-all uppercase tracking-wide" style={{ textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
                 SHOP FOR ORIGINAL RUGLYS
-              </Button>
+              </button>
             </Link>
             <Link to={createPageUrl('CustomBuilder')}>
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg px-10 py-7 shadow-xl">
+              <button className="bg-transparent border-4 border-blue-400 text-white font-black text-xl px-12 py-6 hover:bg-blue-400/10 transition-all uppercase tracking-wide" style={{ textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
                 CREATE A CRUGLY (CUSTOM)
-              </Button>
+              </button>
             </Link>
             <Link to={createPageUrl('Commission')}>
-              <Button size="lg" className="bg-white hover:bg-gray-100 text-slate-900 font-bold text-lg px-10 py-7 shadow-xl">
+              <button className="bg-transparent border-4 border-red-400 text-white font-black text-xl px-12 py-6 hover:bg-red-400/10 transition-all uppercase tracking-wide" style={{ textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
                 COMMISSION A DESIGNER
-              </Button>
+              </button>
             </Link>
           </div>
         </div>
