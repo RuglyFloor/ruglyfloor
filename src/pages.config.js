@@ -7,8 +7,8 @@ import Commission from './pages/Commission';
 import CustomBuilder from './pages/CustomBuilder';
 import Home from './pages/Home';
 import Orders from './pages/Orders';
-import Shop from './pages/Shop';
 import Policies from './pages/Policies';
+import Shop from './pages/Shop';
 import __Layout from './Layout.jsx';
 
 
@@ -22,8 +22,8 @@ export const PAGES = {
     "CustomBuilder": CustomBuilder,
     "Home": Home,
     "Orders": Orders,
-    "Shop": Shop,
     "Policies": Policies,
+    "Shop": Shop,
 }
 
 export const pagesConfig = {

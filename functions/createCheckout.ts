@@ -18,6 +18,31 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Cart is empty' }, { status: 400 });
     }
 
+    // Calculate shipping
+    const calculateShipping = (cart) => {
+      if (cart.length >= 2) return 0; // Free shipping for 2+ items
+      
+      const item = cart[0];
+      const size = item.size.toLowerCase();
+      
+      // Small, Medium, and Round: $29
+      if (size.includes('small') || size.includes('medium') || size.includes('round') || size.includes('4x6') || size.includes('5x7')) {
+        return 29;
+      }
+      // Large: $59
+      if (size.includes('large') || size.includes('8x10')) {
+        return 59;
+      }
+      // Huge: $99
+      if (size.includes('huge') || size.includes('9x11')) {
+        return 99;
+      }
+      
+      return 29; // Default to small shipping
+    };
+
+    const shippingCost = calculateShipping(cart);
+
     // Create line items for Stripe
     const lineItems = cart.map(item => ({
       price_data: {
@@ -34,6 +59,21 @@ Deno.serve(async (req) => {
       quantity: 1,
     }));
 
+    // Add shipping line item if applicable
+    if (shippingCost > 0) {
+      lineItems.push({
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: 'Shipping',
+            description: 'Ground shipping within the US',
+          },
+          unit_amount: shippingCost * 100,
+        },
+        quantity: 1,
+      });
+    }
+
     // Create order record first
     const orderNumber = 'RUG-' + Date.now();
     const order = await base44.asServiceRole.entities.Order.create({
@@ -49,7 +89,7 @@ Deno.serve(async (req) => {
         country: customerInfo.country || 'USA'
       },
       items: cart,
-      total_amount: cart.reduce((sum, item) => sum + item.price, 0),
+      total_amount: cart.reduce((sum, item) => sum + item.price, 0) + shippingCost,
       status: 'pending',
       payment_status: 'pending'
     });

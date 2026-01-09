@@ -72,8 +72,15 @@ export default function Policies() {
             <div>
               <h3 className="font-semibold text-lg mb-2">Shipping Costs</h3>
               <p>
-                Shipping costs are calculated at checkout based on size and destination. 
-                We ship via ground shipping within the continental United States. 
+                Shipping costs are based on rug size:
+              </p>
+              <ul className="list-disc ml-6 mt-2 space-y-1">
+                <li>Small, Medium, and Round (4ft): $29</li>
+                <li>Large: $59</li>
+                <li>Huge: $99</li>
+              </ul>
+              <p className="mt-2">
+                <strong>Free shipping on orders of 2 or more rugs!</strong> We ship via ground shipping within the continental United States. 
                 International shipping is available upon request with additional fees.
               </p>
             </div>
