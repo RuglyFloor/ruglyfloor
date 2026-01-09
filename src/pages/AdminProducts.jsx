@@ -9,8 +9,17 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Package, Plus, Edit, Trash2, Upload } from 'lucide-react';
+import AdminProtected from '../components/AdminProtected';
 
 export default function AdminProducts() {
+  return (
+    <AdminProtected>
+      <AdminProductsContent />
+    </AdminProtected>
+  );
+}
+
+function AdminProductsContent() {
   const queryClient = useQueryClient();
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -187,19 +196,6 @@ export default function AdminProducts() {
       data: { in_stock: !product.in_stock }
     });
   };
-
-  if (!user) return null;
-
-  if (user.role !== 'admin') {
-    return (
-      <div className="min-h-screen py-12 px-6">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-4">Access Denied</h2>
-          <p>This page is only accessible to administrators.</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen py-12 px-6 bg-gray-50">
