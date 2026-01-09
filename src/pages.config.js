@@ -1,6 +1,8 @@
 import About from './pages/About';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminLogin from './pages/AdminLogin';
 import AdminOrders from './pages/AdminOrders';
+import AdminPortal from './pages/AdminPortal';
 import AdminProducts from './pages/AdminProducts';
 import AdminSEO from './pages/AdminSEO';
 import Blog from './pages/Blog';
@@ -13,15 +15,15 @@ import Orders from './pages/Orders';
 import Policies from './pages/Policies';
 import Shop from './pages/Shop';
 import TrackOrder from './pages/TrackOrder';
-import AdminLogin from './pages/AdminLogin';
-import AdminPortal from './pages/AdminPortal';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "About": About,
     "AdminDashboard": AdminDashboard,
+    "AdminLogin": AdminLogin,
     "AdminOrders": AdminOrders,
+    "AdminPortal": AdminPortal,
     "AdminProducts": AdminProducts,
     "AdminSEO": AdminSEO,
     "Blog": Blog,
@@ -34,8 +36,6 @@ export const PAGES = {
     "Policies": Policies,
     "Shop": Shop,
     "TrackOrder": TrackOrder,
-    "AdminLogin": AdminLogin,
-    "AdminPortal": AdminPortal,
 }
 
 export const pagesConfig = {
