@@ -498,7 +498,12 @@ export default function CustomBuilder() {
 
                 {/* Drawing Mode */}
                 {designMode === 'draw' && (
-                  <DrawingCanvas onSaveDrawing={handleDrawingSave} />
+                  <DrawingCanvas 
+                    onSaveDrawing={handleDrawingSave}
+                    onColorCountChange={(count) => {
+                      setConfig(prev => ({ ...prev, numColors: count }));
+                    }}
+                  />
                 )}
 
                 {config.imageUrl && (

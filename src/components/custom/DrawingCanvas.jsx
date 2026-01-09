@@ -7,7 +7,7 @@ import { Slider } from '@/components/ui/slider';
 import { Pencil, Eraser, Type, Square, Circle, Undo, Trash2, Save } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export default function DrawingCanvas({ onSaveDrawing }) {
+export default function DrawingCanvas({ onSaveDrawing, onColorCountChange }) {
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [tool, setTool] = useState('pen'); // pen, eraser, text, rectangle, circle
@@ -18,6 +18,7 @@ export default function DrawingCanvas({ onSaveDrawing }) {
   const [showTextInput, setShowTextInput] = useState(false);
   const [textPosition, setTextPosition] = useState({ x: 0, y: 0 });
   const [selectedFont, setSelectedFont] = useState('Allerta Stencil');
+  const [usedColors, setUsedColors] = useState(new Set(['#000000']));
 
   const STENCIL_FONTS = [
     'Allerta Stencil',
@@ -67,6 +68,17 @@ export default function DrawingCanvas({ onSaveDrawing }) {
     ctx.moveTo(x, y);
   };
 
+  const updateColorCount = (newColor) => {
+    setUsedColors(prev => {
+      const updated = new Set(prev);
+      updated.add(newColor);
+      if (onColorCountChange) {
+        onColorCountChange(updated.size);
+      }
+      return updated;
+    });
+  };
+
   const draw = (e) => {
     if (!isDrawing) return;
     
@@ -77,6 +89,7 @@ export default function DrawingCanvas({ onSaveDrawing }) {
     const ctx = canvas.getContext('2d');
 
     if (tool === 'pen') {
+      updateColorCount(color);
       ctx.strokeStyle = color;
       ctx.lineWidth = brushSize;
       ctx.lineCap = 'round';
@@ -103,6 +116,7 @@ export default function DrawingCanvas({ onSaveDrawing }) {
   const addText = () => {
     if (!textInput.trim()) return;
     
+    updateColorCount(color);
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     ctx.font = `bold ${brushSize * 5}px "${selectedFont}"`;
@@ -115,6 +129,7 @@ export default function DrawingCanvas({ onSaveDrawing }) {
   };
 
   const drawShape = (e, shapeType) => {
+    updateColorCount(color);
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
     const x = (e.clientX || e.touches[0].clientX) - rect.left;
@@ -234,7 +249,11 @@ export default function DrawingCanvas({ onSaveDrawing }) {
 
             {/* Color Picker */}
             <div>
-              <Label className="mb-2 block">Color</Label>
+              <Label className="mb-2 block">
+                Color {usedColors.size > 2 && (
+                  <span className="text-blue-600 font-semibold">({usedColors.size} colors used)</span>
+                )}
+              </Label>
               <div className="flex gap-2 items-center">
                 <input
                   type="color"
@@ -253,6 +272,11 @@ export default function DrawingCanvas({ onSaveDrawing }) {
                   ))}
                 </div>
               </div>
+              {usedColors.size > 2 && (
+                <p className="text-xs text-blue-600 mt-1">
+                  Additional color charges will be applied
+                </p>
+              )}
             </div>
 
             {/* Brush Size */}
