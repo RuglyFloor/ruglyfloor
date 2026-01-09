@@ -7,17 +7,24 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { base44 } from '@/api/base44Client';
 
 const PAINT_COLORS = [
+  // First set - Only for light base rugs
+  { name: 'Bright Red', hex: '#e31e24', type: 'dark' },
+  { name: 'Navy Blue', hex: '#1c3664', type: 'dark' },
+  { name: 'Bright Green', hex: '#00a651', type: 'dark' },
+  { name: 'Magenta', hex: '#c71585', type: 'dark' },
   { name: 'Black', hex: '#000000', type: 'dark' },
-  { name: 'Navy', hex: '#1e3a5f', type: 'dark' },
-  { name: 'Burgundy', hex: '#800020', type: 'dark' },
-  { name: 'Forest Green', hex: '#0f4d2a', type: 'dark' },
-  { name: 'Charcoal', hex: '#36454f', type: 'dark' },
-  { name: 'Dark Brown', hex: '#3e2723', type: 'dark' },
-  { name: 'White', hex: '#ffffff', type: 'light' },
-  { name: 'Cream', hex: '#fffdd0', type: 'light' },
-  { name: 'Light Blue', hex: '#add8e6', type: 'light' },
-  { name: 'Light Grey', hex: '#d3d3d3', type: 'light' },
-  { name: 'Beige', hex: '#f5f5dc', type: 'light' }
+  { name: 'Sun Yellow', hex: '#ffd700', type: 'dark' },
+  { name: 'Bright Orange', hex: '#ff4500', type: 'dark' },
+  { name: 'Hot Pink', hex: '#ff1493', type: 'dark' },
+  // Second set - Works with both light and dark base rugs
+  { name: 'Sun Yellow', hex: '#ffd700', type: 'both' },
+  { name: 'Bright Orange', hex: '#ff6347', type: 'both' },
+  { name: 'Brilliant Red', hex: '#dc143c', type: 'both' },
+  { name: 'Violet', hex: '#7851a9', type: 'both' },
+  { name: 'Azure Blue', hex: '#2e5090', type: 'both' },
+  { name: 'Bright Green', hex: '#00a651', type: 'both' },
+  { name: 'Black', hex: '#000000', type: 'both' },
+  { name: 'White', hex: '#ffffff', type: 'both' }
 ];
 
 const get3DPrice = (size) => {
@@ -204,7 +211,10 @@ export default function UpsellOptions({ size, baseColor, currentPreview, isGener
                   >
                     None
                   </button>
-                  {PAINT_COLORS.filter(color => selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light').slice(0, 6).map((color) => (
+                  {PAINT_COLORS.filter(color => {
+                    if (color.type === 'both') return true;
+                    return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
+                  }).slice(0, 6).map((color) => (
                     <button
                       key={color.name}
                       onClick={() => setUpsells(prev => ({ ...prev, thirdColor: color.name }))}
@@ -226,7 +236,10 @@ export default function UpsellOptions({ size, baseColor, currentPreview, isGener
                     >
                       None
                     </button>
-                    {PAINT_COLORS.filter(color => selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light').slice(0, 6).map((color) => (
+                    {PAINT_COLORS.filter(color => {
+                      if (color.type === 'both') return true;
+                      return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
+                    }).slice(0, 6).map((color) => (
                       <button
                         key={color.name}
                         onClick={() => setUpsells(prev => ({ ...prev, fourthColor: color.name }))}
