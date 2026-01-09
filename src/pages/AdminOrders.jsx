@@ -23,6 +23,8 @@ export default function AdminOrders() {
   const [editingOrder, setEditingOrder] = useState(null);
   const [newStatus, setNewStatus] = useState('');
   const [notes, setNotes] = useState('');
+  const [trackingNumber, setTrackingNumber] = useState('');
+  const [trackingUrl, setTrackingUrl] = useState('');
 
   const { data: user } = useQuery({
     queryKey: ['user'],
@@ -45,29 +47,53 @@ export default function AdminOrders() {
     }
   });
 
-  const sendStatusUpdateEmail = async (order, newStatus) => {
+  const sendStatusUpdateEmail = async (order, newStatus, tracking) => {
     const statusLabel = STATUS_CONFIG[newStatus]?.label || newStatus;
     await base44.functions.invoke('sendStatusUpdate', {
       email: order.customer_email,
       orderNumber: order.order_number,
       status: statusLabel,
-      customerName: order.customer_name
+      customerName: order.customer_name,
+      trackingNumber: tracking?.number,
+      trackingUrl: tracking?.url
     });
   };
 
   const handleUpdateStatus = async (order) => {
     if (!newStatus) return;
     
-    const updateData = { status: newStatus };
+    const updateData = { 
+      status: newStatus,
+      status_history: [
+        ...(order.status_history || []),
+        {
+          status: newStatus,
+          timestamp: new Date().toISOString(),
+          note: notes
+        }
+      ]
+    };
+    
     if (notes) {
       updateData.notes = notes;
+    }
+    
+    if (trackingNumber) {
+      updateData.tracking_number = trackingNumber;
+    }
+    
+    if (trackingUrl) {
+      updateData.tracking_url = trackingUrl;
     }
 
     await updateOrderMutation.mutateAsync({ orderId: order.id, data: updateData });
     
     // Send email notification
     try {
-      await sendStatusUpdateEmail(order, newStatus);
+      await sendStatusUpdateEmail(order, newStatus, {
+        number: trackingNumber,
+        url: trackingUrl
+      });
     } catch (error) {
       console.error('Failed to send email:', error);
     }
@@ -203,12 +229,36 @@ export default function AdminOrders() {
                               </SelectContent>
                             </Select>
                           </div>
+                          {newStatus === 'shipped' && (
+                            <>
+                              <div>
+                                <Label>Tracking Number</Label>
+                                <input
+                                  type="text"
+                                  value={trackingNumber}
+                                  onChange={(e) => setTrackingNumber(e.target.value)}
+                                  placeholder="1Z999AA10123456784"
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                />
+                              </div>
+                              <div>
+                                <Label>Tracking URL</Label>
+                                <input
+                                  type="url"
+                                  value={trackingUrl}
+                                  onChange={(e) => setTrackingUrl(e.target.value)}
+                                  placeholder="https://www.ups.com/track?..."
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                />
+                              </div>
+                            </>
+                          )}
                           <div>
                             <Label>Additional Notes (Optional)</Label>
                             <Textarea
                               value={notes}
                               onChange={(e) => setNotes(e.target.value)}
-                              placeholder="Add tracking number, estimated delivery, etc."
+                              placeholder="Add any additional information..."
                               rows={3}
                             />
                           </div>
@@ -230,6 +280,8 @@ export default function AdminOrders() {
                           setEditingOrder(order.id);
                           setNewStatus(order.status);
                           setNotes(order.notes || '');
+                          setTrackingNumber(order.tracking_number || '');
+                          setTrackingUrl(order.tracking_url || '');
                         }}>
                           Update Status
                         </Button>
