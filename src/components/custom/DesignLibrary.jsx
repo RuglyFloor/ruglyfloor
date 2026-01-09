@@ -71,10 +71,22 @@ const DESIGN_LIBRARY = [
     name: 'Texaco',
     category: 'vintage',
     url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/2b095bbe6_Screenshot2026-01-09at042848.png'
+  },
+  {
+    id: 'portrait-1',
+    name: 'Portrait 1',
+    category: 'portrait',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/9d6f3b557_image.png'
+  },
+  {
+    id: 'portrait-2',
+    name: 'Portrait 2',
+    category: 'portrait',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/bb9c2718a_image.png'
   }
 ];
 
-const CATEGORIES = ['all', 'vintage'];
+const CATEGORIES = ['all', 'vintage', 'portrait'];
 
 export default function DesignLibrary({ onSelectDesign }) {
   const [selectedCategory, setSelectedCategory] = useState('all');

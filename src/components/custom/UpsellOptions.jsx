@@ -33,8 +33,8 @@ const get3DPrice = (size) => {
 };
 
 const getAdditionalColorPrice = (size) => {
-  const sizeMap = { tiny: 25, small: 49, medium: 99, large: 149, huge: 199, '4ft round': 49 };
-  return sizeMap[size] || 49;
+  const sizeMap = { tiny: 39, small: 69, medium: 99, large: 129, huge: 159, '4ft round': 69 };
+  return sizeMap[size] || 39;
 };
 
 const getSecondImagePrice = (size) => {

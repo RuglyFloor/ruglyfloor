@@ -24,10 +24,10 @@ const SIZES = [
 
 const getColorPrice = (size, numColors) => {
   if (numColors === 2) return 0;
-  const sizeMap = { tiny: 0, small: 0, medium: 50, large: 100, huge: 150, '4ft round': 0 };
-  const sizeUpcharge = sizeMap[size] || 0;
-  if (numColors === 3) return 49 + sizeUpcharge;
-  if (numColors === 4) return (49 + sizeUpcharge) * 2;
+  const sizeMap = { tiny: 39, small: 69, medium: 99, large: 129, huge: 159, '4ft round': 69 };
+  const basePrice = sizeMap[size] || 39;
+  if (numColors === 3) return basePrice;
+  if (numColors === 4) return basePrice * 2;
   return 0;
 };
 
