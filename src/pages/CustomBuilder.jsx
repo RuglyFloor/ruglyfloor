@@ -424,7 +424,12 @@ export default function CustomBuilder() {
         {step === 3 && (
           <Card>
             <CardHeader>
-              <CardTitle>Step 3: Create Your Design</CardTitle>
+              <div className="flex items-center gap-3 mb-2">
+                <Button variant="outline" size="sm" onClick={() => setStep(2)}>
+                  ← Back
+                </Button>
+                <CardTitle className="flex-1">Step 3: Create Your Design</CardTitle>
+              </div>
               <p className="text-sm text-gray-600 mt-2">
                 Choose how you want to create your design
               </p>
