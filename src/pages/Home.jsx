@@ -3,34 +3,26 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { Palette, Sparkles, Package, CheckCircle } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 
 export default function Home() {
   const [currentProduct, setCurrentProduct] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   
-  const products = [
-    {
-      image: "https://ruglyfloor.com/_next/image?url=%2Fimages%2Fready-to-ship-1.jpg&w=3840&q=75",
-      title: "Pan Am Vintage Logo",
-      description: "A classic aviation icon, hand-painted with precision on a low-pile base.",
-      price: 299,
-      sold: true
-    },
-    {
-      image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/736432943_ChicagoRug.png",
-      title: "Chicago Skyline",
-      description: "Hand-painted using dye and fabric paint. Features Chicago's iconic skyline with all current buildings plus two under construction.",
-      price: 400,
-      sold: false
-    }
-  ];
+  const { data: products = [] } = useQuery({
+    queryKey: ['featured-products'],
+    queryFn: () => base44.entities.Product.filter({ category: 'original' }),
+  });
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentProduct((prev) => (prev + 1) % products.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+    if (products.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentProduct((prev) => (prev + 1) % products.length);
+      }, 4000);
+      return () => clearInterval(interval);
+    }
+  }, [products.length]);
 
   useEffect(() => {
     const stepInterval = setInterval(() => {
@@ -94,45 +86,52 @@ export default function Home() {
             <h2 className="text-3xl font-bold">SHOP FOR ORIGINAL RUGLYS</h2>
           </div>
           <div className="relative">
-            <div className={`group cursor-pointer transition-opacity duration-500 ${currentProduct === 0 ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}`}>
-              <div className="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-4 relative max-w-2xl mx-auto">
-                <img 
-                  src={products[0].image}
-                  alt={products[0].title}
-                  className="w-full h-full object-cover opacity-60"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-red-600 text-white font-bold text-3xl px-8 py-4 rounded-lg transform rotate-12">
-                    SOLD
+            {products.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-slate-600">Loading featured rugs...</p>
+              </div>
+            ) : (
+              products.map((product, index) => (
+                <div 
+                  key={product.id}
+                  className={`group cursor-pointer transition-opacity duration-500 ${currentProduct === index ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}`}
+                >
+                  <div className="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-4 relative max-w-2xl mx-auto">
+                    <img 
+                      src={product.image_url}
+                      alt={product.name}
+                      className={`w-full h-full object-cover ${!product.in_stock ? 'opacity-60' : 'group-hover:scale-105 transition-transform duration-300'}`}
+                    />
+                    {!product.in_stock && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="bg-red-600 text-white font-bold text-3xl px-8 py-4 rounded-lg transform rotate-12">
+                          SOLD
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-center max-w-2xl mx-auto">
+                    <h3 className="text-2xl font-bold mb-3">{product.name}</h3>
+                    <p className="text-slate-600 mb-4">{product.description}</p>
+                    <div className="flex items-center justify-center gap-4">
+                      {product.in_stock ? (
+                        <>
+                          <span className="text-3xl font-bold text-blue-600">${product.price}</span>
+                          <Link to={createPageUrl('Shop')}>
+                            <Button>GRAB IT</Button>
+                          </Link>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-3xl font-bold text-red-600">SOLD OUT</span>
+                          <Button disabled className="opacity-50">SOLD</Button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="text-center max-w-2xl mx-auto">
-                <h3 className="text-2xl font-bold mb-3">{products[0].title}</h3>
-                <p className="text-slate-600 mb-4">{products[0].description}</p>
-                <div className="flex items-center justify-center gap-4">
-                  <span className="text-3xl font-bold text-red-600">SOLD OUT</span>
-                  <Button disabled className="opacity-50">SOLD</Button>
-                </div>
-              </div>
-            </div>
-            <div className={`group cursor-pointer transition-opacity duration-500 ${currentProduct === 1 ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}`}>
-              <div className="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-4 max-w-2xl mx-auto">
-                <img 
-                  src={products[1].image}
-                  alt={products[1].title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-              <div className="text-center max-w-2xl mx-auto">
-                <h3 className="text-2xl font-bold mb-3">{products[1].title}</h3>
-                <p className="text-slate-600 mb-4">{products[1].description}</p>
-                <div className="flex items-center justify-center gap-4">
-                  <span className="text-3xl font-bold text-blue-600">${products[1].price}</span>
-                  <Button>GRAB IT</Button>
-                </div>
-              </div>
-            </div>
+              ))
+            )}
           </div>
           <div className="flex justify-center gap-2 mt-6">
             {products.map((_, index) => (
