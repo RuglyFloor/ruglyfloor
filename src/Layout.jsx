@@ -23,8 +23,10 @@ export default function Layout({ children, currentPageName }) {
     { name: 'My Orders', page: 'Orders' },
     ...(user?.role === 'admin' ? [
       { name: 'Admin', page: 'AdminDashboard' },
+      { name: 'Content', page: 'ContentManager' },
       { name: 'SEO', page: 'AdminSEO' }
-    ] : [])
+    ] : []),
+    { name: 'Blog', page: 'Blog' }
   ];
 
   return (

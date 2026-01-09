@@ -10,6 +10,8 @@ import Orders from './pages/Orders';
 import Policies from './pages/Policies';
 import Shop from './pages/Shop';
 import AdminSEO from './pages/AdminSEO';
+import ContentManager from './pages/ContentManager';
+import Blog from './pages/Blog';
 import __Layout from './Layout.jsx';
 
 
@@ -26,6 +28,8 @@ export const PAGES = {
     "Policies": Policies,
     "Shop": Shop,
     "AdminSEO": AdminSEO,
+    "ContentManager": ContentManager,
+    "Blog": Blog,
 }
 
 export const pagesConfig = {
