@@ -28,24 +28,22 @@ const PAINT_COLORS = [
 ];
 
 const get3DPrice = (size) => {
-  const sizeMap = { small: 200, medium: 250, large: 300, huge: 350, '4ft round': 200 };
+  const sizeMap = { tiny: 100, small: 200, medium: 250, large: 300, huge: 350, '4ft round': 200 };
   return sizeMap[size] || 200;
 };
 
 const getAdditionalColorPrice = (size) => {
-  const sizeMap = { small: 49, medium: 99, large: 149, huge: 199, '4ft round': 49 };
+  const sizeMap = { tiny: 25, small: 49, medium: 99, large: 149, huge: 199, '4ft round': 49 };
   return sizeMap[size] || 49;
 };
 
 const getSecondImagePrice = (size) => {
-  const sizeMap = { small: 99, medium: 149, large: 199, huge: 249, '4ft round': 99 };
+  const sizeMap = { tiny: 49, small: 99, medium: 149, large: 199, huge: 249, '4ft round': 99 };
   return sizeMap[size] || 99;
 };
 
-
-
 const getCarveOutPrice = (size) => {
-  const sizeMap = { small: 125, medium: 175, large: 225, huge: 275, '4ft round': 125 };
+  const sizeMap = { tiny: 75, small: 125, medium: 175, large: 225, huge: 275, '4ft round': 125 };
   return sizeMap[size] || 125;
 };
 
