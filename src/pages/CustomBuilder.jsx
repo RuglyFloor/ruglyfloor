@@ -30,10 +30,7 @@ const getColorPrice = (size, numColors) => {
   return 0;
 };
 
-const getBorderPrice = (size) => {
-  const sizeMap = { small: 99, medium: 149, large: 199, huge: 249, '4ft round': 99 };
-  return sizeMap[size] || 99;
-};
+
 
 const get3DPrice = (size) => {
   const sizeMap = { small: 200, medium: 250, large: 300, huge: 350, '4ft round': 200 };
@@ -76,7 +73,6 @@ export default function CustomBuilder() {
     previewUrl: '',
     is3D: false,
     numColors: 2,
-    shaveBorders: false,
     upsells: {
       is3D: false,
       thirdColor: '',
@@ -186,8 +182,7 @@ export default function CustomBuilder() {
     const selectedSize = SIZES.find(s => s.value === config.size);
     const basePrice = selectedSize.price;
     const colorPrice = getColorPrice(config.size, config.numColors);
-    const borderPrice = config.shaveBorders ? getBorderPrice(config.size) : 0;
-    const price = basePrice + colorPrice + borderPrice + config.upsellTotal;
+    const price = basePrice + colorPrice + config.upsellTotal;
     
     const cartItem = {
       type: 'custom',
@@ -197,7 +192,6 @@ export default function CustomBuilder() {
       imageUrl: config.imageUrl,
       previewUrl: config.previewUrl,
       numColors: config.numColors,
-      shaveBorders: config.shaveBorders,
       upsells: config.upsells,
       price: price,
       name: `Custom Rug - ${selectedSize.label}`
@@ -215,8 +209,7 @@ export default function CustomBuilder() {
     const selectedSize = SIZES.find(s => s.value === config.size);
     const basePrice = selectedSize.price;
     const colorPrice = getColorPrice(config.size, config.numColors);
-    const borderPrice = config.shaveBorders ? getBorderPrice(config.size) : 0;
-    return basePrice + colorPrice + borderPrice + config.upsellTotal;
+    return basePrice + colorPrice + config.upsellTotal;
   };
 
   return (
@@ -497,8 +490,8 @@ export default function CustomBuilder() {
                     onSaveStencil={(stencilUrl) => {
                       setConfig(prev => ({ ...prev, previewUrl: stencilUrl }));
                     }}
-                    onConfigChange={({ colors, shaveBorders }) => {
-                      setConfig(prev => ({ ...prev, numColors: colors, shaveBorders }));
+                    onConfigChange={({ colors }) => {
+                      setConfig(prev => ({ ...prev, numColors: colors }));
                     }}
                   />
                 )}
@@ -561,12 +554,6 @@ export default function CustomBuilder() {
                       <div className="flex justify-between">
                         <span>{config.numColors} Colors:</span>
                         <span className="font-semibold">+${getColorPrice(config.size, config.numColors)}</span>
-                      </div>
-                    )}
-                    {config.shaveBorders && (
-                      <div className="flex justify-between">
-                        <span>Shaved Borders:</span>
-                        <span className="font-semibold">+${getBorderPrice(config.size)}</span>
                       </div>
                     )}
                   </div>
