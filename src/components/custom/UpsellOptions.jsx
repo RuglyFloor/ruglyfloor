@@ -200,6 +200,11 @@ export default function UpsellOptions({ size, baseColor, currentPreview, isGener
           </div>
           {expandedSections['colors'] && (
             <div className="px-4 pb-4 border-t pt-3 space-y-3">
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/e276df23a_Screenshot2026-01-09at122917.png"
+                alt="2 color example - 1 form with 2 colors"
+                className="w-full rounded-lg border bg-white p-4"
+              />
               <div>
                 <Label className="text-sm mb-2 block">Third Color (+${getAdditionalColorPrice(size)})</Label>
                 <div className="flex gap-2 flex-wrap">
