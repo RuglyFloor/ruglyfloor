@@ -14,6 +14,7 @@ import DesignLibrary from '../components/custom/DesignLibrary';
 import InteractiveRugPreview from '../components/custom/InteractiveRugPreview';
 
 const SIZES = [
+  { id: 'tiny', label: 'Tiny', value: 'tiny', price: 79, originalPrice: 99, measurement: '24x36' },
   { id: 'sm', label: 'Small', value: 'small', price: 200, originalPrice: 225, measurement: '4x6' },
   { id: 'md', label: 'Medium', value: 'medium', price: 300, originalPrice: 350, measurement: '5x7' },
   { id: 'lg', label: 'Large', value: 'large', price: 400, originalPrice: 450, measurement: '8x10' },
@@ -23,7 +24,7 @@ const SIZES = [
 
 const getColorPrice = (size, numColors) => {
   if (numColors === 2) return 0;
-  const sizeMap = { small: 0, medium: 50, large: 100, huge: 150, '4ft round': 0 };
+  const sizeMap = { tiny: 0, small: 0, medium: 50, large: 100, huge: 150, '4ft round': 0 };
   const sizeUpcharge = sizeMap[size] || 0;
   if (numColors === 3) return 49 + sizeUpcharge;
   if (numColors === 4) return (49 + sizeUpcharge) * 2;
@@ -33,7 +34,7 @@ const getColorPrice = (size, numColors) => {
 
 
 const get3DPrice = (size) => {
-  const sizeMap = { small: 200, medium: 250, large: 300, huge: 350, '4ft round': 200 };
+  const sizeMap = { tiny: 100, small: 200, medium: 250, large: 300, huge: 350, '4ft round': 200 };
   return sizeMap[size] || 200;
 };
 
