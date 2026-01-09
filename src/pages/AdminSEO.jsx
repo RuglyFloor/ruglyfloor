@@ -18,6 +18,14 @@ const PAGES = [
 ];
 
 export default function AdminSEO() {
+  return (
+    <AdminProtected>
+      <AdminSEOContent />
+    </AdminProtected>
+  );
+}
+
+function AdminSEOContent() {
   const [user, setUser] = useState(null);
   const [selectedPage, setSelectedPage] = useState(PAGES[0]);
   const [seoData, setSeoData] = useState({

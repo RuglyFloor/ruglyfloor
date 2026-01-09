@@ -151,19 +151,9 @@ export default function Layout({ children, currentPageName }) {
             <Link to={createPageUrl('Policies')} className="text-sm text-gray-400 hover:text-white transition-colors">
               Terms & Policies
             </Link>
-            {user?.role === 'admin' && (
-              <div className="flex gap-4 justify-center mt-2">
-                <Link to={createPageUrl('AdminDashboard')} className="text-sm text-gray-400 hover:text-white transition-colors">
-                  Admin
-                </Link>
-                <Link to={createPageUrl('ContentManager')} className="text-sm text-gray-400 hover:text-white transition-colors">
-                  Content
-                </Link>
-                <Link to={createPageUrl('AdminSEO')} className="text-sm text-gray-400 hover:text-white transition-colors">
-                  SEO
-                </Link>
-              </div>
-            )}
+            <Link to={createPageUrl('AdminLogin')} className="text-sm text-gray-400 hover:text-white transition-colors">
+              Admin
+            </Link>
           </div>
         </div>
       </footer>

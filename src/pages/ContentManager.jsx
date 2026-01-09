@@ -25,6 +25,14 @@ const CATEGORIES = [
 ];
 
 export default function ContentManager() {
+  return (
+    <AdminProtected>
+      <ContentManagerContent />
+    </AdminProtected>
+  );
+}
+
+function ContentManagerContent() {
   const queryClient = useQueryClient();
   const [user, setUser] = useState(null);
   const [editingContent, setEditingContent] = useState(null);

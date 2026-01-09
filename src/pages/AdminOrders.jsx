@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Package, Clock, Paintbrush, Truck, CheckCircle, XCircle, Mail } from 'lucide-react';
+import AdminProtected from '../components/AdminProtected';
 
 const STATUS_CONFIG = {
   pending: { label: 'Pending Payment', icon: Clock, color: 'text-gray-500' },
@@ -19,6 +20,14 @@ const STATUS_CONFIG = {
 };
 
 export default function AdminOrders() {
+  return (
+    <AdminProtected>
+      <AdminOrdersContent />
+    </AdminProtected>
+  );
+}
+
+function AdminOrdersContent() {
   const queryClient = useQueryClient();
   const [editingOrder, setEditingOrder] = useState(null);
   const [newStatus, setNewStatus] = useState('');
@@ -98,19 +107,6 @@ export default function AdminOrders() {
       console.error('Failed to send email:', error);
     }
   };
-
-  if (!user) return null;
-
-  if (user.role !== 'admin') {
-    return (
-      <div className="min-h-screen py-12 px-6">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-4">Access Denied</h2>
-          <p>This page is only accessible to administrators.</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen py-12 px-6 bg-gray-50">

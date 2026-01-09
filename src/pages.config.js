@@ -13,6 +13,8 @@ import Orders from './pages/Orders';
 import Policies from './pages/Policies';
 import Shop from './pages/Shop';
 import TrackOrder from './pages/TrackOrder';
+import AdminLogin from './pages/AdminLogin';
+import AdminPortal from './pages/AdminPortal';
 import __Layout from './Layout.jsx';
 
 
@@ -32,6 +34,8 @@ export const PAGES = {
     "Policies": Policies,
     "Shop": Shop,
     "TrackOrder": TrackOrder,
+    "AdminLogin": AdminLogin,
+    "AdminPortal": AdminPortal,
 }
 
 export const pagesConfig = {
