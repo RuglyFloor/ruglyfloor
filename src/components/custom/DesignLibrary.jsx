@@ -7,56 +7,74 @@ import { base44 } from '@/api/base44Client';
 
 const DESIGN_LIBRARY = [
   {
-    id: 'geometric-1',
-    name: 'Bold Circles',
-    category: 'geometric',
-    url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=400&fit=crop'
+    id: 'logo-1',
+    name: 'Pan Am',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/e2ca8e912_Screenshot2026-01-09at040505.png'
   },
   {
-    id: 'geometric-2',
-    name: 'Triangle Pattern',
-    category: 'geometric',
-    url: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=400&h=400&fit=crop'
+    id: 'logo-2',
+    name: 'DeLorean Motor Company',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/f4e63e07f_Screenshot2026-01-09at040817.png'
   },
   {
-    id: 'floral-1',
-    name: 'Rose Garden',
-    category: 'floral',
-    url: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400&h=400&fit=crop'
+    id: 'logo-3',
+    name: 'Detroit Electric',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/56017b581_Screenshot2026-01-09at041003.png'
   },
   {
-    id: 'floral-2',
-    name: 'Tropical Leaves',
-    category: 'floral',
-    url: 'https://images.unsplash.com/photo-1509587584298-0f3b3a3a1797?w=400&h=400&fit=crop'
+    id: 'logo-4',
+    name: 'Fight Club',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/ff29cb05f_Screenshot2026-01-09at041140.png'
   },
   {
-    id: 'abstract-1',
-    name: 'Paint Splash',
-    category: 'abstract',
-    url: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=400&fit=crop'
+    id: 'logo-5',
+    name: 'Bell Telephone',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/850c83557_Screenshot2026-01-09at041824.png'
   },
   {
-    id: 'abstract-2',
-    name: 'Brush Strokes',
-    category: 'abstract',
-    url: 'https://images.unsplash.com/photo-1515405295579-ba7b45403062?w=400&h=400&fit=crop'
+    id: 'logo-6',
+    name: 'Butterfinger',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/de4fad953_Screenshot2026-01-09at042027.png'
   },
   {
-    id: 'text-1',
-    name: 'Typography',
-    category: 'text',
-    url: 'https://images.unsplash.com/photo-1519791883288-dc8bd696e667?w=400&h=400&fit=crop'
+    id: 'logo-7',
+    name: 'Clark Bar',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/aac63a2ba_Screenshot2026-01-09at042153.png'
   },
   {
-    id: 'minimal-1',
-    name: 'Simple Lines',
-    category: 'minimal',
-    url: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&h=400&fit=crop'
+    id: 'logo-8',
+    name: 'Oh Henry!',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/31b8b1fe0_Screenshot2026-01-09at042252.png'
+  },
+  {
+    id: 'logo-9',
+    name: 'Atari',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/a109f3d28_Screenshot2026-01-09at042510.png'
+  },
+  {
+    id: 'logo-10',
+    name: 'Exol Motor Oil',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8b8f23d98_Screenshot2026-01-09at042755.png'
+  },
+  {
+    id: 'logo-11',
+    name: 'Texaco',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/2b095bbe6_Screenshot2026-01-09at042848.png'
   }
 ];
 
-const CATEGORIES = ['all', 'geometric', 'floral', 'abstract', 'text', 'minimal'];
+const CATEGORIES = ['all', 'vintage'];
 
 export default function DesignLibrary({ onSelectDesign }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
