@@ -64,7 +64,7 @@ const PAINT_COLORS = [
 export default function CustomBuilder() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
-  const [designMode, setDesignMode] = useState('upload'); // 'upload' or 'draw'
+  const [designMode, setDesignMode] = useState('draw'); // 'upload' or 'draw'
   const [config, setConfig] = useState({
     size: '',
     baseColor: '',
@@ -434,16 +434,6 @@ export default function CustomBuilder() {
                 {/* Mode Selection */}
                 <div className="grid md:grid-cols-2 gap-4 mb-6">
                   <button
-                    onClick={() => setDesignMode('upload')}
-                    className={`p-6 rounded-lg border-2 transition-all ${
-                      designMode === 'upload' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <Upload className="w-8 h-8 mx-auto mb-3 text-blue-600" />
-                    <div className="font-semibold text-lg mb-1">Upload & Convert</div>
-                    <div className="text-sm text-gray-600">Upload an image and convert to stencil</div>
-                  </button>
-                  <button
                     onClick={() => setDesignMode('draw')}
                     className={`p-6 rounded-lg border-2 transition-all ${
                       designMode === 'draw' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
@@ -452,6 +442,16 @@ export default function CustomBuilder() {
                     <Pencil className="w-8 h-8 mx-auto mb-3 text-blue-600" />
                     <div className="font-semibold text-lg mb-1">Draw Your Own</div>
                     <div className="text-sm text-gray-600">Create with our drawing tools</div>
+                  </button>
+                  <button
+                    onClick={() => setDesignMode('upload')}
+                    className={`p-6 rounded-lg border-2 transition-all ${
+                      designMode === 'upload' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <Upload className="w-8 h-8 mx-auto mb-3 text-blue-600" />
+                    <div className="font-semibold text-lg mb-1">Upload & Convert</div>
+                    <div className="text-sm text-gray-600">Upload an image and convert to stencil</div>
                   </button>
                 </div>
 
