@@ -281,7 +281,12 @@ export default function UpsellOptions({ size, baseColor, currentPreview, isGener
             </div>
           </div>
           {expandedSections['image'] && (
-            <div className="px-4 pb-4 border-t pt-3">
+            <div className="px-4 pb-4 border-t pt-3 space-y-3">
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/eda9d739c_Screenshot2026-01-09at115710.png"
+                alt="Second Design Layer Example"
+                className="w-full rounded-lg border"
+              />
               <Label htmlFor="second-image" className="cursor-pointer text-blue-600 hover:text-blue-700 flex items-center gap-2 text-sm">
                 <Upload className="w-4 h-4" />
                 {upsells.secondImageUrl ? 'Change Image' : 'Upload Image'}
