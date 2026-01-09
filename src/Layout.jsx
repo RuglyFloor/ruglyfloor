@@ -147,6 +147,11 @@ export default function Layout({ children, currentPageName }) {
           <p className="text-sm text-gray-400">www.ruglyfloor.com</p>
           <p className="text-sm text-gray-400">(517) 777-8474</p>
           <p className="text-sm text-gray-400 mt-4">Custom-painted rugs for spaces that inspire</p>
+          <div className="mt-6 pt-4 border-t border-gray-700">
+            <Link to={createPageUrl('Policies')} className="text-sm text-gray-400 hover:text-white transition-colors">
+              Terms & Policies
+            </Link>
+          </div>
         </div>
       </footer>
     </div>
