@@ -20,13 +20,8 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Shop Originals', page: 'Shop' },
     { name: 'Commission Design', page: 'Commission' },
     { name: 'About', page: 'About' },
-    { name: 'My Orders', page: 'Orders' },
-    ...(user?.role === 'admin' ? [
-      { name: 'Admin', page: 'AdminDashboard' },
-      { name: 'Content', page: 'ContentManager' },
-      { name: 'SEO', page: 'AdminSEO' }
-    ] : []),
-    { name: 'Blog', page: 'Blog' }
+    { name: 'Blog', page: 'Blog' },
+    { name: 'My Orders', page: 'Orders' }
   ];
 
   return (
@@ -152,10 +147,23 @@ export default function Layout({ children, currentPageName }) {
           <p className="text-sm text-gray-400">www.ruglyfloor.com</p>
           <p className="text-sm text-gray-400">(517) 777-8474</p>
           <p className="text-sm text-gray-400 mt-4">Custom-painted rugs for spaces that inspire</p>
-          <div className="mt-6 pt-4 border-t border-gray-700">
+          <div className="mt-6 pt-4 border-t border-gray-700 flex flex-col gap-2">
             <Link to={createPageUrl('Policies')} className="text-sm text-gray-400 hover:text-white transition-colors">
               Terms & Policies
             </Link>
+            {user?.role === 'admin' && (
+              <div className="flex gap-4 justify-center mt-2">
+                <Link to={createPageUrl('AdminDashboard')} className="text-sm text-gray-400 hover:text-white transition-colors">
+                  Admin
+                </Link>
+                <Link to={createPageUrl('ContentManager')} className="text-sm text-gray-400 hover:text-white transition-colors">
+                  Content
+                </Link>
+                <Link to={createPageUrl('AdminSEO')} className="text-sm text-gray-400 hover:text-white transition-colors">
+                  SEO
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </footer>
