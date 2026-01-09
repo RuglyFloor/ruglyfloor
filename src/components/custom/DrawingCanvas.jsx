@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Pencil, Eraser, Type, Square, Circle, Undo, Trash2, Save } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function DrawingCanvas({ onSaveDrawing }) {
   const canvasRef = useRef(null);
@@ -16,6 +17,19 @@ export default function DrawingCanvas({ onSaveDrawing }) {
   const [textInput, setTextInput] = useState('');
   const [showTextInput, setShowTextInput] = useState(false);
   const [textPosition, setTextPosition] = useState({ x: 0, y: 0 });
+  const [selectedFont, setSelectedFont] = useState('Allerta Stencil');
+
+  const STENCIL_FONTS = [
+    'Allerta Stencil',
+    'Big Shoulders Stencil Display',
+    'Saira Stencil One',
+    'Black Ops One',
+    'Wallpoet',
+    'Kenia',
+    'Plaster',
+    'Emblema One',
+    'Protest Guerrilla'
+  ];
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -91,7 +105,7 @@ export default function DrawingCanvas({ onSaveDrawing }) {
     
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    ctx.font = `bold ${brushSize * 5}px Arial`;
+    ctx.font = `bold ${brushSize * 5}px "${selectedFont}"`;
     ctx.fillStyle = color;
     ctx.fillText(textInput, textPosition.x, textPosition.y);
     
@@ -253,6 +267,25 @@ export default function DrawingCanvas({ onSaveDrawing }) {
               />
               <p className="text-xs text-gray-500 mt-1">Thicker lines work better for stencils</p>
             </div>
+
+            {/* Font Selector (for text tool) */}
+            {tool === 'text' && (
+              <div>
+                <Label className="mb-2 block">Text Font</Label>
+                <Select value={selectedFont} onValueChange={setSelectedFont}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {STENCIL_FONTS.map(font => (
+                      <SelectItem key={font} value={font} style={{ fontFamily: font }}>
+                        {font}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
             {/* Actions */}
             <div className="flex gap-2 pt-2">
