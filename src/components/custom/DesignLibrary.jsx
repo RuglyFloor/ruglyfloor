@@ -83,6 +83,30 @@ const DESIGN_LIBRARY = [
     name: 'Portrait 2',
     category: 'portrait',
     url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/bb9c2718a_image.png'
+  },
+  {
+    id: 'logo-12',
+    name: 'Chicago CTA',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/48665128e_image.png'
+  },
+  {
+    id: 'logo-13',
+    name: 'NYC Subway Times Square',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/476865fa1_Screenshot2026-01-09at124250.png'
+  },
+  {
+    id: 'logo-14',
+    name: 'Colorado Flag',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/345492b05_Screenshot2026-01-09at124339.png'
+  },
+  {
+    id: 'logo-15',
+    name: 'Great Lakes',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/440e289c0_image.png'
   }
 ];
 
