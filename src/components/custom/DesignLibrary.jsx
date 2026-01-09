@@ -107,6 +107,12 @@ const DESIGN_LIBRARY = [
     name: 'Great Lakes',
     category: 'vintage',
     url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/440e289c0_image.png'
+  },
+  {
+    id: 'logo-16',
+    name: 'CTA Transit Map',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/0a7d4f94a_Screenshot2026-01-09at153024.png'
   }
 ];
 
