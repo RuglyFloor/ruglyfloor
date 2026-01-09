@@ -3,13 +3,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Upload, CheckCircle, Loader2, Pencil } from 'lucide-react';
+import { Upload, CheckCircle, Loader2, Pencil, FileText } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import StencilCreator from '../components/custom/StencilCreator';
 import UpsellOptions from '../components/custom/UpsellOptions';
 import DrawingCanvas from '../components/custom/DrawingCanvas';
+import DesignLibrary from '../components/custom/DesignLibrary';
+import InteractiveRugPreview from '../components/custom/InteractiveRugPreview';
 
 const SIZES = [
   { id: 'sm', label: 'Small', value: 'small', price: 200, originalPrice: 225, measurement: '4x6' },
@@ -64,7 +66,7 @@ const PAINT_COLORS = [
 export default function CustomBuilder() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
-  const [designMode, setDesignMode] = useState('draw'); // 'upload' or 'draw'
+  const [designMode, setDesignMode] = useState('library'); // 'library', 'upload', or 'draw'
   const [config, setConfig] = useState({
     size: '',
     baseColor: '',
@@ -349,75 +351,85 @@ export default function CustomBuilder() {
           </div>
         )}
 
-        {/* Step 2: Color Selection */}
+        {/* Step 2: Color Selection with Live Preview */}
         {step === 2 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Step 2: Choose Colors</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div>
-                  <Label className="text-lg mb-3 block">Rug Base Color</Label>
-                  <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-                    {BASE_COLORS.map((color) => (
-                      <button
-                        key={color.name}
-                        onClick={() => setConfig(prev => ({ ...prev, baseColor: color.name }))}
-                        className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
-                          config.baseColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <div 
-                          className="w-12 h-12 rounded-full border-2 border-white shadow-md"
-                          style={{ backgroundColor: color.hex }}
-                        />
-                        <span className="text-xs text-center">{color.name}</span>
-                      </button>
-                    ))}
+          <div className="grid lg:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Step 2: Choose Colors</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div>
+                    <Label className="text-lg mb-3 block">Rug Base Color</Label>
+                    <div className="grid grid-cols-3 gap-4">
+                      {BASE_COLORS.map((color) => (
+                        <button
+                          key={color.name}
+                          onClick={() => setConfig(prev => ({ ...prev, baseColor: color.name }))}
+                          className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                            config.baseColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div 
+                            className="w-12 h-12 rounded-full border-2 border-white shadow-md"
+                            style={{ backgroundColor: color.hex }}
+                          />
+                          <span className="text-xs text-center">{color.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-lg mb-3 block">Paint Color for Design</Label>
+                    <div className="grid grid-cols-3 gap-4">
+                      {PAINT_COLORS.filter(color => {
+                        if (!config.baseColor) return true;
+                        const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
+                        if (!selectedBase) return true;
+                        return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
+                      }).map((color) => (
+                        <button
+                          key={color.name}
+                          onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
+                          className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                            config.paintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div 
+                            className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
+                            style={{ backgroundColor: color.hex }}
+                          />
+                          <span className="text-xs text-center">{color.name}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <Label className="text-lg mb-3 block">Paint Color for Design</Label>
-                  <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-                    {PAINT_COLORS.filter(color => {
-                      if (!config.baseColor) return true;
-                      const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
-                      if (!selectedBase) return true;
-                      // If base is light, show dark paints; if base is dark, show light paints
-                      return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
-                    }).map((color) => (
-                      <button
-                        key={color.name}
-                        onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
-                        className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
-                          config.paintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <div 
-                          className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
-                          style={{ backgroundColor: color.hex }}
-                        />
-                        <span className="text-xs text-center">{color.name}</span>
-                      </button>
-                    ))}
-                  </div>
+                <div className="flex gap-3 mt-6">
+                  <Button variant="outline" onClick={() => setStep(1)}>
+                    Back
+                  </Button>
+                  <Button 
+                    className="flex-1" 
+                    onClick={() => setStep(3)} 
+                    disabled={!config.baseColor || !config.paintColor}
+                  >
+                    Continue to Design
+                  </Button>
                 </div>
-              </div>
-              <div className="flex gap-3 mt-6">
-                <Button variant="outline" onClick={() => setStep(1)}>
-                  Back
-                </Button>
-                <Button 
-                  className="flex-1" 
-                  onClick={() => setStep(3)} 
-                  disabled={!config.baseColor || !config.paintColor}
-                >
-                  Continue to Design
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+            
+            {config.imageUrl && config.baseColor && (
+              <InteractiveRugPreview
+                designUrl={config.imageUrl}
+                baseColor={BASE_COLORS.find(c => c.name === config.baseColor)?.hex}
+                paintColor={PAINT_COLORS.find(c => c.name === config.paintColor)?.hex}
+                size={config.size}
+              />
+            )}
+          </div>
         )}
 
         {/* Step 3: Create Stencil Design */}
@@ -437,7 +449,17 @@ export default function CustomBuilder() {
             <CardContent>
               <div className="space-y-6">
                 {/* Mode Selection */}
-                <div className="grid md:grid-cols-2 gap-4 mb-6">
+                <div className="grid md:grid-cols-3 gap-4 mb-6">
+                  <button
+                    onClick={() => setDesignMode('library')}
+                    className={`p-6 rounded-lg border-2 transition-all ${
+                      designMode === 'library' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <FileText className="w-8 h-8 mx-auto mb-3 text-blue-600" />
+                    <div className="font-semibold text-lg mb-1">Design Library</div>
+                    <div className="text-sm text-gray-600">Choose from our collection</div>
+                  </button>
                   <button
                     onClick={() => setDesignMode('draw')}
                     className={`p-6 rounded-lg border-2 transition-all ${
@@ -459,6 +481,15 @@ export default function CustomBuilder() {
                     <div className="text-sm text-gray-600">Upload an image and convert to stencil</div>
                   </button>
                 </div>
+
+                {/* Design Library Mode */}
+                {designMode === 'library' && (
+                  <DesignLibrary
+                    onSelectDesign={(url) => {
+                      setConfig(prev => ({ ...prev, imageUrl: url }));
+                    }}
+                  />
+                )}
 
                 {/* Upload Mode */}
                 {designMode === 'upload' && (
