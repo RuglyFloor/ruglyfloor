@@ -5,6 +5,8 @@ import { createPageUrl } from '../utils';
 import { Palette, Sparkles, Package, CheckCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import SEOHead from '../components/seo/SEOHead';
+import { generateOrganizationSchema } from '../components/seo/SchemaGenerator';
 
 export default function Home() {
   const [currentProduct, setCurrentProduct] = useState(0);
@@ -33,6 +35,14 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Rugly Floor - Custom Hand-Painted Rugs | Personalized Carpet Designs"
+        description="Transform your space with custom hand-painted rugs. Design your own unique floor rug or browse our original collection. Free shipping on 2+ rugs. Order today!"
+        keywords={['custom rugs', 'hand-painted rugs', 'personalized carpet', 'custom floor rugs', 'painted rug designs', 'custom carpet art']}
+        url="/"
+        type="website"
+        schema={generateOrganizationSchema()}
+      />
       {/* Hero Section */}
       <section className="relative py-32 px-6 overflow-hidden">
         {/* Background Video */}
