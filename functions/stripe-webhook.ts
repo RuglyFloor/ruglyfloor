@@ -32,68 +32,49 @@ Deno.serve(async (req) => {
         const orderId = session.metadata?.order_id;
 
         if (orderId) {
-          // Generate serial number and estimated delivery
-          const serialNumber = `RUG-${Date.now()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
-          const estimatedDelivery = new Date();
-          estimatedDelivery.setDate(estimatedDelivery.getDate() + 21); // 3 weeks
-          const deliveryDate = estimatedDelivery.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-
-          // Update order status
-          await base44.asServiceRole.entities.Order.update(orderId, {
-            payment_status: 'paid',
-            status: 'rug_ordered',
-            notes: `Serial: ${serialNumber} | Est. Delivery: ${deliveryDate}`
-          });
-
           const order = (await base44.asServiceRole.entities.Order.filter({ id: orderId }))[0];
           
-          if (order && order.customer_email) {
-            const itemsList = order.items.map(item => 
-              `• ${item.name} - ${item.size} - $${item.price}`
-            ).join('\n');
-
-            // Send confirmation email
-            await base44.asServiceRole.integrations.Core.SendEmail({
-              to: order.customer_email,
-              subject: `Order Confirmed! Your Custom Rug is Being Created - Order #${order.order_number}`,
-              body: `
-🎨 Thank you for your Rugly order!
-
-Order Details:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Order Number: #${order.order_number}
-Serial Number: ${serialNumber}
-Status: Rug Ordered - Production Starting Soon
-
-Items:
-${itemsList}
-
-Total: $${order.total_amount}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-📅 Estimated Delivery: ${deliveryDate}
-
-Your custom rug journey:
-1. ✅ Order Confirmed - We're sourcing your base rug
-2. 🎨 In Production - Hand-painting begins
-3. 🖌️ Painting - Your design comes to life
-4. 📦 Shipped - On its way to you
-5. 🏠 Delivered - Enjoy your art for the floor!
-
-Track Your Order:
-You can check your order status anytime at www.ruglyfloor.com/orders
-
-Questions? Contact us at orders@ruglyfloor.com or call (517) 777-8474
-
-Thank you for choosing Rugly!
-- The Rugly Team
-
-www.ruglyfloor.com
-              `
+          if (order) {
+            // Check if returning customer
+            const previousOrders = await base44.asServiceRole.entities.Order.filter({ 
+              customer_email: order.customer_email 
             });
-          }
+            const isReturningCustomer = previousOrders.length > 1;
+            
+            // Calculate estimated completion (30 days)
+            const estimatedCompletion = new Date();
+            estimatedCompletion.setDate(estimatedCompletion.getDate() + 30);
 
-          console.log(`Order ${orderId} marked as paid with serial ${serialNumber}`);
+            // Update order status
+            await base44.asServiceRole.entities.Order.update(orderId, {
+              payment_status: 'paid',
+              status: 'rug_ordered',
+              estimated_completion: estimatedCompletion.toISOString(),
+              is_returning_customer: isReturningCustomer,
+              status_history: [
+                {
+                  status: 'rug_ordered',
+                  timestamp: new Date().toISOString(),
+                  note: 'Payment confirmed, rug ordered from supplier'
+                }
+              ]
+            });
+
+            // Send confirmation email via new function
+            await base44.asServiceRole.functions.invoke('sendOrderConfirmation', {
+              orderData: {
+                ...order,
+                estimated_completion: estimatedCompletion.toISOString()
+              }
+            });
+
+            // Notify business
+            await base44.asServiceRole.functions.invoke('notifyNewOrder', {
+              orderData: order
+            });
+
+            console.log(`Order ${orderId} confirmed. Returning customer: ${isReturningCustomer}`);
+          }
         }
         break;
       }

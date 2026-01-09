@@ -4,7 +4,8 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Package } from 'lucide-react';
+import { Package, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 
 const statusColors = {
@@ -114,6 +115,34 @@ export default function Orders() {
                       </p>
                     </div>
                   )}
+
+                  {order.tracking_number && (
+                    <div className="mt-4 p-3 bg-green-50 rounded-lg">
+                      <p className="text-sm font-semibold text-green-900 mb-1">📦 Tracking Information:</p>
+                      <p className="text-sm text-green-800 font-mono">{order.tracking_number}</p>
+                      {order.tracking_url && (
+                        <a 
+                          href={order.tracking_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-sm text-green-700 hover:text-green-900 font-semibold mt-2"
+                        >
+                          Track Package
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="mt-4">
+                    <Link 
+                      to={`/track?order=${order.order_number}`}
+                      className="text-blue-600 hover:text-blue-800 font-semibold text-sm inline-flex items-center gap-1"
+                    >
+                      View Detailed Tracking
+                      <ExternalLink className="w-3 h-3" />
+                    </Link>
+                  </div>
                 </CardContent>
               </Card>
             ))}
