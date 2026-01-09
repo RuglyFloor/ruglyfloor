@@ -35,15 +35,7 @@ const getSecondImagePrice = (size) => {
   return sizeMap[size] || 99;
 };
 
-const getBevelPrice = (size) => {
-  const sizeMap = { small: 150, medium: 200, large: 250, huge: 300, '4ft round': 150 };
-  return sizeMap[size] || 150;
-};
 
-const getBackgroundReliefPrice = (size) => {
-  const sizeMap = { small: 175, medium: 225, large: 275, huge: 325, '4ft round': 175 };
-  return sizeMap[size] || 175;
-};
 
 const getCarveOutPrice = (size) => {
   const sizeMap = { small: 125, medium: 175, large: 225, huge: 275, '4ft round': 125 };
@@ -56,8 +48,6 @@ export default function UpsellOptions({ size, baseColor, currentPreview, isGener
     thirdColor: '',
     fourthColor: '',
     secondImageUrl: '',
-    bevelLines: false,
-    backgroundRelief: false,
     carveOut: false
   });
   const [uploading, setUploading] = useState(false);
@@ -84,8 +74,6 @@ export default function UpsellOptions({ size, baseColor, currentPreview, isGener
     if (upsells.thirdColor) total += getAdditionalColorPrice(size);
     if (upsells.fourthColor) total += getAdditionalColorPrice(size);
     if (upsells.secondImageUrl) total += getSecondImagePrice(size);
-    if (upsells.bevelLines) total += getBevelPrice(size);
-    if (upsells.backgroundRelief) total += getBackgroundReliefPrice(size);
     if (upsells.carveOut) total += getCarveOutPrice(size);
     return total;
   };
@@ -298,80 +286,6 @@ export default function UpsellOptions({ size, baseColor, currentPreview, isGener
               {upsells.secondImageUrl && (
                 <img src={upsells.secondImageUrl} alt="Second design" className="w-full h-24 object-cover rounded-lg mt-2" />
               )}
-            </div>
-          )}
-        </div>
-
-        {/* Beveled Lines */}
-        <div className="border-2 rounded-lg overflow-hidden bg-white">
-          <div className="flex items-center justify-between p-4">
-            <div className="flex items-center gap-3">
-              <Checkbox
-                checked={upsells.bevelLines}
-                onCheckedChange={(checked) => {
-                  handleUpsellChange({ bevelLines: checked });
-                  if (checked) toggleSection('bevel');
-                }}
-              />
-              <div>
-                <div className="font-semibold">Beveled Lines</div>
-                <div className="text-xs text-gray-600">Raised edges with depth</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-blue-600">+${getBevelPrice(size)}</span>
-              <button 
-                onClick={() => toggleSection('bevel')}
-                className="p-1 hover:bg-gray-100 rounded"
-              >
-                <ChevronDown className={`w-4 h-4 transition-transform ${expandedSections['bevel'] ? 'rotate-180' : ''}`} />
-              </button>
-            </div>
-          </div>
-          {expandedSections['bevel'] && (
-            <div className="px-4 pb-4 border-t">
-              <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg"
-                alt="Beveled Lines"
-                className="w-full h-32 object-cover rounded-lg mt-3"
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Background Relief */}
-        <div className="border-2 rounded-lg overflow-hidden bg-white">
-          <div className="flex items-center justify-between p-4">
-            <div className="flex items-center gap-3">
-              <Checkbox
-                checked={upsells.backgroundRelief}
-                onCheckedChange={(checked) => {
-                  handleUpsellChange({ backgroundRelief: checked });
-                  if (checked) toggleSection('relief');
-                }}
-              />
-              <div>
-                <div className="font-semibold">Background Relief</div>
-                <div className="text-xs text-gray-600">Textured pop-out effect</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-semibold text-blue-600">+${getBackgroundReliefPrice(size)}</span>
-              <button 
-                onClick={() => toggleSection('relief')}
-                className="p-1 hover:bg-gray-100 rounded"
-              >
-                <ChevronDown className={`w-4 h-4 transition-transform ${expandedSections['relief'] ? 'rotate-180' : ''}`} />
-              </button>
-            </div>
-          </div>
-          {expandedSections['relief'] && (
-            <div className="px-4 pb-4 border-t">
-              <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png"
-                alt="Background Relief"
-                className="w-full h-32 object-cover rounded-lg mt-3"
-              />
             </div>
           )}
         </div>
