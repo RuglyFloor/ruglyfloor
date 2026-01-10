@@ -31,6 +31,11 @@ const getColorPrice = (size, numColors) => {
   return 0;
 };
 
+const getSecondShadePrice = (size) => {
+  const sizeMap = { tiny: 39, small: 69, medium: 99, large: 129, huge: 159, '4ft round': 69 };
+  return sizeMap[size] || 39;
+};
+
 
 
 const get3DPrice = (size) => {
@@ -191,7 +196,8 @@ export default function CustomBuilder() {
     const selectedSize = SIZES.find(s => s.value === config.size);
     const basePrice = selectedSize.price;
     const colorPrice = getColorPrice(config.size, config.numColors);
-    const price = basePrice + colorPrice + config.upsellTotal;
+    const secondShadePrice = config.useSecondShade ? getSecondShadePrice(config.size) : 0;
+    const price = basePrice + colorPrice + secondShadePrice + config.upsellTotal;
     
     const cartItem = {
       type: 'custom',
@@ -218,7 +224,8 @@ export default function CustomBuilder() {
     const selectedSize = SIZES.find(s => s.value === config.size);
     const basePrice = selectedSize.price;
     const colorPrice = getColorPrice(config.size, config.numColors);
-    return basePrice + colorPrice + config.upsellTotal;
+    const secondShadePrice = config.useSecondShade ? getSecondShadePrice(config.size) : 0;
+    return basePrice + colorPrice + secondShadePrice + config.upsellTotal;
   };
 
   return (
@@ -623,6 +630,12 @@ export default function CustomBuilder() {
                       <div className="flex justify-between">
                         <span>{config.numColors} Colors:</span>
                         <span className="font-semibold">+${getColorPrice(config.size, config.numColors)}</span>
+                      </div>
+                    )}
+                    {config.useSecondShade && (
+                      <div className="flex justify-between">
+                        <span>2nd Shade:</span>
+                        <span className="font-semibold">+${getSecondShadePrice(config.size)}</span>
                       </div>
                     )}
                   </div>
