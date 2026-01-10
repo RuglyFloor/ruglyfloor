@@ -424,7 +424,7 @@ export default function CustomBuilder() {
 
                     {/* Second Set - Universal colors */}
                     <div className="mb-4">
-                      <p className="text-xs text-gray-600 mb-2 font-semibold">Universal Colors</p>
+                      <p className="text-xs text-gray-600 mb-2 font-semibold">2nd Color</p>
                       <div className="grid grid-cols-3 gap-4">
                         {PAINT_COLORS.filter(color => color.type === 'both').map((color, idx) => (
                           <button
