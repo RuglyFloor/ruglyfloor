@@ -48,6 +48,7 @@ export default function Layout({ children, currentPageName }) {
           --font-display: 'Boldonse', sans-serif;
           --font-serif: 'Kameron', serif;
           --font-script: 'Qwitcher Grypen', cursive;
+          --font-button: 'Big Shoulders Stencil Display', sans-serif;
         }
         
         body {
@@ -56,6 +57,12 @@ export default function Layout({ children, currentPageName }) {
         
         h1, h2, h3, h4, h5, h6 {
           font-family: var(--font-heading);
+        }
+
+        button, .btn, [role="button"] {
+          font-family: var(--font-button);
+          font-weight: 700;
+          letter-spacing: 0.5px;
         }
         
         /* Custom primary color classes */
