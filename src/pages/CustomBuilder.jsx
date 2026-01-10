@@ -81,6 +81,7 @@ export default function CustomBuilder() {
     previewUrl: '',
     is3D: false,
     numColors: 2,
+    useSecondShade: false,
     upsells: {
       is3D: false,
       thirdColor: '',
@@ -383,33 +384,80 @@ export default function CustomBuilder() {
                   </div>
                   <div>
                     <Label className="text-lg mb-3 block">Paint Color for Design</Label>
-                    <div className="grid grid-cols-3 gap-4">
-                      {PAINT_COLORS.filter(color => {
-                        if (!config.baseColor) return true;
-                        const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
-                        if (!selectedBase) return true;
+                    
+                    {/* First Set - Base-specific colors */}
+                    <div className="mb-3">
+                      <p className="text-xs text-gray-600 mb-2 font-semibold">Primary Colors</p>
+                      <div className="grid grid-cols-3 gap-4">
+                        {PAINT_COLORS.filter(color => {
+                          if (!config.baseColor) return color.type === 'dark';
+                          const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
+                          if (!selectedBase) return color.type === 'dark';
+                          return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
+                        }).map((color) => (
+                          <button
+                            key={`primary-${color.name}-${color.hex}`}
+                            onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
+                            className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                              config.paintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                            }`}
+                          >
+                            <div 
+                              className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
+                              style={{ backgroundColor: color.hex }}
+                            />
+                            <span className="text-xs text-center">{color.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
 
-                        // 'both' type works with any base
-                        if (color.type === 'both') return true;
+                    {/* Separator */}
+                    <div className="relative my-4">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-gray-300"></div>
+                      </div>
+                      <div className="relative flex justify-center">
+                        <span className="bg-white px-3 text-xs text-gray-500">Works with any base color</span>
+                      </div>
+                    </div>
 
-                        // 'dark' colors only work with light bases
-                        // 'light' colors only work with dark bases
-                        return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
-                      }).map((color) => (
-                        <button
-                          key={color.name}
-                          onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
-                          className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
-                            config.paintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                        >
-                          <div 
-                            className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
-                            style={{ backgroundColor: color.hex }}
-                          />
-                          <span className="text-xs text-center">{color.name}</span>
-                        </button>
-                      ))}
+                    {/* Second Set - Universal colors */}
+                    <div className="mb-4">
+                      <p className="text-xs text-gray-600 mb-2 font-semibold">Universal Colors</p>
+                      <div className="grid grid-cols-3 gap-4">
+                        {PAINT_COLORS.filter(color => color.type === 'both').map((color, idx) => (
+                          <button
+                            key={`both-${color.name}-${color.hex}-${idx}`}
+                            onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
+                            className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                              config.paintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                            }`}
+                          >
+                            <div 
+                              className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
+                              style={{ backgroundColor: color.hex }}
+                            />
+                            <span className="text-xs text-center">{color.name}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Second Shade Checkbox */}
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <label className="flex items-start gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={config.useSecondShade}
+                          onChange={(e) => setConfig(prev => ({ ...prev, useSecondShade: e.target.checked }))}
+                          className="mt-1 w-4 h-4 text-blue-600 rounded"
+                        />
+                        <div>
+                          <div className="font-semibold text-sm text-gray-900">Use a 2nd shade for better definition</div>
+                          <div className="text-xs text-gray-600">Recommended for images of people, places, etc.</div>
+                        </div>
+                      </label>
                     </div>
                   </div>
                 </div>
