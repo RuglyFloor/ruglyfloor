@@ -49,21 +49,22 @@ const BASE_COLORS = [
 
 const PAINT_COLORS = [
   // First set - Only for light base rugs
-  { name: 'Bright Red', hex: '#e31e24', type: 'dark' },
-  { name: 'Navy Blue', hex: '#1c3664', type: 'dark' },
-  { name: 'Bright Green', hex: '#00a651', type: 'dark' },
-  { name: 'Magenta', hex: '#c71585', type: 'dark' },
-  { name: 'Black', hex: '#000000', type: 'dark' },
   { name: 'Sun Yellow', hex: '#ffd700', type: 'dark' },
   { name: 'Bright Orange', hex: '#ff4500', type: 'dark' },
-  { name: 'Hot Pink', hex: '#ff1493', type: 'dark' },
+  { name: 'Brilliant Red', hex: '#dc143c', type: 'dark' },
+  { name: 'Violet', hex: '#7851a9', type: 'dark' },
+  { name: 'Azure Blue', hex: '#2e5090', type: 'dark' },
+  { name: 'Bright Green', hex: '#00a651', type: 'dark' },
+  { name: 'Black', hex: '#000000', type: 'dark' },
+  { name: 'White', hex: '#ffffff', type: 'dark' },
   // Second set - Works with both light and dark base rugs
-  { name: 'Tangerine', hex: '#ff6347', type: 'both' },
-  { name: 'Brilliant Red', hex: '#dc143c', type: 'both' },
-  { name: 'Violet', hex: '#7851a9', type: 'both' },
-  { name: 'Azure Blue', hex: '#2e5090', type: 'both' },
-  { name: 'Lime Green', hex: '#32cd32', type: 'both' },
-  { name: 'Charcoal', hex: '#36454f', type: 'both' },
+  { name: 'Emerald Green', hex: '#046307', type: 'both' },
+  { name: 'Brilliant Red', hex: '#c8102e', type: 'both' },
+  { name: 'Violet', hex: '#5b3a70', type: 'both' },
+  { name: 'Dioxazine Purple', hex: '#1c0d82', type: 'both' },
+  { name: 'Black', hex: '#000000', type: 'both' },
+  { name: 'Hansa Yellow', hex: '#ffd300', type: 'both' },
+  { name: 'Vermillion Orange', hex: '#ff4500', type: 'both' },
   { name: 'White', hex: '#ffffff', type: 'both' }
 ];
 
