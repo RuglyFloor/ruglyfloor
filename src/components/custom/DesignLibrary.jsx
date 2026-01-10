@@ -147,7 +147,7 @@ export default function DesignLibrary({ onSelectDesign }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Choose a Design</CardTitle>
+        <CardTitle>Inspiration; Choose from ideas</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex gap-2">
