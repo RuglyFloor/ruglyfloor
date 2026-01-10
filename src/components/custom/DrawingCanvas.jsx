@@ -7,18 +7,18 @@ import { Slider } from '@/components/ui/slider';
 import { Pencil, Eraser, Type, Square, Circle, Undo, Trash2, Save } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export default function DrawingCanvas({ onSaveDrawing, onColorCountChange }) {
+export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, initialColor = '#000000' }) {
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [tool, setTool] = useState('pen'); // pen, eraser, text, rectangle, circle
-  const [color, setColor] = useState('#000000');
+  const [color, setColor] = useState(initialColor);
   const [brushSize, setBrushSize] = useState(15);
   const [history, setHistory] = useState([]);
   const [textInput, setTextInput] = useState('');
   const [showTextInput, setShowTextInput] = useState(false);
   const [textPosition, setTextPosition] = useState({ x: 0, y: 0 });
   const [selectedFont, setSelectedFont] = useState('Allerta Stencil');
-  const [usedColors, setUsedColors] = useState(new Set(['#000000']));
+  const [usedColors, setUsedColors] = useState(new Set([initialColor]));
 
   const STENCIL_FONTS = [
     'Allerta Stencil',

@@ -517,6 +517,7 @@ export default function CustomBuilder() {
                     onColorCountChange={(count) => {
                       setConfig(prev => ({ ...prev, numColors: count }));
                     }}
+                    initialColor={PAINT_COLORS.find(c => c.name === config.paintColor)?.hex || '#000000'}
                   />
                 )}
 
