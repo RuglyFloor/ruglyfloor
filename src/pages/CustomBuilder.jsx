@@ -58,13 +58,12 @@ const PAINT_COLORS = [
   { name: 'Bright Orange', hex: '#ff4500', type: 'dark' },
   { name: 'Hot Pink', hex: '#ff1493', type: 'dark' },
   // Second set - Works with both light and dark base rugs
-  { name: 'Sun Yellow', hex: '#ffd700', type: 'both' },
-  { name: 'Bright Orange', hex: '#ff6347', type: 'both' },
+  { name: 'Tangerine', hex: '#ff6347', type: 'both' },
   { name: 'Brilliant Red', hex: '#dc143c', type: 'both' },
   { name: 'Violet', hex: '#7851a9', type: 'both' },
   { name: 'Azure Blue', hex: '#2e5090', type: 'both' },
-  { name: 'Bright Green', hex: '#00a651', type: 'both' },
-  { name: 'Black', hex: '#000000', type: 'both' },
+  { name: 'Lime Green', hex: '#32cd32', type: 'both' },
+  { name: 'Charcoal', hex: '#36454f', type: 'both' },
   { name: 'White', hex: '#ffffff', type: 'both' }
 ];
 
