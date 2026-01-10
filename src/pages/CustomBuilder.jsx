@@ -14,7 +14,7 @@ import DesignLibrary from '../components/custom/DesignLibrary';
 import InteractiveRugPreview from '../components/custom/InteractiveRugPreview';
 
 const SIZES = [
-  { id: 'tiny', label: 'Tiny', value: 'tiny', price: 79, originalPrice: 99, measurement: '24x36' },
+  { id: 'tiny', label: 'Tiny', value: 'tiny', price: 79, originalPrice: 99, measurement: '2x3' },
   { id: 'sm', label: 'Small', value: 'small', price: 200, originalPrice: 225, measurement: '4x6' },
   { id: 'md', label: 'Medium', value: 'medium', price: 300, originalPrice: 350, measurement: '5x7' },
   { id: 'lg', label: 'Large', value: 'large', price: 400, originalPrice: 450, measurement: '8x10' },
