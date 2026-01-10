@@ -49,7 +49,9 @@ const BASE_COLORS = [
   { name: 'White', hex: '#ffffff', type: 'light' },
   { name: 'Burnt Orange', hex: '#cc5500', type: 'dark' },
   { name: 'Grey', hex: '#9ca3af', type: 'light' },
-  { name: 'Green', hex: '#86cb92', type: 'light' }
+  { name: 'Green', hex: '#86cb92', type: 'light' },
+  { name: 'Tan', hex: '#d2b48c', type: 'light' },
+  { name: 'Khaki', hex: '#c3b091', type: 'light' }
 ];
 
 const PAINT_COLORS = [
