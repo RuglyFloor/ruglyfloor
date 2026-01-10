@@ -71,7 +71,7 @@ const PAINT_COLORS = [
 export default function CustomBuilder() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
-  const [designMode, setDesignMode] = useState('library'); // 'library', 'upload', or 'draw'
+  const [designMode, setDesignMode] = useState('draw'); // 'library', 'upload', or 'draw'
   const [config, setConfig] = useState({
     size: '',
     baseColor: '',
