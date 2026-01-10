@@ -7,7 +7,7 @@ import { Slider } from '@/components/ui/slider';
 import { Pencil, Eraser, Type, Square, Circle, Undo, Trash2, Save } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, initialColor = '#000000' }) {
+export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, initialColor = '#000000', size = 'small' }) {
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [tool, setTool] = useState('pen'); // pen, eraser, text, rectangle, circle
@@ -273,9 +273,44 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, initi
                 </div>
               </div>
               {usedColors.size > 2 && (
-                <p className="text-xs text-blue-600 mt-1">
-                  Additional color charges will be applied
-                </p>
+                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm font-semibold text-blue-900 mb-1">Color Charges:</p>
+                  <div className="text-xs text-gray-700 space-y-1">
+                    {usedColors.size >= 3 && (
+                      <div className="flex justify-between">
+                        <span>3rd color:</span>
+                        <span className="font-semibold">+${(() => {
+                          const sizeMap = { tiny: 39, small: 69, medium: 99, large: 129, huge: 159, '4ft round': 69 };
+                          return sizeMap[size] || 39;
+                        })()}</span>
+                      </div>
+                    )}
+                    {usedColors.size >= 4 && (
+                      <div className="flex justify-between">
+                        <span>4th color:</span>
+                        <span className="font-semibold">+${(() => {
+                          const sizeMap = { tiny: 39, small: 69, medium: 99, large: 129, huge: 159, '4ft round': 69 };
+                          return sizeMap[size] || 39;
+                        })()}</span>
+                      </div>
+                    )}
+                    {usedColors.size > 4 && (
+                      <p className="text-red-600 font-semibold mt-1">Note: 4 colors maximum</p>
+                    )}
+                    {usedColors.size <= 4 && (
+                      <div className="flex justify-between pt-1 mt-1 border-t border-blue-300">
+                        <span className="font-semibold">Total Color Charges:</span>
+                        <span className="font-bold text-blue-600">+${(() => {
+                          const sizeMap = { tiny: 39, small: 69, medium: 99, large: 129, huge: 159, '4ft round': 69 };
+                          const basePrice = sizeMap[size] || 39;
+                          if (usedColors.size === 3) return basePrice;
+                          if (usedColors.size >= 4) return basePrice * 2;
+                          return 0;
+                        })()}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               )}
             </div>
 
