@@ -373,7 +373,7 @@ export default function CustomBuilder() {
                 <div className="space-y-6">
                   <div>
                     <Label className="text-lg mb-3 block">Rug Base Color</Label>
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-4 gap-4">
                       {BASE_COLORS.map((color) => (
                         <button
                           key={color.name}
