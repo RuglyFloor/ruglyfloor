@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Sparkles, Search, FileText, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import SEOAnalyzer from '../components/seo/SEOAnalyzer';
+import AdminProtected from '../components/AdminProtected';
 
 const PAGES = [
   { name: 'Home', path: '/', description: 'Main landing page showcasing custom painted rugs' },

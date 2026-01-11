@@ -15,6 +15,7 @@ import VersionHistory from '../components/cms/VersionHistory';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
+import AdminProtected from '../components/AdminProtected';
 
 const CATEGORIES = [
   { value: 'blog', label: 'Blog Post' },
