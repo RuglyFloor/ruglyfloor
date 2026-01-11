@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
-import { ShoppingCart, Menu, X, Facebook, Instagram, Twitter, Mail } from 'lucide-react';
+import { ShoppingCart, Menu, X, Facebook, Instagram, Twitter, Mail, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 
@@ -157,14 +157,17 @@ export default function Layout({ children, currentPageName }) {
 
           {/* Social Media Links */}
           <div className="flex justify-center gap-4 mt-6">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+            <a href="https://facebook.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
               <Facebook className="w-6 h-6" />
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+            <a href="https://instagram.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
               <Instagram className="w-6 h-6" />
             </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+            <a href="https://twitter.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
               <Twitter className="w-6 h-6" />
+            </a>
+            <a href="https://tiktok.com/@ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+              <Video className="w-6 h-6" />
             </a>
             <a href="mailto:contact@ruglyfloor.com" className="text-gray-400 hover:text-white transition-colors">
               <Mail className="w-6 h-6" />
