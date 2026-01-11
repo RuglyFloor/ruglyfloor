@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
-import { ShoppingCart, Menu, X } from 'lucide-react';
+import { ShoppingCart, Menu, X, Facebook, Instagram, Twitter, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 
@@ -154,6 +154,23 @@ export default function Layout({ children, currentPageName }) {
           <p className="text-sm text-gray-400">www.ruglyfloor.com</p>
           <p className="text-sm text-gray-400">(517) 777-8474</p>
           <p className="text-sm text-gray-400 mt-4">Custom-painted rugs for spaces that inspire</p>
+
+          {/* Social Media Links */}
+          <div className="flex justify-center gap-4 mt-6">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+              <Facebook className="w-6 h-6" />
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+              <Instagram className="w-6 h-6" />
+            </a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
+              <Twitter className="w-6 h-6" />
+            </a>
+            <a href="mailto:contact@ruglyfloor.com" className="text-gray-400 hover:text-white transition-colors">
+              <Mail className="w-6 h-6" />
+            </a>
+          </div>
+
           <div className="mt-6 pt-4 border-t border-gray-700 flex flex-col gap-2">
             <Link to={createPageUrl('Policies')} className="text-sm text-gray-400 hover:text-white transition-colors">
               Terms & Policies
