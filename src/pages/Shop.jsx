@@ -63,57 +63,61 @@ export default function Shop() {
         ) : (
           <div className="grid md:grid-cols-3 gap-6">
             {products.map((product) => {
-              const [selectedImage, setSelectedImage] = React.useState(0);
-              const allImages = [
-                product.image_url,
-                ...(product.images || [])
-              ].filter(Boolean);
-              
-              return (
-                <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="aspect-square bg-gray-100 relative">
-                    {allImages.length > 0 && (
-                      <>
-                        <img 
-                          src={allImages[selectedImage]} 
-                          alt={product.name} 
-                          className="w-full h-full object-cover"
-                        />
-                        {allImages.length > 1 && (
-                          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/50 px-2 py-1.5 rounded-full">
-                            {allImages.map((_, idx) => (
-                              <button
-                                key={idx}
-                                onClick={() => setSelectedImage(idx)}
-                                className={`w-2 h-2 rounded-full transition-all ${
-                                  idx === selectedImage ? 'bg-white w-4' : 'bg-white/50 hover:bg-white/75'
-                                }`}
-                              />
-                            ))}
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                  <CardContent className="p-4">
-                    <h3 className="text-xl font-bold mb-2">{product.name}</h3>
-                    <p className="text-gray-600 text-sm mb-2">{product.description}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-500">{product.size}</span>
-                      <span className="text-2xl font-bold text-blue-600">${product.price}</span>
+              const ProductCard = () => {
+                const [selectedImage, setSelectedImage] = React.useState(0);
+                const allImages = [
+                  product.image_url,
+                  ...(product.images || [])
+                ].filter(Boolean);
+                
+                return (
+                  <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+                    <div className="aspect-square bg-gray-100 relative">
+                      {allImages.length > 0 && (
+                        <>
+                          <img 
+                            src={allImages[selectedImage]} 
+                            alt={product.name} 
+                            className="w-full h-full object-cover"
+                          />
+                          {allImages.length > 1 && (
+                            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5 bg-black/50 px-2 py-1.5 rounded-full">
+                              {allImages.map((_, idx) => (
+                                <button
+                                  key={idx}
+                                  onClick={() => setSelectedImage(idx)}
+                                  className={`w-2 h-2 rounded-full transition-all ${
+                                    idx === selectedImage ? 'bg-white w-4' : 'bg-white/50 hover:bg-white/75'
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          )}
+                        </>
+                      )}
                     </div>
-                  </CardContent>
-                  <CardFooter className="p-4 pt-0">
-                    <Button 
-                      className="w-full bg-blue-600 hover:bg-blue-700"
-                      onClick={() => addToCart(product)}
-                    >
-                      <ShoppingCart className="w-4 h-4 mr-2" />
-                      Add to Cart
-                    </Button>
-                  </CardFooter>
-                </Card>
-              );
+                    <CardContent className="p-4">
+                      <h3 className="text-xl font-bold mb-2">{product.name}</h3>
+                      <p className="text-gray-600 text-sm mb-2">{product.description}</p>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-500">{product.size}</span>
+                        <span className="text-2xl font-bold text-blue-600">${product.price}</span>
+                      </div>
+                    </CardContent>
+                    <CardFooter className="p-4 pt-0">
+                      <Button 
+                        className="w-full bg-blue-600 hover:bg-blue-700"
+                        onClick={() => addToCart(product)}
+                      >
+                        <ShoppingCart className="w-4 h-4 mr-2" />
+                        Add to Cart
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                );
+              };
+              
+              return <ProductCard key={product.id} />;
             })}
           </div>
         )}
