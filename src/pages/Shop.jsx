@@ -38,9 +38,9 @@ export default function Shop() {
   return (
     <div className="min-h-screen py-12 px-6">
       <SEOHead
-        title="Rugly Floors - Shop Originals"
-        description="Browse our collection of original hand-painted rugs. Unique, one-of-a-kind designs starting at $700. Shop now and transform your space."
-        keywords={['buy custom rug', 'original hand painted rugs', 'unique floor rugs', 'shop rugly']}
+        title="Hand-Painted Rugs for Sale | Original Custom Area Rugs & Floor Art"
+        description="Buy custom hand-painted rugs online. Shop original bespoke area rugs, unique hand-painted home decor, and one-of-a-kind statement rugs. Best custom rug designers, ready to ship."
+        keywords={['hand-painted rugs for sale', 'buy custom hand-painted rugs', 'bespoke hand-painted area rugs', 'unique hand-painted home decor', 'best custom rug designers', 'one-of-a-kind hand-painted statement rugs', 'durable hand-painted rug brands', 'artistic area rugs for modern homes']}
         url="/shop"
       />
       <div className="max-w-7xl mx-auto">

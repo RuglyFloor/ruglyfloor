@@ -36,9 +36,9 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <SEOHead
-        title="Rugly Floors - Custom Hand-Painted Rugs | Personalized Carpet Designs"
-        description="Transform your space with custom hand-painted rugs. Design your own unique floor rug or browse our original collection. Free shipping on 2+ rugs. Order today!"
-        keywords={['custom rugs', 'hand-painted rugs', 'personalized carpet', 'custom floor rugs', 'painted rug designs', 'custom carpet art']}
+        title="Buy Custom Hand-Painted Rugs | Bespoke Area Rugs & Personalized Floor Art"
+        description="Shop custom hand-painted rugs for sale. Commission bespoke rug designs, personalized floor art, and unique hand-painted home decor. Luxury hand-painted carpet designs for modern homes and interior designers."
+        keywords={['buy custom hand-painted rugs', 'bespoke hand-painted area rugs', 'commission custom rug design', 'hand-painted rugs for sale', 'personalized floor art rugs', 'unique hand-painted home decor', 'luxury hand-painted carpet designs', 'artistic area rugs for modern homes', 'custom painted washable rugs']}
         url="/"
         type="website"
         schema={generateOrganizationSchema()}
