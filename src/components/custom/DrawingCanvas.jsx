@@ -180,6 +180,14 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, initi
 
   const saveDrawing = async () => {
     const canvas = canvasRef.current;
+    
+    // Download to user's machine
+    const link = document.createElement('a');
+    link.download = 'rugly-custom-drawing.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    
+    // Also save for preview
     canvas.toBlob(async (blob) => {
       const file = new File([blob], 'drawing.png', { type: 'image/png' });
       onSaveDrawing(file);

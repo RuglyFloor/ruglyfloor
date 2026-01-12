@@ -201,6 +201,14 @@ export default function StencilCreator({ onSaveStencil, onConfigChange }) {
 
   const handleSave = () => {
     if (!canvasRef.current) return;
+    
+    // Download to user's machine
+    const link = document.createElement('a');
+    link.download = 'rugly-stencil-design.png';
+    link.href = canvasRef.current.toDataURL('image/png');
+    link.click();
+    
+    // Also save for preview
     const imageUrl = canvasRef.current.toDataURL();
     onSaveStencil && onSaveStencil(imageUrl);
   };
