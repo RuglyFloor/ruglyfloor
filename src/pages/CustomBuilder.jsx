@@ -289,7 +289,10 @@ export default function CustomBuilder() {
               {SIZES.map((size) => (
                 <button
                   key={size.id}
-                  onClick={() => setConfig(prev => ({ ...prev, size: size.value }))}
+                  onClick={() => {
+                    setConfig(prev => ({ ...prev, size: size.value }));
+                    setStep(2);
+                  }}
                   className={`group relative overflow-hidden rounded-2xl transition-all duration-300 ${
                     config.size === size.value 
                       ? 'ring-4 ring-blue-500 shadow-2xl scale-105' 
@@ -356,16 +359,7 @@ export default function CustomBuilder() {
               ))}
             </div>
 
-            <div className="text-center mt-8">
-              <Button 
-                size="lg"
-                className="px-12 py-6 text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg" 
-                onClick={() => setStep(2)} 
-                disabled={!config.size}
-              >
-                {config.size ? '✨ Continue to Colors' : 'Choose a size to continue'}
-              </Button>
-            </div>
+
           </div>
         )}
 
