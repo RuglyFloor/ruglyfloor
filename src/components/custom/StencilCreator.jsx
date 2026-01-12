@@ -19,7 +19,6 @@ export default function StencilCreator({ onSaveStencil, onConfigChange }) {
   const [threshold, setThreshold] = useState(128);
   const [selectedColor, setSelectedColor] = useState(PAINT_COLORS[0]);
   const [colors, setColors] = useState(2);
-  const [shaveBorders, setShaveBorders] = useState(false);
   
   const blur = 5; // Always at max
   
@@ -43,9 +42,9 @@ export default function StencilCreator({ onSaveStencil, onConfigChange }) {
 
   useEffect(() => {
     if (onConfigChange) {
-      onConfigChange({ colors, shaveBorders });
+      onConfigChange({ colors });
     }
-  }, [colors, shaveBorders, onConfigChange]);
+  }, [colors, onConfigChange]);
 
   useEffect(() => {
     if (!originalImage || !canvasRef.current) return;
@@ -195,7 +194,6 @@ export default function StencilCreator({ onSaveStencil, onConfigChange }) {
     setOriginalImage(null);
     setThreshold(128);
     setColors(2);
-    setShaveBorders(false);
     setSelectedColor(PAINT_COLORS[0]);
   };
 
@@ -327,32 +325,7 @@ export default function StencilCreator({ onSaveStencil, onConfigChange }) {
               </CardContent>
             </Card>
 
-            {/* Border Shaving */}
-            <Card>
-              <CardContent className="p-4">
-                <button
-                  type="button"
-                  onClick={() => setShaveBorders(!shaveBorders)}
-                  className={`w-full p-3 rounded-lg border-2 transition-all text-left ${
-                    shaveBorders
-                      ? 'border-blue-600 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-400'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <div className="font-bold text-sm">Shave Borders</div>
-                      <div className="text-xs text-gray-600 mt-0.5">Clean edge finish</div>
-                    </div>
-                    <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-                      shaveBorders ? 'bg-blue-600 border-blue-600' : 'border-gray-300'
-                    }`}>
-                      {shaveBorders && <span className="text-white text-xs">✓</span>}
-                    </div>
-                  </div>
-                </button>
-              </CardContent>
-            </Card>
+
           </div>
 
           {/* Action Buttons */}
