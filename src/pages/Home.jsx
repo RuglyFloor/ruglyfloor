@@ -159,12 +159,26 @@ export default function Home() {
 
       {/* CTA Section */}
       <section className="py-20 px-6 bg-blue-600">
-        <div className="max-w-4xl mx-auto text-center text-white">
-          <h2 className="text-4xl font-bold mb-4">Ready to Create Something Unique?</h2>
-          <p className="text-xl mb-8 opacity-90">Custom Cruglys starting at $199. Premium originals from $700.</p>
+        <div className="max-w-5xl mx-auto text-center text-white">
+          <h2 className="text-5xl font-bold mb-6">Your Rug, Your Rules</h2>
+          <p className="text-2xl mb-4 font-semibold">Design a rug that's as unique as you are. Because your space should tell YOUR story.</p>
+          <div className="text-lg mb-8 opacity-95 max-w-4xl mx-auto leading-relaxed space-y-4">
+            <p>
+              Forget cookie-cutter rugs. With Rugly's design studio, you're not just buying a rug—you're creating a piece of art that reflects who you are.
+            </p>
+            <p>
+              Pick your colors. Play with patterns. Watch it come to life in real-time.
+            </p>
+            <p>
+              Whether you're finally making your apartment feel like home or hunting for that perfect gift—we've got you covered. Mother's Day. Father's Day. Birthdays. Anniversaries. That friend who has everything. Your custom rug is the gift that actually means something.
+            </p>
+            <p>
+              Your mom will love it. Your best friend will be jealous. And honestly? You'll love it too.
+            </p>
+          </div>
           <Link to={createPageUrl('CustomBuilder')}>
-            <Button size="lg" variant="secondary" className="text-lg px-10 py-7">
-              Start Designing Now
+            <Button size="lg" variant="secondary" className="text-xl px-12 py-8 font-bold">
+              Create Your Rug Now
             </Button>
           </Link>
         </div>
