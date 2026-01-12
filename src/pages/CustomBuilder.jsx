@@ -12,6 +12,7 @@ import UpsellOptions from '../components/custom/UpsellOptions';
 import DrawingCanvas from '../components/custom/DrawingCanvas';
 import DesignLibrary from '../components/custom/DesignLibrary';
 import InteractiveRugPreview from '../components/custom/InteractiveRugPreview';
+import SEOHead from '../components/seo/SEOHead';
 
 const SIZES = [
   { id: 'tiny', label: 'Tiny', value: 'tiny', price: 79, originalPrice: 99, measurement: '2x3' },
@@ -232,6 +233,12 @@ export default function CustomBuilder() {
 
   return (
     <div className="min-h-screen py-12 px-6">
+      <SEOHead
+        title="Rugly Floor - Custom Builder"
+        description="Design your own custom hand-painted rug with our interactive builder. Choose size, colors, and create unique designs. From $79 with free shipping on 2+ rugs."
+        keywords={['custom rug builder', 'design your own rug', 'personalized carpet', 'create custom rug online']}
+        url="/custom-builder"
+      />
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-center mb-2">Design Your Custom Rug</h1>
         <p className="text-center text-gray-600 mb-8">Create a one-of-a-kind piece in three simple steps</p>

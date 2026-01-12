@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
+import SEOHead from '../components/seo/SEOHead';
 
 export default function Shop() {
   const navigate = useNavigate();
@@ -36,6 +37,12 @@ export default function Shop() {
 
   return (
     <div className="min-h-screen py-12 px-6">
+      <SEOHead
+        title="Rugly Floor - Shop Originals"
+        description="Browse our collection of original hand-painted rugs. Unique, one-of-a-kind designs starting at $700. Shop now and transform your space."
+        keywords={['buy custom rug', 'original hand painted rugs', 'unique floor rugs', 'shop rugly']}
+        url="/shop"
+      />
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Original Ruglys</h1>
