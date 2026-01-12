@@ -158,8 +158,19 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-6 bg-blue-600">
-        <div className="max-w-5xl mx-auto text-center text-white">
+      <section className="relative py-20 px-6 overflow-hidden">
+        {/* Background Video */}
+        <div className="absolute inset-0 z-0">
+          <iframe
+            className="absolute inset-0 w-full h-full object-cover"
+            src="https://www.youtube.com/embed/oGBsu7bQMAE?autoplay=1&mute=1&loop=1&playlist=oGBsu7bQMAE&controls=0&showinfo=0&rel=0&modestbranding=1"
+            allow="autoplay; encrypted-media"
+            style={{ pointerEvents: 'none' }}
+          />
+          <div className="absolute inset-0 bg-black/50" />
+        </div>
+
+        <div className="max-w-5xl mx-auto text-center text-white relative z-10">
           <h2 className="text-5xl font-bold mb-6">Your Rug, Your Rules</h2>
           <p className="text-2xl mb-4 font-semibold">Design a rug that's as unique as you are. Because your space should tell YOUR story.</p>
           <div className="text-lg mb-8 opacity-95 max-w-4xl mx-auto leading-relaxed space-y-4">
