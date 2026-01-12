@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Package, FileText, TrendingUp, LogOut, ShoppingBag } from 'lucide-react';
+import { Package, FileText, TrendingUp, LogOut, ShoppingBag, Mail } from 'lucide-react';
 import { createPageUrl } from '../utils';
 
 export default function AdminPortal() {
@@ -55,6 +55,13 @@ export default function AdminPortal() {
       description: 'View analytics and metrics',
       page: 'AdminDashboard',
       color: 'bg-indigo-500'
+    },
+    {
+      title: 'Inbox',
+      icon: Mail,
+      description: 'View and manage contact messages',
+      page: 'AdminInbox',
+      color: 'bg-pink-500'
     }
   ];
 
