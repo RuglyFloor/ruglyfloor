@@ -84,6 +84,33 @@ export default function About() {
           </div>
         </div>
       </section>
+
+      {/* Video Background Section */}
+      <section className="relative py-32 px-6 overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <iframe
+            className="absolute inset-0 w-full h-full object-cover"
+            src="https://www.youtube.com/embed/oGBsu7bQMAE?autoplay=1&mute=1&loop=1&playlist=oGBsu7bQMAE&controls=0&showinfo=0&rel=0&modestbranding=1"
+            allow="autoplay; encrypted-media"
+            style={{ pointerEvents: 'none' }}
+          />
+          <div className="absolute inset-0 bg-black/60" />
+        </div>
+
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Art That Lives Where You Do
+          </h2>
+          <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+            Every Rugly is hand-painted in our studio, crafted to bring bold, beautiful design into your everyday life.
+          </p>
+          <Link to={createPageUrl('Shop')}>
+            <Button size="lg" variant="secondary" className="text-lg px-12 py-6 font-bold">
+              Shop Original Ruglys
+            </Button>
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }
