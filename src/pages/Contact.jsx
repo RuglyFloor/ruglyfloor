@@ -25,6 +25,25 @@ export default function Contact() {
 
     try {
       await base44.entities.InboxMessage.create(formData);
+      
+      // Send email notification to info@ruglyfloor.com
+      await base44.integrations.Core.SendEmail({
+        from_name: 'Rugly Floors Contact Form',
+        to: 'info@ruglyfloor.com',
+        subject: `New Contact: ${formData.subject || 'No Subject'}`,
+        body: `
+New contact form submission:
+
+From: ${formData.from_name}
+Email: ${formData.from_email}
+Phone: ${formData.from_phone || 'Not provided'}
+Subject: ${formData.subject || 'None'}
+
+Message:
+${formData.message}
+        `.trim()
+      });
+      
       setSubmitted(true);
       setFormData({ from_name: '', from_email: '', from_phone: '', subject: '', message: '' });
     } catch (error) {
