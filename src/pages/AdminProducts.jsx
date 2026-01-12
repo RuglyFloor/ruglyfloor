@@ -36,15 +36,9 @@ function AdminProductsContent() {
     in_stock: true
   });
 
-  const { data: user } = useQuery({
-    queryKey: ['user'],
-    queryFn: () => base44.auth.me()
-  });
-
   const { data: products, isLoading } = useQuery({
     queryKey: ['admin-products'],
-    queryFn: () => base44.entities.Product.list('-created_date'),
-    enabled: user?.role === 'admin'
+    queryFn: () => base44.entities.Product.list('-created_date')
   });
 
   const createProductMutation = useMutation({
