@@ -11,10 +11,10 @@ import { generateOrganizationSchema } from '../components/seo/SchemaGenerator';
 export default function Home() {
   const [currentProduct, setCurrentProduct] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
-  
+
   const { data: products = [] } = useQuery({
     queryKey: ['featured-products'],
-    queryFn: () => base44.entities.Product.filter({ category: 'original' }),
+    queryFn: () => base44.entities.Product.filter({ category: 'original' })
   });
 
   useEffect(() => {
@@ -41,8 +41,8 @@ export default function Home() {
         keywords={['buy custom hand-painted rugs', 'bespoke hand-painted area rugs', 'commission custom rug design', 'hand-painted rugs for sale', 'personalized floor art rugs', 'unique hand-painted home decor', 'luxury hand-painted carpet designs', 'artistic area rugs for modern homes', 'custom painted washable rugs']}
         url="/"
         type="website"
-        schema={generateOrganizationSchema()}
-      />
+        schema={generateOrganizationSchema()} />
+
       {/* Hero Section */}
       <section className="relative py-32 px-6 overflow-hidden">
         {/* Background Video */}
@@ -51,22 +51,23 @@ export default function Home() {
             className="absolute inset-0 w-full h-full object-cover"
             src="https://www.youtube.com/embed/oGBsu7bQMAE?autoplay=1&mute=1&loop=1&playlist=oGBsu7bQMAE&controls=0&showinfo=0&rel=0&modestbranding=1"
             allow="autoplay; encrypted-media"
-            style={{ pointerEvents: 'none' }}
-          />
+            style={{ pointerEvents: 'none' }} />
+
           <div className="absolute inset-0 bg-black/50" />
         </div>
 
         <div className="max-w-6xl mx-auto text-center relative z-10">
-          <img 
+          <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/7e922323a_RUGLYMASTERLOGO-61.png"
             alt="RUGLY"
-            className="h-32 md:h-48 mx-auto mb-6"
-          />
-          <h2 className="text-3xl md:text-5xl font-bold mb-12 text-white">
-            ART FOR YOUR FLOOR.
+            className="h-32 md:h-48 mx-auto mb-6" />
+
+          <h2 className="text-3xl md:text-5xl font-bold mb-12 text-white">Your Rug, Your Rules
+
           </h2>
-          <p className="text-lg md:text-xl text-white mb-12 max-w-3xl mx-auto">
-            Hand Painted, Dyed, and Stencilled Area Rugs to your design, your color, at your price
+          <p className="text-lg md:text-xl text-white mb-12 max-w-3xl mx-auto">Design a rug that's as unique as you are. Because your space should tell YOUR story. Pick your colors. Play with patterns. Watch it come to life in real-time.
+
+
           </p>
           <div className="flex gap-4 justify-center flex-wrap items-center">
             <Link to={createPageUrl('Shop')}>
@@ -96,63 +97,62 @@ export default function Home() {
             <h2 className="text-3xl font-bold">SHOP FOR ORIGINAL RUGLYS</h2>
           </div>
           <div className="relative">
-            {products.length === 0 ? (
-              <div className="text-center py-12">
+            {products.length === 0 ? <div className="text-center py-12">
                 <p className="text-slate-600">Loading featured rugs...</p>
-              </div>
-            ) : (
-              products.map((product, index) => (
-                <div 
-                  key={product.id}
-                  className={`group cursor-pointer transition-opacity duration-500 ${currentProduct === index ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}`}
-                >
+              </div> :
+
+            products.map((product, index) =>
+            <div
+              key={product.id}
+              className={`group cursor-pointer transition-opacity duration-500 ${currentProduct === index ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}`}>
+
                   <div className="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-4 relative max-w-2xl mx-auto">
-                    <img 
-                      src={product.image_url}
-                      alt={product.name}
-                      className={`w-full h-full object-cover ${!product.in_stock ? 'opacity-60' : 'group-hover:scale-105 transition-transform duration-300'}`}
-                    />
-                    {!product.in_stock && (
-                      <div className="absolute inset-0 flex items-center justify-center">
+                    <img
+                  src={product.image_url}
+                  alt={product.name}
+                  className={`w-full h-full object-cover ${!product.in_stock ? 'opacity-60' : 'group-hover:scale-105 transition-transform duration-300'}`} />
+
+                    {!product.in_stock &&
+                <div className="absolute inset-0 flex items-center justify-center">
                         <div className="bg-red-600 text-white font-bold text-3xl px-8 py-4 rounded-lg transform rotate-12">
                           SOLD
                         </div>
                       </div>
-                    )}
+                }
                   </div>
                   <div className="text-center max-w-2xl mx-auto">
                     <h3 className="text-2xl font-bold mb-3">{product.name}</h3>
                     <p className="text-slate-600 mb-4">{product.description}</p>
                     <div className="flex items-center justify-center gap-4">
-                      {product.in_stock ? (
-                        <>
+                      {product.in_stock ?
+                  <>
                           <span className="text-3xl font-bold text-blue-600">${product.price}</span>
                           <Link to={createPageUrl('Shop')}>
                             <Button>GRAB IT</Button>
                           </Link>
-                        </>
-                      ) : (
-                        <>
+                        </> :
+
+                  <>
                           <span className="text-3xl font-bold text-red-600">SOLD OUT</span>
                           <Button disabled className="opacity-50">SOLD</Button>
                         </>
-                      )}
+                  }
                     </div>
                   </div>
                 </div>
-              ))
-            )}
+            )
+            }
           </div>
           <div className="flex justify-center gap-2 mt-6">
-            {products.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentProduct(index)}
-                className={`w-3 h-3 rounded-full transition-all ${
-                  currentProduct === index ? 'bg-blue-600 w-8' : 'bg-gray-300'
-                }`}
-              />
-            ))}
+            {products.map((_, index) =>
+            <button
+              key={index}
+              onClick={() => setCurrentProduct(index)}
+              className={`w-3 h-3 rounded-full transition-all ${
+              currentProduct === index ? 'bg-blue-600 w-8' : 'bg-gray-300'}`
+              } />
+
+            )}
           </div>
         </div>
       </section>
@@ -165,8 +165,8 @@ export default function Home() {
             className="absolute inset-0 w-full h-full object-cover"
             src="https://www.youtube.com/embed/oGBsu7bQMAE?autoplay=1&mute=1&loop=1&playlist=oGBsu7bQMAE&controls=0&showinfo=0&rel=0&modestbranding=1"
             allow="autoplay; encrypted-media"
-            style={{ pointerEvents: 'none' }}
-          />
+            style={{ pointerEvents: 'none' }} />
+
           <div className="absolute inset-0 bg-black/50" />
         </div>
 
@@ -201,35 +201,35 @@ export default function Home() {
           <h2 className="text-3xl font-bold mb-8 text-center">FROM CONCEPT TO CREATION</h2>
           <div className="relative h-96 bg-slate-100 rounded-lg overflow-hidden">
             {[
-              {
-                image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/40e12a1d2_Screenshot2025-12-19at235301.png",
-                caption: "1. Choose Your Design"
-              },
-              {
-                image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg",
-                caption: "2. We Create the Stencil"
-              },
-              {
-                image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png",
-                caption: "3. Hand-Paint Your Rug"
-              }
-            ].map((step, index) => (
-              <div
-                key={index}
-                className={`absolute inset-0 transition-opacity duration-1000 ${
-                  currentStep === index ? 'opacity-100' : 'opacity-0'
-                }`}
-              >
-                <img 
-                  src={step.image}
-                  alt={step.caption}
-                  className="w-full h-full object-cover"
-                />
+            {
+              image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/40e12a1d2_Screenshot2025-12-19at235301.png",
+              caption: "1. Choose Your Design"
+            },
+            {
+              image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg",
+              caption: "2. We Create the Stencil"
+            },
+            {
+              image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png",
+              caption: "3. Hand-Paint Your Rug"
+            }].
+            map((step, index) =>
+            <div
+              key={index}
+              className={`absolute inset-0 transition-opacity duration-1000 ${
+              currentStep === index ? 'opacity-100' : 'opacity-0'}`
+              }>
+
+                <img
+                src={step.image}
+                alt={step.caption}
+                className="w-full h-full object-cover" />
+
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
                   <p className="text-white text-2xl font-bold text-center">{step.caption}</p>
                 </div>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </section>
@@ -300,11 +300,11 @@ export default function Home() {
       {/* Studio Story */}
       <section className="py-20 px-6 bg-slate-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg" 
-            alt="Rugly Background" 
-            className="w-full h-full object-cover"
-          />
+          <img
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg"
+            alt="Rugly Background"
+            className="w-full h-full object-cover" />
+
         </div>
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <h2 className="text-4xl font-bold mb-6">FROM THE STUDIO TO YOUR LIVING ROOM.</h2>
@@ -320,19 +320,19 @@ export default function Home() {
             </p>
           </div>
           <div className="flex items-center justify-center gap-8 mt-8">
-            <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/f4f7d59d4_Screenshot2026-01-07at180950.png" 
-              alt="Ryan Hensley - Founder & Artist" 
-              className="h-16"
-            />
-            <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/90995324f_RUGLYMASTERLOGO-6.png" 
-              alt="Rugly Logo" 
-              className="h-16"
-            />
+            <img
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/f4f7d59d4_Screenshot2026-01-07at180950.png"
+              alt="Ryan Hensley - Founder & Artist"
+              className="h-16" />
+
+            <img
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/90995324f_RUGLYMASTERLOGO-6.png"
+              alt="Rugly Logo"
+              className="h-16" />
+
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>);
+
 }
