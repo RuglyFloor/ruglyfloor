@@ -3,10 +3,17 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { Palette } from 'lucide-react';
+import SEOHead from '../components/seo/SEOHead';
 
 export default function About() {
   return (
     <div className="min-h-screen">
+      <SEOHead
+        title="Rugly Floor - About"
+        description="Meet Ryan Hensley, founder of Rugly Floor. Learn about our passion for large-scale art and hand-painted custom rugs that transform spaces."
+        keywords={['about rugly', 'ryan hensley', 'custom rug artist', 'hand painted rug creator']}
+        url="/about"
+      />
       {/* Hero Section */}
       <section className="relative py-20 px-6 bg-gradient-to-br from-blue-50 via-white to-purple-50">
         <div className="max-w-4xl mx-auto text-center">

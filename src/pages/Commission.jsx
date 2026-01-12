@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Upload, Loader2, CheckCircle, Clock, Zap } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
+import SEOHead from '../components/seo/SEOHead';
 
 export default function Commission() {
   const navigate = useNavigate();
@@ -175,6 +176,12 @@ export default function Commission() {
 
   return (
     <div className="min-h-screen py-12 px-6">
+      <SEOHead
+        title="Rugly Floor - Commission Design"
+        description="Commission a custom hand-painted rug designed specifically for your space. Perfect for businesses and unique residential projects. $300 deposit includes detailed estimate."
+        keywords={['commission custom rug', 'business floor art', 'commercial custom rug', 'bespoke rug design']}
+        url="/commission"
+      />
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold mb-4 text-center">Commission Your Own Design</h1>
         <p className="text-center text-gray-600 mb-4 text-lg">
