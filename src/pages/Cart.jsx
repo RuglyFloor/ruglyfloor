@@ -7,6 +7,7 @@ import { Trash2, ShoppingBag } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
+import SEOHead from '../components/seo/SEOHead';
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -73,6 +74,11 @@ export default function Cart() {
   if (cart.length === 0) {
     return (
       <div className="min-h-screen py-12 px-6">
+        <SEOHead
+          title="Rugly Floor - Cart"
+          description="Review your custom rug order and checkout securely."
+          url="/cart"
+        />
         <div className="max-w-2xl mx-auto text-center">
           <ShoppingBag className="w-16 h-16 mx-auto text-gray-400 mb-4" />
           <h2 className="text-2xl font-bold mb-2">Your cart is empty</h2>
@@ -87,6 +93,11 @@ export default function Cart() {
 
   return (
     <div className="min-h-screen py-12 px-6">
+      <SEOHead
+        title="Rugly Floor - Cart"
+        description="Review your custom rug order and checkout securely."
+        url="/cart"
+      />
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-bold mb-8">Shopping Cart</h1>
 

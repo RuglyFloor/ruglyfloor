@@ -50,7 +50,7 @@ export default function Blog() {
     return (
       <div className="min-h-screen py-12 px-6">
         <SEOHead
-          title={content.seo_title || content.title}
+          title={`Rugly Floor - ${content.seo_title || content.title}`}
           description={content.seo_description || content.excerpt}
           keywords={content.seo_keywords || []}
           url={`/blog?slug=${slug}`}
@@ -108,7 +108,7 @@ export default function Blog() {
   return (
     <div className="min-h-screen py-12 px-6">
       <SEOHead
-        title="Blog & Resources - Rugly Floor"
+        title="Rugly Floor - Blog"
         description="Read our latest blog posts, articles, and guides about custom rugs, interior design, and home decor."
         keywords={['rug blog', 'interior design', 'home decor', 'custom rugs', 'design guides']}
         url="/blog"

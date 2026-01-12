@@ -7,6 +7,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Package, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
+import SEOHead from '../components/seo/SEOHead';
 
 const statusColors = {
   pending: 'bg-yellow-100 text-yellow-800',
@@ -38,6 +39,11 @@ export default function Orders() {
 
   return (
     <div className="min-h-screen py-12 px-6">
+      <SEOHead
+        title="Rugly Floor - My Orders"
+        description="Track your custom rug orders and view order history."
+        url="/orders"
+      />
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-bold mb-8">
           {user?.role === 'admin' ? 'All Orders' : 'My Orders'}
