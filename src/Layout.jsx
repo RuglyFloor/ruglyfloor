@@ -21,6 +21,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Commission Design', page: 'Commission' },
     { name: 'About', page: 'About' },
     { name: 'Blog', page: 'Blog' },
+    { name: 'Contact', page: 'Contact' },
     { name: 'My Orders', page: 'Orders' }
   ];
 
