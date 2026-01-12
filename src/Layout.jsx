@@ -143,44 +143,76 @@ export default function Layout({ children, currentPageName }) {
       <main>{children}</main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-300 py-8 px-6 mt-20">
-        <div className="max-w-7xl mx-auto text-center">
-          <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/9a05f04b4_RUGLYMASTERLOGO-92.png" 
-            alt="Rugly" 
-            className="h-8 mx-auto mb-4"
-          />
-          <p className="mb-2">Homesteads, LLC</p>
-          <p className="text-sm text-gray-400">www.ruglyfloors.com</p>
-          <p className="text-sm text-gray-400">(517) 777-8474</p>
-          <p className="text-sm text-gray-400 mt-4">Custom-painted rugs for spaces that inspire</p>
+      <footer className="bg-gray-900 text-gray-300 py-16 px-6 mt-20">
+        <div className="max-w-7xl mx-auto">
+          {/* Contact Us Section - Elevated */}
+          <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-12 mb-12 text-center shadow-2xl">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Get In Touch</h2>
+            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+              Have a question about custom rugs or need help with your order? We're here to help.
+            </p>
 
-          {/* Social Media Links */}
-          <div className="flex justify-center gap-4 mt-6">
-            <a href="https://facebook.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
-              <Facebook className="w-6 h-6" />
-            </a>
-            <a href="https://instagram.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
-              <Instagram className="w-6 h-6" />
-            </a>
-            <a href="https://twitter.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
-              <Twitter className="w-6 h-6" />
-            </a>
-            <a href="https://tiktok.com/@ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
-              <Video className="w-6 h-6" />
-            </a>
-            <a href="mailto:contact@ruglyfloor.com" className="text-gray-400 hover:text-white transition-colors">
-              <Mail className="w-6 h-6" />
-            </a>
+            <div className="grid md:grid-cols-3 gap-8 mb-8">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+                <Mail className="w-8 h-8 mx-auto mb-3 text-white" />
+                <h3 className="text-white font-bold text-lg mb-2">Email Us</h3>
+                <a href="mailto:contact@ruglyfloor.com" className="text-white/90 hover:text-white text-lg">
+                  contact@ruglyfloor.com
+                </a>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+                <div className="w-8 h-8 mx-auto mb-3 text-white flex items-center justify-center text-2xl">📞</div>
+                <h3 className="text-white font-bold text-lg mb-2">Call Us</h3>
+                <a href="tel:5177778474" className="text-white/90 hover:text-white text-lg">
+                  (517) 777-8474
+                </a>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+                <div className="w-8 h-8 mx-auto mb-3 text-white flex items-center justify-center text-2xl">🌐</div>
+                <h3 className="text-white font-bold text-lg mb-2">Visit Us</h3>
+                <a href="https://ruglyfloors.com" className="text-white/90 hover:text-white text-lg">
+                  www.ruglyfloors.com
+                </a>
+              </div>
+            </div>
+
+            {/* Social Media Links */}
+            <div className="flex justify-center gap-6">
+              <a href="https://facebook.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors">
+                <Facebook className="w-8 h-8" />
+              </a>
+              <a href="https://instagram.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors">
+                <Instagram className="w-8 h-8" />
+              </a>
+              <a href="https://twitter.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors">
+                <Twitter className="w-8 h-8" />
+              </a>
+              <a href="https://tiktok.com/@ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors">
+                <Video className="w-8 h-8" />
+              </a>
+            </div>
           </div>
 
-          <div className="mt-6 pt-4 border-t border-gray-700 flex flex-col gap-2">
-            <Link to={createPageUrl('Policies')} className="text-sm text-gray-400 hover:text-white transition-colors">
-              Terms & Policies
-            </Link>
-            <Link to={createPageUrl('AdminLogin')} className="text-sm text-gray-400 hover:text-white transition-colors">
-              Admin
-            </Link>
+          {/* Footer Bottom */}
+          <div className="text-center">
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/9a05f04b4_RUGLYMASTERLOGO-92.png" 
+              alt="Rugly" 
+              className="h-10 mx-auto mb-4 opacity-70"
+            />
+            <p className="text-sm mb-2">Homesteads, LLC</p>
+            <p className="text-sm text-gray-500">Custom-painted rugs for spaces that inspire</p>
+
+            <div className="mt-6 pt-6 border-t border-gray-800 flex justify-center gap-6">
+              <Link to={createPageUrl('Policies')} className="text-sm text-gray-400 hover:text-white transition-colors">
+                Terms & Policies
+              </Link>
+              <Link to={createPageUrl('AdminLogin')} className="text-sm text-gray-400 hover:text-white transition-colors">
+                Admin
+              </Link>
+            </div>
           </div>
         </div>
       </footer>
