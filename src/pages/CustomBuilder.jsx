@@ -79,6 +79,7 @@ const PAINT_COLORS = [
 export default function CustomBuilder() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [transitioning, setTransitioning] = useState(false);
   const [designMode, setDesignMode] = useState('draw'); // 'library', 'upload', or 'draw'
   const [config, setConfig] = useState({
     size: '',
@@ -276,8 +277,8 @@ export default function CustomBuilder() {
         </div>
 
         {/* Step 1: Size Selection */}
-        {step === 1 && (
-          <div className="space-y-6">
+         {step === 1 && (
+           <div className={`space-y-6 transition-opacity duration-300 ${transitioning ? 'opacity-50' : 'opacity-100'}`}>
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold mb-3 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Pick Your Perfect Size
@@ -290,8 +291,12 @@ export default function CustomBuilder() {
                 <button
                   key={size.id}
                   onClick={() => {
+                    setTransitioning(true);
                     setConfig(prev => ({ ...prev, size: size.value }));
-                    setStep(2);
+                    setTimeout(() => {
+                      setStep(2);
+                      setTransitioning(false);
+                    }, 400);
                   }}
                   className={`group relative overflow-hidden rounded-2xl transition-all duration-300 ${
                     config.size === size.value 
