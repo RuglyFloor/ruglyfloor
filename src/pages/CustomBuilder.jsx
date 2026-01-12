@@ -477,17 +477,21 @@ export default function CustomBuilder() {
                   </div>
                 </div>
                 <div className="flex gap-3 mt-6">
-                  <Button variant="outline" onClick={() => setStep(1)}>
-                    Back
-                  </Button>
-                  <Button 
-                    className="flex-1" 
-                    onClick={() => setStep(3)} 
-                    disabled={!config.baseColor || !config.paintColor}
-                  >
-                    Continue to Design
-                  </Button>
-                </div>
+                   <Button variant="outline" onClick={() => setStep(1)}>
+                     Back
+                   </Button>
+                   <Button 
+                     className="flex-1" 
+                     onClick={() => setStep(3)} 
+                     disabled={!config.baseColor || !config.paintColor}
+                   >
+                     {config.baseColor && config.paintColor ? (
+                       `${config.baseColor} Rug, ${config.paintColor} paint`
+                     ) : (
+                       'Continue to Design'
+                     )}
+                   </Button>
+                 </div>
               </CardContent>
             </Card>
             
