@@ -8,8 +8,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Package, Plus, Edit, Trash2, Upload } from 'lucide-react';
+import { Package, Plus, Edit, Trash2 } from 'lucide-react';
 import AdminProtected from '../components/AdminProtected';
+import ImageManager from '../components/admin/ImageManager';
 
 export default function AdminProducts() {
   return (
@@ -29,8 +30,7 @@ function AdminProductsContent() {
     name: '',
     description: '',
     price: '',
-    image_url: '',
-    images: [],
+    all_images: [],
     size: '5x7',
     category: 'original',
     in_stock: true
@@ -71,37 +71,24 @@ function AdminProductsContent() {
       name: '',
       description: '',
       price: '',
-      image_url: '',
-      images: [],
+      all_images: [],
       size: '5x7',
       category: 'original',
       in_stock: true
     });
   };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploading(true);
-    try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      setFormData(prev => ({ ...prev, image_url: file_url }));
-    } catch (error) {
-      alert('Failed to upload image');
-    } finally {
-      setUploading(false);
-    }
-  };
-
   const handleAIGenerate = async () => {
-    if (!formData.image_url) {
-      alert('Please upload an image first');
+    const selectedImages = formData.all_images.filter(img => img.selected);
+    if (selectedImages.length === 0) {
+      alert('Please upload at least one image first');
       return;
     }
 
     setGeneratingAI(true);
     try {
+      const mainImage = selectedImages[0].url;
+
       // Generate product info using AI
       const productInfo = await base44.integrations.Core.InvokeLLM({
         prompt: `Analyze this rug image and provide comprehensive product information. Extract or infer:
@@ -111,7 +98,7 @@ function AdminProductsContent() {
         4. Dominant colors and design style
         
         Be professional and sales-oriented. Make it sound premium and artistic.`,
-        file_urls: [formData.image_url],
+        file_urls: [mainImage],
         response_json_schema: {
           type: "object",
           properties: {
@@ -126,25 +113,42 @@ function AdminProductsContent() {
 
       // Generate marketing images
       const [livingRoomImage, measurementImage] = await Promise.all([
-        // Contemporary living room setting
         base44.integrations.Core.GenerateImage({
           prompt: `Create a photorealistic interior design mockup showing this rug placed in a modern, contemporary living room with natural lighting. The room should have minimalist furniture, neutral walls, hardwood floors, and the rug should be the focal point. Make it look like a professional interior design photo.`,
-          existing_image_urls: [formData.image_url]
+          existing_image_urls: [mainImage]
         }),
-        // Measurement overlay
         base44.integrations.Core.GenerateImage({
           prompt: `Create a clean product image of this rug on a white background with clear measurement annotations. Show the dimensions (${formData.size}) marked with professional arrows and labels. Make it look like a technical product specification sheet with measurements clearly visible.`,
-          existing_image_urls: [formData.image_url]
+          existing_image_urls: [mainImage]
         })
       ]);
 
-      // Update form with AI-generated data
+      // Add AI-generated images to all_images
+      const newImages = [
+        {
+          id: `ai-${Date.now()}-1`,
+          url: livingRoomImage.url,
+          original_url: livingRoomImage.url,
+          selected: true,
+          order: formData.all_images.length,
+          source: 'ai'
+        },
+        {
+          id: `ai-${Date.now()}-2`,
+          url: measurementImage.url,
+          original_url: measurementImage.url,
+          selected: true,
+          order: formData.all_images.length + 1,
+          source: 'ai'
+        }
+      ];
+
       setFormData(prev => ({
         ...prev,
         name: productInfo.name,
         description: `${productInfo.description}\n\nStyle: ${productInfo.style}\nColors: ${productInfo.colors}`,
         price: productInfo.suggested_price.toString(),
-        images: [livingRoomImage.url, measurementImage.url]
+        all_images: [...prev.all_images, ...newImages]
       }));
 
       alert('✨ AI generation complete! Review and adjust as needed.');
@@ -158,9 +162,22 @@ function AdminProductsContent() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    const selectedImages = formData.all_images.filter(img => img.selected);
+    if (selectedImages.length === 0) {
+      alert('Please select at least one image to display');
+      return;
+    }
+    
+    // Set backward compatibility fields
+    const mainImage = selectedImages[0];
+    const additionalImages = selectedImages.slice(1).map(img => img.url);
+    
     const data = {
       ...formData,
-      price: parseFloat(formData.price)
+      price: parseFloat(formData.price),
+      image_url: mainImage.url,
+      images: additionalImages
     };
 
     if (editingProduct) {
@@ -172,12 +189,40 @@ function AdminProductsContent() {
 
   const handleEdit = (product) => {
     setEditingProduct(product);
+    
+    // Convert old format to new format if needed
+    let allImages = product.all_images || [];
+    if (allImages.length === 0 && (product.image_url || product.images)) {
+      allImages = [];
+      if (product.image_url) {
+        allImages.push({
+          id: 'main',
+          url: product.image_url,
+          original_url: product.image_url,
+          selected: true,
+          order: 0,
+          source: 'upload'
+        });
+      }
+      if (product.images) {
+        product.images.forEach((img, idx) => {
+          allImages.push({
+            id: `img-${idx}`,
+            url: img,
+            original_url: img,
+            selected: true,
+            order: allImages.length,
+            source: 'upload'
+          });
+        });
+      }
+    }
+    
     setFormData({
       name: product.name,
       description: product.description || '',
       price: product.price.toString(),
-      image_url: product.image_url || '',
-      images: product.images || [],
+      all_images: allImages,
       size: product.size || '5x7',
       category: product.category || 'original',
       in_stock: product.in_stock !== undefined ? product.in_stock : true
@@ -261,62 +306,12 @@ function AdminProductsContent() {
                 </div>
 
                 <div>
-                  <Label>Main Image</Label>
-                  <div className="flex gap-4 items-center mb-3">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => document.getElementById('image-upload').click()}
-                      disabled={uploading}
-                      className="gap-2"
-                    >
-                      <Upload className="w-4 h-4" />
-                      {uploading ? 'Uploading...' : 'Upload Image'}
-                    </Button>
-                    <input
-                      id="image-upload"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-                    {formData.image_url && (
-                      <img src={formData.image_url} alt="Preview" className="w-20 h-20 object-cover rounded" />
-                    )}
-                  </div>
-                  
-                  {formData.image_url && (
-                    <Button
-                      type="button"
-                      onClick={handleAIGenerate}
-                      disabled={generatingAI}
-                      className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 gap-2"
-                    >
-                      {generatingAI ? (
-                        <>⏳ Generating AI Content...</>
-                      ) : (
-                        <>✨ Auto-Fill with AI (Description, Price, Marketing Images)</>
-                      )}
-                    </Button>
-                  )}
-                  
-                  {formData.images.length > 0 && (
-                    <div className="mt-4">
-                      <Label className="text-sm text-gray-600">AI-Generated Marketing Images</Label>
-                      <div className="grid grid-cols-2 gap-3 mt-2">
-                        {formData.images.map((img, idx) => (
-                          <div key={idx} className="relative group">
-                            <img src={img} alt={`Generated ${idx + 1}`} className="w-full h-32 object-cover rounded border" />
-                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded flex items-center justify-center">
-                              <span className="text-white text-xs">
-                                {idx === 0 ? 'Living Room' : 'Measurements'}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                  <Label>Product Images</Label>
+                  <ImageManager
+                    images={formData.all_images}
+                    onChange={(images) => setFormData(prev => ({ ...prev, all_images: images }))}
+                    onGenerateAI={generatingAI ? null : handleAIGenerate}
+                  />
                 </div>
 
                 <div>
@@ -364,8 +359,12 @@ function AdminProductsContent() {
               <Card key={product.id} className={!product.in_stock ? 'opacity-60' : ''}>
                 <CardHeader>
                   <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden mb-3 relative">
-                    {product.image_url ? (
-                      <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                    {product.image_url || (product.all_images && product.all_images.find(img => img.selected)) ? (
+                      <img 
+                        src={product.image_url || product.all_images.find(img => img.selected)?.url} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover" 
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400">
                         <Package className="w-16 h-16" />
@@ -374,6 +373,11 @@ function AdminProductsContent() {
                     {!product.in_stock && (
                       <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                         <span className="bg-red-600 text-white font-bold px-4 py-2 rounded">SOLD OUT</span>
+                      </div>
+                    )}
+                    {product.all_images && product.all_images.filter(img => img.selected).length > 1 && (
+                      <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                        {product.all_images.filter(img => img.selected).length} images
                       </div>
                     )}
                   </div>
