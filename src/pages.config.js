@@ -15,6 +15,8 @@ import Orders from './pages/Orders';
 import Policies from './pages/Policies';
 import Shop from './pages/Shop';
 import TrackOrder from './pages/TrackOrder';
+import AdminInbox from './pages/AdminInbox';
+import Contact from './pages/Contact';
 import __Layout from './Layout.jsx';
 
 
@@ -36,6 +38,8 @@ export const PAGES = {
     "Policies": Policies,
     "Shop": Shop,
     "TrackOrder": TrackOrder,
+    "AdminInbox": AdminInbox,
+    "Contact": Contact,
 }
 
 export const pagesConfig = {
