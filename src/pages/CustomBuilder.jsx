@@ -234,7 +234,7 @@ export default function CustomBuilder() {
   return (
     <div className="min-h-screen py-12 px-6">
       <SEOHead
-        title="Rugly Floor - Custom Builder"
+        title="Rugly Floors - Custom Builder"
         description="Design your own custom hand-painted rug with our interactive builder. Choose size, colors, and create unique designs. From $79 with free shipping on 2+ rugs."
         keywords={['custom rug builder', 'design your own rug', 'personalized carpet', 'create custom rug online']}
         url="/custom-builder"

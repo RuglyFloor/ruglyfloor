@@ -38,7 +38,7 @@ export default function Shop() {
   return (
     <div className="min-h-screen py-12 px-6">
       <SEOHead
-        title="Rugly Floor - Shop Originals"
+        title="Rugly Floors - Shop Originals"
         description="Browse our collection of original hand-painted rugs. Unique, one-of-a-kind designs starting at $700. Shop now and transform your space."
         keywords={['buy custom rug', 'original hand painted rugs', 'unique floor rugs', 'shop rugly']}
         url="/shop"

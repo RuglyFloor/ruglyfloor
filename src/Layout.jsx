@@ -151,7 +151,7 @@ export default function Layout({ children, currentPageName }) {
             className="h-8 mx-auto mb-4"
           />
           <p className="mb-2">Homesteads, LLC</p>
-          <p className="text-sm text-gray-400">www.ruglyfloor.com</p>
+          <p className="text-sm text-gray-400">www.ruglyfloors.com</p>
           <p className="text-sm text-gray-400">(517) 777-8474</p>
           <p className="text-sm text-gray-400 mt-4">Custom-painted rugs for spaces that inspire</p>
 

@@ -10,7 +10,7 @@ export default function SEOHead({
   type = 'website',
   schema
 }) {
-  const siteUrl = 'https://ruglyfloor.com';
+  const siteUrl = 'https://ruglyfloors.com';
   const fullUrl = url ? `${siteUrl}${url}` : siteUrl;
   const defaultImage = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/9a05f04b4_RUGLYMASTERLOGO-92.png';
   const ogImage = image || defaultImage;
@@ -28,7 +28,7 @@ export default function SEOHead({
       <meta property="og:type" content={type} />
       <meta property="og:url" content={fullUrl} />
       <meta property="og:image" content={ogImage} />
-      <meta property="og:site_name" content="Rugly Floor" />
+      <meta property="og:site_name" content="Rugly Floors" />
       
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />

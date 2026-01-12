@@ -9,7 +9,7 @@ export default function About() {
   return (
     <div className="min-h-screen">
       <SEOHead
-        title="Rugly Floor - About"
+        title="Rugly Floors - About"
         description="Meet Ryan Hensley, founder of Rugly Floor. Learn about our passion for large-scale art and hand-painted custom rugs that transform spaces."
         keywords={['about rugly', 'ryan hensley', 'custom rug artist', 'hand painted rug creator']}
         url="/about"

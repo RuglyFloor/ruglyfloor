@@ -36,7 +36,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <SEOHead
-        title="Rugly Floor - Custom Hand-Painted Rugs | Personalized Carpet Designs"
+        title="Rugly Floors - Custom Hand-Painted Rugs | Personalized Carpet Designs"
         description="Transform your space with custom hand-painted rugs. Design your own unique floor rug or browse our original collection. Free shipping on 2+ rugs. Order today!"
         keywords={['custom rugs', 'hand-painted rugs', 'personalized carpet', 'custom floor rugs', 'painted rug designs', 'custom carpet art']}
         url="/"

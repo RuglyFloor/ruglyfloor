@@ -177,7 +177,7 @@ export default function Commission() {
   return (
     <div className="min-h-screen py-12 px-6">
       <SEOHead
-        title="Rugly Floor - Commission Design"
+        title="Rugly Floors - Commission Design"
         description="Commission a custom hand-painted rug designed specifically for your space. Perfect for businesses and unique residential projects. $300 deposit includes detailed estimate."
         keywords={['commission custom rug', 'business floor art', 'commercial custom rug', 'bespoke rug design']}
         url="/commission"
