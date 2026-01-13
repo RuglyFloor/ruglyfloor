@@ -80,6 +80,7 @@ export default function CustomBuilder() {
     size: '',
     baseColor: '',
     paintColor: '',
+    secondPaintColor: '',
     imageFile: null,
     imageUrl: '',
     previewUrl: '',
