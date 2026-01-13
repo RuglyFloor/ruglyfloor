@@ -57,6 +57,9 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
     canvas.width = originalImage.width * scale;
     canvas.height = originalImage.height * scale;
 
+    // Clear to transparent first
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     // Draw original image
     ctx.drawImage(originalImage, 0, 0, canvas.width, canvas.height);
 
@@ -165,7 +168,7 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
     if (!canvasRef.current) return;
     const link = document.createElement('a');
     link.download = 'rugly-stencil.png';
-    link.href = canvasRef.current.toDataURL();
+    link.href = canvasRef.current.toDataURL('image/png');
     link.click();
   };
 
@@ -200,14 +203,16 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
   const handleSave = () => {
     if (!canvasRef.current) return;
     
+    // Save as PNG with transparency
+    const imageUrl = canvasRef.current.toDataURL('image/png');
+    
     // Download to user's machine
     const link = document.createElement('a');
     link.download = 'rugly-stencil-design.png';
-    link.href = canvasRef.current.toDataURL('image/png');
+    link.href = imageUrl;
     link.click();
     
     // Also save for preview
-    const imageUrl = canvasRef.current.toDataURL();
     onSaveStencil && onSaveStencil(imageUrl);
   };
 
