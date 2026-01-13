@@ -76,7 +76,7 @@ export default function BuilderSidebar({
                     style={{ 
                       backgroundColor: paintColors.find(c => c.name === config.paintColor)?.hex,
                       borderRadius: '50% 50% 50% 0',
-                      transform: 'rotate(-45deg)'
+                      transform: 'rotate(135deg)'
                     }}
                   />
                   <div>
@@ -91,7 +91,7 @@ export default function BuilderSidebar({
                       style={{ 
                         backgroundColor: paintColors.find(c => c.name === config.secondPaintColor)?.hex,
                         borderRadius: '50% 50% 50% 0',
-                        transform: 'rotate(-45deg)'
+                        transform: 'rotate(135deg)'
                       }}
                     />
                     <div>
