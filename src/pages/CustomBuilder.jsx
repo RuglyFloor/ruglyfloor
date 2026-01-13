@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -80,6 +80,10 @@ export default function CustomBuilder() {
   const [step, setStep] = useState(1);
   const [transitioning, setTransitioning] = useState(false);
   const [designMode, setDesignMode] = useState('draw'); // 'library', 'upload', or 'draw'
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const [config, setConfig] = useState({
     size: '',
     baseColor: '',
