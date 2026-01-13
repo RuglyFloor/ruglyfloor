@@ -118,6 +118,8 @@ export default function CustomBuilder() {
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file: drawingFile });
       setConfig(prev => ({ ...prev, imageFile: drawingFile, imageUrl: file_url }));
+      // Show success message
+      alert('Drawing saved! Continue below to generate your preview.');
     } catch (error) {
       alert('Failed to save drawing');
     } finally {
@@ -539,11 +541,19 @@ export default function CustomBuilder() {
 
                 {/* Design Library Mode */}
                 {designMode === 'library' && (
-                  <DesignLibrary
-                    onSelectDesign={(url) => {
-                      setConfig(prev => ({ ...prev, imageUrl: url }));
-                    }}
-                  />
+                  <>
+                    <DesignLibrary
+                      onSelectDesign={(url) => {
+                        setConfig(prev => ({ ...prev, imageUrl: url }));
+                      }}
+                    />
+                    {config.imageUrl && designMode === 'library' && (
+                      <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <p className="text-sm text-green-700 font-semibold mb-2">✓ Design selected!</p>
+                        <p className="text-xs text-gray-600 mb-3">Continue below to generate your preview</p>
+                      </div>
+                    )}
+                  </>
                 )}
 
                 {/* Upload Mode */}
@@ -551,7 +561,7 @@ export default function CustomBuilder() {
                   <StencilCreator
                     paintColor={PAINT_COLORS.find(c => c.name === config.paintColor)?.hex || '#000000'}
                     onSaveStencil={(stencilUrl) => {
-                      setConfig(prev => ({ ...prev, previewUrl: stencilUrl }));
+                      setConfig(prev => ({ ...prev, imageUrl: stencilUrl, previewUrl: stencilUrl }));
                     }}
                     onConfigChange={({ colors }) => {
                       setConfig(prev => ({ ...prev, numColors: colors }));
