@@ -12,16 +12,23 @@ export default function InteractiveRugPreview({
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    if (!canvasRef.current || !baseColor) return;
+    if (!canvasRef.current) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    
+    // Set canvas size
+    const containerWidth = canvas.parentElement.offsetWidth;
+    canvas.width = containerWidth;
+    canvas.height = containerWidth * 0.75;
+    
+    // Clear canvas first
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    if (!baseColor) return;
     
     // If placeholder and no design, just show base color
     if (placeholder && !designUrl) {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
-      const containerWidth = canvas.parentElement.offsetWidth;
-      canvas.width = containerWidth;
-      canvas.height = containerWidth * 0.75;
-      
       const rugWidth = canvas.width * 0.8;
       const rugHeight = canvas.height * 0.8;
       const rugX = (canvas.width - rugWidth) / 2;
@@ -49,14 +56,6 @@ export default function InteractiveRugPreview({
     
     if (!designUrl) return;
 
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    
-    // Set canvas size
-    const containerWidth = canvas.parentElement.offsetWidth;
-    canvas.width = containerWidth;
-    canvas.height = containerWidth * 0.75;
-
     // Draw rug base
     const rugWidth = canvas.width * 0.8;
     const rugHeight = canvas.height * 0.8;
@@ -79,40 +78,34 @@ export default function InteractiveRugPreview({
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
-      ctx.save();
-      ctx.globalAlpha = opacity;
-      
-      // Apply color tint if paint color is specified
-      if (paintColor) {
-        ctx.globalCompositeOperation = 'multiply';
-        ctx.fillStyle = paintColor;
-        ctx.fillRect(rugX, rugY, rugWidth, rugHeight);
-        ctx.globalCompositeOperation = 'destination-in';
-      }
-      
-      // Draw design
+      // Draw design directly on rug
       const aspectRatio = img.width / img.height;
-      let drawWidth = rugWidth * 0.7;
+      let drawWidth = rugWidth * 0.8;
       let drawHeight = drawWidth / aspectRatio;
       
-      if (drawHeight > rugHeight * 0.7) {
-        drawHeight = rugHeight * 0.7;
+      if (drawHeight > rugHeight * 0.8) {
+        drawHeight = rugHeight * 0.8;
         drawWidth = drawHeight * aspectRatio;
       }
       
       const drawX = rugX + (rugWidth - drawWidth) / 2;
       const drawY = rugY + (rugHeight - drawHeight) / 2;
       
+      ctx.save();
+      ctx.globalAlpha = opacity;
       ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
       ctx.restore();
 
       // Rug texture overlay
-      ctx.fillStyle = 'rgba(0,0,0,0.05)';
-      for (let i = 0; i < rugHeight; i += 2) {
+      ctx.fillStyle = 'rgba(0,0,0,0.03)';
+      for (let i = 0; i < rugHeight; i += 3) {
         ctx.fillRect(rugX, rugY + i, rugWidth, 1);
       }
     };
-    img.src = designUrl;
+    img.onerror = () => {
+      console.error('Failed to load design image:', designUrl);
+    };
+    img.src = designUrl + '?t=' + Date.now(); // Cache bust
   }, [designUrl, baseColor, paintColor, opacity, size, placeholder]);
 
   return (
