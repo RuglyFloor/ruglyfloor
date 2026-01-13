@@ -495,15 +495,6 @@ export default function CustomBuilder() {
                  </div>
               </CardContent>
             </Card>
-            
-            {config.imageUrl && config.baseColor && (
-              <InteractiveRugPreview
-                designUrl={config.imageUrl}
-                baseColor={BASE_COLORS.find(c => c.name === config.baseColor)?.hex}
-                paintColor={PAINT_COLORS.find(c => c.name === config.paintColor)?.hex}
-                size={config.size}
-              />
-            )}
           </div>
         )}
 
