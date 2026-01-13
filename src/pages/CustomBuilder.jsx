@@ -46,7 +46,9 @@ const BASE_COLORS = [
   { name: 'Grey', hex: '#9ca3af', type: 'light' },
   { name: 'Green', hex: '#86cb92', type: 'light' },
   { name: 'Tan', hex: '#d2b48c', type: 'light' },
-  { name: 'Khaki', hex: '#c3b091', type: 'light' }
+  { name: 'Khaki', hex: '#c3b091', type: 'light' },
+  { name: 'Blue', hex: '#1d4ed8', type: 'dark' },
+  { name: 'Red', hex: '#b91c1c', type: 'dark' }
 ];
 
 const PAINT_COLORS = [
@@ -67,7 +69,8 @@ const PAINT_COLORS = [
   { name: 'Black', hex: '#000000', type: 'both' },
   { name: 'Hansa Yellow', hex: '#ffd300', type: 'both' },
   { name: 'Vermillion Orange', hex: '#ff4500', type: 'both' },
-  { name: 'White', hex: '#ffffff', type: 'both' }
+  { name: 'White', hex: '#ffffff', type: 'both' },
+  { name: 'Blue', hex: '#3b82f6', type: 'both' }
 ];
 
 export default function CustomBuilder() {
