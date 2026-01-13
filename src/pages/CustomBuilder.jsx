@@ -371,7 +371,7 @@ export default function CustomBuilder() {
 
         {/* Step 2: Color Selection with Live Preview */}
         {step === 2 && (
-          <div className="grid lg:grid-cols-2 gap-6">
+          <div>
             <Card>
               <CardHeader>
                 <CardTitle>Step 2: Choose Colors</CardTitle>
