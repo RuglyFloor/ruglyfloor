@@ -33,9 +33,10 @@ const getColorPrice = (size, numColors) => {
   return 0;
 };
 
-const getSecondShadePrice = (size) => {
+const getSecondShadePrice = (size, mode) => {
   const sizeMap = { tiny: 39, small: 69, medium: 99, large: 129, huge: 159, '4ft round': 69 };
-  return sizeMap[size] || 39;
+  const basePrice = sizeMap[size] || 39;
+  return mode === 'dolly' ? basePrice * 2 : basePrice;
 };
 
 const BASE_COLORS = [
@@ -87,6 +88,7 @@ export default function CustomBuilder() {
     is3D: false,
     numColors: 2,
     useSecondShade: false,
+    shadeMode: 'none', // 'none', 'specify', or 'dolly'
     upsells: {
       is3D: false,
       thirdColor: '',
@@ -165,7 +167,7 @@ export default function CustomBuilder() {
     const selectedSize = SIZES.find(s => s.value === config.size);
     const basePrice = selectedSize.price;
     const colorPrice = getColorPrice(config.size, config.numColors);
-    const secondShadePrice = config.useSecondShade ? getSecondShadePrice(config.size) : 0;
+    const secondShadePrice = config.shadeMode !== 'none' ? getSecondShadePrice(config.size, config.shadeMode) : 0;
     const price = basePrice + colorPrice + secondShadePrice + config.upsellTotal;
     
     const cartItem = {
@@ -193,7 +195,7 @@ export default function CustomBuilder() {
     const selectedSize = SIZES.find(s => s.value === config.size);
     const basePrice = selectedSize.price;
     const colorPrice = getColorPrice(config.size, config.numColors);
-    const secondShadePrice = config.useSecondShade ? getSecondShadePrice(config.size) : 0;
+    const secondShadePrice = config.shadeMode !== 'none' ? getSecondShadePrice(config.size, config.shadeMode) : 0;
     return basePrice + colorPrice + secondShadePrice + config.upsellTotal;
   };
 
@@ -410,51 +412,88 @@ export default function CustomBuilder() {
                           </div>
                         </div>
 
-                        {/* Second Set - Universal colors */}
-                        <div className="mb-4">
-                          <p className="text-xs text-gray-600 mb-2 font-semibold">2nd Color (Optional)</p>
-                          <div className="grid grid-cols-3 gap-4">
-                            {PAINT_COLORS.filter(color => color.type === 'both').map((color) => (
-                              <button
-                                key={color.id}
-                                onClick={() => setConfig(prev => ({ 
-                                  ...prev, 
-                                  secondPaintColor: prev.secondPaintColor === color.name ? '' : color.name 
-                                }))}
-                                className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
-                                  config.secondPaintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                                }`}
-                              >
-                                <div 
-                                  className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
-                                  style={{ backgroundColor: color.hex }}
-                                />
-                                <span className="text-xs text-center">{color.name}</span>
-                              </button>
-                            ))}
-                          </div>
-                          {config.secondPaintColor && (
-                            <button
-                              onClick={() => setConfig(prev => ({ ...prev, secondPaintColor: '' }))}
-                              className="mt-3 text-xs text-red-600 hover:text-red-700 underline"
-                            >
-                              Clear 2nd color
-                            </button>
-                          )}
-                        </div>
-
                         {/* Dimension Shade Layer Info */}
                         <div className="mt-6 bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-4">
-                          <button className="w-full text-left">
+                          <div className="space-y-4">
+                            <h4 className="font-bold text-purple-900 text-center">Create Shade Layer to Primary Color for Dimension</h4>
+                            <img 
+                              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/036515277_Screenshot2026-01-13at073037.png"
+                              alt="Dimension technique diagram"
+                              className="w-full rounded-lg mb-4"
+                            />
+
+                            {/* Shade Mode Selection */}
                             <div className="space-y-3">
-                              <h4 className="font-bold text-purple-900 text-center">Create Shade Layer to Primary Color for Dimension</h4>
-                              <img 
-                                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/036515277_Screenshot2026-01-13at073037.png"
-                                alt="Dimension technique diagram"
-                                className="w-full rounded-lg"
-                              />
+                              <button
+                                onClick={() => setConfig(prev => ({ 
+                                  ...prev, 
+                                  shadeMode: prev.shadeMode === 'specify' ? 'none' : 'specify',
+                                  secondPaintColor: prev.shadeMode === 'specify' ? '' : prev.secondPaintColor
+                                }))}
+                                className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+                                  config.shadeMode === 'specify' ? 'border-purple-600 bg-purple-50' : 'border-gray-300 hover:border-purple-400'
+                                }`}
+                              >
+                                <div className="flex justify-between items-center mb-2">
+                                  <span className="font-semibold text-purple-900">Specify 2nd Color</span>
+                                  {config.size && (
+                                    <span className="text-sm font-bold text-purple-700">
+                                      +${getSecondShadePrice(config.size, 'specify')}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-xs text-gray-700">Choose your own shade color from the palette below</p>
+                              </button>
+
+                              <button
+                                onClick={() => setConfig(prev => ({ 
+                                  ...prev, 
+                                  shadeMode: prev.shadeMode === 'dolly' ? 'none' : 'dolly',
+                                  secondPaintColor: ''
+                                }))}
+                                className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+                                  config.shadeMode === 'dolly' ? 'border-purple-600 bg-purple-50' : 'border-gray-300 hover:border-purple-400'
+                                }`}
+                              >
+                                <div className="flex justify-between items-center mb-2">
+                                  <span className="font-semibold text-purple-900">Dolly Parton Option</span>
+                                  {config.size && (
+                                    <span className="text-sm font-bold text-purple-700">
+                                      +${getSecondShadePrice(config.size, 'dolly')}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-xs text-gray-700">We'll create a darker shade of your primary color (2x upcharge)</p>
+                              </button>
                             </div>
-                          </button>
+
+                            {/* Color selection for 'specify' mode */}
+                            {config.shadeMode === 'specify' && (
+                              <div className="mt-4 pt-4 border-t border-purple-200">
+                                <p className="text-xs text-gray-600 mb-3 font-semibold">Select Your 2nd Color</p>
+                                <div className="grid grid-cols-3 gap-3">
+                                  {PAINT_COLORS.filter(color => color.type === 'both').map((color) => (
+                                    <button
+                                      key={color.id}
+                                      onClick={() => setConfig(prev => ({ 
+                                        ...prev, 
+                                        secondPaintColor: color.name
+                                      }))}
+                                      className={`flex flex-col items-center gap-2 p-2 rounded-lg border-2 transition-all ${
+                                        config.secondPaintColor === color.name ? 'border-purple-600 bg-purple-100' : 'border-gray-200 hover:border-gray-300'
+                                      }`}
+                                    >
+                                      <div 
+                                        className="w-10 h-10 rounded-full border-2 border-gray-300 shadow-md"
+                                        style={{ backgroundColor: color.hex }}
+                                      />
+                                      <span className="text-xs text-center leading-tight">{color.name}</span>
+                                    </button>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -617,10 +656,10 @@ export default function CustomBuilder() {
                             <span className="font-semibold">+${getColorPrice(config.size, config.numColors)}</span>
                           </div>
                         )}
-                        {config.useSecondShade && (
+                        {config.shadeMode !== 'none' && (
                           <div className="flex justify-between">
-                            <span>2nd Shade:</span>
-                            <span className="font-semibold">+${getSecondShadePrice(config.size)}</span>
+                            <span>{config.shadeMode === 'dolly' ? 'Dolly Parton Shade:' : '2nd Shade:'}</span>
+                            <span className="font-semibold">+${getSecondShadePrice(config.size, config.shadeMode)}</span>
                           </div>
                         )}
                       </div>
