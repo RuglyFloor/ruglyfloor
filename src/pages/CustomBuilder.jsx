@@ -459,9 +459,15 @@ export default function CustomBuilder() {
                       </div>
                     </div>
 
-                    {/* Second Shade Checkbox */}
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                      <label className="flex items-start gap-3 cursor-pointer">
+                    {/* Second Shade Info */}
+                    <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-4">
+                      <h4 className="font-bold text-purple-900 text-center mb-3">Create Shade Layer to Primary Color for Dimension</h4>
+                      <img 
+                        src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/39ce9ca8b_Screenshot2026-01-13at074841.png"
+                        alt="Dimension technique diagram"
+                        className="w-full rounded-lg mb-3"
+                      />
+                      <label className="flex items-start gap-3 cursor-pointer bg-white rounded-lg p-3">
                         <input
                           type="checkbox"
                           checked={config.useSecondShade}
