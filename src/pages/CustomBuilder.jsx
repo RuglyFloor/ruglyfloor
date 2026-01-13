@@ -679,37 +679,37 @@ export default function CustomBuilder() {
           {/* Step 4: Upsell Options */}
           {step === 4 && (
             <Card>
-            <CardHeader>
-              <CardTitle>Step 4: Premium Upgrades (Optional)</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <UpsellOptions
-                size={config.size}
-                baseColor={config.baseColor}
-                currentPreview={config.previewUrl}
-                isGenerating={processing}
-                onPreviewUpdate={(upsells) => generatePreview(upsells)}
-                onContinue={(upsells, upsellTotal) => {
-                  setConfig(prev => ({ ...prev, upsells, upsellTotal }));
-                  handleAddToCart();
-                }}
-                onBack={() => setStep(3)}
-              />
-            </CardContent>
-          </Card>
+              <CardHeader>
+                <CardTitle>Step 4: Premium Upgrades (Optional)</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <UpsellOptions
+                  size={config.size}
+                  baseColor={config.baseColor}
+                  currentPreview={config.previewUrl}
+                  isGenerating={processing}
+                  onPreviewUpdate={(upsells) => generatePreview(upsells)}
+                  onContinue={(upsells, upsellTotal) => {
+                    setConfig(prev => ({ ...prev, upsells, upsellTotal }));
+                    handleAddToCart();
+                  }}
+                  onBack={() => setStep(3)}
+                />
+              </CardContent>
+            </Card>
           )}
-          </div>
-
-          <div className="hidden lg:block">
-            <BuilderSidebar
-              step={step}
-              config={config}
-              currentPrice={currentPrice()}
-              baseColors={BASE_COLORS}
-              paintColors={PAINT_COLORS}
-            />
-          </div>
         </div>
+
+        <div className="hidden lg:block">
+          <BuilderSidebar
+            step={step}
+            config={config}
+            currentPrice={currentPrice()}
+            baseColors={BASE_COLORS}
+            paintColors={PAINT_COLORS}
+          />
+        </div>
+      </div>
       </div>
     </div>
   );
