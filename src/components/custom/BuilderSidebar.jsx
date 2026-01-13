@@ -169,7 +169,7 @@ export default function BuilderSidebar({
       {/* Dynamic Preview or Placeholder */}
       {config.baseColor ? (
         <InteractiveRugPreview
-          key={`preview-${config.imageUrl}-${config.baseColor}-${config.paintColor}-${Date.now()}`}
+          key={`preview-${config.imageUrl}-${config.baseColor}-${config.paintColor}`}
           designUrl={config.imageUrl}
           baseColor={baseColors.find(c => c.name === config.baseColor)?.hex}
           paintColor={paintColors.find(c => c.name === config.paintColor)?.hex}
