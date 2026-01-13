@@ -1,48 +1,42 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
-    try {
-        const base44 = createClientFromRequest(req);
-        const { orderData } = await req.json();
+  try {
+    const base44 = createClientFromRequest(req);
+    const body = await req.json();
+    const { orderId, customerName, customerEmail, totalAmount } = body;
 
-        // Send email to business owner
-        await base44.integrations.Core.SendEmail({
-            from_name: 'Rugly Orders',
-            to: 'orders@ruglyfloor.com', // Replace with your actual email
-            subject: `New Order Received - ${orderData.order_number}`,
-            body: `
-                <h2>New Custom Rug Order!</h2>
-                <p><strong>Order Number:</strong> ${orderData.order_number}</p>
-                <p><strong>Customer:</strong> ${orderData.customer_name}</p>
-                <p><strong>Email:</strong> ${orderData.customer_email}</p>
-                <p><strong>Phone:</strong> ${orderData.customer_phone || 'N/A'}</p>
-                <p><strong>Total Amount:</strong> $${orderData.total_amount}</p>
-                
-                <h3>Order Items:</h3>
-                <ul>
-                ${orderData.items.map(item => `
-                    <li>
-                        ${item.name} - ${item.size}<br>
-                        Base Color: ${item.baseColor}, Paint Color: ${item.paintColor}<br>
-                        ${item.is3D ? '3-D Effect' : 'Standard'}<br>
-                        Price: $${item.price}
-                        ${item.imageUrl ? `<br><strong>Original Uploaded Image:</strong><br><img src="${item.imageUrl}" style="max-width: 300px; margin-top: 10px; background: white; padding: 10px;">` : ''}
-                        ${item.previewUrl ? `<br><strong>Preview on Rug:</strong><br><img src="${item.previewUrl}" style="max-width: 300px; margin-top: 10px;">` : ''}
-                    </li>
-                `).join('')}
-                </ul>
-                
-                <h3>Shipping Address:</h3>
-                <p>
-                    ${orderData.shipping_address.street}<br>
-                    ${orderData.shipping_address.city}, ${orderData.shipping_address.state} ${orderData.shipping_address.zip}<br>
-                    ${orderData.shipping_address.country}
-                </p>
-            `
-        });
-
-        return Response.json({ success: true });
-    } catch (error) {
-        return Response.json({ error: error.message }, { status: 500 });
+    if (!orderId || !customerName) {
+      return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
+
+    const emailBody = `
+New Order Received!
+
+Order ID: ${orderId}
+Customer: ${customerName}
+Email: ${customerEmail}
+Total: $${totalAmount}
+
+View in Admin Portal: https://ruglyfloors.com/admin-orders
+
+Next steps:
+1. Review order details
+2. Confirm design specifications
+3. Begin production
+    `.trim();
+
+    await base44.integrations.Core.SendEmail({
+      to: 'contact@ruglyfloor.com',
+      subject: `New Order: ${customerName} - $${totalAmount}`,
+      body: emailBody,
+      from_name: 'Rugly Order System'
+    });
+
+    console.log(`Order notification sent for ${orderId}`);
+    return Response.json({ success: true });
+  } catch (error) {
+    console.error('Notification error:', error);
+    return Response.json({ error: error.message }, { status: 500 });
+  }
 });
