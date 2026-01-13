@@ -591,6 +591,7 @@ export default function CustomBuilder() {
                 {/* Upload Mode */}
                 {designMode === 'upload' && (
                   <StencilCreator
+                    paintColor={PAINT_COLORS.find(c => c.name === config.paintColor)?.hex || '#000000'}
                     onSaveStencil={(stencilUrl) => {
                       setConfig(prev => ({ ...prev, previewUrl: stencilUrl }));
                     }}

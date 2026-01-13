@@ -14,10 +14,9 @@ const PAINT_COLORS = [
   { name: 'Dark Brown', hex: '#3e2723' }
 ];
 
-export default function StencilCreator({ onSaveStencil, onConfigChange }) {
+export default function StencilCreator({ onSaveStencil, onConfigChange, paintColor }) {
   const [originalImage, setOriginalImage] = useState(null);
   const [threshold, setThreshold] = useState(128);
-  const [selectedColor, setSelectedColor] = useState(PAINT_COLORS[0]);
   const [colors, setColors] = useState(2);
   
   const blur = 5; // Always at max
@@ -83,10 +82,10 @@ export default function StencilCreator({ onSaveStencil, onConfigChange }) {
       const layerValue = Math.floor(gray / layerStep) * layerStep;
       
       if (layerValue < threshold) {
-        // Apply selected color
-        imageData.data[i] = parseInt(selectedColor.hex.slice(1, 3), 16);
-        imageData.data[i + 1] = parseInt(selectedColor.hex.slice(3, 5), 16);
-        imageData.data[i + 2] = parseInt(selectedColor.hex.slice(5, 7), 16);
+        // Apply paint color from config
+        imageData.data[i] = parseInt(paintColor.slice(1, 3), 16);
+        imageData.data[i + 1] = parseInt(paintColor.slice(3, 5), 16);
+        imageData.data[i + 2] = parseInt(paintColor.slice(5, 7), 16);
       } else {
         // White background
         imageData.data[i] = 255;
@@ -96,7 +95,7 @@ export default function StencilCreator({ onSaveStencil, onConfigChange }) {
     }
 
     ctx.putImageData(imageData, 0, 0);
-  }, [originalImage, threshold, selectedColor, colors]);
+  }, [originalImage, threshold, paintColor, colors]);
 
   const applyGaussianBlur = (imageData, radius) => {
     const width = imageData.width;
@@ -194,7 +193,6 @@ export default function StencilCreator({ onSaveStencil, onConfigChange }) {
     setOriginalImage(null);
     setThreshold(128);
     setColors(2);
-    setSelectedColor(PAINT_COLORS[0]);
   };
 
   const handleSave = () => {
@@ -252,33 +250,6 @@ export default function StencilCreator({ onSaveStencil, onConfigChange }) {
 
           {/* Controls */}
           <div className="space-y-4">
-            {/* Color Selection */}
-            <Card>
-              <CardContent className="p-4">
-                <Label className="text-sm font-bold mb-3 block">Paint Color</Label>
-                <div className="grid grid-cols-3 gap-2">
-                  {PAINT_COLORS.map((color) => (
-                    <button
-                      key={color.name}
-                      type="button"
-                      onClick={() => setSelectedColor(color)}
-                      className={`flex flex-col items-center gap-1.5 p-2 rounded-lg border-2 transition-all ${
-                        selectedColor.hex === color.hex
-                          ? 'border-blue-600 bg-blue-50 scale-105 shadow-md'
-                          : 'border-gray-200 hover:border-gray-400 hover:scale-102'
-                      }`}
-                    >
-                      <div
-                        className="w-10 h-10 rounded-full shadow border-2 border-white ring-2 ring-gray-200"
-                        style={{ backgroundColor: color.hex }}
-                      />
-                      <span className="text-xs font-medium text-center">{color.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Contrast */}
             <Card>
               <CardContent className="p-4">
