@@ -90,12 +90,13 @@ Deno.serve(async (req) => {
     });
 
     // Create Stripe checkout session
+    const origin = req.headers.get('origin') || 'https://ruglyfloors.com';
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
-      success_url: `${req.headers.get('origin')}/Orders?session_id={CHECKOUT_SESSION_ID}&success=true`,
-      cancel_url: `${req.headers.get('origin')}/Cart?canceled=true`,
+      success_url: `${origin}/Orders?session_id={CHECKOUT_SESSION_ID}&success=true`,
+      cancel_url: `${origin}/Cart?canceled=true`,
       customer_email: customerInfo.email,
       metadata: {
         base44_app_id: Deno.env.get('BASE44_APP_ID'),
