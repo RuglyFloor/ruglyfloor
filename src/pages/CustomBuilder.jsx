@@ -758,6 +758,7 @@ export default function CustomBuilder() {
             currentPrice={currentPrice()}
             baseColors={BASE_COLORS}
             paintColors={PAINT_COLORS}
+            key={`${config.baseColor}-${config.paintColor}-${config.imageUrl}`}
           />
         </div>
       </div>
