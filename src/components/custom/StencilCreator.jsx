@@ -14,7 +14,7 @@ const PAINT_COLORS = [
   { name: 'Dark Brown', hex: '#3e2723' }
 ];
 
-export default function StencilCreator({ onSaveStencil, onConfigChange, paintColor }) {
+export default function StencilCreator({ onSaveStencil, onConfigChange, paintColor, baseColor }) {
   const [originalImage, setOriginalImage] = useState(null);
   const [threshold, setThreshold] = useState(128);
   const [colors, setColors] = useState(2);
@@ -245,15 +245,17 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
           <div className="lg:sticky lg:top-6 h-fit">
             <Card>
               <CardContent className="p-4">
-                <div className="bg-gray-100 rounded-lg p-4 flex items-center justify-center" style={{ 
-                  backgroundImage: 'repeating-linear-gradient(45deg, #f9fafb 0px, #f9fafb 10px, #e5e7eb 10px, #e5e7eb 20px)',
-                  backgroundSize: '20px 20px'
+                <div className="rounded-lg p-4 flex items-center justify-center" style={{ 
+                  backgroundColor: baseColor || '#86cb92'
                 }}>
                   <canvas
                     ref={canvasRef}
                     className="max-w-full rounded shadow-2xl"
                   />
                 </div>
+                <p className="text-xs text-center text-gray-600 mt-2">
+                  Preview showing your design in {paintColor || 'paint'} on the base rug color
+                </p>
               </CardContent>
             </Card>
           </div>

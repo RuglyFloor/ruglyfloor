@@ -169,13 +169,13 @@ export default function BuilderSidebar({
       {/* Dynamic Preview or Placeholder */}
       {config.baseColor ? (
         <InteractiveRugPreview
-          key={`preview-${config.imageUrl}-${config.baseColor}-${config.paintColor}`}
+          key={`preview-${config.imageUrl}-${config.baseColor}-${config.paintColor}-${Date.now()}`}
           designUrl={config.imageUrl}
           baseColor={baseColors.find(c => c.name === config.baseColor)?.hex}
           paintColor={paintColors.find(c => c.name === config.paintColor)?.hex}
           size={config.size}
           placeholder={!config.imageUrl}
-          opacity={config.imageUrl ? 0.8 : 0.3}
+          opacity={1}
         />
       ) : (
         <Card className="bg-gray-50 border-dashed">
