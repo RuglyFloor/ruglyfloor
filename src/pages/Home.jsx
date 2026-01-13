@@ -158,42 +158,18 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="relative py-20 px-6 overflow-hidden">
-        {/* Background Video */}
-        <div className="absolute inset-0 z-0">
-          <iframe
-            className="absolute inset-0 w-full h-full object-cover"
-            src="https://www.youtube.com/embed/oGBsu7bQMAE?autoplay=1&mute=1&loop=1&playlist=oGBsu7bQMAE&controls=0&showinfo=0&rel=0&modestbranding=1"
-            allow="autoplay; encrypted-media"
-            style={{ pointerEvents: 'none' }} />
-
-          <div className="absolute inset-0 bg-black/50" />
-        </div>
-
-        <div className="max-w-5xl mx-auto text-center text-white relative z-10">
-          <h2 className="text-5xl font-bold mb-6">Your Rug, Your Rules</h2>
-          <p className="text-2xl mb-4 font-semibold">Design a rug that's as unique as you are. Because your space should tell YOUR story.</p>
-          <div className="text-lg mb-8 opacity-95 max-w-4xl mx-auto leading-relaxed space-y-4">
-            <p>
-              Forget cookie-cutter rugs. With Rugly's design studio, you're not just buying a rug—you're creating a piece of art that reflects who you are.
-            </p>
-            <p>
-              Pick your colors. Play with patterns. Watch it come to life in real-time.
-            </p>
-            <p>
-              Whether you're finally making your apartment feel like home or hunting for that perfect gift—we've got you covered. Mother's Day. Father's Day. Birthdays. Anniversaries. That friend who has everything. Your custom rug is the gift that actually means something.
-            </p>
-            <p>
-              Your mom will love it. Your best friend will be jealous. And honestly? You'll love it too.
-            </p>
+      <Link to={createPageUrl('CustomBuilder')}>
+        <section className="relative py-20 px-6 overflow-hidden cursor-pointer">
+          {/* Background Video */}
+          <div className="absolute inset-0 z-0">
+            <iframe
+              className="absolute inset-0 w-full h-full object-cover"
+              src="https://www.youtube.com/embed/eVrsX-VmtYo?autoplay=1&mute=1&loop=1&playlist=eVrsX-VmtYo&controls=0&showinfo=0&rel=0&modestbranding=1"
+              allow="autoplay; encrypted-media"
+              style={{ pointerEvents: 'none' }} />
           </div>
-          <Link to={createPageUrl('CustomBuilder')}>
-            <Button size="lg" variant="secondary" className="text-xl px-12 py-8 font-bold">
-              Create Your Rug Now
-            </Button>
-          </Link>
-        </div>
-      </section>
+        </section>
+      </Link>
 
       {/* Our Process Section */}
       <section className="py-16 px-6 bg-slate-50">
