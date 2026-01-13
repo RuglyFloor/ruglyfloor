@@ -113,7 +113,7 @@ export default function InteractiveRugPreview({
       }
     };
     img.src = designUrl;
-  }, [designUrl, baseColor, paintColor, opacity, size]);
+  }, [designUrl, baseColor, paintColor, opacity, size, placeholder]);
 
   return (
     <Card className="sticky top-6">
