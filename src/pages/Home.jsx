@@ -157,12 +157,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <Link to={createPageUrl('CustomBuilder')}>
-        <section className="relative overflow-hidden cursor-pointer h-[500px] bg-gradient-to-br from-blue-600 to-purple-600">
-        </section>
-      </Link>
-
       {/* Our Process Section */}
       <section className="py-16 px-6 bg-slate-50">
         <div className="max-w-4xl mx-auto">
