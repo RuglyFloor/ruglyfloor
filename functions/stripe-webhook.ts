@@ -1,100 +1,88 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
-import Stripe from 'npm:stripe@17.5.0';
+import Stripe from 'npm:stripe@14.8.0';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
-const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
 
 Deno.serve(async (req) => {
-  const base44 = createClientFromRequest(req);
-  
   try {
-    const body = await req.text();
     const signature = req.headers.get('stripe-signature');
-
+    const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
+    
     if (!signature || !webhookSecret) {
       console.error('Missing signature or webhook secret');
-      return Response.json({ error: 'Webhook Error' }, { status: 400 });
+      return Response.json({ error: 'Missing signature or webhook secret' }, { status: 400 });
     }
 
-    // Verify webhook signature (async version for Deno)
-    const event = await stripe.webhooks.constructEventAsync(
-      body,
-      signature,
-      webhookSecret
-    );
+    const body = await req.text();
+    const event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
 
-    console.log('Webhook event:', event.type);
+    // Initialize Base44 client for service role operations
+    const base44 = createClientFromRequest(req);
 
-    // Handle the event
-    switch (event.type) {
-      case 'checkout.session.completed': {
-        const session = event.data.object;
-        const orderId = session.metadata?.order_id;
+    console.log(`Processing Stripe event: ${event.type}`);
 
-        if (orderId) {
-          const order = (await base44.asServiceRole.entities.Order.filter({ id: orderId }))[0];
-          
-          if (order) {
-            // Check if returning customer
-            const previousOrders = await base44.asServiceRole.entities.Order.filter({ 
-              customer_email: order.customer_email 
-            });
-            const isReturningCustomer = previousOrders.length > 1;
-            
-            // Calculate estimated completion (30 days)
-            const estimatedCompletion = new Date();
-            estimatedCompletion.setDate(estimatedCompletion.getDate() + 30);
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object;
+      
+      console.log(`Checkout completed: ${session.id}, Order ID: ${session.metadata?.order_id}`);
 
-            // Update order status
-            await base44.asServiceRole.entities.Order.update(orderId, {
-              payment_status: 'paid',
-              status: 'rug_ordered',
-              estimated_completion: estimatedCompletion.toISOString(),
-              is_returning_customer: isReturningCustomer,
-              status_history: [
-                {
-                  status: 'rug_ordered',
-                  timestamp: new Date().toISOString(),
-                  note: 'Payment confirmed, rug ordered from supplier'
-                }
-              ]
-            });
+      // Update order payment status
+      if (session.metadata?.order_id) {
+        await base44.asServiceRole.entities.Order.update(session.metadata.order_id, {
+          payment_status: 'paid',
+          tracking_number: null
+        });
 
-            // Send confirmation email via new function
+        console.log(`Order ${session.metadata.order_id} marked as paid`);
+
+        // Get order details for notification
+        const order = await base44.asServiceRole.entities.Order.list();
+        const updatedOrder = order.find(o => o.id === session.metadata.order_id);
+
+        if (updatedOrder) {
+          // Send order confirmation email
+          try {
             await base44.asServiceRole.functions.invoke('sendOrderConfirmation', {
-              orderData: {
-                ...order,
-                estimated_completion: estimatedCompletion.toISOString()
-              }
+              orderId: session.metadata.order_id,
+              customerEmail: updatedOrder.customer_email,
+              customerName: updatedOrder.customer_name,
+              totalAmount: updatedOrder.total_amount,
+              items: updatedOrder.items
             });
+            console.log(`Confirmation email sent for order ${session.metadata.order_id}`);
+          } catch (emailError) {
+            console.error('Failed to send confirmation email:', emailError.message);
+          }
 
-            // Notify business
+          // Notify admin of new order
+          try {
             await base44.asServiceRole.functions.invoke('notifyNewOrder', {
-              orderData: order
+              orderId: session.metadata.order_id,
+              customerName: updatedOrder.customer_name,
+              customerEmail: updatedOrder.customer_email,
+              totalAmount: updatedOrder.total_amount
             });
-
-            console.log(`Order ${orderId} confirmed. Returning customer: ${isReturningCustomer}`);
+            console.log(`Admin notified of new order ${session.metadata.order_id}`);
+          } catch (notifyError) {
+            console.error('Failed to notify admin:', notifyError.message);
           }
         }
-        break;
       }
-
-      case 'payment_intent.payment_failed': {
-        const paymentIntent = event.data.object;
-        console.error('Payment failed:', paymentIntent.id);
-        break;
-      }
-
-      default:
-        console.log(`Unhandled event type: ${event.type}`);
     }
 
-    return Response.json({ received: true });
+    if (event.type === 'checkout.session.expired') {
+      const session = event.data.object;
+      console.log(`Checkout session expired: ${session.id}`);
+      // Handle expired checkout if needed
+    }
 
+    return Response.json({ success: true, received: true });
   } catch (error) {
     console.error('Webhook error:', error);
+    console.error('Error message:', error.message);
     return Response.json({ 
-      error: error.message 
+      error: 'Webhook processing failed',
+      message: error.message 
     }, { status: 400 });
   }
 });
