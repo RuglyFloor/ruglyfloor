@@ -6,12 +6,48 @@ export default function InteractiveRugPreview({
   baseColor, 
   paintColor, 
   size,
-  opacity = 0.9 
+  opacity = 0.9,
+  placeholder = false
 }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    if (!canvasRef.current || !designUrl || !baseColor) return;
+    if (!canvasRef.current || !baseColor) return;
+    
+    // If placeholder and no design, just show base color
+    if (placeholder && !designUrl) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      const containerWidth = canvas.parentElement.offsetWidth;
+      canvas.width = containerWidth;
+      canvas.height = containerWidth * 0.75;
+      
+      const rugWidth = canvas.width * 0.8;
+      const rugHeight = canvas.height * 0.8;
+      const rugX = (canvas.width - rugWidth) / 2;
+      const rugY = (canvas.height - rugHeight) / 2;
+      
+      // Background
+      ctx.fillStyle = '#f3f4f6';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.15)';
+      ctx.fillRect(rugX + 10, rugY + 10, rugWidth, rugHeight);
+      
+      // Base color
+      ctx.fillStyle = baseColor;
+      ctx.fillRect(rugX, rugY, rugWidth, rugHeight);
+      
+      // Texture
+      ctx.fillStyle = 'rgba(0,0,0,0.05)';
+      for (let i = 0; i < rugHeight; i += 2) {
+        ctx.fillRect(rugX, rugY + i, rugWidth, 1);
+      }
+      return;
+    }
+    
+    if (!designUrl) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
