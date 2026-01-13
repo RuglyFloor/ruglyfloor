@@ -7,7 +7,7 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    const { cart, customerInfo } = await req.json();
+    const { cart, customerInfo, designInstructions } = await req.json();
 
     if (!cart || cart.length === 0) {
       return Response.json({ error: 'Cart is empty' }, { status: 400 });
@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
 
     // Create order record first
     const orderNumber = 'RUG-' + Date.now();
-    const order = await base44.entities.Order.create({
+    const order = await base44.asServiceRole.entities.Order.create({
       order_number: orderNumber,
       customer_name: customerInfo.name,
       customer_email: customerInfo.email,
@@ -86,7 +86,8 @@ Deno.serve(async (req) => {
       items: cart,
       total_amount: cart.reduce((sum, item) => sum + item.price, 0) + shippingCost,
       status: 'pending',
-      payment_status: 'pending'
+      payment_status: 'pending',
+      notes: designInstructions || ''
     });
 
     // Create Stripe checkout session
