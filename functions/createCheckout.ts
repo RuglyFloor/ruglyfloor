@@ -116,8 +116,11 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     console.error('Checkout error:', error);
+    console.error('Error details:', error.message);
+    console.error('Error stack:', error.stack);
     return Response.json({ 
-      error: error.message || 'Failed to create checkout session' 
+      error: error.message || 'Failed to create checkout session',
+      details: error.message
     }, { status: 500 });
   }
 });
