@@ -69,18 +69,37 @@ export default function BuilderSidebar({
             )}
 
             {config.paintColor && (
-              <div className="bg-gray-50 p-3 rounded-lg flex items-center gap-3">
-                <div 
-                  className="w-8 h-8 rounded-full border border-gray-200 shadow-sm transform -rotate-45"
-                  style={{ 
-                    backgroundColor: paintColors.find(c => c.name === config.paintColor)?.hex,
-                    borderTopRightRadius: 0
-                  }}
-                />
-                <div>
-                  <div className="text-xs font-semibold">Selected Paint</div>
-                  <div className="text-xs text-gray-600">{config.paintColor}</div>
+              <div className="bg-gray-50 p-3 rounded-lg">
+                <div className="flex items-center gap-3 mb-2">
+                  <div 
+                    className="w-8 h-8 rounded-full border border-gray-200 shadow-sm"
+                    style={{ 
+                      backgroundColor: paintColors.find(c => c.name === config.paintColor)?.hex,
+                      borderRadius: '50% 50% 50% 0',
+                      transform: 'rotate(-45deg)'
+                    }}
+                  />
+                  <div>
+                    <div className="text-xs font-semibold">1st Paint Color</div>
+                    <div className="text-xs text-gray-600">{config.paintColor}</div>
+                  </div>
                 </div>
+                {config.secondPaintColor && (
+                  <div className="flex items-center gap-3 mt-2">
+                    <div 
+                      className="w-8 h-8 rounded-full border border-gray-200 shadow-sm"
+                      style={{ 
+                        backgroundColor: paintColors.find(c => c.name === config.secondPaintColor)?.hex,
+                        borderRadius: '50% 50% 50% 0',
+                        transform: 'rotate(-45deg)'
+                      }}
+                    />
+                    <div>
+                      <div className="text-xs font-semibold">2nd Paint Color</div>
+                      <div className="text-xs text-gray-600">{config.secondPaintColor}</div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
