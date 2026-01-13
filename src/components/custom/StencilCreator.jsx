@@ -86,11 +86,13 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
         imageData.data[i] = parseInt(paintColor.slice(1, 3), 16);
         imageData.data[i + 1] = parseInt(paintColor.slice(3, 5), 16);
         imageData.data[i + 2] = parseInt(paintColor.slice(5, 7), 16);
+        imageData.data[i + 3] = 255; // Opaque
       } else {
-        // White background
-        imageData.data[i] = 255;
-        imageData.data[i + 1] = 255;
-        imageData.data[i + 2] = 255;
+        // Transparent background
+        imageData.data[i] = 0;
+        imageData.data[i + 1] = 0;
+        imageData.data[i + 2] = 0;
+        imageData.data[i + 3] = 0; // Fully transparent
       }
     }
 
@@ -238,7 +240,10 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
           <div className="lg:sticky lg:top-6 h-fit">
             <Card>
               <CardContent className="p-4">
-                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg p-4 flex items-center justify-center">
+                <div className="bg-gray-100 rounded-lg p-4 flex items-center justify-center" style={{ 
+                  backgroundImage: 'repeating-linear-gradient(45deg, #f9fafb 0px, #f9fafb 10px, #e5e7eb 10px, #e5e7eb 20px)',
+                  backgroundSize: '20px 20px'
+                }}>
                   <canvas
                     ref={canvasRef}
                     className="max-w-full rounded shadow-2xl"

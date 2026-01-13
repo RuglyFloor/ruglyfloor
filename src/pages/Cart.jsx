@@ -3,12 +3,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Trash2, ShoppingBag, BookmarkPlus, Mail, X } from 'lucide-react';
+import { Trash2, ShoppingBag, BookmarkPlus, Mail, X, MessageSquare, Phone } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import SEOHead from '../components/seo/SEOHead';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ export default function Cart() {
   const [showExitPopup, setShowExitPopup] = useState(false);
   const [exitEmail, setExitEmail] = useState('');
   const [exitEmailSent, setExitEmailSent] = useState(false);
+  const [designInstructions, setDesignInstructions] = useState('');
 
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem('rugly_cart') || '[]');
@@ -104,7 +106,8 @@ export default function Cart() {
     try {
       const response = await base44.functions.invoke('createCheckout', { 
         cart, 
-        customerInfo 
+        customerInfo,
+        designInstructions 
       });
 
       if (response.data.url) {
@@ -341,6 +344,42 @@ export default function Cart() {
                     value={customerInfo.zip}
                     onChange={(e) => setCustomerInfo(prev => ({ ...prev, zip: e.target.value }))}
                   />
+                </div>
+
+                {/* Master Design Instructions */}
+                <div className="border-t pt-4 mt-4">
+                  <Label className="text-sm mb-2 block font-semibold flex items-center gap-2">
+                    <MessageSquare className="w-4 h-4 text-blue-600" />
+                    Master Design Instructions (Optional)
+                  </Label>
+                  <Textarea
+                    value={designInstructions}
+                    onChange={(e) => setDesignInstructions(e.target.value)}
+                    placeholder="Example: Make the text bold and centered, add a vintage feel, use vibrant colors..."
+                    className="h-24 text-sm"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Share special requests or design details
+                  </p>
+                  
+                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-3 rounded-lg border border-blue-200 mt-3">
+                    <p className="text-xs font-semibold text-gray-900 mb-2">Need to discuss your design?</p>
+                    <div className="flex gap-2">
+                      <a href="tel:5177778474" className="flex-1">
+                        <Button variant="outline" size="sm" className="w-full gap-1 text-xs">
+                          <Phone className="w-3 h-3" />
+                          Call
+                        </Button>
+                      </a>
+                      <a href="sms:5177778474" className="flex-1">
+                        <Button variant="outline" size="sm" className="w-full gap-1 text-xs">
+                          <MessageSquare className="w-3 h-3" />
+                          Text
+                        </Button>
+                      </a>
+                    </div>
+                    <p className="text-xs text-center text-gray-600 mt-1">(517) 777-8474</p>
+                  </div>
                 </div>
 
                 <div className="border-t pt-4 mt-4">
