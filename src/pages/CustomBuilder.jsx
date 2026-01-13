@@ -495,10 +495,16 @@ export default function CustomBuilder() {
                           onChange={(e) => setConfig(prev => ({ ...prev, useSecondShade: e.target.checked }))}
                           className="mt-1 w-4 h-4 text-blue-600 rounded"
                         />
-                        <div>
+                        <div className="flex-1">
                           <div className="font-semibold text-sm text-gray-900">Use a 2nd shade for better definition</div>
                           <div className="text-xs text-gray-600">Recommended for images of people, places, etc.</div>
                         </div>
+                        {config.useSecondShade && (
+                          <div className="flex flex-col items-center gap-1">
+                            <div className="w-8 h-8 rounded-full bg-gray-400 shadow-md border-2 border-gray-500"></div>
+                            <span className="text-xs font-semibold text-gray-700">2nd layer shade</span>
+                          </div>
+                        )}
                       </label>
                     </div>
                   </div>
@@ -508,17 +514,11 @@ export default function CustomBuilder() {
                      Back
                    </Button>
                    <Button 
-                     className="flex-1" 
+                     className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-lg py-6" 
                      onClick={() => setStep(3)} 
                      disabled={!config.baseColor || !config.paintColor}
                    >
-                     {config.baseColor && config.paintColor ? (
-                       config.secondPaintColor 
-                         ? `${config.baseColor} + ${config.paintColor} + ${config.secondPaintColor}`
-                         : `${config.baseColor} + ${config.paintColor}`
-                     ) : (
-                       'Continue to Design'
-                     )}
+                     BUILD MY RUG →
                    </Button>
                  </div>
                  </CardContent>
