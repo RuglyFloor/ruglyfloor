@@ -373,7 +373,6 @@ export default function CustomBuilder() {
 
           {/* Step 2: Color Selection */}
           {step === 2 && (
-          <div className="grid lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
                 <CardTitle>Step 2: Choose Colors</CardTitle>
