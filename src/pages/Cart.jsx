@@ -69,16 +69,11 @@ export default function Cart() {
     }
 
     try {
-      await base44.integrations.Core.SendEmail({
-        to: exitEmail,
-        subject: 'Your Custom Rug is Waiting! 🎨',
-        body: `
-          <h2>Don't Leave Your Dream Rug Behind!</h2>
-          <p>You have ${cart.length} custom rug${cart.length > 1 ? 's' : ''} in your cart totaling $${totalAmount}.</p>
-          <p>Your custom designs are waiting for you! Complete your order and bring art to your floor.</p>
-          <p><a href="${window.location.origin}${createPageUrl('Cart')}" style="background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">Complete Your Order</a></p>
-          <p style="margin-top: 20px;">Questions? Reply to this email or call us at (517) 777-8474</p>
-        `
+      await base44.functions.invoke('sendExitEmail', {
+        email: exitEmail,
+        cartItems: cart.length,
+        totalAmount,
+        cartUrl: `${window.location.origin}${createPageUrl('Cart')}`
       });
       setExitEmailSent(true);
       setTimeout(() => setShowExitPopup(false), 2000);
