@@ -442,6 +442,24 @@ export default function CustomBuilder() {
                             </button>
                           )}
                         </div>
+
+                        {/* Dimension Shade Layer Info */}
+                        <div className="mt-6 bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-4">
+                          <button className="w-full text-left">
+                            <div className="flex items-start gap-3">
+                              <div className="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold text-lg">
+                                💡
+                              </div>
+                              <div className="flex-1">
+                                <h4 className="font-bold text-purple-900 mb-1">Create Shade Layer to Primary Color for Dimension</h4>
+                                <p className="text-xs text-purple-700 leading-relaxed">
+                                  <strong>Pro Technique:</strong> Use 1 form with 2 colors for depth, or 2 forms with 2 colors for complex dimension. 
+                                  A darker/lighter shade of your primary color creates realistic shadows and highlights, making your design pop off the rug.
+                                </p>
+                              </div>
+                            </div>
+                          </button>
+                        </div>
                       </div>
                     </div>
                     <div className="flex gap-3 mt-6">
