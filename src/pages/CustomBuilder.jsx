@@ -60,21 +60,19 @@ const PAINT_COLORS = [
   // First set - Only for light base rugs
   { name: 'Sun Yellow', hex: '#ffd700', type: 'dark' },
   { name: 'Bright Orange', hex: '#ff4500', type: 'dark' },
-  { name: 'Brilliant Red', hex: '#dc143c', type: 'dark' },
+  { name: 'Red', hex: '#dc143c', type: 'dark' },
   { name: 'Violet', hex: '#7851a9', type: 'dark' },
-  { name: 'Azure Blue', hex: '#2e5090', type: 'dark' },
+  { name: 'Blue', hex: '#2e5090', type: 'dark' },
   { name: 'Bright Green', hex: '#00a651', type: 'dark' },
   { name: 'Black', hex: '#000000', type: 'dark' },
   { name: 'White', hex: '#ffffff', type: 'dark' },
   // Second set - Works with both light and dark base rugs
   { name: 'Emerald Green', hex: '#046307', type: 'both' },
-  { name: 'Brilliant Red', hex: '#c8102e', type: 'both' },
-  { name: 'Violet', hex: '#5b3a70', type: 'both' },
+  { name: 'Crimson', hex: '#c8102e', type: 'both' },
+  { name: 'Purple', hex: '#5b3a70', type: 'both' },
   { name: 'Dioxazine Purple', hex: '#1c0d82', type: 'both' },
-  { name: 'Black', hex: '#000000', type: 'both' },
   { name: 'Hansa Yellow', hex: '#ffd300', type: 'both' },
-  { name: 'Vermillion Orange', hex: '#ff4500', type: 'both' },
-  { name: 'White', hex: '#ffffff', type: 'both' }
+  { name: 'Vermillion', hex: '#ff4500', type: 'both' }
 ];
 
 export default function CustomBuilder() {
@@ -449,7 +447,7 @@ export default function CustomBuilder() {
 
                     {/* Second Set - Universal colors */}
                     <div className="mb-4">
-                      <p className="text-xs text-gray-600 mb-2 font-semibold">2nd Color</p>
+                      <p className="text-xs text-gray-600 mb-2 font-semibold">Universal Colors</p>
                       <div className="grid grid-cols-3 gap-4">
                         {PAINT_COLORS.filter(color => color.type === 'both').map((color, idx) => (
                           <button
