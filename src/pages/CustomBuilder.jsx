@@ -12,6 +12,7 @@ import UpsellOptions from '../components/custom/UpsellOptions';
 import DrawingCanvas from '../components/custom/DrawingCanvas';
 import DesignLibrary from '../components/custom/DesignLibrary';
 import InteractiveRugPreview from '../components/custom/InteractiveRugPreview';
+import BuilderSidebar from '../components/custom/BuilderSidebar';
 import SEOHead from '../components/seo/SEOHead';
 
 const SIZES = [
@@ -240,7 +241,7 @@ export default function CustomBuilder() {
         keywords={['custom hand-painted rugs for interior designers', 'personalized floor art rugs', 'customizable stencil rug designs', 'custom painted washable rugs', 'hand-painted low-pile rugs for high traffic', 'personalized rugs for nursery hand-painted', 'custom painted rugs for Airbnb decor']}
         url="/custom-builder"
       />
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-bold text-center mb-2">Design Your Custom Rug</h1>
         <p className="text-center text-gray-600 mb-8">Create a one-of-a-kind piece in three simple steps</p>
 
@@ -276,8 +277,10 @@ export default function CustomBuilder() {
           </div>
         </div>
 
-        {/* Step 1: Size Selection */}
-         {step === 1 && (
+        <div className="grid lg:grid-cols-3 gap-8 items-start">
+          <div className="lg:col-span-2 space-y-6">
+            {/* Step 1: Size Selection */}
+            {step === 1 && (
            <div className={`space-y-6 transition-opacity duration-300 ${transitioning ? 'opacity-50' : 'opacity-100'}`}>
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold mb-3 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -365,11 +368,11 @@ export default function CustomBuilder() {
             </div>
 
 
-          </div>
-        )}
+            </div>
+          )}
 
-        {/* Step 2: Color Selection with Live Preview */}
-        {step === 2 && (
+          {/* Step 2: Color Selection */}
+          {step === 2 && (
           <div className="grid lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
@@ -389,9 +392,17 @@ export default function CustomBuilder() {
                           }`}
                         >
                           <div 
-                            className="w-12 h-12 rounded-full border-2 border-white shadow-md"
-                            style={{ backgroundColor: color.hex }}
-                          />
+                           className="relative w-16 h-12 rounded-sm border-2 border-white shadow-md overflow-hidden"
+                           style={{ backgroundColor: color.hex }}
+                          >
+                           <div 
+                             className="absolute inset-0 opacity-30"
+                             style={{
+                               backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000' fill-opacity='0.15' fill-rule='evenodd'%3E%3Cpath d='M0 0h20v20H0V0zm20 20h20v20H20V20z'/%3E%3C/g%3E%3C/svg%3E")`,
+                               backgroundSize: '6px 6px'
+                             }}
+                           />
+                          </div>
                           <span className="text-xs text-center">{color.name}</span>
                         </button>
                       ))}
@@ -498,23 +509,13 @@ export default function CustomBuilder() {
                      )}
                    </Button>
                  </div>
-              </CardContent>
-            </Card>
-            
-            {config.imageUrl && config.baseColor && (
-              <InteractiveRugPreview
-                designUrl={config.imageUrl}
-                baseColor={BASE_COLORS.find(c => c.name === config.baseColor)?.hex}
-                paintColor={PAINT_COLORS.find(c => c.name === config.paintColor)?.hex}
-                size={config.size}
-              />
-            )}
-          </div>
-        )}
+                 </CardContent>
+                 </Card>
+                 )}
 
-        {/* Step 3: Create Stencil Design */}
-        {step === 3 && (
-          <Card>
+          {/* Step 3: Create Stencil Design */}
+          {step === 3 && (
+            <Card>
             <CardHeader>
               <div className="flex items-center gap-3 mb-2">
                 <Button variant="outline" size="sm" onClick={() => setStep(2)}>
@@ -674,11 +675,11 @@ export default function CustomBuilder() {
               </div>
             </CardContent>
           </Card>
-        )}
+          )}
 
-        {/* Step 4: Upsell Options */}
-        {step === 4 && (
-          <Card>
+          {/* Step 4: Upsell Options */}
+          {step === 4 && (
+            <Card>
             <CardHeader>
               <CardTitle>Step 4: Premium Upgrades (Optional)</CardTitle>
             </CardHeader>
@@ -697,8 +698,20 @@ export default function CustomBuilder() {
               />
             </CardContent>
           </Card>
-        )}
+          )}
+          </div>
+
+          <div className="hidden lg:block">
+            <BuilderSidebar
+              step={step}
+              config={config}
+              currentPrice={currentPrice()}
+              baseColors={BASE_COLORS}
+              paintColors={PAINT_COLORS}
+            />
+          </div>
         </div>
-        </div>
-        );
-        }
+      </div>
+    </div>
+  );
+}
