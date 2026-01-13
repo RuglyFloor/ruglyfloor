@@ -241,7 +241,7 @@ export default function CustomBuilder() {
         keywords={['custom hand-painted rugs for interior designers', 'personalized floor art rugs', 'customizable stencil rug designs', 'custom painted washable rugs', 'hand-painted low-pile rugs for high traffic', 'personalized rugs for nursery hand-painted', 'custom painted rugs for Airbnb decor']}
         url="/custom-builder"
       />
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-bold text-center mb-2">Design Your Custom Rug</h1>
         <p className="text-center text-gray-600 mb-8">Create a one-of-a-kind piece in three simple steps</p>
 
