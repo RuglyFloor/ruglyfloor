@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
 
     // Create order record first
     const orderNumber = 'RUG-' + Date.now();
-    const order = await base44.asServiceRole.entities.Order.create({
+    const order = await base44.entities.Order.create({
       order_number: orderNumber,
       customer_name: customerInfo.name,
       customer_email: customerInfo.email,
