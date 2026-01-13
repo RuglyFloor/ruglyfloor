@@ -89,6 +89,7 @@ export default function CustomBuilder() {
     numColors: 2,
     useSecondShade: false,
     shadeMode: 'none', // 'none', 'specify', or 'dolly'
+    dollyShade: 'darker', // 'darker' or 'lighter'
     upsells: {
       is3D: false,
       thirdColor: '',
@@ -463,8 +464,32 @@ export default function CustomBuilder() {
                                     </span>
                                   )}
                                 </div>
-                                <p className="text-xs text-gray-700">We'll create a darker shade of your primary color (2x upcharge)</p>
+                                <p className="text-xs text-gray-700">We'll create a shade of your primary color (2x upcharge)</p>
                               </button>
+
+                              {/* Dolly shade selection */}
+                              {config.shadeMode === 'dolly' && (
+                                <div className="ml-4 mt-2 flex gap-3">
+                                  <button
+                                    onClick={() => setConfig(prev => ({ ...prev, dollyShade: 'darker' }))}
+                                    className={`flex-1 p-3 rounded-lg border-2 transition-all ${
+                                      config.dollyShade === 'darker' ? 'border-purple-600 bg-purple-100' : 'border-gray-300 hover:border-gray-400'
+                                    }`}
+                                  >
+                                    <div className="text-sm font-semibold text-purple-900">Darker Shade</div>
+                                    <div className="text-xs text-gray-600 mt-1">of 1st color</div>
+                                  </button>
+                                  <button
+                                    onClick={() => setConfig(prev => ({ ...prev, dollyShade: 'lighter' }))}
+                                    className={`flex-1 p-3 rounded-lg border-2 transition-all ${
+                                      config.dollyShade === 'lighter' ? 'border-purple-600 bg-purple-100' : 'border-gray-300 hover:border-gray-400'
+                                    }`}
+                                  >
+                                    <div className="text-sm font-semibold text-purple-900">Lighter Shade</div>
+                                    <div className="text-xs text-gray-600 mt-1">of 1st color</div>
+                                  </button>
+                                </div>
+                              )}
                             </div>
 
                             {/* Color selection for 'specify' mode */}
