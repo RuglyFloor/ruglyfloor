@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Upload, CheckCircle, Loader2, Pencil, FileText } from 'lucide-react';
+import { Upload, CheckCircle, Loader2, Pencil, FileText, MessageSquare, Phone } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -93,7 +93,8 @@ export default function CustomBuilder() {
     imageUrl: '',
     previewUrl: '',
     numColors: 2,
-    useSecondShade: false
+    useSecondShade: false,
+    designInstructions: ''
   });
   const [uploading, setUploading] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -180,6 +181,7 @@ export default function CustomBuilder() {
       imageUrl: config.imageUrl,
       previewUrl: config.previewUrl,
       numColors: config.numColors,
+      designInstructions: config.designInstructions || '',
       price: price,
       name: `Custom Rug - ${selectedSize.label}`
     };
@@ -555,6 +557,49 @@ export default function CustomBuilder() {
                     )}
                   </>
                 )}
+
+                {/* Master Design Instructions */}
+                <Card className="mt-6">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <MessageSquare className="w-5 h-5 text-blue-600" />
+                      Master Design Instructions (Optional)
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label className="text-sm mb-2 block">Tell us about your vision</Label>
+                      <textarea
+                        value={config.designInstructions}
+                        onChange={(e) => setConfig(prev => ({ ...prev, designInstructions: e.target.value }))}
+                        placeholder="Example: I want the text to be bold and centered. The background should have a vintage feel. Please make the colors vibrant..."
+                        className="w-full h-32 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        Share any special requests, style preferences, or specific details about your design
+                      </p>
+                    </div>
+
+                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-200">
+                      <p className="text-sm font-semibold text-gray-900 mb-3">Need to discuss your design?</p>
+                      <div className="flex gap-3">
+                        <a href="tel:5177778474" className="flex-1">
+                          <Button variant="outline" className="w-full gap-2">
+                            <Phone className="w-4 h-4" />
+                            Call Us
+                          </Button>
+                        </a>
+                        <a href="sms:5177778474" className="flex-1">
+                          <Button variant="outline" className="w-full gap-2">
+                            <MessageSquare className="w-4 h-4" />
+                            Text Us
+                          </Button>
+                        </a>
+                      </div>
+                      <p className="text-xs text-center text-gray-600 mt-2">(517) 777-8474</p>
+                    </div>
+                  </CardContent>
+                </Card>
 
                 {/* Upload Mode */}
                 {designMode === 'upload' && (
