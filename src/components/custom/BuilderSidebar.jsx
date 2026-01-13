@@ -188,10 +188,23 @@ export default function BuilderSidebar({
       {/* Guidance Info */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">Guide & Tips</CardTitle>
+          <CardTitle className="text-base">Foundation Guide</CardTitle>
         </CardHeader>
         <CardContent>
           {renderStepInfo()}
+          
+          {/* 2nd Shade Indicator */}
+          {step === 2 && config.useSecondShade && (
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
+                <div className="w-8 h-8 rounded-full bg-gray-400 shadow-md border-2 border-gray-500"></div>
+                <div>
+                  <div className="text-xs font-semibold">2nd Layer Shade</div>
+                  <div className="text-xs text-gray-600">Added for definition</div>
+                </div>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
