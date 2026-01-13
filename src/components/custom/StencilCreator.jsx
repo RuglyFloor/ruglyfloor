@@ -84,14 +84,14 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
       const gray = imageData.data[i];
       const layerValue = Math.floor(gray / layerStep) * layerStep;
       
-      if (layerValue > threshold) {
-        // Light areas become paint color
+      if (layerValue < threshold) {
+        // Dark areas become paint color
         imageData.data[i] = parseInt(paintColor.slice(1, 3), 16);
         imageData.data[i + 1] = parseInt(paintColor.slice(3, 5), 16);
         imageData.data[i + 2] = parseInt(paintColor.slice(5, 7), 16);
         imageData.data[i + 3] = 255; // Opaque
       } else {
-        // Dark areas become transparent (show base rug color)
+        // Light areas become transparent (show base rug color)
         imageData.data[i] = 0;
         imageData.data[i + 1] = 0;
         imageData.data[i + 2] = 0;
