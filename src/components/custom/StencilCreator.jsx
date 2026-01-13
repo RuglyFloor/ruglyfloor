@@ -2,8 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { Upload, Download, Share2, RotateCcw } from 'lucide-react';
+import { Download, Share2, RotateCcw, Sparkles } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import ImageUploader from './ImageUploader';
 
 const PAINT_COLORS = [
   { name: 'Black', hex: '#000000' },
@@ -18,25 +19,18 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
   const [originalImage, setOriginalImage] = useState(null);
   const [threshold, setThreshold] = useState(128);
   const [colors, setColors] = useState(2);
+  const [brightness, setBrightness] = useState(100);
+  const [saturation, setSaturation] = useState(100);
   
-  const blur = 5; // Always at max
-  
+  const blur = 5;
   const canvasRef = useRef(null);
-  const fileInputRef = useRef(null);
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        setOriginalImage(img);
-      };
-      img.src = event.target.result;
+  const handleImageSelect = (imageDataUrl) => {
+    const img = new Image();
+    img.onload = () => {
+      setOriginalImage(img);
     };
-    reader.readAsDataURL(file);
+    img.src = imageDataUrl;
   };
 
   useEffect(() => {
@@ -57,7 +51,7 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
     canvas.width = originalImage.width * scale;
     canvas.height = originalImage.height * scale;
 
-    // Clear to transparent first
+    // Clear to transparent
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Draw original image
@@ -67,6 +61,28 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
     let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
 
+    // Apply brightness and saturation adjustments
+    for (let i = 0; i < data.length; i += 4) {
+      let r = data[i];
+      let g = data[i + 1];
+      let b = data[i + 2];
+
+      // Apply brightness
+      r = Math.min(255, r * (brightness / 100));
+      g = Math.min(255, g * (brightness / 100));
+      b = Math.min(255, b * (brightness / 100));
+
+      // Apply saturation
+      const gray = r * 0.299 + g * 0.587 + b * 0.114;
+      r = Math.round(gray + (r - gray) * (saturation / 100));
+      g = Math.round(gray + (g - gray) * (saturation / 100));
+      b = Math.round(gray + (b - gray) * (saturation / 100));
+
+      data[i] = r;
+      data[i + 1] = g;
+      data[i + 2] = b;
+    }
+
     // Convert to grayscale
     for (let i = 0; i < data.length; i += 4) {
       const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
@@ -75,7 +91,7 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
       data[i + 2] = gray;
     }
 
-    // Apply max blur for smoothest edges
+    // Apply blur
     imageData = applyGaussianBlur(imageData, blur);
 
     // Apply threshold with colors/layers
@@ -85,22 +101,20 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
       const layerValue = Math.floor(gray / layerStep) * layerStep;
       
       if (layerValue < threshold) {
-        // Dark areas become paint color
         imageData.data[i] = parseInt(paintColor.slice(1, 3), 16);
         imageData.data[i + 1] = parseInt(paintColor.slice(3, 5), 16);
         imageData.data[i + 2] = parseInt(paintColor.slice(5, 7), 16);
-        imageData.data[i + 3] = 255; // Opaque
+        imageData.data[i + 3] = 255;
       } else {
-        // Light areas become transparent (show base rug color)
         imageData.data[i] = 0;
         imageData.data[i + 1] = 0;
         imageData.data[i + 2] = 0;
-        imageData.data[i + 3] = 0; // Fully transparent
+        imageData.data[i + 3] = 0;
       }
     }
 
     ctx.putImageData(imageData, 0, 0);
-  }, [originalImage, threshold, paintColor, colors]);
+  }, [originalImage, threshold, paintColor, colors, brightness, saturation]);
 
   const applyGaussianBlur = (imageData, radius) => {
     const width = imageData.width;
@@ -219,26 +233,7 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
   return (
     <div className="space-y-6">
       {!originalImage ? (
-        <Card>
-          <CardContent className="p-12">
-            <div className="text-center">
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 hover:border-blue-500 transition-colors cursor-pointer"
-                   onClick={() => fileInputRef.current?.click()}>
-                <Upload className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-xl font-bold mb-2">Create Your Stencil</h3>
-                <p className="text-gray-600 mb-4">Upload any image to transform it into a rug-ready stencil design</p>
-                <Button type="button">Choose Image</Button>
-              </div>
-              <input
-                ref={fileInputRef}
-                type="file"
-                className="hidden"
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
-            </div>
-          </CardContent>
-        </Card>
+        <ImageUploader onImageSelect={handleImageSelect} />
       ) : (
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Canvas Preview */}
@@ -262,6 +257,50 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
 
           {/* Controls */}
           <div className="space-y-4">
+            {/* Brightness */}
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <Label className="text-sm font-bold flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-yellow-500" />
+                    Brightness
+                  </Label>
+                  <span className="text-xs font-mono bg-yellow-100 text-yellow-800 px-2 py-1 rounded">{brightness}%</span>
+                </div>
+                <Slider
+                  value={[brightness]}
+                  onValueChange={(val) => setBrightness(val[0])}
+                  min={50}
+                  max={150}
+                  step={1}
+                  className="w-full"
+                />
+                <p className="text-xs text-gray-500 mt-1.5">Lighten or darken</p>
+              </CardContent>
+            </Card>
+
+            {/* Saturation */}
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <Label className="text-sm font-bold flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-purple-500" />
+                    Saturation
+                  </Label>
+                  <span className="text-xs font-mono bg-purple-100 text-purple-800 px-2 py-1 rounded">{saturation}%</span>
+                </div>
+                <Slider
+                  value={[saturation]}
+                  onValueChange={(val) => setSaturation(val[0])}
+                  min={0}
+                  max={200}
+                  step={1}
+                  className="w-full"
+                />
+                <p className="text-xs text-gray-500 mt-1.5">Color intensity</p>
+              </CardContent>
+            </Card>
+
             {/* Contrast */}
             <Card>
               <CardContent className="p-4">
@@ -277,7 +316,7 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
                   step={1}
                   className="w-full"
                 />
-                <p className="text-xs text-gray-500 mt-1.5">More detail vs. cleaner look</p>
+                <p className="text-xs text-gray-500 mt-1.5">Detail vs. clean look</p>
               </CardContent>
             </Card>
 
@@ -304,11 +343,9 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
                     </button>
                   ))}
                 </div>
-                <p className="text-xs text-gray-500">Paint + background (2 min)</p>
+                <p className="text-xs text-gray-500">Paint + background layers</p>
               </CardContent>
             </Card>
-
-
           </div>
 
           {/* Action Buttons */}
