@@ -17,6 +17,7 @@ import Orders from './pages/Orders';
 import Policies from './pages/Policies';
 import Shop from './pages/Shop';
 import TrackOrder from './pages/TrackOrder';
+import NotionSync from './pages/NotionSync';
 import __Layout from './Layout.jsx';
 
 
@@ -40,6 +41,7 @@ export const PAGES = {
     "Policies": Policies,
     "Shop": Shop,
     "TrackOrder": TrackOrder,
+    "NotionSync": NotionSync,
 }
 
 export const pagesConfig = {
