@@ -367,7 +367,7 @@ export default function CustomBuilder() {
                         
                         {/* First Set - Base-specific colors */}
                         <div className="mb-3">
-                          <p className="text-xs text-gray-600 mb-2 font-semibold">Primary Colors</p>
+                          <p className="text-xs text-gray-600 mb-2 font-semibold">1st Color (Primary)</p>
                           <div className="grid grid-cols-3 gap-4">
                             {PAINT_COLORS.filter(color => {
                               if (!config.baseColor) return color.type === 'dark';
@@ -376,7 +376,7 @@ export default function CustomBuilder() {
                               return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
                             }).map((color) => (
                               <button
-                                key={`primary-${color.name}-${color.hex}`}
+                                key={color.id}
                                 onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
                                 className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
                                   config.paintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
@@ -404,14 +404,17 @@ export default function CustomBuilder() {
 
                         {/* Second Set - Universal colors */}
                         <div className="mb-4">
-                          <p className="text-xs text-gray-600 mb-2 font-semibold">2nd Color</p>
+                          <p className="text-xs text-gray-600 mb-2 font-semibold">2nd Color (Optional)</p>
                           <div className="grid grid-cols-3 gap-4">
-                            {PAINT_COLORS.filter(color => color.type === 'both').map((color, idx) => (
+                            {PAINT_COLORS.filter(color => color.type === 'both').map((color) => (
                               <button
-                                key={`both-${color.name}-${color.hex}-${idx}`}
-                                onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
+                                key={color.id}
+                                onClick={() => setConfig(prev => ({ 
+                                  ...prev, 
+                                  secondPaintColor: prev.secondPaintColor === color.name ? '' : color.name 
+                                }))}
                                 className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
-                                  config.paintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                                  config.secondPaintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                                 }`}
                               >
                                 <div 
@@ -422,22 +425,14 @@ export default function CustomBuilder() {
                               </button>
                             ))}
                           </div>
-                        </div>
-
-                        {/* Second Shade Checkbox */}
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                          <label className="flex items-start gap-3 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={config.useSecondShade}
-                              onChange={(e) => setConfig(prev => ({ ...prev, useSecondShade: e.target.checked }))}
-                              className="mt-1 w-4 h-4 text-blue-600 rounded"
-                            />
-                            <div>
-                              <div className="font-semibold text-sm text-gray-900">Use a 2nd shade for better definition</div>
-                              <div className="text-xs text-gray-600">Recommended for images of people, places, etc.</div>
-                            </div>
-                          </label>
+                          {config.secondPaintColor && (
+                            <button
+                              onClick={() => setConfig(prev => ({ ...prev, secondPaintColor: '' }))}
+                              className="mt-3 text-xs text-red-600 hover:text-red-700 underline"
+                            >
+                              Clear 2nd color
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>
