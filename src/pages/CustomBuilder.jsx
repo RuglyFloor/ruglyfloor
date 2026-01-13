@@ -144,11 +144,16 @@ export default function CustomBuilder() {
         colorInfo += ' with a second shade for depth and definition';
       }
       
+      // Add design instructions if provided
+      const instructionsAddendum = config.designInstructions 
+        ? `\n\nAdditional design requirements: ${config.designInstructions}` 
+        : '';
+      
       const prompt = `Create a realistic mockup image showing a ${sizeLabel} carpet rug in ${config.baseColor} base color lying on a floor at a slight angle (perspective view from above). 
       The design from the uploaded image should be ${colorInfo} in a flat stencil style (NOT 3D).
       IMPORTANT: If the uploaded image contains text, words, or letters, reproduce them clearly and legibly on the rug - the text must be readable and accurate.
       The rug should have visible carpet texture and the design should look professionally hand-painted on the rug surface.
-      Make it look professional and realistic, as if photographed in a well-lit room.`;
+      Make it look professional and realistic, as if photographed in a well-lit room.${instructionsAddendum}`;
       
       const { url } = await base44.integrations.Core.GenerateImage({
         prompt: prompt,
@@ -163,6 +168,13 @@ export default function CustomBuilder() {
       setProcessing(false);
     }
   };
+
+  // Auto-generate preview when design is complete
+  useEffect(() => {
+    if (step === 3 && config.imageUrl && config.baseColor && config.paintColor && !config.previewUrl && !processing) {
+      generatePreview();
+    }
+  }, [step, config.imageUrl, config.baseColor, config.paintColor, config.previewUrl]);
 
   const handleAddToCart = () => {
     const selectedSize = SIZES.find(s => s.value === config.size);
@@ -632,26 +644,33 @@ export default function CustomBuilder() {
 
                 {config.imageUrl && (
                   <div className="space-y-4">
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                      <Label className="block mb-2 font-semibold text-blue-900">🎨 Generate Realistic Preview</Label>
-                      <p className="text-sm text-gray-700 mb-3">
-                        See what your rug will actually look like with AI-generated preview
-                      </p>
-                      <Button
-                        onClick={() => generatePreview()}
-                        disabled={processing || !config.imageUrl}
-                        className="w-full bg-blue-600 hover:bg-blue-700"
-                      >
-                        {processing ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Generating Preview...
-                          </>
-                        ) : (
-                          'Generate AI Preview'
-                        )}
-                      </Button>
-                    </div>
+                    {processing && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div className="flex items-center gap-3">
+                          <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
+                          <div>
+                            <p className="font-semibold text-blue-900">🎨 Generating Your Realistic Preview...</p>
+                            <p className="text-sm text-gray-600">This may take 5-10 seconds</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {!config.previewUrl && !processing && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <Label className="block mb-2 font-semibold text-blue-900">🎨 Regenerate Preview</Label>
+                        <p className="text-sm text-gray-700 mb-3">
+                          Click to regenerate the AI preview with any changes
+                        </p>
+                        <Button
+                          onClick={() => generatePreview()}
+                          disabled={processing || !config.imageUrl}
+                          className="w-full bg-blue-600 hover:bg-blue-700"
+                        >
+                          Regenerate AI Preview
+                        </Button>
+                      </div>
+                    )}
 
                     {config.previewUrl && (
                       <div className="bg-green-50 border border-green-200 rounded-lg p-4">
