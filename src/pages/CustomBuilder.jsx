@@ -713,7 +713,7 @@ export default function CustomBuilder() {
           )}
         </div>
 
-        <div className="hidden lg:block">
+        <div className="hidden lg:block sticky top-6 self-start">
           <BuilderSidebar
             step={step}
             config={config}
