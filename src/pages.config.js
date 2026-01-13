@@ -19,6 +19,7 @@ import Policies from './pages/Policies';
 import Shop from './pages/Shop';
 import TrackOrder from './pages/TrackOrder';
 import Success from './pages/Success';
+import AdminOrderDetail from './pages/AdminOrderDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -44,10 +45,11 @@ export const PAGES = {
     "Shop": Shop,
     "TrackOrder": TrackOrder,
     "Success": Success,
+    "AdminOrderDetail": AdminOrderDetail,
 }
 
 export const pagesConfig = {
-    mainPage: "Home",
+    mainPage: "CustomBuilder",
     Pages: PAGES,
     Layout: __Layout,
 };

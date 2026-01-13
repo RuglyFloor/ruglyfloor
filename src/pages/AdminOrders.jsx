@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Package, Clock, Paintbrush, Truck, CheckCircle, XCircle, Mail } from 'lucide-react';
 import AdminProtected from '../components/AdminProtected';
+import { createPageUrl } from '../utils';
 
 const STATUS_CONFIG = {
   pending: { label: 'Pending Payment', icon: Clock, color: 'text-gray-500' },
@@ -186,12 +187,19 @@ function AdminOrdersContent() {
                               {item.preview_url && (
                                 <img src={item.preview_url} alt={item.name} className="w-16 h-16 object-cover rounded" />
                               )}
-                              <div>
+                              <div className="flex-1">
                                 <div className="font-medium">{item.name}</div>
                                 <div className="text-gray-600">Size: {item.size}</div>
                                 {item.base_color && <div className="text-gray-600">Base: {item.base_color}</div>}
                                 <div className="text-blue-600 font-semibold">${item.price}</div>
                               </div>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => window.location.href = `${createPageUrl('AdminOrderDetail')}?id=${order.id}`}
+                              >
+                                View Details
+                              </Button>
                             </div>
                           ))}
                         </div>
