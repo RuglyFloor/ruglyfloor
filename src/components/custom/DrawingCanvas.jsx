@@ -39,8 +39,8 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
     const canvas = canvasRef.current;
     if (canvas) {
       const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Clear to transparent instead of white
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       saveToHistory();
     }
   }, []);
@@ -90,12 +90,14 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
       ctx.lineTo(x, y);
       ctx.stroke();
     } else if (tool === 'eraser') {
-      ctx.strokeStyle = '#ffffff';
+      // Erase to transparent
+      ctx.globalCompositeOperation = 'destination-out';
       ctx.lineWidth = brushSize * 3;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.lineTo(x, y);
       ctx.stroke();
+      ctx.globalCompositeOperation = 'source-over';
     }
   };
 
@@ -198,8 +200,8 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
   const clearCanvas = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // Clear to transparent
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     saveToHistory();
   };
 
@@ -404,7 +406,10 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
       </Card>
 
       {/* Canvas */}
-      <div className="relative bg-white border-2 border-gray-300 rounded-lg overflow-hidden">
+      <div className="relative bg-gray-100 border-2 border-gray-300 rounded-lg overflow-hidden" style={{ 
+        backgroundImage: 'repeating-linear-gradient(45deg, #f9fafb 0px, #f9fafb 10px, #e5e7eb 10px, #e5e7eb 20px)',
+        backgroundSize: '20px 20px'
+      }}>
         <canvas
           ref={canvasRef}
           width={800}
