@@ -159,15 +159,7 @@ export default function Home() {
 
       {/* CTA Section */}
       <Link to={createPageUrl('CustomBuilder')}>
-        <section className="relative overflow-hidden cursor-pointer h-[500px]">
-          {/* Background Video */}
-          <div className="absolute inset-0 z-0">
-            <iframe
-              className="absolute inset-0 w-full h-full object-cover"
-              src="https://www.youtube.com/embed/eVrsX-VmtYo?autoplay=1&mute=1&loop=1&playlist=eVrsX-VmtYo&controls=0&showinfo=0&rel=0&modestbranding=1"
-              allow="autoplay; encrypted-media"
-              style={{ pointerEvents: 'none' }} />
-          </div>
+        <section className="relative overflow-hidden cursor-pointer h-[500px] bg-gradient-to-br from-blue-600 to-purple-600">
         </section>
       </Link>
 
