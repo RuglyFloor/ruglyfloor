@@ -12,6 +12,7 @@ import UpsellOptions from '../components/custom/UpsellOptions';
 import DrawingCanvas from '../components/custom/DrawingCanvas';
 import DesignLibrary from '../components/custom/DesignLibrary';
 import InteractiveRugPreview from '../components/custom/InteractiveRugPreview';
+import BuilderSidebar from '../components/custom/BuilderSidebar';
 import SEOHead from '../components/seo/SEOHead';
 
 const SIZES = [
