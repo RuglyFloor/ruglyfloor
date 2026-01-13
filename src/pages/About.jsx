@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import { Palette } from 'lucide-react';
+import { Palette, ArrowRight, ShoppingBag } from 'lucide-react';
 import SEOHead from '../components/seo/SEOHead';
 
 export default function About() {
@@ -24,9 +24,24 @@ export default function About() {
           <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
             About Rugly
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-600 mb-8">
             Where art meets the floor
           </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to={createPageUrl('CustomBuilder')}>
+              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8">
+                <Palette className="w-5 h-5 mr-2" />
+                Design Custom Rug
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </Link>
+            <Link to={createPageUrl('Shop')}>
+              <Button size="lg" variant="outline" className="text-lg px-8 border-2">
+                <ShoppingBag className="w-5 h-5 mr-2" />
+                Shop Originals
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
