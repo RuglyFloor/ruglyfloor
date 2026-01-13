@@ -46,31 +46,29 @@ const BASE_COLORS = [
   { name: 'Grey', hex: '#9ca3af', type: 'light' },
   { name: 'Green', hex: '#86cb92', type: 'light' },
   { name: 'Tan', hex: '#d2b48c', type: 'light' },
-  { name: 'Khaki', hex: '#c3b091', type: 'light' },
-  { name: 'Blue', hex: '#1d4ed8', type: 'dark' },
-  { name: 'Red', hex: '#b91c1c', type: 'dark' }
+  { name: 'Khaki', hex: '#c3b091', type: 'light' }
 ];
 
 const PAINT_COLORS = [
   // First set - Only for light base rugs
-  { name: 'Sun Yellow', hex: '#ffd700', type: 'dark' },
-  { name: 'Bright Orange', hex: '#ff4500', type: 'dark' },
-  { name: 'Brilliant Red', hex: '#dc143c', type: 'dark' },
-  { name: 'Violet', hex: '#7851a9', type: 'dark' },
-  { name: 'Azure Blue', hex: '#2e5090', type: 'dark' },
-  { name: 'Bright Green', hex: '#00a651', type: 'dark' },
-  { name: 'Black', hex: '#000000', type: 'dark' },
-  { name: 'White', hex: '#ffffff', type: 'dark' },
+  { name: 'Sun Yellow', hex: '#ffd700', type: 'dark', id: 1 },
+  { name: 'Bright Orange', hex: '#ff4500', type: 'dark', id: 2 },
+  { name: 'Red', hex: '#dc143c', type: 'dark', id: 3 },
+  { name: 'Violet', hex: '#7851a9', type: 'dark', id: 4 },
+  { name: 'Blue', hex: '#2e5090', type: 'dark', id: 5 },
+  { name: 'Bright Green', hex: '#00a651', type: 'dark', id: 6 },
+  { name: 'Black (Primary)', hex: '#000000', type: 'dark', id: 7 },
+  { name: 'White (Primary)', hex: '#ffffff', type: 'dark', id: 8 },
   // Second set - Works with both light and dark base rugs
-  { name: 'Emerald Green', hex: '#046307', type: 'both' },
-  { name: 'Brilliant Red', hex: '#c8102e', type: 'both' },
-  { name: 'Violet', hex: '#5b3a70', type: 'both' },
-  { name: 'Dioxazine Purple', hex: '#1c0d82', type: 'both' },
-  { name: 'Black', hex: '#000000', type: 'both' },
-  { name: 'Hansa Yellow', hex: '#ffd300', type: 'both' },
-  { name: 'Vermillion Orange', hex: '#ff4500', type: 'both' },
-  { name: 'White', hex: '#ffffff', type: 'both' },
-  { name: 'Blue', hex: '#3b82f6', type: 'both' }
+  { name: 'Emerald Green', hex: '#046307', type: 'both', id: 9 },
+  { name: 'Crimson', hex: '#c8102e', type: 'both', id: 10 },
+  { name: 'Purple', hex: '#5b3a70', type: 'both', id: 11 },
+  { name: 'Dioxazine Purple', hex: '#1c0d82', type: 'both', id: 12 },
+  { name: 'Black (Universal)', hex: '#000000', type: 'both', id: 13 },
+  { name: 'Hansa Yellow', hex: '#ffd300', type: 'both', id: 14 },
+  { name: 'Vermillion Orange', hex: '#ff4500', type: 'both', id: 15 },
+  { name: 'White (Universal)', hex: '#ffffff', type: 'both', id: 16 },
+  { name: 'Sky Blue', hex: '#3b82f6', type: 'both', id: 17 }
 ];
 
 export default function CustomBuilder() {
