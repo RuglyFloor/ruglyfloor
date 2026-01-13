@@ -167,12 +167,13 @@ export default function BuilderSidebar({
   return (
     <div className="sticky top-24 space-y-6">
       {/* Dynamic Preview or Placeholder */}
-      {(config.imageUrl && config.baseColor) ? (
+      {config.baseColor ? (
         <InteractiveRugPreview
           designUrl={config.imageUrl}
           baseColor={baseColors.find(c => c.name === config.baseColor)?.hex}
           paintColor={paintColors.find(c => c.name === config.paintColor)?.hex}
           size={config.size}
+          placeholder={!config.imageUrl}
         />
       ) : (
         <Card className="bg-gray-50 border-dashed">

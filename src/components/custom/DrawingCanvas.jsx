@@ -1,24 +1,27 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
-import { Pencil, Eraser, Type, Square, Circle, Undo, Trash2, Save } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Pencil, Eraser, Type, Square, Circle, Undo, Trash2, Save, AlertCircle } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, initialColor = '#000000', size = 'small' }) {
+export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, availableColors = [], size = 'small' }) {
   const canvasRef = useRef(null);
+  const textareaRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [tool, setTool] = useState('pen'); // pen, eraser, text, rectangle, circle
-  const [color, setColor] = useState(initialColor);
+  const [tool, setTool] = useState('pen');
+  const [color, setColor] = useState(availableColors[0]?.hex || '#000000');
   const [brushSize, setBrushSize] = useState(15);
   const [history, setHistory] = useState([]);
   const [textInput, setTextInput] = useState('');
   const [showTextInput, setShowTextInput] = useState(false);
   const [textPosition, setTextPosition] = useState({ x: 0, y: 0 });
   const [selectedFont, setSelectedFont] = useState('Allerta Stencil');
-  const [usedColors, setUsedColors] = useState(new Set([initialColor]));
+  const [fontSize, setFontSize] = useState(40);
+  const [textAlign, setTextAlign] = useState('left');
+  const [maxWidth, setMaxWidth] = useState(600);
 
   const STENCIL_FONTS = [
     'Allerta Stencil',
@@ -68,16 +71,7 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, initi
     ctx.moveTo(x, y);
   };
 
-  const updateColorCount = (newColor) => {
-    setUsedColors(prev => {
-      const updated = new Set(prev);
-      updated.add(newColor);
-      if (onColorCountChange) {
-        onColorCountChange(updated.size);
-      }
-      return updated;
-    });
-  };
+
 
   const draw = (e) => {
     if (!isDrawing) return;
@@ -89,7 +83,6 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, initi
     const ctx = canvas.getContext('2d');
 
     if (tool === 'pen') {
-      updateColorCount(color);
       ctx.strokeStyle = color;
       ctx.lineWidth = brushSize;
       ctx.lineCap = 'round';
@@ -116,12 +109,45 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, initi
   const addText = () => {
     if (!textInput.trim()) return;
     
-    updateColorCount(color);
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    ctx.font = `bold ${brushSize * 5}px "${selectedFont}"`;
+    ctx.font = `bold ${fontSize}px "${selectedFont}"`;
     ctx.fillStyle = color;
-    ctx.fillText(textInput, textPosition.x, textPosition.y);
+    ctx.textAlign = textAlign;
+    
+    // Split text into lines and handle wrapping
+    const lines = textInput.split('\n');
+    const lineHeight = fontSize * 1.2;
+    let currentY = textPosition.y;
+    
+    lines.forEach(line => {
+      if (maxWidth && line.length > 0) {
+        // Word wrap
+        const words = line.split(' ');
+        let currentLine = '';
+        
+        words.forEach((word, i) => {
+          const testLine = currentLine + (currentLine ? ' ' : '') + word;
+          const metrics = ctx.measureText(testLine);
+          
+          if (metrics.width > maxWidth && currentLine) {
+            ctx.fillText(currentLine, textPosition.x, currentY);
+            currentY += lineHeight;
+            currentLine = word;
+          } else {
+            currentLine = testLine;
+          }
+          
+          if (i === words.length - 1) {
+            ctx.fillText(currentLine, textPosition.x, currentY);
+            currentY += lineHeight;
+          }
+        });
+      } else {
+        ctx.fillText(line, textPosition.x, currentY);
+        currentY += lineHeight;
+      }
+    });
     
     setTextInput('');
     setShowTextInput(false);
@@ -129,7 +155,6 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, initi
   };
 
   const drawShape = (e, shapeType) => {
-    updateColorCount(color);
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
     const x = (e.clientX || e.touches[0].clientX) - rect.left;
@@ -204,6 +229,12 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, initi
 
   return (
     <div className="space-y-4">
+      {/* Pro Tip */}
+      <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg p-4 text-white text-center">
+        <AlertCircle className="w-5 h-5 inline mr-2" />
+        <span className="font-bold">PRO TIP:</span> Use your iPad or tablet for the best drawing experience!
+      </div>
+
       {/* Toolbar */}
       <Card>
         <CardContent className="p-4">
@@ -255,71 +286,28 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, initi
               </div>
             </div>
 
-            {/* Color Picker */}
+            {/* Color Selection - From Step 2 */}
             <div>
-              <Label className="mb-2 block">
-                Color {usedColors.size > 2 && (
-                  <span className="text-blue-600 font-semibold">({usedColors.size} colors used)</span>
-                )}
-              </Label>
-              <div className="flex gap-2 items-center">
-                <input
-                  type="color"
-                  value={color}
-                  onChange={(e) => setColor(e.target.value)}
-                  className="w-12 h-12 rounded cursor-pointer"
-                />
-                <div className="flex gap-2">
-                  {['#000000', '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'].map(c => (
-                    <button
-                      key={c}
-                      onClick={() => setColor(c)}
-                      className="w-8 h-8 rounded border-2 border-gray-300"
-                      style={{ backgroundColor: c }}
+              <Label className="mb-2 block">Selected Colors</Label>
+              <div className="flex gap-2 flex-wrap">
+                {availableColors.map((colorObj) => (
+                  <button
+                    key={colorObj.hex}
+                    onClick={() => setColor(colorObj.hex)}
+                    className={`flex flex-col items-center gap-1 p-2 rounded-lg border-2 transition-all ${
+                      color === colorObj.hex
+                        ? 'border-blue-600 bg-blue-50 scale-105 shadow-md'
+                        : 'border-gray-200 hover:border-gray-400'
+                    }`}
+                  >
+                    <div
+                      className="w-10 h-10 rounded-full shadow border-2 border-white"
+                      style={{ backgroundColor: colorObj.hex }}
                     />
-                  ))}
-                </div>
+                    <span className="text-xs">{colorObj.name}</span>
+                  </button>
+                ))}
               </div>
-              {usedColors.size > 2 && (
-                <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                  <p className="text-sm font-semibold text-blue-900 mb-1">Color Charges:</p>
-                  <div className="text-xs text-gray-700 space-y-1">
-                    {usedColors.size >= 3 && (
-                      <div className="flex justify-between">
-                        <span>3rd color:</span>
-                        <span className="font-semibold">+${(() => {
-                          const sizeMap = { tiny: 39, small: 69, medium: 99, large: 129, huge: 159, '4ft round': 69 };
-                          return sizeMap[size] || 39;
-                        })()}</span>
-                      </div>
-                    )}
-                    {usedColors.size >= 4 && (
-                      <div className="flex justify-between">
-                        <span>4th color:</span>
-                        <span className="font-semibold">+${(() => {
-                          const sizeMap = { tiny: 39, small: 69, medium: 99, large: 129, huge: 159, '4ft round': 69 };
-                          return sizeMap[size] || 39;
-                        })()}</span>
-                      </div>
-                    )}
-                    {usedColors.size > 4 && (
-                      <p className="text-red-600 font-semibold mt-1">Note: 4 colors maximum</p>
-                    )}
-                    {usedColors.size <= 4 && (
-                      <div className="flex justify-between pt-1 mt-1 border-t border-blue-300">
-                        <span className="font-semibold">Total Color Charges:</span>
-                        <span className="font-bold text-blue-600">+${(() => {
-                          const sizeMap = { tiny: 39, small: 69, medium: 99, large: 129, huge: 159, '4ft round': 69 };
-                          const basePrice = sizeMap[size] || 39;
-                          if (usedColors.size === 3) return basePrice;
-                          if (usedColors.size >= 4) return basePrice * 2;
-                          return 0;
-                        })()}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Brush Size */}
@@ -335,22 +323,64 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, initi
               <p className="text-xs text-gray-500 mt-1">Thicker lines work better for stencils</p>
             </div>
 
-            {/* Font Selector (for text tool) */}
+            {/* Text Settings (for text tool) */}
             {tool === 'text' && (
-              <div>
-                <Label className="mb-2 block">Text Font</Label>
-                <Select value={selectedFont} onValueChange={setSelectedFont}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {STENCIL_FONTS.map(font => (
-                      <SelectItem key={font} value={font} style={{ fontFamily: font }}>
-                        {font}
-                      </SelectItem>
+              <div className="space-y-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div>
+                  <Label className="mb-2 block text-sm">Font</Label>
+                  <Select value={selectedFont} onValueChange={setSelectedFont}>
+                    <SelectTrigger className="h-9">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {STENCIL_FONTS.map(font => (
+                        <SelectItem key={font} value={font} style={{ fontFamily: font }}>
+                          {font}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label className="mb-2 block text-sm">Font Size: {fontSize}px</Label>
+                  <Slider
+                    value={[fontSize]}
+                    onValueChange={(val) => setFontSize(val[0])}
+                    min={20}
+                    max={120}
+                    step={5}
+                  />
+                </div>
+
+                <div>
+                  <Label className="mb-2 block text-sm">Text Alignment</Label>
+                  <div className="flex gap-2">
+                    {['left', 'center', 'right'].map(align => (
+                      <Button
+                        key={align}
+                        variant={textAlign === align ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setTextAlign(align)}
+                        className="flex-1 capitalize"
+                      >
+                        {align}
+                      </Button>
                     ))}
-                  </SelectContent>
-                </Select>
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="mb-2 block text-sm">Max Width: {maxWidth}px</Label>
+                  <Slider
+                    value={[maxWidth]}
+                    onValueChange={(val) => setMaxWidth(val[0])}
+                    min={200}
+                    max={800}
+                    step={50}
+                  />
+                  <p className="text-xs text-gray-600 mt-1">Text will wrap at this width</p>
+                </div>
               </div>
             )}
 
@@ -390,30 +420,50 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, initi
           onClick={handleCanvasClick}
         />
 
-        {/* Text Input Overlay */}
+        {/* Text Input Overlay - Enhanced for Paragraphs */}
         {showTextInput && (
           <div 
-            className="absolute bg-white p-3 rounded-lg shadow-lg border-2 border-blue-500"
-            style={{ left: textPosition.x, top: textPosition.y }}
+            className="absolute bg-white p-4 rounded-lg shadow-2xl border-2 border-blue-500 z-50"
+            style={{ 
+              left: Math.min(textPosition.x, window.innerWidth - 350), 
+              top: Math.min(textPosition.y, window.innerHeight - 250),
+              minWidth: '320px',
+              maxWidth: '90vw'
+            }}
           >
-            <Input
+            <Label className="mb-2 block font-semibold">Enter Your Text</Label>
+            <Textarea
+              ref={textareaRef}
               value={textInput}
               onChange={(e) => setTextInput(e.target.value)}
-              placeholder="Enter text..."
-              className="mb-2"
+              placeholder="Type your text here... Press Enter for new lines."
+              className="mb-3 min-h-[120px] text-base"
               autoFocus
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                  addText();
+                }
+              }}
             />
+            <div className="text-xs text-gray-500 mb-3">
+              Tip: Press Ctrl+Enter to add text quickly
+            </div>
             <div className="flex gap-2">
-              <Button size="sm" onClick={addText}>Add</Button>
+              <Button size="sm" onClick={addText} className="flex-1">Add Text</Button>
               <Button size="sm" variant="outline" onClick={() => setShowTextInput(false)}>Cancel</Button>
             </div>
           </div>
         )}
       </div>
 
-      <p className="text-sm text-gray-600 text-center">
-        Draw your design using the tools above. Works great with touch screens and Apple Pencil!
-      </p>
+      <div className="bg-gray-50 rounded-lg p-4 text-center">
+        <p className="text-sm text-gray-700 font-medium mb-2">
+          🎨 Draw your custom design using the tools above
+        </p>
+        <p className="text-xs text-gray-600">
+          Optimized for touch screens, Apple Pencil, and tablets • Use text tool for paragraphs
+        </p>
+      </div>
     </div>
   );
 }

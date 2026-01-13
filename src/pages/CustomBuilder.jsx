@@ -608,7 +608,11 @@ export default function CustomBuilder() {
                     onColorCountChange={(count) => {
                       setConfig(prev => ({ ...prev, numColors: count }));
                     }}
-                    initialColor={PAINT_COLORS.find(c => c.name === config.paintColor)?.hex || '#000000'}
+                    availableColors={[
+                      { name: config.paintColor, hex: PAINT_COLORS.find(c => c.name === config.paintColor)?.hex || '#000000' },
+                      ...(config.secondPaintColor ? [{ name: config.secondPaintColor, hex: PAINT_COLORS.find(c => c.name === config.secondPaintColor)?.hex }] : []),
+                      ...(config.useSecondShade ? [{ name: '2nd Shade', hex: '#808080' }] : [])
+                    ].filter(c => c.hex)}
                     size={config.size}
                   />
                 )}
