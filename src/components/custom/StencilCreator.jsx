@@ -35,9 +35,9 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
 
   useEffect(() => {
     if (onConfigChange) {
-      onConfigChange({ colors });
+      onConfigChange({ colors, brightness, saturation, threshold });
     }
-  }, [colors, onConfigChange]);
+  }, [colors, brightness, saturation, threshold, onConfigChange]);
 
   useEffect(() => {
     if (!originalImage || !canvasRef.current) return;
@@ -255,8 +255,8 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
             </Card>
           </div>
 
-          {/* Controls */}
-          <div className="space-y-4">
+          {/* Controls & Actions */}
+          <div className="space-y-4 flex flex-col">
             {/* Brightness */}
             <Card>
               <CardContent className="p-4">
@@ -348,45 +348,50 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
             </Card>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex gap-3 flex-wrap">
-            <Button
-              type="button"
-              onClick={handleSave}
-              className="flex-1 bg-blue-600 hover:bg-blue-700"
-            >
-              Use This Design
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleShare}
-              className="gap-2"
-            >
-              <Share2 className="w-4 h-4" />
-              Share
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleDownload}
-              className="gap-2"
-            >
-              <Download className="w-4 h-4" />
-              Download
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleReset}
-              className="gap-2"
-            >
-              <RotateCcw className="w-4 h-4" />
-              New Image
-            </Button>
+          {/* Action Buttons - Stay at Bottom */}
+          <div className="mt-auto pt-4 space-y-2 flex flex-col">
+           <Button
+             type="button"
+             onClick={handleSave}
+             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-6 text-lg"
+           >
+             Use This Design
+           </Button>
+           <div className="grid grid-cols-3 gap-2">
+             <Button
+               type="button"
+               variant="outline"
+               onClick={handleShare}
+               size="sm"
+               className="gap-1"
+             >
+               <Share2 className="w-3 h-3" />
+               Share
+             </Button>
+             <Button
+               type="button"
+               variant="outline"
+               onClick={handleDownload}
+               size="sm"
+               className="gap-1"
+             >
+               <Download className="w-3 h-3" />
+               Download
+             </Button>
+             <Button
+               type="button"
+               variant="outline"
+               onClick={handleReset}
+               size="sm"
+               className="gap-1"
+             >
+               <RotateCcw className="w-3 h-3" />
+               New
+             </Button>
+           </div>
           </div>
-        </div>
-      )}
+          </div>
+          )}
     </div>
   );
 }
