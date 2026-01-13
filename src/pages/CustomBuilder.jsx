@@ -8,7 +8,7 @@ import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import StencilCreator from '../components/custom/StencilCreator';
-import UpsellOptions from '../components/custom/UpsellOptions';
+
 import DrawingCanvas from '../components/custom/DrawingCanvas';
 import DesignLibrary from '../components/custom/DesignLibrary';
 import InteractiveRugPreview from '../components/custom/InteractiveRugPreview';
@@ -92,19 +92,8 @@ export default function CustomBuilder() {
     imageFile: null,
     imageUrl: '',
     previewUrl: '',
-    is3D: false,
     numColors: 2,
-    useSecondShade: false,
-    upsells: {
-      is3D: false,
-      thirdColor: '',
-      fourthColor: '',
-      secondImageUrl: '',
-      bevelLines: false,
-      backgroundRelief: false,
-      carveOut: false
-    },
-    upsellTotal: 0
+    useSecondShade: false
   });
   const [uploading, setUploading] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -136,62 +125,31 @@ export default function CustomBuilder() {
     }
   };
 
-  const generatePreview = async (upsellOptions = null) => {
+  const generatePreview = async () => {
     if (!config.imageUrl || !config.baseColor || !config.paintColor) return;
     
     setProcessing(true);
     try {
       const sizeLabel = SIZES.find(s => s.value === config.size)?.label || config.size;
-      const upsells = upsellOptions || config.upsells;
-      
-      // Build effect descriptions
-      let effectDescription = '';
-      if (upsells.is3D) {
-        effectDescription += '3D depth effect with multiple tones and shading for dimension. ';
-      }
-      if (upsells.bevelLines) {
-        effectDescription += 'Beveled raised edges with dimensional depth on the lines. ';
-      }
-      if (upsells.backgroundRelief) {
-        effectDescription += 'Textured relief background creating a pop-out effect for the design. ';
-      }
-      if (upsells.carveOut) {
-        effectDescription += 'Bold carved-out sections with negative space cut into the rug. ';
-      }
-      
-      if (!effectDescription) {
-        effectDescription = '1-2 color flat stencil style';
-      }
       
       // Build color description
       let colorInfo = `painted in ${config.paintColor}`;
       if (config.secondPaintColor) {
         colorInfo += ` and ${config.secondPaintColor}`;
       }
-      if (upsells.thirdColor) {
-        colorInfo += ` and ${upsells.thirdColor}`;
-      }
-      if (upsells.fourthColor) {
-        colorInfo += ` and ${upsells.fourthColor}`;
-      }
-      
-      const imageUrls = [config.imageUrl];
-      let secondImageNote = '';
-      if (upsells.secondImageUrl) {
-        imageUrls.push(upsells.secondImageUrl);
-        secondImageNote = 'Additionally, blend in a second design from the second uploaded image in a complementary way. ';
+      if (config.useSecondShade) {
+        colorInfo += ' with a second shade for depth and definition';
       }
       
       const prompt = `Create a realistic mockup image showing a ${sizeLabel} carpet rug in ${config.baseColor} base color lying on a floor at a slight angle (perspective view from above). 
-      The design from the uploaded image should be ${colorInfo} with these effects: ${effectDescription}
-      ${secondImageNote}
+      The design from the uploaded image should be ${colorInfo} in a flat stencil style (NOT 3D).
       IMPORTANT: If the uploaded image contains text, words, or letters, reproduce them clearly and legibly on the rug - the text must be readable and accurate.
-      The rug should have visible carpet texture and the design should look professionally hand-painted on the rug surface with the specified effects clearly visible.
+      The rug should have visible carpet texture and the design should look professionally hand-painted on the rug surface.
       Make it look professional and realistic, as if photographed in a well-lit room.`;
       
       const { url } = await base44.integrations.Core.GenerateImage({
         prompt: prompt,
-        existing_image_urls: imageUrls
+        existing_image_urls: [config.imageUrl]
       });
       
       setConfig(prev => ({ ...prev, previewUrl: url }));
@@ -208,17 +166,18 @@ export default function CustomBuilder() {
     const basePrice = selectedSize.price;
     const colorPrice = getColorPrice(config.size, config.numColors);
     const secondShadePrice = config.useSecondShade ? getSecondShadePrice(config.size) : 0;
-    const price = basePrice + colorPrice + secondShadePrice + config.upsellTotal;
+    const price = basePrice + colorPrice + secondShadePrice;
     
     const cartItem = {
       type: 'custom',
       size: selectedSize.label,
       baseColor: config.baseColor,
       paintColor: config.paintColor,
+      secondPaintColor: config.secondPaintColor || null,
+      useSecondShade: config.useSecondShade,
       imageUrl: config.imageUrl,
       previewUrl: config.previewUrl,
       numColors: config.numColors,
-      upsells: config.upsells,
       price: price,
       name: `Custom Rug - ${selectedSize.label}`
     };
@@ -236,7 +195,7 @@ export default function CustomBuilder() {
     const basePrice = selectedSize.price;
     const colorPrice = getColorPrice(config.size, config.numColors);
     const secondShadePrice = config.useSecondShade ? getSecondShadePrice(config.size) : 0;
-    return basePrice + colorPrice + secondShadePrice + config.upsellTotal;
+    return basePrice + colorPrice + secondShadePrice;
   };
 
   return (
@@ -257,8 +216,7 @@ export default function CustomBuilder() {
             {[
               { num: 1, label: 'Size' },
               { num: 2, label: 'Colors' },
-              { num: 3, label: 'Design' },
-              { num: 4, label: 'Upgrades' }
+              { num: 3, label: 'Design & Confirm' }
             ].map((s, idx) => (
               <div key={s.num} className="flex flex-col items-center flex-1">
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all ${
@@ -271,10 +229,10 @@ export default function CustomBuilder() {
                 <span className={`text-xs mt-2 font-medium ${step >= s.num ? 'text-blue-600' : 'text-gray-400'}`}>
                   {s.label}
                 </span>
-                {idx < 3 && (
+                {idx < 2 && (
                   <div className="absolute top-6 left-0 right-0 h-0.5 -z-10" style={{ 
-                    left: `${(idx * 33.33) + 16.66}%`, 
-                    width: '33.33%',
+                    left: `${(idx * 50) + 25}%`, 
+                    width: '50%',
                     background: step > s.num ? 'linear-gradient(to right, #2563eb, #9333ea)' : '#e5e7eb'
                   }} />
                 )}
@@ -529,7 +487,7 @@ export default function CustomBuilder() {
                  </Card>
                  )}
 
-          {/* Step 3: Create Stencil Design */}
+          {/* Step 3: Create Design & Confirm */}
           {step === 3 && (
             <Card>
             <CardHeader>
@@ -537,10 +495,10 @@ export default function CustomBuilder() {
                 <Button variant="outline" size="sm" onClick={() => setStep(2)}>
                   ← Back
                 </Button>
-                <CardTitle className="flex-1">Step 3: Create Your Design</CardTitle>
+                <CardTitle className="flex-1">Step 3: Create Your Design & Confirm</CardTitle>
               </div>
               <p className="text-sm text-gray-600 mt-2">
-                Choose how you want to create your design
+                Design your rug and preview before adding to cart
               </p>
             </CardHeader>
             <CardContent>
@@ -625,7 +583,7 @@ export default function CustomBuilder() {
                         See what your rug will actually look like with AI-generated preview
                       </p>
                       <Button
-                        onClick={generatePreview}
+                        onClick={() => generatePreview()}
                         disabled={processing || !config.imageUrl}
                         className="w-full bg-blue-600 hover:bg-blue-700"
                       >
@@ -639,18 +597,47 @@ export default function CustomBuilder() {
                         )}
                       </Button>
                     </div>
-                    
+
                     {config.previewUrl && (
                       <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                        <Label className="block mb-2 font-semibold text-green-900">✨ Preview Ready!</Label>
+                        <Label className="block mb-2 font-semibold text-green-900">✨ Your Custom Rug Preview</Label>
                         <img 
                           src={config.previewUrl} 
                           alt="Rug preview" 
-                          className="w-full rounded-lg shadow-lg mb-3"
+                          className="w-full rounded-lg shadow-lg mb-4"
                         />
-                        <p className="text-sm text-green-700">
-                          Your realistic preview is ready! Continue to see premium upgrade options.
+                        <p className="text-sm text-green-700 mb-4">
+                          This is how your custom rug will look! Review and add to cart when ready.
                         </p>
+
+                        {/* Final Summary */}
+                        <div className="bg-white rounded-lg p-4 mb-4 space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Size:</span>
+                            <span className="font-semibold">{SIZES.find(s => s.value === config.size)?.label}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Base Color:</span>
+                            <span className="font-semibold">{config.baseColor}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Paint Colors:</span>
+                            <span className="font-semibold">{config.paintColor}{config.secondPaintColor ? `, ${config.secondPaintColor}` : ''}</span>
+                          </div>
+                          {config.useSecondShade && (
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">2nd Shade:</span>
+                              <span className="font-semibold">Yes</span>
+                            </div>
+                          )}
+                        </div>
+
+                        <Button
+                          onClick={handleAddToCart}
+                          className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold text-lg py-6"
+                        >
+                          Add to Cart - ${currentPrice()}
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -681,45 +668,13 @@ export default function CustomBuilder() {
                   </div>
                 </div>
 
-                <div className="flex gap-3">
-                  <Button variant="outline" onClick={() => setStep(2)}>
-                    Back
-                  </Button>
-                  <Button 
-                    className="flex-1 bg-blue-600 hover:bg-blue-700" 
-                    onClick={() => setStep(4)}
-                    disabled={!config.previewUrl}
-                  >
-                    Continue to Upgrades
-                  </Button>
-                </div>
+
               </div>
             </CardContent>
           </Card>
           )}
 
-          {/* Step 4: Upsell Options */}
-          {step === 4 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Step 4: Premium Upgrades (Optional)</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <UpsellOptions
-                  size={config.size}
-                  baseColor={config.baseColor}
-                  currentPreview={config.previewUrl}
-                  isGenerating={processing}
-                  onPreviewUpdate={(upsells) => generatePreview(upsells)}
-                  onContinue={(upsells, upsellTotal) => {
-                    setConfig(prev => ({ ...prev, upsells, upsellTotal }));
-                    handleAddToCart();
-                  }}
-                  onBack={() => setStep(3)}
-                />
-              </CardContent>
-            </Card>
-          )}
+
         </div>
 
         <div className="hidden lg:block sticky top-6 self-start">
