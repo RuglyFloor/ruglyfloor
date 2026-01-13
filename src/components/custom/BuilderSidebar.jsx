@@ -56,7 +56,7 @@ export default function BuilderSidebar({
             {config.baseColor && (
               <div className="bg-gray-50 p-3 rounded-lg flex items-center gap-3">
                 <div 
-                  className="w-8 h-8 rounded-full border border-gray-200 shadow-sm"
+                  className="w-8 h-10 rounded-sm border border-gray-200 shadow-sm"
                   style={{ 
                     backgroundColor: baseColors.find(c => c.name === config.baseColor)?.hex 
                   }}
@@ -71,9 +71,10 @@ export default function BuilderSidebar({
             {config.paintColor && (
               <div className="bg-gray-50 p-3 rounded-lg flex items-center gap-3">
                 <div 
-                  className="w-8 h-8 rounded-full border border-gray-200 shadow-sm"
+                  className="w-8 h-8 rounded-full border border-gray-200 shadow-sm transform -rotate-45"
                   style={{ 
-                    backgroundColor: paintColors.find(c => c.name === config.paintColor)?.hex 
+                    backgroundColor: paintColors.find(c => c.name === config.paintColor)?.hex,
+                    borderTopRightRadius: 0
                   }}
                 />
                 <div>
