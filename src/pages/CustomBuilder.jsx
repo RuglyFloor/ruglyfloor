@@ -84,6 +84,7 @@ export default function CustomBuilder() {
     size: '',
     baseColor: '',
     paintColor: '',
+    secondPaintColor: '',
     imageFile: null,
     imageUrl: '',
     previewUrl: '',
@@ -160,6 +161,9 @@ export default function CustomBuilder() {
       
       // Build color description
       let colorInfo = `painted in ${config.paintColor}`;
+      if (config.secondPaintColor) {
+        colorInfo += ` and ${config.secondPaintColor}`;
+      }
       if (upsells.thirdColor) {
         colorInfo += ` and ${upsells.thirdColor}`;
       }
@@ -406,8 +410,8 @@ export default function CustomBuilder() {
                     </div>
                   </div>
                   <div>
-                    <Label className="text-lg mb-3 block">Paint Color for Design</Label>
-                    
+                    <Label className="text-lg mb-3 block">1st Paint Color for Design</Label>
+
                     {/* First Set - Base-specific colors */}
                     <div className="mb-3">
                       <p className="text-xs text-gray-600 mb-2 font-semibold">Primary Colors</p>
@@ -441,20 +445,24 @@ export default function CustomBuilder() {
                         <div className="w-full border-t border-gray-300"></div>
                       </div>
                       <div className="relative flex justify-center">
-                        <span className="bg-white px-3 text-xs text-gray-500">Works with any base color</span>
+                        <span className="bg-white px-3 text-xs text-gray-500">Add 2nd Color (Optional +${getColorPrice(config.size, 3)})</span>
                       </div>
                     </div>
 
-                    {/* Second Set - Universal colors */}
+                    {/* Second Set - Universal colors for 2nd paint color */}
                     <div className="mb-4">
-                      <p className="text-xs text-gray-600 mb-2 font-semibold">Universal Colors</p>
+                      <p className="text-xs text-gray-600 mb-2 font-semibold">2nd Paint Color (Universal Colors)</p>
                       <div className="grid grid-cols-3 gap-4">
                         {PAINT_COLORS.filter(color => color.type === 'both').map((color, idx) => (
                           <button
                             key={`both-${color.name}-${color.hex}-${idx}`}
-                            onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
+                            onClick={() => setConfig(prev => ({ 
+                              ...prev, 
+                              secondPaintColor: prev.secondPaintColor === color.name ? '' : color.name,
+                              numColors: prev.secondPaintColor === color.name ? 2 : 3
+                            }))}
                             className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
-                              config.paintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                              config.secondPaintColor === color.name ? 'border-green-600 bg-green-50' : 'border-gray-200 hover:border-gray-300'
                             }`}
                           >
                             <div 
@@ -465,6 +473,11 @@ export default function CustomBuilder() {
                           </button>
                         ))}
                       </div>
+                      {config.secondPaintColor && (
+                        <p className="text-xs text-green-600 mt-2 font-semibold">
+                          ✓ 2nd color selected: {config.secondPaintColor}
+                        </p>
+                      )}
                     </div>
 
                     {/* Second Shade Info */}
@@ -500,7 +513,9 @@ export default function CustomBuilder() {
                      disabled={!config.baseColor || !config.paintColor}
                    >
                      {config.baseColor && config.paintColor ? (
-                       `${config.baseColor} Rug, ${config.paintColor} paint`
+                       config.secondPaintColor 
+                         ? `${config.baseColor} + ${config.paintColor} + ${config.secondPaintColor}`
+                         : `${config.baseColor} + ${config.paintColor}`
                      ) : (
                        'Continue to Design'
                      )}
