@@ -578,7 +578,7 @@ export default function CustomBuilder() {
                     paintColor={PAINT_COLORS.find(c => c.name === config.paintColor)?.hex || '#000000'}
                     baseColor={BASE_COLORS.find(c => c.name === config.baseColor)?.hex || '#86cb92'}
                     onSaveStencil={(stencilUrl) => {
-                      setConfig(prev => ({ ...prev, imageUrl: stencilUrl }));
+                      setConfig(prev => ({ ...prev, imageUrl: stencilUrl, previewUrl: stencilUrl }));
                     }}
                     onConfigChange={({ colors }) => {
                       setConfig(prev => ({ ...prev, numColors: colors }));
