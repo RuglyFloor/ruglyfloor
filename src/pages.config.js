@@ -13,11 +13,11 @@ import Contact from './pages/Contact';
 import ContentManager from './pages/ContentManager';
 import CustomBuilder from './pages/CustomBuilder';
 import Home from './pages/Home';
+import NotionSync from './pages/NotionSync';
 import Orders from './pages/Orders';
 import Policies from './pages/Policies';
 import Shop from './pages/Shop';
 import TrackOrder from './pages/TrackOrder';
-import NotionSync from './pages/NotionSync';
 import __Layout from './Layout.jsx';
 
 
@@ -37,15 +37,15 @@ export const PAGES = {
     "ContentManager": ContentManager,
     "CustomBuilder": CustomBuilder,
     "Home": Home,
+    "NotionSync": NotionSync,
     "Orders": Orders,
     "Policies": Policies,
     "Shop": Shop,
     "TrackOrder": TrackOrder,
-    "NotionSync": NotionSync,
 }
 
 export const pagesConfig = {
-    mainPage: "Home",
+    mainPage: "CustomBuilder",
     Pages: PAGES,
     Layout: __Layout,
 };
