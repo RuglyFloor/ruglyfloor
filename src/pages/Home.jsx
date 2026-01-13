@@ -159,7 +159,7 @@ export default function Home() {
 
       {/* CTA Section */}
       <Link to={createPageUrl('CustomBuilder')}>
-        <section className="relative py-20 px-6 overflow-hidden cursor-pointer">
+        <section className="relative overflow-hidden cursor-pointer h-[500px]">
           {/* Background Video */}
           <div className="absolute inset-0 z-0">
             <iframe
