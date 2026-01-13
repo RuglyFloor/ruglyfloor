@@ -354,9 +354,17 @@ export default function CustomBuilder() {
                               }`}
                             >
                               <div 
-                                className="w-12 h-12 rounded-full border-2 border-white shadow-md"
+                                className="relative w-16 h-12 rounded-sm border-2 border-white shadow-md overflow-hidden"
                                 style={{ backgroundColor: color.hex }}
-                              />
+                              >
+                                <div 
+                                  className="absolute inset-0 opacity-30"
+                                  style={{
+                                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000' fill-opacity='0.15' fill-rule='evenodd'%3E%3Cpath d='M0 0h20v20H0V0zm20 20h20v20H20V20z'/%3E%3C/g%3E%3C/svg%3E")`,
+                                    backgroundSize: '6px 6px'
+                                  }}
+                                />
+                              </div>
                               <span className="text-xs text-center">{color.name}</span>
                             </button>
                           ))}
