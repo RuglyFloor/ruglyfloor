@@ -165,15 +165,15 @@ export default function Home() {
             {[
             {
               image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/40e12a1d2_Screenshot2025-12-19at235301.png",
-              caption: "1. Choose Your Design"
+              caption: "Step One: Decide on what you want on your floor"
             },
             {
               image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg",
-              caption: "2. We Create the Stencil"
+              caption: "Step Two: We draft stencils or hand dye your design (depending on complexity and need for line) and we create your vision"
             },
             {
               image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png",
-              caption: "3. Hand-Paint Your Rug"
+              caption: "Step Three: Your Crugly is shipped from our studio to your home"
             }].
             map((step, index) =>
             <div
@@ -187,8 +187,8 @@ export default function Home() {
                 alt={step.caption}
                 className="w-full h-full object-cover" />
 
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
-                  <p className="text-white text-2xl font-bold text-center">{step.caption}</p>
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8">
+                  <p className="text-white text-xl md:text-2xl font-bold text-center leading-relaxed">{step.caption}</p>
                 </div>
               </div>
             )}
