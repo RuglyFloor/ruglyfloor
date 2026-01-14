@@ -88,7 +88,7 @@ export default function ImageUploader({ onImageSelect, accept = 'image/*' }) {
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
+          onClick={() => fileInputRef.current && fileInputRef.current.click()}
           className={`border-2 border-dashed rounded-lg p-12 cursor-pointer text-center transition-all ${
             isDragging
               ? 'border-blue-500 bg-blue-50 scale-105'
