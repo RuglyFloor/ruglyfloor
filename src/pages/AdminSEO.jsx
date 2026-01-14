@@ -117,7 +117,7 @@ function AdminSEOContent() {
       seo_title: formData.seo_title,
       seo_description: formData.seo_description,
       seo_keywords: formData.seo_keywords,
-      status: formData.status,
+      status: 'published',
       body: formData.body || ''
     });
   };
@@ -299,18 +299,7 @@ function AdminSEOContent() {
                       />
                     </div>
 
-                    <div>
-                      <Label>Status</Label>
-                      <select
-                        value={formData.status}
-                        onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                      >
-                        <option value="draft">Draft</option>
-                        <option value="published">Published</option>
-                        <option value="archived">Archived</option>
-                      </select>
-                    </div>
+
                   </CardContent>
                 </Card>
 
@@ -465,14 +454,7 @@ function AdminSEOContent() {
                   )}
                 </div>
 
-                {formData.status === 'published' && (
-                  <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                    <div className="flex items-center gap-2 text-sm text-green-700">
-                      <Globe className="w-4 h-4" />
-                      <span>Published</span>
-                    </div>
-                  </div>
-                )}
+
               </div>
             </div>
           </TabsContent>
