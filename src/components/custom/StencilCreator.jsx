@@ -114,6 +114,9 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
     }
 
     ctx.putImageData(imageData, 0, 0);
+    
+    // Auto-save after processing
+    setTimeout(() => handleSave(), 100);
   }, [originalImage, threshold, paintColor, colors, brightness, saturation]);
 
   const applyGaussianBlur = (imageData, radius) => {
@@ -216,17 +219,7 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
 
   const handleSave = () => {
     if (!canvasRef.current) return;
-    
-    // Save as PNG with transparency
     const imageUrl = canvasRef.current.toDataURL('image/png');
-    
-    // Download to user's machine
-    const link = document.createElement('a');
-    link.download = 'rugly-stencil-design.png';
-    link.href = imageUrl;
-    link.click();
-    
-    // Also save for preview
     onSaveStencil && onSaveStencil(imageUrl);
   };
 
@@ -350,13 +343,9 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
 
           {/* Action Buttons - Stay at Bottom */}
           <div className="mt-auto pt-4 space-y-2 flex flex-col">
-           <Button
-             type="button"
-             onClick={handleSave}
-             className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-6 text-lg shadow-lg"
-           >
-             ✅ Use This Design
-           </Button>
+           <div className="bg-green-50 border-2 border-green-500 rounded-lg p-4 text-center">
+             <p className="text-green-800 font-bold text-sm">✓ Design auto-saved! Adjust settings to update or continue to cart below.</p>
+           </div>
            <div className="grid grid-cols-3 gap-2">
              <Button
                type="button"

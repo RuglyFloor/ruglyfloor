@@ -215,7 +215,19 @@ export default function CustomBuilder() {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8 items-start">
+        {config.previewUrl && step === 3 && (
+        <div className="fixed bottom-6 right-6 z-50 lg:hidden">
+          <Button
+            onClick={handleAddToCart}
+            size="lg"
+            className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold shadow-2xl"
+          >
+            Add to Cart - ${currentPrice()}
+          </Button>
+        </div>
+      )}
+
+      <div className="grid lg:grid-cols-3 gap-8 items-start">
           <div className="lg:col-span-2 space-y-6">
             {/* Step 1: Size Selection */}
             {step === 1 && (
@@ -450,11 +462,15 @@ export default function CustomBuilder() {
                      Back
                    </Button>
                    <Button 
-                     className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-lg py-6" 
+                     className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-lg py-6 group relative" 
                      onClick={() => setStep(3)} 
                      disabled={!config.baseColor || !config.paintColor}
+                     title="Continue to design selection"
                    >
                      BUILD MY RUG →
+                     <span className="absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
+                       Next: Choose or create your design
+                     </span>
                    </Button>
                  </div>
                  </CardContent>
@@ -592,9 +608,13 @@ export default function CustomBuilder() {
 
                         <Button
                           onClick={handleAddToCart}
-                          className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold text-lg py-6"
+                          className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold text-lg py-6 group relative"
+                          title="Add this custom rug to your shopping cart"
                         >
                           Add to Cart - ${currentPrice()}
+                          <span className="absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                            Adds this rug to your cart • You can checkout or keep designing
+                          </span>
                         </Button>
                       </div>
                     )}

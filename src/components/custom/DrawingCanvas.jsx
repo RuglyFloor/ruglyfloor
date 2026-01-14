@@ -219,12 +219,6 @@ export default function DrawingCanvas({ onSaveDrawing, availableColors = [] }) {
 
   const saveDrawing = async () => {
     const canvas = canvasRef.current;
-    
-    const link = document.createElement('a');
-    link.download = 'rugly-custom-drawing.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-    
     canvas.toBlob(async (blob) => {
       const file = new File([blob], 'drawing.png', { type: 'image/png' });
       onSaveDrawing(file);
@@ -401,9 +395,17 @@ export default function DrawingCanvas({ onSaveDrawing, availableColors = [] }) {
                 <Trash2 className="w-4 h-4 mr-2" />
                 Clear
               </Button>
-              <Button size="sm" onClick={saveDrawing} className="ml-auto bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold">
+              <Button 
+                size="sm" 
+                onClick={saveDrawing} 
+                className="ml-auto bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold group relative"
+                title="Save your drawing and see it on your rug preview"
+              >
                 <Save className="w-4 h-4 mr-2" />
-                Use This Design
+                Save Drawing
+                <span className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  Saves your drawing and shows preview below
+                </span>
               </Button>
             </div>
           </div>
