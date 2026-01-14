@@ -175,44 +175,18 @@ export default function Commission() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen py-12 px-6">
       <SEOHead
         title="Commission Custom Rug Design | Bespoke Hand-Painted Area Rugs by Artists"
         description="Commission bespoke hand-painted area rug designs from professional artists. Custom rug trade program for interior designers. Luxury hand-painted carpet designs and custom logo rugs hand-painted for businesses."
         keywords={['commission custom rug design', 'bespoke hand-painted area rugs', 'custom rug trade program for designers', 'luxury hand-painted carpet designs', 'custom logo rugs hand-painted', 'best custom rug designers', 'custom hand-painted rugs for interior designers']}
         url="/commission"
       />
-      
-      {/* Video Hero Section */}
-      <div className="relative h-[60vh] min-h-[500px] overflow-hidden">
-        {/* YouTube Video Background */}
-        <div className="absolute inset-0 w-full h-full">
-          <iframe
-            className="absolute top-1/2 left-1/2 w-[177.77vh] h-[56.25vw] min-w-full min-h-full -translate-x-1/2 -translate-y-1/2"
-            src="https://www.youtube.com/embed/eVrsX-VmtYo?autoplay=1&mute=1&loop=1&playlist=eVrsX-VmtYo&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
-            allow="autoplay; encrypted-media"
-            allowFullScreen
-            style={{ pointerEvents: 'none' }}
-          />
-        </div>
-        
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/50" />
-        
-        {/* Text Content */}
-        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 drop-shadow-2xl">
-            Commission Your Own Design
-          </h1>
-          <p className="text-xl md:text-2xl text-white/90 max-w-3xl drop-shadow-lg">
-            Perfect for businesses and unique spaces. Get a detailed estimate from our studio.
-          </p>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="py-12 px-6">
       <div className="max-w-4xl mx-auto">
+        <h1 className="text-4xl font-bold mb-4 text-center">Commission Your Own Design</h1>
+        <p className="text-center text-gray-600 mb-4 text-lg">
+          Perfect for businesses and unique spaces. Get a detailed estimate from our studio.
+        </p>
 
         {/* Deposit Info Banner */}
         <div className="bg-blue-50 border-2 border-blue-600 rounded-lg p-6 mb-8">
@@ -524,7 +498,6 @@ export default function Commission() {
             You'll receive a detailed estimate within 48 hours
           </p>
         </form>
-      </div>
       </div>
     </div>
   );
