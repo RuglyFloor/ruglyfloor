@@ -124,9 +124,8 @@ export default function CustomBuilder() {
     setUploading(true);
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file: drawingFile });
-      setConfig(prev => ({ ...prev, imageFile: drawingFile, imageUrl: file_url }));
-      // Show success message
-      alert('Drawing saved! Continue below to generate your preview.');
+      // For drawings, use the actual drawing as both the design and preview
+      setConfig(prev => ({ ...prev, imageFile: drawingFile, imageUrl: file_url, previewUrl: file_url }));
     } catch (error) {
       alert('Failed to save drawing');
     } finally {
@@ -175,12 +174,12 @@ export default function CustomBuilder() {
     }
   };
 
-  // Auto-generate preview when design is complete
+  // Auto-generate preview when design is complete (skip for drawing mode)
   useEffect(() => {
-    if (step === 3 && config.imageUrl && config.baseColor && config.paintColor && !config.previewUrl && !processing) {
+    if (step === 3 && config.imageUrl && config.baseColor && config.paintColor && !config.previewUrl && !processing && designMode !== 'draw') {
       generatePreview();
     }
-  }, [step, config.imageUrl, config.baseColor, config.paintColor, config.previewUrl]);
+  }, [step, config.imageUrl, config.baseColor, config.paintColor, config.previewUrl, designMode]);
 
   const handleAddToCart = () => {
     const selectedSize = SIZES.find(s => s.value === config.size);
@@ -641,11 +640,20 @@ export default function CustomBuilder() {
                     {config.previewUrl && (
                       <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                         <Label className="block mb-2 font-semibold text-green-900">✨ Your Custom Rug Preview</Label>
-                        <img 
-                          src={config.previewUrl} 
-                          alt="Rug preview" 
-                          className="w-full rounded-lg shadow-lg mb-4"
-                        />
+                        {designMode === 'draw' ? (
+                          <InteractiveRugPreview
+                            designUrl={config.previewUrl}
+                            baseColor={BASE_COLORS.find(c => c.name === config.baseColor)?.hex || '#ffffff'}
+                            paintColor={PAINT_COLORS.find(c => c.name === config.paintColor)?.hex || '#000000'}
+                            size={config.size}
+                          />
+                        ) : (
+                          <img 
+                            src={config.previewUrl} 
+                            alt="Rug preview" 
+                            className="w-full rounded-lg shadow-lg mb-4"
+                          />
+                        )}
                         <p className="text-sm text-green-700 mb-4">
                           This is how your custom rug will look! Review and add to cart when ready.
                         </p>
