@@ -209,7 +209,7 @@ export default function CustomBuilder() {
           <Button
             onClick={handleAddToCart}
             size="lg"
-            className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold shadow-2xl"
+            className="border-4 border-gray-900 bg-white hover:bg-gray-50 text-gray-900 font-bold shadow-2xl"
           >
             Add to Cart - ${currentPrice()}
           </Button>
@@ -437,10 +437,10 @@ export default function CustomBuilder() {
                      Back
                    </Button>
                    <Button 
-                     className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold text-lg py-6 group relative" 
                      onClick={() => setStep(3)} 
                      disabled={!config.baseColor || !config.paintColor}
                      title="Continue to design selection"
+                     className="flex-1 border-4 border-gray-900 bg-white hover:bg-gray-50 text-gray-900 font-bold text-lg py-6 group relative disabled:opacity-50 disabled:cursor-not-allowed"
                    >
                      BUILD MY RUG →
                      <span className="absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
@@ -576,7 +576,7 @@ export default function CustomBuilder() {
 
                         <Button
                           onClick={handleAddToCart}
-                          className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold text-lg py-6 group relative"
+                          className="w-full border-4 border-gray-900 bg-white hover:bg-gray-50 text-gray-900 font-bold text-lg py-6 group relative"
                           title="Add this custom rug to your shopping cart"
                         >
                           Add to Cart - ${currentPrice()}

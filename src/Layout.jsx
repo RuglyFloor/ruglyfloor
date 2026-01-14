@@ -148,34 +148,34 @@ export default function Layout({ children, currentPageName }) {
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-300 py-16 px-6 mt-20">
         <div className="max-w-7xl mx-auto">
-          {/* Contact Us Section - Elevated */}
-          <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-12 mb-12 text-center shadow-2xl">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Get In Touch</h2>
-            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+          {/* Contact Us Section - Cutout Style */}
+          <div className="border-4 border-gray-900 rounded-2xl p-12 mb-12 text-center bg-white">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Get In Touch</h2>
+            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Have a question about custom rugs or need help with your order? We're here to help.
             </p>
 
             <div className="grid md:grid-cols-3 gap-8 mb-8">
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-                <Mail className="w-8 h-8 mx-auto mb-3 text-white" />
-                <h3 className="text-white font-bold text-lg mb-2">Email Us</h3>
-                <a href="mailto:contact@ruglyfloor.com" className="text-white/90 hover:text-white text-lg">
+              <div className="border-2 border-gray-900 rounded-xl p-6 hover:bg-gray-50 transition-colors">
+                <Mail className="w-8 h-8 mx-auto mb-3 text-gray-900" />
+                <h3 className="text-gray-900 font-bold text-lg mb-2">Email Us</h3>
+                <a href="mailto:contact@ruglyfloor.com" className="text-gray-600 hover:text-gray-900 text-lg">
                   contact@ruglyfloor.com
                 </a>
               </div>
 
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-                <div className="w-8 h-8 mx-auto mb-3 text-white flex items-center justify-center text-2xl">📞</div>
-                <h3 className="text-white font-bold text-lg mb-2">Call Us</h3>
-                <a href="tel:5177778474" className="text-white/90 hover:text-white text-lg">
+              <div className="border-2 border-gray-900 rounded-xl p-6 hover:bg-gray-50 transition-colors">
+                <div className="w-8 h-8 mx-auto mb-3 text-gray-900 flex items-center justify-center text-2xl">📞</div>
+                <h3 className="text-gray-900 font-bold text-lg mb-2">Call Us</h3>
+                <a href="tel:5177778474" className="text-gray-600 hover:text-gray-900 text-lg">
                   (517) 777-8474
                 </a>
               </div>
 
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
-                <div className="w-8 h-8 mx-auto mb-3 text-white flex items-center justify-center text-2xl">🌐</div>
-                <h3 className="text-white font-bold text-lg mb-2">Visit Us</h3>
-                <a href="https://ruglyfloors.com" className="text-white/90 hover:text-white text-lg">
+              <div className="border-2 border-gray-900 rounded-xl p-6 hover:bg-gray-50 transition-colors">
+                <div className="w-8 h-8 mx-auto mb-3 text-gray-900 flex items-center justify-center text-2xl">🌐</div>
+                <h3 className="text-gray-900 font-bold text-lg mb-2">Visit Us</h3>
+                <a href="https://ruglyfloors.com" className="text-gray-600 hover:text-gray-900 text-lg">
                   www.ruglyfloors.com
                 </a>
               </div>
@@ -183,16 +183,16 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Social Media Links */}
             <div className="flex justify-center gap-6">
-              <a href="https://facebook.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors">
+              <a href="https://facebook.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 transition-colors">
                 <Facebook className="w-8 h-8" />
               </a>
-              <a href="https://instagram.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors">
+              <a href="https://instagram.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 transition-colors">
                 <Instagram className="w-8 h-8" />
               </a>
-              <a href="https://twitter.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors">
+              <a href="https://twitter.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 transition-colors">
                 <Twitter className="w-8 h-8" />
               </a>
-              <a href="https://tiktok.com/@ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors">
+              <a href="https://tiktok.com/@ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 transition-colors">
                 <Video className="w-8 h-8" />
               </a>
             </div>
