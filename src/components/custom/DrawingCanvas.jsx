@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
-import { Pencil, Eraser, Type, Square, Circle, Undo, Trash2, Save, AlertCircle } from 'lucide-react';
+import { Pencil, Eraser, Type, Square, Circle, Undo, Redo, Trash2, Save, AlertCircle, Plus, Eye, EyeOff, Layers } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, availableColors = [], size = 'small' }) {
@@ -14,7 +14,11 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
   const [tool, setTool] = useState('pen');
   const [color, setColor] = useState(availableColors[0]?.hex || '#000000');
   const [brushSize, setBrushSize] = useState(15);
+  const [opacity, setOpacity] = useState(1);
   const [history, setHistory] = useState([]);
+  const [historyStep, setHistoryStep] = useState(0);
+  const [layers, setLayers] = useState([{ id: 1, name: 'Layer 1', visible: true, data: null }]);
+  const [activeLayer, setActiveLayer] = useState(1);
   const [textInput, setTextInput] = useState('');
   const [showTextInput, setShowTextInput] = useState(false);
   const [textPosition, setTextPosition] = useState({ x: 0, y: 0 });
@@ -39,17 +43,50 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
     const canvas = canvasRef.current;
     if (canvas) {
       const ctx = canvas.getContext('2d');
-      // Clear to transparent instead of white
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       saveToHistory();
     }
   }, []);
 
+  useEffect(() => {
+    redrawCanvas();
+  }, [layers, activeLayer]);
+
   const saveToHistory = () => {
     const canvas = canvasRef.current;
     if (canvas) {
       const dataUrl = canvas.toDataURL();
-      setHistory(prev => [...prev.slice(-19), dataUrl]);
+      const newHistory = history.slice(0, historyStep + 1);
+      setHistory([...newHistory, dataUrl]);
+      setHistoryStep(newHistory.length);
+    }
+  };
+
+  const redrawCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    layers.forEach(layer => {
+      if (layer.visible && layer.data) {
+        const img = new Image();
+        img.src = layer.data;
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0);
+        };
+      }
+    });
+  };
+
+  const saveLayerData = () => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const dataUrl = canvas.toDataURL();
+      setLayers(prev => prev.map(layer => 
+        layer.id === activeLayer ? { ...layer, data: dataUrl } : layer
+      ));
     }
   };
 
@@ -83,14 +120,15 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
     const ctx = canvas.getContext('2d');
 
     if (tool === 'pen') {
+      ctx.globalAlpha = opacity;
       ctx.strokeStyle = color;
       ctx.lineWidth = brushSize;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.lineTo(x, y);
       ctx.stroke();
+      ctx.globalAlpha = 1;
     } else if (tool === 'eraser') {
-      // Erase to transparent
       ctx.globalCompositeOperation = 'destination-out';
       ctx.lineWidth = brushSize * 3;
       ctx.lineCap = 'round';
@@ -104,6 +142,7 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
   const stopDrawing = () => {
     if (isDrawing) {
       setIsDrawing(false);
+      saveLayerData();
       saveToHistory();
     }
   };
@@ -153,6 +192,7 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
     
     setTextInput('');
     setShowTextInput(false);
+    saveLayerData();
     saveToHistory();
   };
 
@@ -178,30 +218,67 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
       ctx.stroke();
     }
 
+    saveLayerData();
     saveToHistory();
   };
 
   const undo = () => {
-    if (history.length <= 1) return;
+    if (historyStep <= 0) return;
     
-    const newHistory = history.slice(0, -1);
-    setHistory(newHistory);
+    const newStep = historyStep - 1;
+    setHistoryStep(newStep);
     
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     const img = new Image();
-    img.src = newHistory[newHistory.length - 1];
+    img.src = history[newStep];
     img.onload = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(img, 0, 0);
     };
   };
 
+  const redo = () => {
+    if (historyStep >= history.length - 1) return;
+    
+    const newStep = historyStep + 1;
+    setHistoryStep(newStep);
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.src = history[newStep];
+    img.onload = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+    };
+  };
+
+  const addLayer = () => {
+    const newId = Math.max(...layers.map(l => l.id)) + 1;
+    setLayers([...layers, { id: newId, name: `Layer ${newId}`, visible: true, data: null }]);
+    setActiveLayer(newId);
+  };
+
+  const deleteLayer = (id) => {
+    if (layers.length <= 1) return;
+    setLayers(layers.filter(l => l.id !== id));
+    if (activeLayer === id) {
+      setActiveLayer(layers[0].id);
+    }
+  };
+
+  const toggleLayerVisibility = (id) => {
+    setLayers(layers.map(l => 
+      l.id === id ? { ...l, visible: !l.visible } : l
+    ));
+  };
+
   const clearCanvas = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    // Clear to transparent
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    saveLayerData();
     saveToHistory();
   };
 
@@ -314,15 +391,28 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
 
             {/* Brush Size */}
             <div>
-              <Label className="mb-2 block">Thickness: {brushSize}px (Stencil-Friendly)</Label>
+              <Label className="mb-2 block">Thickness: {brushSize}px</Label>
               <Slider
                 value={[brushSize]}
                 onValueChange={(val) => setBrushSize(val[0])}
-                min={8}
-                max={40}
+                min={2}
+                max={60}
                 step={2}
               />
-              <p className="text-xs text-gray-500 mt-1">Thicker lines work better for stencils</p>
+              <p className="text-xs text-gray-500 mt-1">Adjust stroke width</p>
+            </div>
+
+            {/* Opacity */}
+            <div>
+              <Label className="mb-2 block">Opacity: {Math.round(opacity * 100)}%</Label>
+              <Slider
+                value={[opacity * 100]}
+                onValueChange={(val) => setOpacity(val[0] / 100)}
+                min={10}
+                max={100}
+                step={5}
+              />
+              <p className="text-xs text-gray-500 mt-1">Control transparency</p>
             </div>
 
             {/* Text Settings (for text tool) */}
@@ -387,10 +477,14 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
             )}
 
             {/* Actions */}
-            <div className="flex gap-2 pt-2">
-              <Button variant="outline" size="sm" onClick={undo} disabled={history.length <= 1}>
+            <div className="flex gap-2 pt-2 flex-wrap">
+              <Button variant="outline" size="sm" onClick={undo} disabled={historyStep <= 0}>
                 <Undo className="w-4 h-4 mr-2" />
                 Undo
+              </Button>
+              <Button variant="outline" size="sm" onClick={redo} disabled={historyStep >= history.length - 1}>
+                <Redo className="w-4 h-4 mr-2" />
+                Redo
               </Button>
               <Button variant="outline" size="sm" onClick={clearCanvas}>
                 <Trash2 className="w-4 h-4 mr-2" />
@@ -400,6 +494,57 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
                 <Save className="w-4 h-4 mr-2" />
                 Save Drawing
               </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Layers Panel */}
+      <Card>
+        <CardContent className="p-4">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="flex items-center gap-2">
+                <Layers className="w-4 h-4" />
+                Layers
+              </Label>
+              <Button size="sm" variant="outline" onClick={addLayer}>
+                <Plus className="w-4 h-4 mr-1" />
+                Add Layer
+              </Button>
+            </div>
+            
+            <div className="space-y-2 max-h-32 overflow-y-auto">
+              {layers.map(layer => (
+                <div
+                  key={layer.id}
+                  className={`flex items-center gap-2 p-2 rounded border-2 transition-all ${
+                    activeLayer === layer.id ? 'border-blue-600 bg-blue-50' : 'border-gray-200'
+                  }`}
+                >
+                  <button
+                    onClick={() => toggleLayerVisibility(layer.id)}
+                    className="p-1 hover:bg-gray-200 rounded"
+                  >
+                    {layer.visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4 text-gray-400" />}
+                  </button>
+                  <button
+                    onClick={() => setActiveLayer(layer.id)}
+                    className="flex-1 text-left text-sm font-medium"
+                  >
+                    {layer.name}
+                  </button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => deleteLayer(layer.id)}
+                    disabled={layers.length <= 1}
+                    className="h-6 w-6 p-0"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </Button>
+                </div>
+              ))}
             </div>
           </div>
         </CardContent>
