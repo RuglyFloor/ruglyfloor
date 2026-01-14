@@ -21,7 +21,7 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
   const [colors, setColors] = useState(2);
   const [brightness, setBrightness] = useState(100);
   const [saturation, setSaturation] = useState(100);
-  const [opacity, setOpacity] = useState(100);
+  const [opacity, setOpacity] = useState(70);
   
   const blur = 5;
   const canvasRef = useRef(null);
