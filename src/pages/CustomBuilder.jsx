@@ -184,19 +184,19 @@ export default function CustomBuilder() {
               <div key={s.num} className="flex flex-col items-center flex-1">
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all ${
                   step >= s.num 
-                    ? 'bg-gradient-to-br from-blue-600 to-purple-600 text-white shadow-lg scale-110' 
-                    : 'bg-gray-100 text-gray-400'
+                    ? 'border-4 border-gray-900 bg-white text-gray-900 shadow-lg scale-110' 
+                    : 'border-2 border-gray-300 bg-gray-100 text-gray-400'
                 }`}>
                   {step > s.num ? <CheckCircle className="w-6 h-6" /> : s.num}
                 </div>
-                <span className={`text-xs mt-2 font-medium ${step >= s.num ? 'text-blue-600' : 'text-gray-400'}`}>
+                <span className={`text-xs mt-2 font-medium ${step >= s.num ? 'text-gray-900' : 'text-gray-400'}`}>
                   {s.label}
                 </span>
                 {idx < 2 && (
                   <div className="absolute top-6 left-0 right-0 h-0.5 -z-10" style={{ 
                     left: `${(idx * 50) + 25}%`, 
                     width: '50%',
-                    background: step > s.num ? 'linear-gradient(to right, #2563eb, #9333ea)' : '#e5e7eb'
+                    background: step > s.num ? '#1f2937' : '#e5e7eb'
                   }} />
                 )}
               </div>
@@ -222,7 +222,7 @@ export default function CustomBuilder() {
             {step === 1 && (
            <div className={`space-y-6 transition-opacity duration-300 ${transitioning ? 'opacity-50' : 'opacity-100'}`}>
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold mb-3 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <h2 className="text-3xl font-bold mb-3 text-gray-900">
                 Pick Your Perfect Size
               </h2>
               <p className="text-gray-600 text-lg">All sizes come with our signature hand-painted quality</p>
@@ -242,14 +242,14 @@ export default function CustomBuilder() {
                   }}
                   className={`group relative overflow-hidden rounded-2xl transition-all duration-300 ${
                     config.size === size.value 
-                      ? 'ring-4 ring-blue-500 shadow-2xl scale-105' 
-                      : 'hover:shadow-xl hover:scale-102 shadow-md'
+                      ? 'border-4 border-gray-900 shadow-2xl scale-105' 
+                      : 'border-2 border-gray-300 hover:border-gray-400 hover:shadow-xl hover:scale-102 shadow-md'
                   }`}
                 >
                   <div className={`absolute inset-0 transition-opacity ${
                     config.size === size.value 
-                      ? 'bg-gradient-to-br from-blue-500 to-purple-500 opacity-100' 
-                      : 'bg-gradient-to-br from-gray-100 to-gray-200 opacity-100 group-hover:from-blue-50 group-hover:to-purple-50'
+                      ? 'bg-white opacity-100' 
+                      : 'bg-gray-50 opacity-100 group-hover:bg-white'
                   }`} />
 
                   <div className="relative p-8 flex flex-col items-center">
@@ -261,43 +261,43 @@ export default function CustomBuilder() {
 
                     <div className={`w-24 h-24 mb-4 rounded-xl flex items-center justify-center transition-all ${
                       config.size === size.value 
-                        ? 'bg-white/20 backdrop-blur-sm' 
-                        : 'bg-white/50 group-hover:bg-white/70'
+                        ? 'border-2 border-gray-900' 
+                        : 'border-2 border-gray-300'
                     }`}>
                       <div className={`text-5xl font-black ${
-                        config.size === size.value ? 'text-white' : 'text-gray-700'
+                        config.size === size.value ? 'text-gray-900' : 'text-gray-700'
                       }`}>
                         {size.id === 'rd' ? 'π' : size.label.charAt(0)}
                       </div>
                     </div>
 
                     <div className={`font-bold text-2xl mb-2 ${
-                      config.size === size.value ? 'text-white' : 'text-gray-900'
+                      config.size === size.value ? 'text-gray-900' : 'text-gray-900'
                     }`}>
                       {size.label}
                     </div>
 
                     <div className={`text-sm mb-4 ${
-                      config.size === size.value ? 'text-white/90' : 'text-gray-600'
+                      config.size === size.value ? 'text-gray-600' : 'text-gray-600'
                     }`}>
                       {size.measurement}
                     </div>
 
                     <div className="flex items-baseline gap-2">
                       <span className={`text-lg line-through ${
-                        config.size === size.value ? 'text-white/60' : 'text-gray-400'
+                        config.size === size.value ? 'text-gray-400' : 'text-gray-400'
                       }`}>
                         ${size.originalPrice}
                       </span>
                       <span className={`text-3xl font-black ${
-                        config.size === size.value ? 'text-white' : 'text-blue-600'
+                        config.size === size.value ? 'text-gray-900' : 'text-gray-900'
                       }`}>
                         ${size.price}
                       </span>
                     </div>
 
                     <div className={`mt-3 text-xs font-semibold ${
-                      config.size === size.value ? 'text-white/80' : 'text-green-600'
+                      config.size === size.value ? 'text-green-600' : 'text-green-600'
                     }`}>
                       SAVE ${size.originalPrice - size.price}
                     </div>
