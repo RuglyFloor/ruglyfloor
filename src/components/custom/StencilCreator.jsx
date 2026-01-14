@@ -17,11 +17,11 @@ const PAINT_COLORS = [
 
 export default function StencilCreator({ onSaveStencil, onConfigChange, paintColor, baseColor }) {
   const [originalImage, setOriginalImage] = useState(null);
-  const [threshold, setThreshold] = useState(160);
-  const [colors, setColors] = useState(2);
-  const [brightness, setBrightness] = useState(115);
-  const [saturation, setSaturation] = useState(85);
-  const [opacity, setOpacity] = useState(75);
+  const [threshold, setThreshold] = useState(110);
+  const [colors, setColors] = useState(3);
+  const [brightness, setBrightness] = useState(130);
+  const [saturation, setSaturation] = useState(70);
+  const [opacity, setOpacity] = useState(85);
   
   const blur = 5;
   const canvasRef = useRef(null);
