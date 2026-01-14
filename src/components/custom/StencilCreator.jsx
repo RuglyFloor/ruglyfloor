@@ -186,7 +186,9 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
     const link = document.createElement('a');
     link.download = 'rugly-stencil.png';
     link.href = canvasRef.current.toDataURL('image/png');
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
   };
 
   const handleShare = async () => {
