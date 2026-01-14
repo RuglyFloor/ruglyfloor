@@ -336,10 +336,14 @@ export default function CustomBuilder() {
                         <button
                           key={color.name}
                           onClick={() => setConfig(prev => ({ ...prev, baseColor: color.name }))}
-                          className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                          className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all group relative ${
                             config.baseColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                           }`}
+                          title={`Set ${color.name} as your rug's base color`}
                         >
+                          <span className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
+                            Make the base color of your rug {color.name}
+                          </span>
                           <div 
                            className="relative w-16 h-12 rounded-sm border-2 border-white shadow-md overflow-hidden"
                            style={{ backgroundColor: color.hex }}
@@ -373,10 +377,14 @@ export default function CustomBuilder() {
                           <button
                             key={`primary-${color.name}-${color.hex}`}
                             onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
-                            className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                            className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all group relative ${
                               config.paintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                             }`}
+                            title={`Paint your design in ${color.name}`}
                           >
+                            <span className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
+                              Paint your design in {color.name}
+                            </span>
                             <div 
                               className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
                               style={{ backgroundColor: color.hex }}
@@ -409,10 +417,14 @@ export default function CustomBuilder() {
                               secondPaintColor: prev.secondPaintColor === color.name ? '' : color.name,
                               numColors: prev.secondPaintColor === color.name ? 2 : 3
                             }))}
-                            className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                            className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all group relative ${
                               config.secondPaintColor === color.name ? 'border-green-600 bg-green-50' : 'border-gray-200 hover:border-gray-300'
                             }`}
+                            title={`Add ${color.name} as a second color (+$${getColorPrice(config.size, 3)})`}
                           >
+                            <span className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
+                              Add {color.name} as 2nd paint color<br/>Adds ${getColorPrice(config.size, 3)} to price
+                            </span>
                             <div 
                               className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
                               style={{ backgroundColor: color.hex }}
