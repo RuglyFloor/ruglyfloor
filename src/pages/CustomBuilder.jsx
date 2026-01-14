@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Upload, CheckCircle, Loader2, Pencil, FileText, MessageSquare, Phone } from 'lucide-react';
+import { Upload, CheckCircle, Pencil, FileText } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -103,7 +103,6 @@ export default function CustomBuilder() {
     designInstructions: ''
   });
   const [uploading, setUploading] = useState(false);
-  const [processing, setProcessing] = useState(false);
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -112,7 +111,7 @@ export default function CustomBuilder() {
     setUploading(true);
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      setConfig(prev => ({ ...prev, imageFile: file, imageUrl: file_url }));
+      setConfig(prev => ({ ...prev, imageFile: file, imageUrl: file_url, previewUrl: file_url }));
     } catch (error) {
       alert('Failed to upload image');
     } finally {
@@ -133,53 +132,7 @@ export default function CustomBuilder() {
     }
   };
 
-  const generatePreview = async () => {
-    if (!config.imageUrl || !config.baseColor || !config.paintColor) return;
-    
-    setProcessing(true);
-    try {
-      const sizeLabel = SIZES.find(s => s.value === config.size)?.label || config.size;
-      
-      // Build color description
-      let colorInfo = `painted in ${config.paintColor}`;
-      if (config.secondPaintColor) {
-        colorInfo += ` and ${config.secondPaintColor}`;
-      }
-      if (config.useSecondShade) {
-        colorInfo += ' with a second shade for depth and definition';
-      }
-      
-      // Add design instructions if provided
-      const instructionsAddendum = config.designInstructions 
-        ? `\n\nAdditional design requirements: ${config.designInstructions}` 
-        : '';
-      
-      const prompt = `Create a realistic mockup image showing a ${sizeLabel} carpet rug in ${config.baseColor} base color lying on a floor at a slight angle (perspective view from above). 
-      The design from the uploaded image should be ${colorInfo} in a flat stencil style (NOT 3D).
-      IMPORTANT: If the uploaded image contains text, words, or letters, reproduce them clearly and legibly on the rug - the text must be readable and accurate.
-      The rug should have visible carpet texture and the design should look professionally hand-painted on the rug surface.
-      Make it look professional and realistic, as if photographed in a well-lit room.${instructionsAddendum}`;
-      
-      const { url } = await base44.integrations.Core.GenerateImage({
-        prompt: prompt,
-        existing_image_urls: [config.imageUrl]
-      });
-      
-      setConfig(prev => ({ ...prev, previewUrl: url }));
-    } catch (error) {
-      console.error('Preview generation error:', error);
-      alert(`Failed to generate preview: ${error.message || 'Unknown error'}`);
-    } finally {
-      setProcessing(false);
-    }
-  };
 
-  // Auto-generate preview when design is complete (skip for drawing mode)
-  useEffect(() => {
-    if (step === 3 && config.imageUrl && config.baseColor && config.paintColor && !config.previewUrl && !processing && designMode !== 'draw') {
-      generatePreview();
-    }
-  }, [step, config.imageUrl, config.baseColor, config.paintColor, config.previewUrl, designMode]);
 
   const handleAddToCart = () => {
     const selectedSize = SIZES.find(s => s.value === config.size);
@@ -563,15 +516,9 @@ export default function CustomBuilder() {
                   <>
                     <DesignLibrary
                       onSelectDesign={(url) => {
-                        setConfig(prev => ({ ...prev, imageUrl: url }));
+                        setConfig(prev => ({ ...prev, imageUrl: url, previewUrl: url }));
                       }}
                     />
-                    {config.imageUrl && designMode === 'library' && (
-                      <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                        <p className="text-sm text-green-700 font-semibold mb-2">✓ Design selected!</p>
-                        <p className="text-xs text-gray-600 mb-3">Continue below to generate your preview</p>
-                      </div>
-                    )}
                   </>
                 )}
 
@@ -607,56 +554,19 @@ export default function CustomBuilder() {
                   />
                 )}
 
-                {config.imageUrl && (
+                {config.previewUrl && (
                   <div className="space-y-4">
-                    {processing && (
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <div className="flex items-center gap-3">
-                          <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
-                          <div>
-                            <p className="font-semibold text-blue-900">🎨 Generating Your Realistic Preview...</p>
-                            <p className="text-sm text-gray-600">This may take 5-10 seconds</p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {!config.previewUrl && !processing && (
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <Label className="block mb-2 font-semibold text-blue-900">🎨 Regenerate Preview</Label>
-                        <p className="text-sm text-gray-700 mb-3">
-                          Click to regenerate the AI preview with any changes
-                        </p>
-                        <Button
-                          onClick={() => generatePreview()}
-                          disabled={processing || !config.imageUrl}
-                          className="w-full bg-blue-600 hover:bg-blue-700"
-                        >
-                          Regenerate AI Preview
-                        </Button>
-                      </div>
-                    )}
-
-                    {config.previewUrl && (
-                      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                        <Label className="block mb-2 font-semibold text-green-900">✨ Your Custom Rug Preview</Label>
-                        {designMode === 'draw' ? (
-                          <InteractiveRugPreview
-                            designUrl={config.previewUrl}
-                            baseColor={BASE_COLORS.find(c => c.name === config.baseColor)?.hex || '#ffffff'}
-                            paintColor={PAINT_COLORS.find(c => c.name === config.paintColor)?.hex || '#000000'}
-                            size={config.size}
-                          />
-                        ) : (
-                          <img 
-                            src={config.previewUrl} 
-                            alt="Rug preview" 
-                            className="w-full rounded-lg shadow-lg mb-4"
-                          />
-                        )}
-                        <p className="text-sm text-green-700 mb-4">
-                          This is how your custom rug will look! Review and add to cart when ready.
-                        </p>
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                      <Label className="block mb-2 font-semibold text-green-900">✨ Your Custom Rug Preview</Label>
+                      <InteractiveRugPreview
+                        designUrl={config.previewUrl}
+                        baseColor={BASE_COLORS.find(c => c.name === config.baseColor)?.hex || '#ffffff'}
+                        paintColor={PAINT_COLORS.find(c => c.name === config.paintColor)?.hex || '#000000'}
+                        size={config.size}
+                      />
+                      <p className="text-sm text-green-700 my-4">
+                        Real-time preview • Colors and design update instantly
+                      </p>
 
                         {/* Final Summary */}
                         <div className="bg-white rounded-lg p-4 mb-4 space-y-2 text-sm">
