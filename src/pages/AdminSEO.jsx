@@ -106,7 +106,7 @@ function AdminSEOContent() {
   };
 
   const handleSaveContent = () => {
-    if (!formData.title || !formData.slug || !formData.seo_title) {
+    if (!formData.title || formData.slug === undefined || formData.slug === null || !formData.seo_title) {
       alert('Please fill in title, slug, and SEO title');
       return;
     }
