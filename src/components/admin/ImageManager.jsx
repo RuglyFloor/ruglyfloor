@@ -132,7 +132,10 @@ export default function ImageManager({ images = [], onChange, onGenerateAI }) {
         <Button
           type="button"
           variant="outline"
-          onClick={() => document.getElementById('image-manager-upload').click()}
+          onClick={() => {
+            const input = document.getElementById('image-manager-upload');
+            if (input) input.click();
+          }}
           disabled={uploading}
           className="gap-2"
         >
