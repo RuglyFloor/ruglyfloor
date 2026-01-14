@@ -21,7 +21,6 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
   const [colors, setColors] = useState(3);
   const [brightness, setBrightness] = useState(130);
   const [saturation, setSaturation] = useState(70);
-  const [opacity, setOpacity] = useState(85);
   
   const blur = 5;
   const canvasRef = useRef(null);
@@ -36,9 +35,9 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
 
   useEffect(() => {
     if (onConfigChange) {
-      onConfigChange({ colors, brightness, saturation, threshold, opacity });
+      onConfigChange({ colors, brightness, saturation, threshold });
     }
-  }, [colors, brightness, saturation, threshold, opacity, onConfigChange]);
+  }, [colors, brightness, saturation, threshold, onConfigChange]);
 
   useEffect(() => {
     if (!originalImage || !canvasRef.current) return;
@@ -105,7 +104,7 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
         imageData.data[i] = parseInt(paintColor.slice(1, 3), 16);
         imageData.data[i + 1] = parseInt(paintColor.slice(3, 5), 16);
         imageData.data[i + 2] = parseInt(paintColor.slice(5, 7), 16);
-        imageData.data[i + 3] = Math.round(255 * (opacity / 100));
+        imageData.data[i + 3] = 255;
       } else {
         imageData.data[i] = 0;
         imageData.data[i + 1] = 0;
@@ -115,7 +114,7 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
     }
 
     ctx.putImageData(imageData, 0, 0);
-  }, [originalImage, threshold, paintColor, colors, brightness, saturation, opacity]);
+  }, [originalImage, threshold, paintColor, colors, brightness, saturation]);
 
   const applyGaussianBlur = (imageData, radius) => {
     const width = imageData.width;
@@ -299,28 +298,6 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
                   className="w-full"
                 />
                 <p className="text-xs text-gray-500 mt-1.5">Color intensity</p>
-              </CardContent>
-            </Card>
-
-            {/* Opacity */}
-            <Card>
-              <CardContent className="p-4">
-                <div className="flex justify-between items-center mb-2">
-                  <Label className="text-sm font-bold flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-blue-500" />
-                    Paint Opacity
-                  </Label>
-                  <span className="text-xs font-mono bg-blue-100 text-blue-800 px-2 py-1 rounded">{opacity}%</span>
-                </div>
-                <Slider
-                  value={[opacity]}
-                  onValueChange={(val) => setOpacity(val[0])}
-                  min={10}
-                  max={100}
-                  step={5}
-                  className="w-full"
-                />
-                <p className="text-xs text-gray-500 mt-1.5">Design transparency</p>
               </CardContent>
             </Card>
 
