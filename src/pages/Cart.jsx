@@ -265,17 +265,17 @@ export default function Cart() {
                     Share special requests or design details
                   </p>
                   
-                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-3 rounded-lg border border-blue-200 mt-3">
+                  <div className="border-4 border-gray-900 p-3 rounded-lg bg-white mt-3">
                     <p className="text-xs font-semibold text-gray-900 mb-2">Need to discuss your design?</p>
                     <div className="flex gap-2">
                       <a href="tel:5177778474" className="flex-1">
-                        <Button variant="outline" size="sm" className="w-full gap-1 text-xs">
+                        <Button variant="outline" size="sm" className="w-full gap-1 text-xs border-2 border-gray-900">
                           <Phone className="w-3 h-3" />
                           Call
                         </Button>
                       </a>
                       <a href="sms:5177778474" className="flex-1">
-                        <Button variant="outline" size="sm" className="w-full gap-1 text-xs">
+                        <Button variant="outline" size="sm" className="w-full gap-1 text-xs border-2 border-gray-900">
                           <MessageSquare className="w-3 h-3" />
                           Text
                         </Button>
@@ -288,10 +288,10 @@ export default function Cart() {
                 <div className="border-t pt-4 mt-4">
                   <div className="flex justify-between items-center mb-4">
                     <span className="text-lg font-semibold">Total:</span>
-                    <span className="text-3xl font-bold text-blue-600">${totalAmount}</span>
+                    <span className="text-3xl font-bold text-gray-900">${totalAmount}</span>
                   </div>
                   <Button 
-                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    className="w-full border-4 border-gray-900 bg-white hover:bg-gray-50 text-gray-900 font-bold"
                     onClick={handleCheckout}
                     disabled={submitting}
                   >
