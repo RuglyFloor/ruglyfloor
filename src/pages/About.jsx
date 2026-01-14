@@ -88,6 +88,42 @@ export default function About() {
             />
           </div>
 
+          {/* Before You Order - Foundation Guide */}
+          <div className="mt-16 bg-gray-50 rounded-xl p-8">
+            <h3 className="text-2xl font-bold text-center mb-8">Foundation Guide: Read Before Ordering</h3>
+            <div className="space-y-6 max-w-3xl mx-auto">
+              <div className="flex items-start gap-4">
+                <div className="w-2 h-2 rounded-full bg-blue-600 mt-2 flex-shrink-0" />
+                <div>
+                  <h4 className="font-bold text-lg mb-2">Hand-Painted, Not Printed</h4>
+                  <p className="text-gray-700">Every Rugly is hand-painted in our studio. This is real hand work, not a printed design. Each piece has unique character and slight variations that make it one-of-a-kind.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-2 h-2 rounded-full bg-blue-600 mt-2 flex-shrink-0" />
+                <div>
+                  <h4 className="font-bold text-lg mb-2">Bold Designs Work Best</h4>
+                  <p className="text-gray-700">High contrast designs with clear edges paint the cleanest. Bold, simple shapes and patterns will give you the most professional-looking result.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-2 h-2 rounded-full bg-blue-600 mt-2 flex-shrink-0" />
+                <div>
+                  <h4 className="font-bold text-lg mb-2">Stencil Process</h4>
+                  <p className="text-gray-700">We create custom stencils for each design. Thin lines, gradients, and extremely fine details may be simplified to work with the stencil painting process.</p>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 border-l-4 border-blue-600 p-6 rounded mt-6">
+                <p className="text-lg italic text-gray-700">
+                  "The preview you see is accurate — but this is still hand work. Each rug has character and small variations. That's the point of custom, hand-painted art."
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* CTA */}
           <div className="text-center mt-16">
             <h3 className="text-3xl font-bold mb-4">Ready to Transform Your Space?</h3>
