@@ -36,9 +36,9 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <SEOHead
-        title="Buy Custom Hand-Painted Rugs | Bespoke Area Rugs & Personalized Floor Art"
-        description="Shop custom hand-painted rugs for sale. Commission bespoke rug designs, personalized floor art, and unique hand-painted home decor. Luxury hand-painted carpet designs for modern homes and interior designers."
-        keywords={['buy custom hand-painted rugs', 'bespoke hand-painted area rugs', 'commission custom rug design', 'hand-painted rugs for sale', 'personalized floor art rugs', 'unique hand-painted home decor', 'luxury hand-painted carpet designs', 'artistic area rugs for modern homes', 'custom painted washable rugs']}
+        title="Buy Custom Hand-Painted Rugs | Unique Gifts for Mother's Day & Father's Day"
+        description="Shop custom hand-painted rugs for sale - perfect Mother's Day gifts, Father's Day gifts, and unique gifts for hard to buy for people. Commission bespoke rug designs, personalized floor art, and unique hand-painted home decor. Luxury hand-painted carpet designs for modern homes and interior designers."
+        keywords={['mothers day gifts', 'fathers day gifts', 'unique gifts for hard to buy for people', 'buy custom hand-painted rugs', 'bespoke hand-painted area rugs', 'commission custom rug design', 'hand-painted rugs for sale', 'personalized floor art rugs', 'unique hand-painted home decor', 'luxury hand-painted carpet designs', 'artistic area rugs for modern homes', 'custom painted washable rugs']}
         url="/"
         type="website"
         schema={generateOrganizationSchema()} />
@@ -75,14 +75,14 @@ export default function Home() {
                 Shop Ruglys
               </button>
             </Link>
-            <Link to={createPageUrl('CustomBuilder')}>
+            <Link to={createPageUrl('UnifiedDesignArea')}>
               <button className="bg-transparent border border-white text-white font-black px-12 py-6 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '1.575rem', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
                 Create a Crugly
               </button>
             </Link>
             <Link to={createPageUrl('Commission')}>
               <button className="bg-transparent border border-white text-white font-black px-8 py-4 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '1.1rem', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
-                Fine Art; Your Style
+                Commission a Rugley
               </button>
             </Link>
           </div>

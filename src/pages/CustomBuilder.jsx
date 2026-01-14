@@ -217,9 +217,9 @@ export default function CustomBuilder() {
   return (
     <div className="min-h-screen py-12 px-6">
       <SEOHead
-        title="Custom Rug Builder | Design Personalized Hand-Painted Area Rugs Online"
-        description="Design custom hand-painted rugs online. Create personalized floor art rugs with our builder. Customizable stencil rug designs, washable custom painted rugs for any space. Perfect for interior designers and homeowners."
-        keywords={['custom hand-painted rugs for interior designers', 'personalized floor art rugs', 'customizable stencil rug designs', 'custom painted washable rugs', 'hand-painted low-pile rugs for high traffic', 'personalized rugs for nursery hand-painted', 'custom painted rugs for Airbnb decor']}
+        title="Custom Rug Builder | Perfect Mother's Day & Father's Day Gifts"
+        description="Design custom hand-painted rugs online - unique mothers day gifts, fathers day gifts, and personalized gifts for anyone. Create personalized floor art rugs with our builder. Customizable stencil rug designs, washable custom painted rugs for any space. Perfect for interior designers and homeowners."
+        keywords={['mothers day gifts unique', 'fathers day gifts personalized', 'gifts for hard to buy for people', 'custom hand-painted rugs for interior designers', 'personalized floor art rugs', 'customizable stencil rug designs', 'custom painted washable rugs', 'hand-painted low-pile rugs for high traffic', 'personalized rugs for nursery hand-painted', 'custom painted rugs for Airbnb decor']}
         url="/custom-builder"
       />
       <div className="max-w-7xl mx-auto">

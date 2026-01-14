@@ -16,6 +16,8 @@ export default function Commission() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [estimating, setEstimating] = useState(false);
+  const [estimate, setEstimate] = useState(null);
   
   const [formData, setFormData] = useState({
     // Design details
@@ -168,6 +170,27 @@ export default function Commission() {
     );
   }
 
+  const generateEstimate = async () => {
+    setEstimating(true);
+    try {
+      const response = await base44.functions.invoke('estimateCommissionPrice', {
+        imageUrl: formData.inspirationImages[0] || null,
+        rugSize: formData.preferredSize,
+        numColors: formData.numColors,
+        budgetRange: formData.budgetRange,
+        description: formData.description
+      });
+
+      if (response.data.success) {
+        setEstimate(response.data.estimate);
+      }
+    } catch (error) {
+      console.error('Failed to generate estimate:', error);
+    } finally {
+      setEstimating(false);
+    }
+  };
+
   const totalCost = () => {
     const deposit = 300;
     const rush = formData.rushOrder ? 159 : 0;
@@ -177,16 +200,35 @@ export default function Commission() {
   return (
     <div className="min-h-screen py-12 px-6">
       <SEOHead
-        title="Commission Custom Rug Design | Bespoke Hand-Painted Area Rugs by Artists"
-        description="Commission bespoke hand-painted area rug designs from professional artists. Custom rug trade program for interior designers. Luxury hand-painted carpet designs and custom logo rugs hand-painted for businesses."
-        keywords={['commission custom rug design', 'bespoke hand-painted area rugs', 'custom rug trade program for designers', 'luxury hand-painted carpet designs', 'custom logo rugs hand-painted', 'best custom rug designers', 'custom hand-painted rugs for interior designers']}
+        title="Commission Rugley Designs | Bespoke Hand-Painted Area Rugs for Commercial & Interior Design"
+        description="Commission bespoke Rugley hand-painted area rug designs from professional artists. Custom rug trade program for interior designers, commercial spaces, and businesses. Luxury hand-painted carpet designs and custom logo rugs hand-painted for hotels, restaurants, Airbnbs, and offices."
+        keywords={['rugley commission', 'commission custom rug design', 'bespoke hand-painted area rugs', 'custom rug trade program for designers', 'luxury hand-painted carpet designs', 'custom logo rugs hand-painted', 'best custom rug designers', 'custom hand-painted rugs for interior designers', 'commercial rug design', 'hotel lobby custom rugs']}
         url="/commission"
       />
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold mb-4 text-center">Commission Your Own Design</h1>
+        <h1 className="text-4xl font-bold mb-4 text-center">Commission a Rugley Design</h1>
         <p className="text-center text-gray-600 mb-4 text-lg">
-          Perfect for businesses and unique spaces. Get a detailed estimate from our studio.
+          Rugley commissions are bespoke, hand-painted rugs created for interior designers, commercial spaces, hotels, restaurants, Airbnbs, and businesses. Get a detailed estimate from our studio.
         </p>
+
+        {/* What is Rugley Section */}
+        <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-6 mb-8">
+          <h2 className="text-2xl font-bold mb-4 text-purple-900">What is a Rugley?</h2>
+          <div className="space-y-3 text-gray-700">
+            <p>
+              <strong>Rugley</strong> is our premium commission line designed specifically for interior designers, architects, and commercial clients who need custom floor art that makes a statement.
+            </p>
+            <p>
+              Whether you're outfitting a boutique hotel lobby, creating a branded experience for a restaurant, or adding personality to an Airbnb rental, Rugley commissions are fully custom, one-of-a-kind pieces that transform spaces.
+            </p>
+            <ul className="list-disc list-inside space-y-2 ml-4">
+              <li><strong>Interior Designers:</strong> Collaborate with us to create signature pieces that complement your vision</li>
+              <li><strong>Commercial Spaces:</strong> Hotels, restaurants, offices, retail stores</li>
+              <li><strong>Unique Branding:</strong> Custom logos, brand colors, and messaging on durable, washable rugs</li>
+              <li><strong>Any Size:</strong> From small accent rugs to massive commercial installations</li>
+            </ul>
+          </div>
+        </div>
 
         {/* Deposit Info Banner */}
         <div className="bg-blue-50 border-2 border-blue-600 rounded-lg p-6 mb-8">
@@ -323,6 +365,41 @@ export default function Commission() {
                   </div>
                 )}
               </div>
+
+              {/* Get Estimate Button */}
+              {formData.description && (
+                <Button
+                  type="button"
+                  onClick={generateEstimate}
+                  disabled={estimating}
+                  variant="outline"
+                  className="w-full"
+                >
+                  {estimating ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Generating Estimate...
+                    </>
+                  ) : (
+                    '💡 Get Rough Price Estimate'
+                  )}
+                </Button>
+              )}
+
+              {/* Display Estimate */}
+              {estimate && (
+                <div className="bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-300 rounded-lg p-4">
+                  <h4 className="font-bold text-lg mb-2 text-green-900">Estimated Price Range</h4>
+                  <div className="text-3xl font-black text-green-700 mb-2">{estimate.priceRange}</div>
+                  <div className="text-sm text-gray-700 mb-2">
+                    <strong>Complexity:</strong> {estimate.complexity}
+                  </div>
+                  <p className="text-sm text-gray-600">{estimate.explanation}</p>
+                  <p className="text-xs text-gray-500 mt-2">
+                    * This is a rough estimate. Final pricing will be provided after review.
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
