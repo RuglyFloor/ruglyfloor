@@ -84,8 +84,12 @@ export default function CustomBuilder() {
   const [designMode, setDesignMode] = useState('draw'); // 'library', 'upload', or 'draw'
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [step]);
   const [config, setConfig] = useState({
     size: '',
     baseColor: '',
