@@ -43,7 +43,10 @@ function AdminOrdersContent() {
 
   const { data: orders, isLoading } = useQuery({
     queryKey: ['admin-orders'],
-    queryFn: () => base44.entities.Order.list('-created_date'),
+    queryFn: async () => {
+      const allOrders = await base44.entities.Order.list('-created_date');
+      return allOrders.filter(order => order.payment_status === 'paid');
+    },
     enabled: user?.role === 'admin'
   });
 
