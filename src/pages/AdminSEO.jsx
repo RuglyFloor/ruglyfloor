@@ -138,11 +138,20 @@ function AdminSEOContent() {
   const handleSelectPage = (page) => {
     setSelectedPage(page);
     setEditingContent(null);
-    const existingContent = contents.find(c => c.slug === page.path.slice(1) || c.slug === page.path);
+    const slug = page.path === '/' ? '' : page.path.slice(1);
+    const existingContent = contents.find(c => c.slug === slug || c.slug === page.path);
     if (existingContent) {
       handleLoadContent(existingContent);
     } else {
-      resetForm();
+      setFormData({
+        title: page.name,
+        seo_title: '',
+        seo_description: '',
+        seo_keywords: [],
+        slug: slug,
+        status: 'draft',
+        body: ''
+      });
     }
   };
 
