@@ -314,7 +314,12 @@ export default function CustomBuilder() {
           {step === 2 && (
             <Card>
               <CardHeader>
-                <CardTitle>Step 2: Choose Colors</CardTitle>
+                <div className="text-center mb-6">
+                  <h2 className="text-3xl font-bold mb-3 text-gray-900">
+                    Choose Colors
+                  </h2>
+                  <p className="text-gray-600 text-lg">Pick the actual rug color and the paint color for your design</p>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
