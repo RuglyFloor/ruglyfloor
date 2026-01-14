@@ -16,7 +16,7 @@ export default function Layout({ children, currentPageName }) {
 
   const navLinks = [
     { name: 'Home', page: 'Home' },
-    { name: 'Unified Design Area', page: 'UnifiedDesignArea' },
+    { name: 'Build Your Rug', page: 'CustomBuilder' },
     { name: 'Shop Originals', page: 'Shop' },
     { name: 'Commission Rugley', page: 'Commission' },
     { name: 'About', page: 'About' },

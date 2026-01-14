@@ -20,7 +20,6 @@ import Policies from './pages/Policies';
 import Shop from './pages/Shop';
 import Success from './pages/Success';
 import TrackOrder from './pages/TrackOrder';
-import UnifiedDesignArea from './pages/UnifiedDesignArea';
 import __Layout from './Layout.jsx';
 
 
@@ -47,7 +46,6 @@ export const PAGES = {
     "Shop": Shop,
     "Success": Success,
     "TrackOrder": TrackOrder,
-    "UnifiedDesignArea": UnifiedDesignArea,
 }
 
 export const pagesConfig = {

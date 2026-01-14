@@ -490,9 +490,9 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
                 <Trash2 className="w-4 h-4 mr-2" />
                 Clear
               </Button>
-              <Button size="sm" onClick={saveDrawing} className="ml-auto bg-blue-600 hover:bg-blue-700">
+              <Button size="sm" onClick={saveDrawing} className="ml-auto bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold">
                 <Save className="w-4 h-4 mr-2" />
-                Save Drawing
+                Use This Design
               </Button>
             </div>
           </div>
@@ -606,12 +606,12 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
         )}
       </div>
 
-      <div className="bg-gray-50 rounded-lg p-4 text-center">
-        <p className="text-sm text-gray-700 font-medium mb-2">
-          🎨 Draw your custom design using the tools above
+      <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-6 text-center border-2 border-green-300">
+        <p className="text-lg text-gray-800 font-bold mb-2">
+          ✅ When you're done, click "Use This Design" above
         </p>
-        <p className="text-xs text-gray-600">
-          Optimized for touch screens, Apple Pencil, and tablets • Use text tool for paragraphs
+        <p className="text-sm text-gray-600">
+          Your drawing will be saved and you can preview it on your rug
         </p>
       </div>
     </div>

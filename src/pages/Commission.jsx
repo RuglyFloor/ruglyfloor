@@ -16,8 +16,6 @@ export default function Commission() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [estimating, setEstimating] = useState(false);
-  const [estimate, setEstimate] = useState(null);
   
   const [formData, setFormData] = useState({
     // Design details
@@ -169,27 +167,6 @@ export default function Commission() {
       </div>
     );
   }
-
-  const generateEstimate = async () => {
-    setEstimating(true);
-    try {
-      const response = await base44.functions.invoke('estimateCommissionPrice', {
-        imageUrl: formData.inspirationImages[0] || null,
-        rugSize: formData.preferredSize,
-        numColors: formData.numColors,
-        budgetRange: formData.budgetRange,
-        description: formData.description
-      });
-
-      if (response.data.success) {
-        setEstimate(response.data.estimate);
-      }
-    } catch (error) {
-      console.error('Failed to generate estimate:', error);
-    } finally {
-      setEstimating(false);
-    }
-  };
 
   const totalCost = () => {
     const deposit = 300;
@@ -365,41 +342,6 @@ export default function Commission() {
                   </div>
                 )}
               </div>
-
-              {/* Get Estimate Button */}
-              {formData.description && (
-                <Button
-                  type="button"
-                  onClick={generateEstimate}
-                  disabled={estimating}
-                  variant="outline"
-                  className="w-full"
-                >
-                  {estimating ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Generating Estimate...
-                    </>
-                  ) : (
-                    '💡 Get Rough Price Estimate'
-                  )}
-                </Button>
-              )}
-
-              {/* Display Estimate */}
-              {estimate && (
-                <div className="bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-300 rounded-lg p-4">
-                  <h4 className="font-bold text-lg mb-2 text-green-900">Estimated Price Range</h4>
-                  <div className="text-3xl font-black text-green-700 mb-2">{estimate.priceRange}</div>
-                  <div className="text-sm text-gray-700 mb-2">
-                    <strong>Complexity:</strong> {estimate.complexity}
-                  </div>
-                  <p className="text-sm text-gray-600">{estimate.explanation}</p>
-                  <p className="text-xs text-gray-500 mt-2">
-                    * This is a rough estimate. Final pricing will be provided after review.
-                  </p>
-                </div>
-              )}
             </CardContent>
           </Card>
 

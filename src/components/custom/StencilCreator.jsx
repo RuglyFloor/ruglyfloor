@@ -376,9 +376,9 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
            <Button
              type="button"
              onClick={handleSave}
-             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-6 text-lg"
+             className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-6 text-lg shadow-lg"
            >
-             Use This Design
+             ✅ Use This Design
            </Button>
            <div className="grid grid-cols-3 gap-2">
              <Button
