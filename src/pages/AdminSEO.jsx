@@ -43,11 +43,11 @@ function AdminSEOContent() {
   const [newPagePath, setNewPagePath] = useState('');
   const [editingContent, setEditingContent] = useState(null);
   const [formData, setFormData] = useState({
-    title: '',
+    title: PAGES[0].name,
     seo_title: '',
     seo_description: '',
     seo_keywords: [],
-    slug: '',
+    slug: PAGES[0].path === '/' ? '' : PAGES[0].path.slice(1),
     status: 'draft'
   });
   const [keywordInput, setKeywordInput] = useState('');
