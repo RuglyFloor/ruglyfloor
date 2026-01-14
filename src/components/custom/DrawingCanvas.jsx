@@ -4,21 +4,18 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
-import { Pencil, Eraser, Type, Square, Circle, Undo, Redo, Trash2, Save, AlertCircle, Plus, Eye, EyeOff, Layers } from 'lucide-react';
+import { Pencil, Eraser, Type, Square, Circle, Undo, Redo, Trash2, Save, AlertCircle } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, availableColors = [], size = 'small' }) {
+export default function DrawingCanvas({ onSaveDrawing, availableColors = [] }) {
   const canvasRef = useRef(null);
   const textareaRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [tool, setTool] = useState('pen');
   const [color, setColor] = useState(availableColors[0]?.hex || '#000000');
   const [brushSize, setBrushSize] = useState(15);
-  const [opacity, setOpacity] = useState(1);
   const [history, setHistory] = useState([]);
   const [historyStep, setHistoryStep] = useState(0);
-  const [layers, setLayers] = useState([{ id: 1, name: 'Layer 1', visible: true, data: null }]);
-  const [activeLayer, setActiveLayer] = useState(1);
   const [textInput, setTextInput] = useState('');
   const [showTextInput, setShowTextInput] = useState(false);
   const [textPosition, setTextPosition] = useState({ x: 0, y: 0 });
@@ -48,10 +45,6 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
     }
   }, []);
 
-  useEffect(() => {
-    redrawCanvas();
-  }, [layers, activeLayer]);
-
   const saveToHistory = () => {
     const canvas = canvasRef.current;
     if (canvas) {
@@ -59,34 +52,6 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
       const newHistory = history.slice(0, historyStep + 1);
       setHistory([...newHistory, dataUrl]);
       setHistoryStep(newHistory.length);
-    }
-  };
-
-  const redrawCanvas = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    layers.forEach(layer => {
-      if (layer.visible && layer.data) {
-        const img = new Image();
-        img.src = layer.data;
-        img.onload = () => {
-          ctx.drawImage(img, 0, 0);
-        };
-      }
-    });
-  };
-
-  const saveLayerData = () => {
-    const canvas = canvasRef.current;
-    if (canvas) {
-      const dataUrl = canvas.toDataURL();
-      setLayers(prev => prev.map(layer => 
-        layer.id === activeLayer ? { ...layer, data: dataUrl } : layer
-      ));
     }
   };
 
@@ -108,8 +73,6 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
     ctx.moveTo(x, y);
   };
 
-
-
   const draw = (e) => {
     if (!isDrawing) return;
     
@@ -120,14 +83,12 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
     const ctx = canvas.getContext('2d');
 
     if (tool === 'pen') {
-      ctx.globalAlpha = opacity;
       ctx.strokeStyle = color;
       ctx.lineWidth = brushSize;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.lineTo(x, y);
       ctx.stroke();
-      ctx.globalAlpha = 1;
     } else if (tool === 'eraser') {
       ctx.globalCompositeOperation = 'destination-out';
       ctx.lineWidth = brushSize * 3;
@@ -142,7 +103,6 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
   const stopDrawing = () => {
     if (isDrawing) {
       setIsDrawing(false);
-      saveLayerData();
       saveToHistory();
     }
   };
@@ -156,14 +116,12 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
     ctx.fillStyle = color;
     ctx.textAlign = textAlign;
     
-    // Split text into lines and handle wrapping
     const lines = textInput.split('\n');
     const lineHeight = fontSize * 1.2;
     let currentY = textPosition.y;
     
     lines.forEach(line => {
       if (maxWidth && line.length > 0) {
-        // Word wrap
         const words = line.split(' ');
         let currentLine = '';
         
@@ -192,7 +150,6 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
     
     setTextInput('');
     setShowTextInput(false);
-    saveLayerData();
     saveToHistory();
   };
 
@@ -218,7 +175,6 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
       ctx.stroke();
     }
 
-    saveLayerData();
     saveToHistory();
   };
 
@@ -254,44 +210,21 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
     };
   };
 
-  const addLayer = () => {
-    const newId = Math.max(...layers.map(l => l.id)) + 1;
-    setLayers([...layers, { id: newId, name: `Layer ${newId}`, visible: true, data: null }]);
-    setActiveLayer(newId);
-  };
-
-  const deleteLayer = (id) => {
-    if (layers.length <= 1) return;
-    setLayers(layers.filter(l => l.id !== id));
-    if (activeLayer === id) {
-      setActiveLayer(layers[0].id);
-    }
-  };
-
-  const toggleLayerVisibility = (id) => {
-    setLayers(layers.map(l => 
-      l.id === id ? { ...l, visible: !l.visible } : l
-    ));
-  };
-
   const clearCanvas = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    saveLayerData();
     saveToHistory();
   };
 
   const saveDrawing = async () => {
     const canvas = canvasRef.current;
     
-    // Download to user's machine
     const link = document.createElement('a');
     link.download = 'rugly-custom-drawing.png';
     link.href = canvas.toDataURL('image/png');
     link.click();
     
-    // Also save for preview
     canvas.toBlob(async (blob) => {
       const file = new File([blob], 'drawing.png', { type: 'image/png' });
       onSaveDrawing(file);
@@ -308,17 +241,14 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
 
   return (
     <div className="space-y-4">
-      {/* Pro Tip */}
       <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg p-4 text-white text-center">
         <AlertCircle className="w-5 h-5 inline mr-2" />
         <span className="font-bold">PRO TIP:</span> Use your iPad or tablet for the best drawing experience!
       </div>
 
-      {/* Toolbar */}
       <Card>
         <CardContent className="p-4">
           <div className="space-y-4">
-            {/* Tools */}
             <div>
               <Label className="mb-2 block">Drawing Tools</Label>
               <div className="flex flex-wrap gap-2">
@@ -365,9 +295,8 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
               </div>
             </div>
 
-            {/* Color Selection - From Step 2 */}
             <div>
-              <Label className="mb-2 block">Selected Colors</Label>
+              <Label className="mb-2 block">Paint Colors</Label>
               <div className="flex gap-2 flex-wrap">
                 {availableColors.map((colorObj) => (
                   <button
@@ -389,9 +318,8 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
               </div>
             </div>
 
-            {/* Brush Size */}
             <div>
-              <Label className="mb-2 block">Thickness: {brushSize}px</Label>
+              <Label className="mb-2 block">Brush Thickness: {brushSize}px</Label>
               <Slider
                 value={[brushSize]}
                 onValueChange={(val) => setBrushSize(val[0])}
@@ -399,23 +327,8 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
                 max={60}
                 step={2}
               />
-              <p className="text-xs text-gray-500 mt-1">Adjust stroke width</p>
             </div>
 
-            {/* Opacity */}
-            <div>
-              <Label className="mb-2 block">Opacity: {Math.round(opacity * 100)}%</Label>
-              <Slider
-                value={[opacity * 100]}
-                onValueChange={(val) => setOpacity(val[0] / 100)}
-                min={10}
-                max={100}
-                step={5}
-              />
-              <p className="text-xs text-gray-500 mt-1">Control transparency</p>
-            </div>
-
-            {/* Text Settings (for text tool) */}
             {tool === 'text' && (
               <div className="space-y-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                 <div>
@@ -471,12 +384,10 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
                     max={800}
                     step={50}
                   />
-                  <p className="text-xs text-gray-600 mt-1">Text will wrap at this width</p>
                 </div>
               </div>
             )}
 
-            {/* Actions */}
             <div className="flex gap-2 pt-2 flex-wrap">
               <Button variant="outline" size="sm" onClick={undo} disabled={historyStep <= 0}>
                 <Undo className="w-4 h-4 mr-2" />
@@ -499,58 +410,6 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
         </CardContent>
       </Card>
 
-      {/* Layers Panel */}
-      <Card>
-        <CardContent className="p-4">
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label className="flex items-center gap-2">
-                <Layers className="w-4 h-4" />
-                Layers
-              </Label>
-              <Button size="sm" variant="outline" onClick={addLayer}>
-                <Plus className="w-4 h-4 mr-1" />
-                Add Layer
-              </Button>
-            </div>
-            
-            <div className="space-y-2 max-h-32 overflow-y-auto">
-              {layers.map(layer => (
-                <div
-                  key={layer.id}
-                  className={`flex items-center gap-2 p-2 rounded border-2 transition-all ${
-                    activeLayer === layer.id ? 'border-blue-600 bg-blue-50' : 'border-gray-200'
-                  }`}
-                >
-                  <button
-                    onClick={() => toggleLayerVisibility(layer.id)}
-                    className="p-1 hover:bg-gray-200 rounded"
-                  >
-                    {layer.visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4 text-gray-400" />}
-                  </button>
-                  <button
-                    onClick={() => setActiveLayer(layer.id)}
-                    className="flex-1 text-left text-sm font-medium"
-                  >
-                    {layer.name}
-                  </button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => deleteLayer(layer.id)}
-                    disabled={layers.length <= 1}
-                    className="h-6 w-6 p-0"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Canvas */}
       <div className="relative bg-gray-100 border-2 border-gray-300 rounded-lg overflow-hidden" style={{ 
         backgroundImage: 'repeating-linear-gradient(45deg, #f9fafb 0px, #f9fafb 10px, #e5e7eb 10px, #e5e7eb 20px)',
         backgroundSize: '20px 20px'
@@ -570,7 +429,6 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
           onClick={handleCanvasClick}
         />
 
-        {/* Text Input Overlay - Enhanced for Paragraphs */}
         {showTextInput && (
           <div 
             className="absolute bg-white p-4 rounded-lg shadow-2xl border-2 border-blue-500 z-50"
@@ -586,7 +444,7 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
               ref={textareaRef}
               value={textInput}
               onChange={(e) => setTextInput(e.target.value)}
-              placeholder="Type your text here... Press Enter for new lines."
+              placeholder="Type your text here..."
               className="mb-3 min-h-[120px] text-base"
               autoFocus
               onKeyDown={(e) => {
@@ -596,7 +454,7 @@ export default function DrawingCanvas({ onSaveDrawing, onColorCountChange, avail
               }}
             />
             <div className="text-xs text-gray-500 mb-3">
-              Tip: Press Ctrl+Enter to add text quickly
+              Tip: Press Ctrl+Enter to add text
             </div>
             <div className="flex gap-2">
               <Button size="sm" onClick={addText} className="flex-1">Add Text</Button>
