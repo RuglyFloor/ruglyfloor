@@ -43,12 +43,10 @@ function AdminSEOContent() {
   const [newPagePath, setNewPagePath] = useState('');
   const [editingContent, setEditingContent] = useState(null);
   const [formData, setFormData] = useState({
-    title: PAGES[0].name,
     seo_title: '',
     seo_description: '',
     seo_keywords: [],
-    slug: PAGES[0].path === '/' ? '' : PAGES[0].path.slice(1),
-    status: 'draft'
+    slug: PAGES[0].path === '/' ? '' : PAGES[0].path.slice(1)
   });
   const [keywordInput, setKeywordInput] = useState('');
 
@@ -88,7 +86,7 @@ function AdminSEOContent() {
       const response = await base44.functions.invoke('generateSEO', {
         pageName: selectedPage.name,
         pageContent: selectedPage.description,
-        currentTitle: formData.title,
+        currentTitle: formData.seo_title,
         currentDescription: formData.seo_description
       });
 
@@ -106,8 +104,8 @@ function AdminSEOContent() {
   };
 
   const handleSaveContent = () => {
-    if (!formData.title || formData.slug === undefined || formData.slug === null || !formData.seo_title) {
-      alert('Please fill in title, slug, and SEO title');
+    if (formData.slug === undefined || formData.slug === null || !formData.seo_title) {
+      alert('Please fill in SEO title');
       return;
     }
 
@@ -122,13 +120,10 @@ function AdminSEOContent() {
   const handleLoadContent = (content) => {
     setEditingContent(content);
     setFormData({
-      title: content.title || '',
       seo_title: content.seo_title || '',
       seo_description: content.seo_description || '',
       seo_keywords: content.seo_keywords || [],
-      slug: content.slug || '',
-      status: content.status || 'draft',
-      body: content.body || ''
+      slug: content.slug || ''
     });
   };
 
@@ -141,13 +136,10 @@ function AdminSEOContent() {
       handleLoadContent(existingContent);
     } else {
       setFormData({
-        title: page.name,
         seo_title: '',
         seo_description: '',
         seo_keywords: [],
-        slug: slug,
-        status: 'draft',
-        body: ''
+        slug: slug
       });
     }
   };
@@ -155,13 +147,10 @@ function AdminSEOContent() {
   const resetForm = () => {
     setEditingContent(null);
     setFormData({
-      title: selectedPage.name,
       seo_title: '',
       seo_description: '',
       seo_keywords: [],
-      slug: selectedPage.path.slice(1),
-      status: 'draft',
-      body: ''
+      slug: selectedPage.path === '/' ? '' : selectedPage.path.slice(1)
     });
     setKeywordInput('');
   };
@@ -279,24 +268,13 @@ function AdminSEOContent() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <Label>Page Title</Label>
+                      <Label>Page</Label>
                       <Input
-                        value={formData.title}
-                        onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                        placeholder="e.g., Custom Rug Designer"
+                        value={selectedPage.name}
+                        disabled
+                        className="bg-gray-50"
                       />
                     </div>
-
-                    <div>
-                      <Label>Page Slug</Label>
-                      <Input
-                        value={formData.slug}
-                        onChange={(e) => setFormData(prev => ({ ...prev, slug: e.target.value }))}
-                        placeholder="e.g., custom-builder"
-                      />
-                    </div>
-
-
                   </CardContent>
                 </Card>
 
@@ -479,23 +457,14 @@ function AdminSEOContent() {
                       >
                         <div className="flex justify-between items-start">
                           <div className="flex-1">
-                            <h3 className="font-semibold text-lg">{content.title}</h3>
+                            <h3 className="font-semibold text-lg">{content.seo_title || content.slug}</h3>
                             <p className="text-sm text-gray-600 mt-1">{content.seo_description}</p>
                             <div className="flex items-center gap-3 mt-3">
-                              <Badge variant={content.status === 'published' ? 'default' : 'secondary'}>
-                                {content.status}
-                              </Badge>
+                              <Badge>/{content.slug || 'home'}</Badge>
                               <span className="text-xs text-gray-500">
                                 {new Date(content.updated_date).toLocaleDateString()}
                               </span>
                             </div>
-                          </div>
-                          <div className="text-right">
-                            {content.status === 'published' ? (
-                              <Eye className="w-5 h-5 text-green-600" />
-                            ) : (
-                              <EyeOff className="w-5 h-5 text-gray-400" />
-                            )}
                           </div>
                         </div>
                       </div>
