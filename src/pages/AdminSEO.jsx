@@ -112,13 +112,10 @@ function AdminSEOContent() {
     }
 
     saveMutation.mutate({
-      title: formData.title,
       slug: formData.slug,
       seo_title: formData.seo_title,
       seo_description: formData.seo_description,
-      seo_keywords: formData.seo_keywords,
-      status: 'published',
-      body: formData.body || ''
+      seo_keywords: formData.seo_keywords
     });
   };
 
