@@ -4,18 +4,21 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { Palette, ArrowRight, ShoppingBag } from 'lucide-react';
 import SEOHead from '../components/seo/SEOHead';
+import { useSEO } from '../components/seo/useSEO';
 
 export default function About() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  const seoData = useSEO('about');
+
   return (
     <div className="min-h-screen">
       <SEOHead
-        title="Rugly Floors - About"
-        description="Meet Ryan Hensley, founder of Rugly Floor. Learn about our passion for large-scale art and hand-painted custom rugs that transform spaces."
-        keywords={['about rugly', 'ryan hensley', 'custom rug artist', 'hand painted rug creator']}
+        title={seoData?.seo_title || "Rugly Floors - About"}
+        description={seoData?.seo_description || "Meet Ryan Hensley, founder of Rugly Floor. Learn about our passion for large-scale art and hand-painted custom rugs that transform spaces."}
+        keywords={seoData?.seo_keywords || ['about rugly', 'ryan hensley', 'custom rug artist', 'hand painted rug creator']}
         url="/about"
       />
       {/* Hero Section */}
