@@ -84,7 +84,7 @@ export default function Home() {
             </Link>
             <Link to={createPageUrl('Commission')}>
               <button className="bg-transparent border border-white text-white font-black px-8 py-4 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '1.1rem', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
-                Commission a Rugley
+                RUGLY
               </button>
             </Link>
           </div>
