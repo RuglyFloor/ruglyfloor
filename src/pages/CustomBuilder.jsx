@@ -34,13 +34,6 @@ const getColorPrice = (size, numColors) => {
   return 0;
 };
 
-const getSecondShadePrice = (size) => {
-  const sizeMap = { tiny: 39, small: 69, medium: 99, large: 129, huge: 159, '4ft round': 69 };
-  return sizeMap[size] || 39;
-};
-
-
-
 const get3DPrice = (size) => {
   const sizeMap = { tiny: 100, small: 200, medium: 250, large: 300, huge: 350, '4ft round': 200 };
   return sizeMap[size] || 200;
@@ -99,7 +92,6 @@ export default function CustomBuilder() {
     imageUrl: '',
     previewUrl: '',
     numColors: 2,
-    useSecondShade: false,
     designInstructions: ''
   });
   const [uploading, setUploading] = useState(false);
@@ -138,8 +130,7 @@ export default function CustomBuilder() {
     const selectedSize = SIZES.find(s => s.value === config.size);
     const basePrice = selectedSize.price;
     const colorPrice = getColorPrice(config.size, config.numColors);
-    const secondShadePrice = config.useSecondShade ? getSecondShadePrice(config.size) : 0;
-    const price = basePrice + colorPrice + secondShadePrice;
+    const price = basePrice + colorPrice;
     
     const cartItem = {
       type: 'custom',
@@ -147,7 +138,6 @@ export default function CustomBuilder() {
       baseColor: config.baseColor,
       paintColor: config.paintColor,
       secondPaintColor: config.secondPaintColor || null,
-      useSecondShade: config.useSecondShade,
       imageUrl: config.imageUrl,
       previewUrl: config.previewUrl,
       numColors: config.numColors,
@@ -168,8 +158,7 @@ export default function CustomBuilder() {
     const selectedSize = SIZES.find(s => s.value === config.size);
     const basePrice = selectedSize.price;
     const colorPrice = getColorPrice(config.size, config.numColors);
-    const secondShadePrice = config.useSecondShade ? getSecondShadePrice(config.size) : 0;
-    return basePrice + colorPrice + secondShadePrice;
+    return basePrice + colorPrice;
   };
 
   return (
@@ -440,33 +429,7 @@ export default function CustomBuilder() {
                       )}
                     </div>
 
-                    {/* Second Shade Info */}
-                    <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-4">
-                      <h4 className="font-bold text-purple-900 text-center mb-3">Create Shade Layer to Primary Color for Dimension</h4>
-                      <img 
-                        src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/39ce9ca8b_Screenshot2026-01-13at074841.png"
-                        alt="Dimension technique diagram"
-                        className="w-full rounded-lg mb-3"
-                      />
-                      <label className="flex items-start gap-3 cursor-pointer bg-white rounded-lg p-3">
-                        <input
-                          type="checkbox"
-                          checked={config.useSecondShade}
-                          onChange={(e) => setConfig(prev => ({ ...prev, useSecondShade: e.target.checked }))}
-                          className="mt-1 w-4 h-4 text-blue-600 rounded"
-                        />
-                        <div className="flex-1">
-                          <div className="font-semibold text-sm text-gray-900">Use a 2nd shade for better definition</div>
-                          <div className="text-xs text-gray-600">Recommended for images of people, places, etc.</div>
-                        </div>
-                        {config.useSecondShade && (
-                          <div className="flex flex-col items-center gap-1">
-                            <div className="w-8 h-8 rounded-full bg-gray-400 shadow-md border-2 border-gray-500"></div>
-                            <span className="text-xs font-semibold text-gray-700">2nd layer shade</span>
-                          </div>
-                        )}
-                      </label>
-                    </div>
+
                   </div>
                 </div>
                 <div className="flex gap-3 mt-6">
@@ -575,8 +538,7 @@ export default function CustomBuilder() {
                     }}
                     availableColors={[
                       { name: config.paintColor, hex: PAINT_COLORS.find(c => c.name === config.paintColor)?.hex || '#000000' },
-                      ...(config.secondPaintColor ? [{ name: config.secondPaintColor, hex: PAINT_COLORS.find(c => c.name === config.secondPaintColor)?.hex }] : []),
-                      ...(config.useSecondShade ? [{ name: '2nd Shade', hex: '#808080' }] : [])
+                      ...(config.secondPaintColor ? [{ name: config.secondPaintColor, hex: PAINT_COLORS.find(c => c.name === config.secondPaintColor)?.hex }] : [])
                     ].filter(c => c.hex)}
                     size={config.size}
                   />
@@ -610,12 +572,6 @@ export default function CustomBuilder() {
                             <span className="text-gray-600">Paint Colors:</span>
                             <span className="font-semibold">{config.paintColor}{config.secondPaintColor ? `, ${config.secondPaintColor}` : ''}</span>
                           </div>
-                          {config.useSecondShade && (
-                            <div className="flex justify-between">
-                              <span className="text-gray-600">2nd Shade:</span>
-                              <span className="font-semibold">Yes</span>
-                            </div>
-                          )}
                         </div>
 
                         <Button
@@ -647,12 +603,6 @@ export default function CustomBuilder() {
                       <div className="flex justify-between">
                         <span>{config.numColors} Colors:</span>
                         <span className="font-semibold">+${getColorPrice(config.size, config.numColors)}</span>
-                      </div>
-                    )}
-                    {config.useSecondShade && (
-                      <div className="flex justify-between">
-                        <span>2nd Shade:</span>
-                        <span className="font-semibold">+${getSecondShadePrice(config.size)}</span>
                       </div>
                     )}
                   </div>
