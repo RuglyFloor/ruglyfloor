@@ -74,6 +74,10 @@ function AdminOrderDetailContent() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="text-sm">
+                  <p className="text-gray-600">Customer Number</p>
+                  <p className="font-mono font-bold text-blue-600">{order.customer_number || 'N/A'}</p>
+                </div>
+                <div className="text-sm">
                   <p className="text-gray-600">Customer</p>
                   <p className="font-semibold">{order.customer_name}</p>
                 </div>
@@ -144,6 +148,18 @@ function AdminOrderDetailContent() {
                 <CardTitle>Item Details</CardTitle>
               </CardHeader>
               <CardContent>
+                <div className="mb-4 pb-4 border-b">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-gray-600 text-sm">Serial Number</p>
+                      <p className="font-mono text-lg font-bold text-blue-600">{currentItem?.serial_number || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-600 text-sm">UPC</p>
+                      <p className="font-mono font-semibold">{currentItem?.upc || 'N/A'}</p>
+                    </div>
+                  </div>
+                </div>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <p className="text-gray-600">Size</p>
