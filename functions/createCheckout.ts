@@ -19,6 +19,34 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Cart is empty' }, { status: 400 });
     }
 
+    // Get highest customer number and UPC
+    const allOrders = await base44.asServiceRole.entities.Order.list('-created_date', 100);
+    let nextCustomerNum = 10000;
+    let nextUpcNum = 10000;
+
+    if (allOrders.length > 0) {
+      // Find highest customer number
+      const maxCN = allOrders
+        .map(o => o.customer_number?.replace('CN', '') || '0')
+        .map(n => parseInt(n))
+        .filter(n => !isNaN(n))
+        .sort((a, b) => b - a)[0];
+      
+      if (maxCN) nextCustomerNum = maxCN + 1;
+
+      // Find highest UPC across all order items
+      const allUpcs = allOrders
+        .flatMap(o => o.items || [])
+        .map(item => item.upc?.replace('UP', '') || '0')
+        .map(n => parseInt(n))
+        .filter(n => !isNaN(n))
+        .sort((a, b) => b - a)[0];
+      
+      if (allUpcs) nextUpcNum = allUpcs + 1;
+    }
+
+    const customerNumber = `CN${nextCustomerNum}`;
+
     // Calculate shipping
     const calculateShipping = (cart) => {
       if (cart.length >= 2) return 0; // Free shipping for 2+ items
@@ -77,15 +105,20 @@ Deno.serve(async (req) => {
 
     // Create order record first - map cart items to order item format
     const orderNumber = 'RUG-' + Date.now();
-    const orderItems = cart.map(item => {
+    const orderItems = cart.map((item, idx) => {
       console.log('Mapping cart item:', item.name);
       console.log('  - imageUrl:', item.imageUrl);
       console.log('  - previewUrl:', item.previewUrl);
+      
+      const upc = `UP${nextUpcNum + idx}`;
+      const serialNumber = `${customerNumber}-${upc}`;
       
       return {
         type: item.type,
         product_id: item.id || '',
         name: item.name,
+        upc: upc,
+        serial_number: serialNumber,
         size: item.size,
         base_color: item.baseColor || '',
         paint_color: item.paintColor || '',
@@ -110,6 +143,7 @@ Deno.serve(async (req) => {
 
     const order = await base44.asServiceRole.entities.Order.create({
       order_number: orderNumber,
+      customer_number: customerNumber,
       customer_name: customerInfo.name,
       customer_email: customerInfo.email,
       customer_phone: customerInfo.phone || '',
