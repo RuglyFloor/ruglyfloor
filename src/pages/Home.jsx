@@ -98,15 +98,16 @@ export default function Home() {
             <Package className="w-8 h-8 text-blue-600" />
             <h2 className="text-3xl font-bold">SHOP FOR ORIGINAL RUGLYS</h2>
           </div>
-          <div className="grid md:grid-cols-2 gap-8 relative">
-            {products.length === 0 ? <div className="text-center py-12 col-span-2">
+          <div className="relative min-h-[600px]">
+            {products.length === 0 ? <div className="text-center py-12">
                 <p className="text-slate-600">Loading featured rugs...</p>
               </div> :
 
             products.map((product, index) =>
             <div
               key={product.id}
-              className={`group cursor-pointer transition-all duration-700 ease-in-out ${currentProduct === index || currentProduct === index - 1 || (currentProduct === products.length - 1 && index === 0) ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}`}>
+              className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${currentProduct === index ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}
+              style={{ transform: 'translateZ(0)' }}>
 
                   <div className="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-4 relative">
                     <img
@@ -180,9 +181,10 @@ export default function Home() {
             map((step, index) =>
             <div
               key={index}
-              className={`absolute inset-0 transition-all duration-1000 ease-in-out ${
-              currentStep === index ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`
-              }>
+              className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              currentStep === index ? 'opacity-100 z-10' : 'opacity-0 z-0'}`
+              }
+              style={{ transform: 'translateZ(0)', willChange: 'opacity' }}>
 
                 <img
                 src={step.image}
