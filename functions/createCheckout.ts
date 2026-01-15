@@ -8,6 +8,12 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
 
     const { cart, customerInfo, designInstructions } = await req.json();
+    
+    // Debug logging
+    console.log('=== CHECKOUT DEBUG ===');
+    console.log('Cart items:', JSON.stringify(cart, null, 2));
+    console.log('First cart item imageUrl:', cart[0]?.imageUrl);
+    console.log('First cart item previewUrl:', cart[0]?.previewUrl);
 
     if (!cart || cart.length === 0) {
       return Response.json({ error: 'Cart is empty' }, { status: 400 });
@@ -71,21 +77,29 @@ Deno.serve(async (req) => {
 
     // Create order record first - map cart items to order item format
     const orderNumber = 'RUG-' + Date.now();
-    const orderItems = cart.map(item => ({
-      type: item.type,
-      product_id: item.id || '',
-      name: item.name,
-      size: item.size,
-      base_color: item.baseColor || '',
-      image_url: item.imageUrl || '',
-      preview_url: item.previewUrl || '',
-      num_colors: item.numColors || 0,
-      price: item.price,
-      original_upload_url: item.previewUrl || item.imageUrl || '',
-      processed_image_url: item.previewUrl || '',
-      ai_preview_url: item.previewUrl || '',
-      image_processing_status: 'completed'
-    }));
+    const orderItems = cart.map(item => {
+      console.log('Mapping cart item:', item.name);
+      console.log('  - imageUrl:', item.imageUrl);
+      console.log('  - previewUrl:', item.previewUrl);
+      
+      return {
+        type: item.type,
+        product_id: item.id || '',
+        name: item.name,
+        size: item.size,
+        base_color: item.baseColor || '',
+        image_url: item.imageUrl || '',
+        preview_url: item.previewUrl || '',
+        num_colors: item.numColors || 0,
+        price: item.price,
+        original_upload_url: item.previewUrl || item.imageUrl || '',
+        processed_image_url: item.previewUrl || item.imageUrl || '',
+        ai_preview_url: item.previewUrl || item.imageUrl || '',
+        image_processing_status: 'completed'
+      };
+    });
+    
+    console.log('Order items created:', JSON.stringify(orderItems, null, 2));
 
     const order = await base44.asServiceRole.entities.Order.create({
       order_number: orderNumber,
