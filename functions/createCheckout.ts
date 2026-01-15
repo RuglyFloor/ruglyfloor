@@ -69,8 +69,24 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Create order record first
+    // Create order record first - map cart items to order item format
     const orderNumber = 'RUG-' + Date.now();
+    const orderItems = cart.map(item => ({
+      type: item.type,
+      product_id: item.id || '',
+      name: item.name,
+      size: item.size,
+      base_color: item.baseColor || '',
+      image_url: item.imageUrl || '',
+      preview_url: item.previewUrl || '',
+      num_colors: item.numColors || 0,
+      price: item.price,
+      original_upload_url: item.previewUrl || item.imageUrl || '',
+      processed_image_url: item.previewUrl || '',
+      ai_preview_url: item.previewUrl || '',
+      image_processing_status: 'completed'
+    }));
+
     const order = await base44.asServiceRole.entities.Order.create({
       order_number: orderNumber,
       customer_name: customerInfo.name,
@@ -83,7 +99,7 @@ Deno.serve(async (req) => {
         zip: customerInfo.zip || '',
         country: customerInfo.country || 'USA'
       },
-      items: cart,
+      items: orderItems,
       total_amount: cart.reduce((sum, item) => sum + item.price, 0) + shippingCost,
       status: 'pending',
       payment_status: 'pending',
