@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, Calendar, User, Tag } from 'lucide-react';
 import { format } from 'date-fns';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import SEOHead from '../components/seo/SEOHead';
 
@@ -21,11 +21,19 @@ const CATEGORIES = [
 ];
 
 export default function Blog() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const slug = searchParams.get('slug');
   
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+
+  useEffect(() => {
+    // Redirect to home page when accessing blog without a slug
+    if (!slug) {
+      navigate(createPageUrl('Home'), { replace: true });
+    }
+  }, [slug, navigate]);
 
   const { data: contents = [] } = useQuery({
     queryKey: ['published-contents'],
