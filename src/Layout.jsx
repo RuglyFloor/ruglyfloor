@@ -20,7 +20,6 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Shop Originals', page: 'Shop' },
     { name: 'Commission Rugley', page: 'Commission' },
     { name: 'About', page: 'About' },
-    { name: 'Blog', page: 'Blog' },
     { name: 'Contact', page: 'Contact' },
     { name: 'My Orders', page: 'Orders' }
   ];
