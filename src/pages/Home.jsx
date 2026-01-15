@@ -164,7 +164,7 @@ export default function Home() {
       <section className="py-16 px-6 bg-slate-50">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold mb-8 text-center">FROM CONCEPT TO CREATION</h2>
-          <div className="relative h-96 bg-slate-100 rounded-lg overflow-hidden">
+          <div className="relative h-96 bg-slate-100 rounded-lg overflow-hidden mb-6">
             {[
             {
               image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/40e12a1d2_Screenshot2025-12-19at235301.png",
@@ -190,10 +190,27 @@ export default function Home() {
                 src={step.image}
                 alt={step.caption}
                 className="w-full h-full object-cover" />
-
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8">
-                  <p className="text-white text-xl md:text-2xl font-bold text-center leading-relaxed">{step.caption}</p>
-                </div>
+              </div>
+            )}
+          </div>
+          <div className="relative h-20">
+            {[
+            {
+              caption: "Step One: Decide on what you want on your floor"
+            },
+            {
+              caption: "Step Two: We draft stencils or hand dye your design (depending on complexity and need for line) and we create your vision"
+            },
+            {
+              caption: "Step Three: Your Crugly is shipped from our studio to your home"
+            }].
+            map((step, index) =>
+            <div
+              key={index}
+              className={`absolute inset-0 transition-opacity duration-1000 flex items-center justify-center ${
+              currentStep === index ? 'opacity-100' : 'opacity-0'}`
+              }>
+                <p className="text-slate-700 text-xl md:text-2xl font-bold text-center leading-relaxed">{step.caption}</p>
               </div>
             )}
           </div>
