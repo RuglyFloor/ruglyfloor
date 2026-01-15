@@ -210,7 +210,8 @@ export default function Layout({ children, currentPageName }) {
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/9a05f04b4_RUGLYMASTERLOGO-92.png" 
               alt="Rugly" 
-              className="h-10 mx-auto mb-4 opacity-70"
+              className="h-10 mx-auto mb-4"
+              style={{ filter: 'brightness(0) saturate(100%) invert(35%) sepia(85%) saturate(2650%) hue-rotate(212deg) brightness(97%) contrast(91%)' }}
             />
             <p className="text-sm mb-2">Homesteads, LLC</p>
             <p className="text-sm text-gray-500">Custom-painted rugs for spaces that inspire</p>
