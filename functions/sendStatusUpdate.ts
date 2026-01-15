@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
     }
 
     const statusMessages = {
-      rug_ordered: 'Your rug blank has been ordered and is on the way to our studio.',
+      rug_ordered: 'Your order has been confirmed and production will begin shortly!',
       in_production: 'Production has started! Your rug is being prepared for painting.',
       painting: 'Your rug is now being hand-painted. This is where the magic happens!',
       shipped: 'Great news! Your rug has been shipped. Check your tracking info below.',

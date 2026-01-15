@@ -11,7 +11,7 @@ import { format } from 'date-fns';
 
 const STATUS_CONFIG = {
   pending: { label: 'Payment Pending', icon: Clock, color: 'bg-yellow-100 text-yellow-800', progress: 0 },
-  rug_ordered: { label: 'Rug Ordered', icon: Package, color: 'bg-blue-100 text-blue-800', progress: 25 },
+  rug_ordered: { label: 'Order Confirmed', icon: Package, color: 'bg-blue-100 text-blue-800', progress: 25 },
   in_production: { label: 'In Production', icon: Clock, color: 'bg-purple-100 text-purple-800', progress: 50 },
   painting: { label: 'Hand Painting', icon: Paintbrush, color: 'bg-indigo-100 text-indigo-800', progress: 75 },
   shipped: { label: 'Shipped', icon: Truck, color: 'bg-green-100 text-green-800', progress: 90 },
