@@ -66,7 +66,11 @@ export default function Cart() {
     try {
       const response = await base44.functions.invoke('createCheckout', { 
         cart, 
-        customerInfo,
+        customerInfo: {
+          ...customerInfo,
+          timeOnSite,
+          referrerSource
+        },
         designInstructions 
       });
 
