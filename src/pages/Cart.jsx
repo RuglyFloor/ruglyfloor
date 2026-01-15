@@ -47,6 +47,10 @@ export default function Cart() {
   const totalAmount = cart.reduce((sum, item) => sum + item.price, 0);
 
   const handleCheckout = async () => {
+    // Track time on site
+    const siteStartTime = parseInt(sessionStorage.getItem('rugly_site_start_time') || Date.now());
+    const timeOnSite = Math.floor((Date.now() - siteStartTime) / 1000);
+    const referrerSource = sessionStorage.getItem('rugly_referrer') || document.referrer || 'direct';
     if (!customerInfo.name || !customerInfo.email || !customerInfo.street || !customerInfo.city) {
       alert('Please fill in all required fields');
       return;

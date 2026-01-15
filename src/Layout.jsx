@@ -12,6 +12,14 @@ export default function Layout({ children, currentPageName }) {
 
   React.useEffect(() => {
     base44.auth.me().then(setUser).catch(() => setUser(null));
+    
+    // Track site entry time and referrer
+    if (!sessionStorage.getItem('rugly_site_start_time')) {
+      sessionStorage.setItem('rugly_site_start_time', Date.now().toString());
+    }
+    if (!sessionStorage.getItem('rugly_referrer')) {
+      sessionStorage.setItem('rugly_referrer', document.referrer || 'direct');
+    }
   }, []);
 
   const navLinks = [

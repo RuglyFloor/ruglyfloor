@@ -67,7 +67,7 @@ function AdminOrderDetailContent() {
 
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Order Summary & Item Selection */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-6">
             <Card>
               <CardHeader>
                 <CardTitle>Order #{order.order_number}</CardTitle>
@@ -80,6 +80,17 @@ function AdminOrderDetailContent() {
                 <div className="text-sm">
                   <p className="text-gray-600">Email</p>
                   <p className="font-semibold">{order.customer_email}</p>
+                </div>
+                <div className="text-sm">
+                  <p className="text-gray-600">Phone</p>
+                  <p className="font-semibold">{order.customer_phone || 'Not provided'}</p>
+                </div>
+                <div className="text-sm">
+                  <p className="text-gray-600">Address</p>
+                  <p className="font-semibold">
+                    {order.shipping_address?.street}<br/>
+                    {order.shipping_address?.city}, {order.shipping_address?.state} {order.shipping_address?.zip}
+                  </p>
                 </div>
                 <div className="border-t pt-4">
                   <p className="text-sm text-gray-600 mb-2">Items in Order</p>
@@ -102,10 +113,74 @@ function AdminOrderDetailContent() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Analytics Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Customer Analytics</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm">
+                <div>
+                  <p className="text-gray-600">Time on Site</p>
+                  <p className="font-semibold">
+                    {order.time_on_site 
+                      ? `${Math.floor(order.time_on_site / 60)}m ${order.time_on_site % 60}s`
+                      : 'Not tracked'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-gray-600">Source</p>
+                  <p className="font-semibold break-all">{order.referrer_source || 'Direct'}</p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Image Details */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Item Details Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Item Details</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-gray-600">Size</p>
+                    <p className="font-semibold">{currentItem?.size}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Base Color</p>
+                    <p className="font-semibold">{currentItem?.base_color || 'Not specified'}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Paint Color</p>
+                    <p className="font-semibold">{currentItem?.paint_color || 'Not specified'}</p>
+                  </div>
+                  {currentItem?.second_paint_color && (
+                    <div>
+                      <p className="text-gray-600">2nd Paint Color</p>
+                      <p className="font-semibold">{currentItem.second_paint_color}</p>
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-gray-600">Number of Colors</p>
+                    <p className="font-semibold">{currentItem?.num_colors || 2}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Price</p>
+                    <p className="font-semibold">${currentItem?.price}</p>
+                  </div>
+                </div>
+                {currentItem?.design_instructions && (
+                  <div className="mt-4 pt-4 border-t">
+                    <p className="text-gray-600 text-sm mb-1">Special Instructions</p>
+                    <p className="font-medium">{currentItem.design_instructions}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
             {/* Image Processing Status */}
             <Card>
               <CardHeader>
