@@ -104,23 +104,29 @@ Deno.serve(async (req) => {
     
     console.log('Order items created:', JSON.stringify(orderItems, null, 2));
 
+    // Get time on site and referrer
+    const timeOnSite = customerInfo.timeOnSite || 0;
+    const referrerSource = customerInfo.referrerSource || 'direct';
+
     const order = await base44.asServiceRole.entities.Order.create({
       order_number: orderNumber,
       customer_name: customerInfo.name,
       customer_email: customerInfo.email,
       customer_phone: customerInfo.phone || '',
       shipping_address: {
-        street: customerInfo.street,
-        city: customerInfo.city,
-        state: customerInfo.state || '',
-        zip: customerInfo.zip || '',
-        country: customerInfo.country || 'USA'
+        street: customerInfo.shipping?.street || customerInfo.street || '',
+        city: customerInfo.shipping?.city || customerInfo.city || '',
+        state: customerInfo.shipping?.state || customerInfo.state || '',
+        zip: customerInfo.shipping?.zip || customerInfo.zip || '',
+        country: customerInfo.shipping?.country || customerInfo.country || 'USA'
       },
       items: orderItems,
       total_amount: cart.reduce((sum, item) => sum + item.price, 0) + shippingCost,
       status: 'pending',
       payment_status: 'pending',
-      notes: designInstructions || ''
+      notes: designInstructions || '',
+      time_on_site: timeOnSite,
+      referrer_source: referrerSource
     });
 
     // Create Stripe checkout session
