@@ -160,6 +160,32 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Before Ordering Section */}
+      <section className="py-16 px-6 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold mb-8 text-center">READ THIS BEFORE ORDERING</h2>
+          <div className="space-y-4 mb-8">
+            <div className="flex items-start gap-3">
+              <CheckCircle className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
+              <p className="text-lg text-slate-700">Rugs are painted, not printed. This is hand work.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <CheckCircle className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
+              <p className="text-lg text-slate-700">Bold designs work best. High contrast = clean edges.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <CheckCircle className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
+              <p className="text-lg text-slate-700">Thin lines & gradients may be simplified for the stencil.</p>
+            </div>
+          </div>
+          <div className="bg-blue-50 border-l-4 border-blue-600 p-6 rounded">
+            <p className="text-lg italic text-slate-700">
+              "The preview is accurate — but this is still hand work. Each rug has character. That's the point."
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Our Process Section */}
       <section className="py-16 px-6 bg-slate-50">
         <div className="max-w-4xl mx-auto">
@@ -213,32 +239,6 @@ export default function Home() {
                 <p className="text-slate-700 text-xl md:text-2xl font-bold text-center leading-relaxed">{step.caption}</p>
               </div>
             )}
-          </div>
-        </div>
-      </section>
-
-      {/* Before Ordering Section */}
-      <section className="py-16 px-6 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold mb-8 text-center">READ THIS BEFORE ORDERING</h2>
-          <div className="space-y-4 mb-8">
-            <div className="flex items-start gap-3">
-              <CheckCircle className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
-              <p className="text-lg text-slate-700">Rugs are painted, not printed. This is hand work.</p>
-            </div>
-            <div className="flex items-start gap-3">
-              <CheckCircle className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
-              <p className="text-lg text-slate-700">Bold designs work best. High contrast = clean edges.</p>
-            </div>
-            <div className="flex items-start gap-3">
-              <CheckCircle className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
-              <p className="text-lg text-slate-700">Thin lines & gradients may be simplified for the stencil.</p>
-            </div>
-          </div>
-          <div className="bg-blue-50 border-l-4 border-blue-600 p-6 rounded">
-            <p className="text-lg italic text-slate-700">
-              "The preview is accurate — but this is still hand work. Each rug has character. That's the point."
-            </p>
           </div>
         </div>
       </section>
