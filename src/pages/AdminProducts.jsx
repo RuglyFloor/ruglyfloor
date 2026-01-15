@@ -26,6 +26,7 @@ function AdminProductsContent() {
   const [editingProduct, setEditingProduct] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [generatingAI, setGeneratingAI] = useState(false);
+  const [aiSuggestion, setAiSuggestion] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -97,6 +98,8 @@ function AdminProductsContent() {
         3. Suggested price in USD (based on size, complexity, and market value for custom hand-painted rugs)
         4. Dominant colors and design style
         
+        ${aiSuggestion ? `Additional context from user: ${aiSuggestion}` : ''}
+        
         Be professional and sales-oriented. Make it sound premium and artistic.`,
         file_urls: [mainImage],
         response_json_schema: {
@@ -111,14 +114,35 @@ function AdminProductsContent() {
         }
       });
 
-      // Generate marketing images
-      const [livingRoomImage, measurementImage] = await Promise.all([
+      // Determine room type based on rug size
+      const size = formData.size.toLowerCase();
+      let roomType = 'living room';
+      let roomDescription = 'modern, contemporary living room with natural lighting. The room should have minimalist furniture, neutral walls, hardwood floors';
+      
+      // Check if it's a small rug (under 5 feet in any dimension)
+      if (size.includes('3x') || size.includes('4x') || size.includes('2x') || size.includes('x3') || size.includes('x4') || size.includes('x2')) {
+        const smallSpaces = ['home office', 'hallway', 'entryway', 'closet'];
+        roomType = smallSpaces[Math.floor(Math.random() * smallSpaces.length)];
+        
+        if (roomType === 'home office') {
+          roomDescription = 'bright home office with a desk, chair, and shelving. Modern workspace with natural light and minimalist decor';
+        } else if (roomType === 'hallway') {
+          roomDescription = 'elegant hallway with clean walls and good lighting. Simple, inviting entryway corridor';
+        } else if (roomType === 'entryway') {
+          roomDescription = 'welcoming entryway with a console table and mirror. Bright foyer with natural light';
+        } else {
+          roomDescription = 'organized closet space or dressing area. Clean, well-lit room with simple furnishings';
+        }
+      }
+
+      // Generate marketing images with custom suggestions
+      const [roomImage, measurementImage] = await Promise.all([
         base44.integrations.Core.GenerateImage({
-          prompt: `Create a photorealistic interior design mockup showing this rug placed in a modern, contemporary living room with natural lighting. The room should have minimalist furniture, neutral walls, hardwood floors, and the rug should be the focal point. Make it look like a professional interior design photo.`,
+          prompt: `Create a photorealistic interior design mockup showing this rug placed in a ${roomDescription}. The rug should be the focal point. Make it look like a professional interior design photo. ${aiSuggestion ? `Additional styling: ${aiSuggestion}` : ''}`,
           existing_image_urls: [mainImage]
         }),
         base44.integrations.Core.GenerateImage({
-          prompt: `Create a clean product image of this rug on a white background with clear measurement annotations. Show the dimensions (${formData.size}) marked with professional arrows and labels. Make it look like a technical product specification sheet with measurements clearly visible.`,
+          prompt: `Create a clean product image of this rug on a white background with clear measurement annotations. Show the exact dimensions (${formData.size}) marked with professional arrows and labels on all sides. Make it look like a technical product specification sheet with measurements clearly visible for width and length.`,
           existing_image_urls: [mainImage]
         })
       ]);
@@ -127,8 +151,8 @@ function AdminProductsContent() {
       const newImages = [
         {
           id: `ai-${Date.now()}-1`,
-          url: livingRoomImage.url,
-          original_url: livingRoomImage.url,
+          url: roomImage.url,
+          original_url: roomImage.url,
           selected: true,
           order: formData.all_images.length,
           source: 'ai'
@@ -151,6 +175,7 @@ function AdminProductsContent() {
         all_images: [...prev.all_images, ...newImages]
       }));
 
+      setAiSuggestion('');
       alert('✨ AI generation complete! Review and adjust as needed.');
     } catch (error) {
       console.error('AI generation error:', error);
@@ -312,6 +337,19 @@ function AdminProductsContent() {
                     onChange={(images) => setFormData(prev => ({ ...prev, all_images: images }))}
                     onGenerateAI={generatingAI ? null : handleAIGenerate}
                   />
+                  {formData.all_images.length > 0 && (
+                    <div className="mt-3 space-y-2">
+                      <Label className="text-sm text-gray-600">AI Suggestions (Optional)</Label>
+                      <Textarea
+                        value={aiSuggestion}
+                        onChange={(e) => setAiSuggestion(e.target.value)}
+                        placeholder="e.g., 'Make it look cozy and warm with autumn colors' or 'Place in a modern minimalist space'"
+                        rows={2}
+                        className="text-sm"
+                      />
+                      <p className="text-xs text-gray-500">💡 Add styling suggestions for AI-generated room photos and product details</p>
+                    </div>
+                  )}
                 </div>
 
                 <div>
