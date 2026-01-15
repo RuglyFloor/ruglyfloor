@@ -71,14 +71,14 @@ export default function About() {
       </section>
 
       {/* Ryan's Story */}
-      <section className="py-24 px-6 bg-white">
+      <section className="py-16 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="grid lg:grid-cols-2 gap-16 items-center mb-20"
+            className="grid lg:grid-cols-2 gap-12 items-center mb-16"
           >
             <motion.div
               initial={{ opacity: 0, x: -30 }}
@@ -133,7 +133,7 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="mt-20"
+            className="mt-16"
           >
             <div className="text-center mb-12">
               <div className="inline-block px-4 py-2 bg-purple-50 rounded-full mb-4">
@@ -157,7 +157,7 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="mt-24 bg-gradient-to-br from-slate-50 to-blue-50 rounded-3xl p-12 border border-gray-200"
+            className="mt-16 bg-gradient-to-br from-slate-50 to-blue-50 rounded-3xl p-8 md:p-12 border border-gray-200"
           >
             <div className="text-center mb-12">
               <div className="inline-block px-4 py-2 bg-white rounded-full mb-4 shadow-sm">
@@ -230,7 +230,7 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="text-center mt-24 bg-gradient-to-br from-gray-900 to-blue-900 rounded-3xl p-16 relative overflow-hidden"
+            className="text-center mt-16 bg-gradient-to-br from-gray-900 to-blue-900 rounded-3xl p-8 md:p-16 relative overflow-hidden"
           >
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE2YzAtNC40MTggMy41ODItOCA4LThzOCAzLjU4MiA4IDgtMy41ODIgOC04IDgtOC0zLjU4Mi04LTh6TTAgMTZjMC00LjQxOCAzLjU4Mi04IDgtOHM4IDMuNTgyIDggOC0zLjU4MiA4LTggOC04LTMuNTgyLTgtOHptMzYgMzZjMC00LjQxOCAzLjU4Mi04IDgtOHM4IDMuNTgyIDggOC0zLjU4MiA4LTggOC04LTMuNTgyLTgtOHpNMCA1MmMwLTQuNDE4IDMuNTgyLTggOC04czggMy41ODIgOCA4LTMuNTgyIDgtOCA4LTgtMy41ODItOC04eiIvPjwvZz48L2c+PC9zdmc+')] opacity-10" />
             <div className="relative z-10">
@@ -251,7 +251,7 @@ export default function About() {
       </section>
 
       {/* Video Background Section */}
-      <section className="relative py-40 px-6 overflow-hidden">
+      <section className="relative py-24 px-6 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <iframe
             className="absolute inset-0 w-full h-full object-cover scale-110"
