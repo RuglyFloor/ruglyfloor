@@ -58,8 +58,10 @@ export default function DrawingCanvas({ onSaveDrawing, availableColors = [] }) {
   const startDrawing = (e) => {
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX || e.touches[0].clientX) - rect.left;
-    const y = (e.clientY || e.touches[0].clientY) - rect.top;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = ((e.clientX || e.touches[0].clientX) - rect.left) * scaleX;
+    const y = ((e.clientY || e.touches[0].clientY) - rect.top) * scaleY;
 
     if (tool === 'text') {
       setTextPosition({ x, y });
@@ -78,8 +80,10 @@ export default function DrawingCanvas({ onSaveDrawing, availableColors = [] }) {
     
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX || e.touches[0].clientX) - rect.left;
-    const y = (e.clientY || e.touches[0].clientY) - rect.top;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = ((e.clientX || e.touches[0].clientX) - rect.left) * scaleX;
+    const y = ((e.clientY || e.touches[0].clientY) - rect.top) * scaleY;
     const ctx = canvas.getContext('2d');
 
     if (tool === 'pen') {
@@ -156,8 +160,10 @@ export default function DrawingCanvas({ onSaveDrawing, availableColors = [] }) {
   const drawShape = (e, shapeType) => {
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
-    const x = (e.clientX || e.touches[0].clientX) - rect.left;
-    const y = (e.clientY || e.touches[0].clientY) - rect.top;
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = ((e.clientX || e.touches[0].clientX) - rect.left) * scaleX;
+    const y = ((e.clientY || e.touches[0].clientY) - rect.top) * scaleY;
     const ctx = canvas.getContext('2d');
 
     const size = brushSize * 8;
