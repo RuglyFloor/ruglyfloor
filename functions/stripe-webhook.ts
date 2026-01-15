@@ -42,30 +42,79 @@ Deno.serve(async (req) => {
         if (updatedOrder) {
           // Send order confirmation email
           try {
-            await base44.asServiceRole.functions.invoke('sendOrderConfirmation', {
-              orderId: session.metadata.order_id,
-              customerEmail: updatedOrder.customer_email,
-              customerName: updatedOrder.customer_name,
-              totalAmount: updatedOrder.total_amount,
-              items: updatedOrder.items
+            const itemsList = updatedOrder.items.map(item => `- ${item.name} (${item.size}): $${item.price}`).join('\n');
+            
+            const emailBody = `
+Hi ${updatedOrder.customer_name},
+
+Thank you for your order! We're excited to bring your custom rug to life.
+
+Order Details:
+Order #: ${updatedOrder.order_number}
+Total: $${updatedOrder.total_amount}
+
+Items:
+${itemsList}
+
+Your rug is being carefully crafted by hand. You'll receive updates as it moves through each stage:
+1. Rug ordered & ready for painting
+2. Design being hand-painted
+3. Quality inspection & finishing
+4. Shipped to you!
+
+Track your order: https://ruglyfloors.com/track?order=${session.metadata.order_id}
+
+Questions? Call us at (517) 777-8474 or reply to this email.
+
+Warm regards,
+The Rugly Team
+Custom Hand-Painted Rugs
+            `.trim();
+
+            await base44.integrations.Core.SendEmail({
+              to: updatedOrder.customer_email,
+              subject: `Order Confirmation - Rugly Custom Rug #${updatedOrder.order_number}`,
+              body: emailBody,
+              from_name: 'Rugly Floors'
             });
-            console.log(`Confirmation email sent for order ${session.metadata.order_id}`);
+            console.log(`Confirmation email sent to ${updatedOrder.customer_email}`);
           } catch (emailError) {
-            console.error('Failed to send confirmation email:', emailError.message);
+            console.error('Failed to send confirmation email:', emailError);
+            console.error('Email error details:', emailError.message);
           }
 
           // Notify admin of new order
           try {
-            await base44.asServiceRole.functions.invoke('notifyNewOrder', {
-              orderId: session.metadata.order_id,
-              customerName: updatedOrder.customer_name,
-              customerEmail: updatedOrder.customer_email,
-              totalAmount: updatedOrder.total_amount
+            const adminEmailBody = `
+New Order Received!
+
+Order ID: ${session.metadata.order_id}
+Order #: ${updatedOrder.order_number}
+Customer: ${updatedOrder.customer_name}
+Email: ${updatedOrder.customer_email}
+Total: $${updatedOrder.total_amount}
+
+View in Admin Portal: https://ruglyfloors.com/admin-orders
+
+Next steps:
+1. Review order details
+2. Confirm design specifications
+3. Begin production
+            `.trim();
+
+            await base44.integrations.Core.SendEmail({
+              to: 'contact@ruglyfloor.com',
+              subject: `New Order: ${updatedOrder.customer_name} - $${updatedOrder.total_amount}`,
+              body: adminEmailBody,
+              from_name: 'Rugly Order System'
             });
-            console.log(`Admin notified of new order ${session.metadata.order_id}`);
+            console.log(`Admin notified for order ${session.metadata.order_id}`);
           } catch (notifyError) {
-            console.error('Failed to notify admin:', notifyError.message);
+            console.error('Failed to notify admin:', notifyError);
+            console.error('Admin notify error details:', notifyError.message);
           }
+        } else {
+          console.error(`Order ${session.metadata.order_id} not found after update!`);
         }
       }
     }
