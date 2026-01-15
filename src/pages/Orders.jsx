@@ -89,7 +89,7 @@ export default function Orders() {
                       <Badge className={statusColors[order.status]}>
                         {order.status.replace(/_/g, ' ')}
                       </Badge>
-                      <p className="text-2xl font-bold text-purple-600 mt-2">
+                      <p className="text-2xl font-bold text-blue-600 mt-2">
                         ${order.total_amount}
                       </p>
                     </div>

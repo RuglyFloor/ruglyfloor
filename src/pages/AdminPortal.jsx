@@ -2,8 +2,10 @@ import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Package, FileText, TrendingUp, LogOut, ShoppingBag, Mail } from 'lucide-react';
 import { createPageUrl } from '../utils';
+import { base44 } from '@/api/base44Client';
 
 export default function AdminPortal() {
   const navigate = useNavigate();
@@ -20,13 +22,28 @@ export default function AdminPortal() {
     navigate(createPageUrl('Home'));
   };
 
+  const [orderCount, setOrderCount] = React.useState(0);
+
+  React.useEffect(() => {
+    const fetchOrderCount = async () => {
+      try {
+        const orders = await base44.entities.Order.filter({ payment_status: 'paid' });
+        setOrderCount(orders.length);
+      } catch (error) {
+        console.error('Failed to fetch order count:', error);
+      }
+    };
+    fetchOrderCount();
+  }, []);
+
   const adminSections = [
     {
       title: 'Orders',
       icon: ShoppingBag,
       description: 'Manage and track customer orders',
       page: 'AdminOrders',
-      color: 'bg-blue-500'
+      color: 'bg-blue-500',
+      badge: orderCount
     },
     {
       title: 'Products',
@@ -88,7 +105,12 @@ export default function AdminPortal() {
                     <div className={`w-12 h-12 ${section.color} rounded-lg flex items-center justify-center`}>
                       <section.icon className="w-6 h-6 text-white" />
                     </div>
-                    <CardTitle>{section.title}</CardTitle>
+                    <div className="flex items-center gap-2">
+                      <CardTitle>{section.title}</CardTitle>
+                      {section.badge > 0 && (
+                        <Badge className="bg-red-600 text-white">{section.badge}</Badge>
+                      )}
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>

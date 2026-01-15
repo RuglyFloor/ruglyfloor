@@ -55,7 +55,7 @@ ${formData.message}
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <Card className="max-w-md w-full text-center">
           <CardContent className="p-12">
             <CheckCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
@@ -71,7 +71,7 @@ ${formData.message}
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-12 px-6">
+    <div className="min-h-screen bg-gray-50 py-12 px-6">
       <SEOHead 
         title="Contact Us - Rugly Floors"
         description="Get in touch with Rugly Floors for custom rug inquiries, questions, or support."
@@ -208,7 +208,7 @@ ${formData.message}
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-blue-600 to-purple-600 text-white">
+            <Card className="bg-blue-600 text-white">
               <CardContent className="p-6">
                 <h3 className="font-bold text-lg mb-2">Ready to Start?</h3>
                 <p className="mb-4">
