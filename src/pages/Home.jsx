@@ -98,7 +98,7 @@ export default function Home() {
             <Package className="w-8 h-8 text-blue-600" />
             <h2 className="text-3xl font-bold">SHOP FOR ORIGINAL RUGLYS</h2>
           </div>
-          <div className="relative min-h-[600px]">
+          <div className="relative min-h-[700px]">
             {products.length === 0 ? <div className="text-center py-12">
                 <p className="text-slate-600">Loading featured rugs...</p>
               </div> :
