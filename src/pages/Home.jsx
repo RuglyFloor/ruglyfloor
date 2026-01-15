@@ -93,22 +93,22 @@ export default function Home() {
 
       {/* Shop for Original Ruglys Section */}
       <section className="py-16 px-6 bg-white">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="flex items-center gap-3 mb-8 justify-center">
             <Package className="w-8 h-8 text-blue-600" />
             <h2 className="text-3xl font-bold">SHOP FOR ORIGINAL RUGLYS</h2>
           </div>
-          <div className="relative">
-            {products.length === 0 ? <div className="text-center py-12">
+          <div className="grid md:grid-cols-2 gap-8 relative">
+            {products.length === 0 ? <div className="text-center py-12 col-span-2">
                 <p className="text-slate-600">Loading featured rugs...</p>
               </div> :
 
             products.map((product, index) =>
             <div
               key={product.id}
-              className={`group cursor-pointer transition-opacity duration-500 ${currentProduct === index ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}`}>
+              className={`group cursor-pointer transition-opacity duration-500 ${currentProduct === index || currentProduct === index - 1 || (currentProduct === products.length - 1 && index === 0) ? 'opacity-100' : 'opacity-0 absolute inset-0 pointer-events-none'}`}>
 
-                  <div className="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-4 relative max-w-2xl mx-auto">
+                  <div className="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-4 relative">
                     <img
                   src={product.image_url}
                   alt={product.name}
@@ -122,7 +122,7 @@ export default function Home() {
                       </div>
                 }
                   </div>
-                  <div className="text-center max-w-2xl mx-auto">
+                  <div className="text-center">
                     <h3 className="text-2xl font-bold mb-3">{product.name}</h3>
                     <p className="text-slate-600 mb-4">{product.description}</p>
                     <div className="flex items-center justify-center gap-4">
