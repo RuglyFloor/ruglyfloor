@@ -92,13 +92,13 @@ export default function Home() {
       </section>
 
       {/* Shop for Original Ruglys Section */}
-      <section className="py-16 px-6 bg-white">
+      <section className="py-20 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-8 justify-center">
+          <div className="flex items-center gap-3 mb-12 justify-center">
             <Package className="w-8 h-8 text-blue-600" />
             <h2 className="text-3xl font-bold">SHOP FOR ORIGINAL RUGLYS</h2>
           </div>
-          <div className="relative min-h-[700px]">
+          <div className="relative" style={{ minHeight: '750px' }}>
             {products.length === 0 ? <div className="text-center py-12">
                 <p className="text-slate-600">Loading featured rugs...</p>
               </div> :
@@ -146,7 +146,7 @@ export default function Home() {
             )
             }
           </div>
-          <div className="flex justify-center gap-2 mt-6">
+          <div className="flex justify-center gap-2 mt-8">
             {products.map((_, index) =>
             <button
               key={index}
@@ -161,7 +161,7 @@ export default function Home() {
       </section>
 
       {/* Before Ordering Section */}
-      <section className="py-16 px-6 bg-white">
+      <section className="py-20 px-6 bg-slate-50">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold mb-8 text-center">READ THIS BEFORE ORDERING</h2>
           <div className="space-y-4 mb-8">
@@ -187,7 +187,7 @@ export default function Home() {
       </section>
 
       {/* Our Process Section */}
-      <section className="py-16 px-6 bg-slate-50">
+      <section className="py-20 px-6 bg-white">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold mb-8 text-center">FROM CONCEPT TO CREATION</h2>
           <div className="relative h-96 bg-slate-100 rounded-lg overflow-hidden mb-6">
@@ -244,7 +244,7 @@ export default function Home() {
       </section>
 
       {/* Base Rug Details */}
-      <section className="py-16 px-6 bg-white">
+      <section className="py-20 px-6 bg-slate-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold mb-8 text-center">BASE RUG DETAILS</h2>
           <div className="grid md:grid-cols-4 gap-8">
