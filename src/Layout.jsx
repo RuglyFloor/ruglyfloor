@@ -87,7 +87,7 @@ export default function Layout({ children, currentPageName }) {
           <div className="flex justify-between items-center">
             <Link to={createPageUrl('Home')} className="flex items-center gap-2">
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/9a05f04b4_RUGLYMASTERLOGO-92.png" 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/d71f153d8_RUGLYMASTERLOGO-92.png" 
                 alt="Rugly" 
                 className="h-10"
               />
@@ -207,13 +207,11 @@ export default function Layout({ children, currentPageName }) {
 
           {/* Footer Bottom */}
           <div className="text-center">
-            <div className="bg-white rounded-lg p-3 inline-block mb-4">
-              <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/d71f153d8_RUGLYMASTERLOGO-92.png" 
-                alt="Rugly" 
-                className="h-10"
-              />
-            </div>
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/9a05f04b4_RUGLYMASTERLOGO-92.png" 
+              alt="Rugly" 
+              className="h-10 mx-auto mb-4 opacity-70"
+            />
             <p className="text-sm mb-2">Homesteads, LLC</p>
             <p className="text-sm text-gray-500">Custom-painted rugs for spaces that inspire</p>
 
