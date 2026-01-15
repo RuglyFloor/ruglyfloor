@@ -13,13 +13,13 @@ export default function ImageManager({ images = [], onChange, onGenerateAI }) {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [cropping, setCropping] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels);
   }, []);
 
-  const handleUpload = async (e) => {
-    const file = e.target.files[0];
+  const handleFileUpload = async (file) => {
     if (!file) return;
 
     setUploading(true);
@@ -39,6 +39,27 @@ export default function ImageManager({ images = [], onChange, onGenerateAI }) {
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleUpload = async (e) => {
+    const file = e.target.files[0];
+    await handleFileUpload(file);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = async (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    await handleFileUpload(file);
   };
 
   const createCroppedImage = async (imageSrc, pixelCrop) => {
@@ -128,20 +149,25 @@ export default function ImageManager({ images = [], onChange, onGenerateAI }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => {
-            const input = document.getElementById('image-manager-upload');
-            if (input) input.click();
-          }}
-          disabled={uploading}
-          className="gap-2"
-        >
-          <Upload className="w-4 h-4" />
-          {uploading ? 'Uploading...' : 'Upload Image'}
-        </Button>
+      <div
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        onClick={() => {
+          const input = document.getElementById('image-manager-upload');
+          if (input) input.click();
+        }}
+        className={`border-2 border-dashed rounded-lg p-8 cursor-pointer text-center transition-all ${
+          isDragging
+            ? 'border-blue-500 bg-blue-50 scale-105'
+            : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
+        }`}
+      >
+        <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+        <p className="text-sm font-semibold mb-1">
+          {uploading ? 'Uploading...' : 'Drop images here or click to upload'}
+        </p>
+        <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
         <input
           id="image-manager-upload"
           type="file"
@@ -150,17 +176,18 @@ export default function ImageManager({ images = [], onChange, onGenerateAI }) {
           className="hidden"
           multiple
         />
-        {images.length > 0 && onGenerateAI && (
-          <Button
-            type="button"
-            onClick={onGenerateAI}
-            className="gap-2 bg-gradient-to-r from-purple-600 to-blue-600"
-          >
-            <Sparkles className="w-4 h-4" />
-            Generate AI Images
-          </Button>
-        )}
       </div>
+
+      {images.length > 0 && onGenerateAI && (
+        <Button
+          type="button"
+          onClick={onGenerateAI}
+          className="gap-2 bg-blue-600"
+        >
+          <Sparkles className="w-4 h-4" />
+          Generate AI Images
+        </Button>
+      )}
 
       {selectedCount > 0 && (
         <div className="text-sm text-blue-600 font-semibold">
