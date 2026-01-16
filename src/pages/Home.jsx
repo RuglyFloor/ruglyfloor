@@ -182,7 +182,7 @@ export default function Home() {
                       <div className="text-center space-y-4">
                         <h3 className="text-2xl font-bold">{product.name}</h3>
                         <p className="text-slate-600 text-lg">{product.description}</p>
-                        <div className="flex items-center justify-center gap-4 pt-4">
+                        <div className="flex flex-col items-center justify-center gap-4 pt-4">
                           {product.in_stock ? (
                             <>
                               <span className="text-3xl font-bold text-blue-600">
@@ -192,17 +192,15 @@ export default function Home() {
                                 size="lg"
                                 onClick={() => handleGrabIt(product)}
                                 disabled={isCheckingOut}
+                                className="min-w-[120px]"
                               >
                                 {isCheckingOut ? 'Loading...' : 'GRAB IT'}
                               </Button>
                             </>
                           ) : (
-                            <>
-                              <span className="text-3xl font-bold text-red-600">SOLD OUT</span>
-                              <Button disabled className="opacity-50" size="lg">
-                                SOLD
-                              </Button>
-                            </>
+                            <div className="text-center space-y-2">
+                              <span className="text-3xl font-bold text-red-600 block">SOLD OUT</span>
+                            </div>
                           )}
                         </div>
                       </div>
