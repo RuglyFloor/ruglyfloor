@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { Palette, Sparkles, Package, CheckCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
@@ -11,8 +11,10 @@ import { useSEO } from '../components/seo/useSEO';
 
 export default function Home() {
   const seoData = useSEO('');
+  const navigate = useNavigate();
   const [currentProduct, setCurrentProduct] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const { data: products = [] } = useQuery({
     queryKey: ['featured-products'],
@@ -34,6 +36,53 @@ export default function Home() {
     }, 2000);
     return () => clearInterval(stepInterval);
   }, []);
+
+  const handleGrabIt = async (product) => {
+    // Check if we're in an iframe (Base44 preview)
+    if (window.self !== window.top) {
+      alert('Checkout is only available on the published app. Please visit the live site to complete your purchase.');
+      return;
+    }
+
+    setIsCheckingOut(true);
+
+    try {
+      const cartItem = {
+        type: 'original',
+        product_id: product.id,
+        name: product.name,
+        size: product.size,
+        price: product.price,
+        imageUrl: product.image_url,
+        previewUrl: product.image_url
+      };
+
+      // Simple customer info collection - they'll complete it in Stripe Checkout
+      const customerInfo = {
+        name: '',
+        email: '',
+        phone: '',
+        timeOnSite: Math.floor((Date.now() - parseInt(sessionStorage.getItem('rugly_site_start_time') || Date.now())) / 1000),
+        referrerSource: sessionStorage.getItem('rugly_referrer') || 'direct'
+      };
+
+      const response = await base44.functions.invoke('createCheckout', {
+        cart: [cartItem],
+        customerInfo: customerInfo,
+        designInstructions: ''
+      });
+
+      if (response.data.url) {
+        window.location.href = response.data.url;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert('Unable to start checkout. Please try adding to cart instead.');
+      setIsCheckingOut(false);
+    }
+  };
 
   return (
     <div className="min-h-screen">
@@ -139,9 +188,13 @@ export default function Home() {
                               <span className="text-3xl font-bold text-blue-600">
                                 ${product.price}
                               </span>
-                              <Link to={createPageUrl('Shop')}>
-                                <Button size="lg">GRAB IT</Button>
-                              </Link>
+                              <Button 
+                                size="lg"
+                                onClick={() => handleGrabIt(product)}
+                                disabled={isCheckingOut}
+                              >
+                                {isCheckingOut ? 'Loading...' : 'GRAB IT'}
+                              </Button>
                             </>
                           ) : (
                             <>
