@@ -92,9 +92,11 @@ export default function CustomBuilder() {
     imageUrl: '',
     previewUrl: '',
     numColors: 2,
-    designInstructions: ''
+    designInstructions: '',
+    is3D: false
   });
   const [uploading, setUploading] = useState(false);
+  const [isRush, setIsRush] = useState(false);
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -130,7 +132,8 @@ export default function CustomBuilder() {
     const selectedSize = SIZES.find(s => s.value === config.size);
     const basePrice = selectedSize.price;
     const colorPrice = getColorPrice(config.size, config.numColors);
-    const price = basePrice + colorPrice;
+    const rushFee = isRush ? 99 : 0;
+    const price = basePrice + colorPrice + rushFee;
     
     const cartItem = {
       type: 'custom',
@@ -143,7 +146,8 @@ export default function CustomBuilder() {
       numColors: config.numColors,
       designInstructions: config.designInstructions || '',
       price: price,
-      name: `Custom Rug - ${selectedSize.label}`
+      name: `Custom Rug - ${selectedSize.label}${isRush ? ' (Rush)' : ''}`,
+      isRush: isRush
     };
 
     const cart = JSON.parse(localStorage.getItem('rugly_cart') || '[]');
@@ -158,7 +162,8 @@ export default function CustomBuilder() {
     const selectedSize = SIZES.find(s => s.value === config.size);
     const basePrice = selectedSize.price;
     const colorPrice = getColorPrice(config.size, config.numColors);
-    return basePrice + colorPrice;
+    const rushFee = isRush ? 99 : 0;
+    return basePrice + colorPrice + rushFee;
   };
 
   return (
@@ -629,6 +634,8 @@ export default function CustomBuilder() {
             currentPrice={currentPrice()}
             baseColors={BASE_COLORS}
             paintColors={PAINT_COLORS}
+            isRush={isRush}
+            onToggleRush={() => setIsRush(!isRush)}
             key={`${config.baseColor}-${config.paintColor}-${config.imageUrl}`}
           />
         </div>
