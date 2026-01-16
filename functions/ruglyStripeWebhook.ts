@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import Stripe from 'npm:stripe@17.5.0';
+import { getBaseRugInfo } from './baseRugSKUMap.js';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
 const webhookSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
@@ -113,6 +114,39 @@ async function handleDepositPaid(base44, event) {
   const existingOrders = await base44.asServiceRole.entities.RuglyOrder.filter({ order_key: orderKey });
   let order;
 
+  // Base rug ordering logic for CRUGLY
+  let baseRugData = {};
+  if (brand === 'CRUGLY') {
+    const rugSize = session.metadata?.rug_size || '';
+    const baseColor = session.metadata?.base_color || '';
+    
+    if (rugSize && baseColor) {
+      const rugInfo = getBaseRugInfo(rugSize, baseColor);
+      if (rugInfo) {
+        baseRugData = {
+          base_rug_required: true,
+          base_rug_sku: rugInfo.sku,
+          base_rug_supplier: rugInfo.supplier,
+          base_rug_product_url: rugInfo.url,
+          base_rug_size: rugSize,
+          base_rug_color: baseColor,
+          base_rug_qty: 1,
+          base_rug_order_status: 'ORDER_TASK_CREATED',
+          base_rug_order_by: new Date().toISOString(),
+          base_rug_cost_estimate: rugInfo.cost
+        };
+      } else {
+        console.warn(`No SKU mapping found for ${rugSize}|${baseColor}`);
+        baseRugData = {
+          base_rug_required: true,
+          base_rug_size: rugSize,
+          base_rug_color: baseColor,
+          base_rug_order_status: 'NOT_ORDERED'
+        };
+      }
+    }
+  }
+
   const orderData = {
     order_key: orderKey,
     brand: brand,
@@ -136,7 +170,8 @@ async function handleDepositPaid(base44, event) {
     customer_images_originals: [],
     assets_status: 'MISSING',
     image_requirement_met: false,
-    image_type_received: 'UNKNOWN'
+    image_type_received: 'UNKNOWN',
+    ...baseRugData
   };
 
   if (existingOrders.length > 0) {
@@ -149,6 +184,11 @@ async function handleDepositPaid(base44, event) {
 
   // ALARM BELLS - Send notifications
   await sendOwnerAlarm(base44, order, 'DEPOSIT_PAID');
+
+  // Base rug ordering alarm (if CRUGLY)
+  if (order.base_rug_required && order.base_rug_order_status === 'ORDER_TASK_CREATED') {
+    await sendBaseRugOrderingAlarm(base44, order);
+  }
 
   // Start escalation timer (handled by automation)
   
@@ -241,5 +281,47 @@ async function sendOwnerAlarm(base44, order, eventType) {
     console.log('Owner notification sent');
   } catch (error) {
     console.error('Failed to send owner notification:', error);
+  }
+}
+
+async function sendBaseRugOrderingAlarm(base44, order) {
+  const ownerEmail = 'contact@ruglyfloor.com';
+  
+  const emailSubject = `🚨 ORDER BASE RUG NOW — ${order.order_key}`;
+  const emailBody = `
+    ORDER BASE RUG IMMEDIATELY
+    
+    Order: ${order.order_key}
+    Customer: ${order.customer_name}
+    
+    BASE RUG DETAILS:
+    Size: ${order.base_rug_size}
+    Color: ${order.base_rug_color}
+    SKU: ${order.base_rug_sku}
+    Qty: ${order.base_rug_qty}
+    Est. Cost: $${order.base_rug_cost_estimate}
+    
+    PRODUCT LINK (CLICK TO ORDER):
+    ${order.base_rug_product_url}
+    
+    SHIP TO YOUR STUDIO:
+    ${order.shipping_address_line1}
+    ${order.shipping_city}, ${order.shipping_state} ${order.shipping_postal}
+    
+    ⚠️ DEADLINE: TODAY
+    Order immediately so stencil + prep can start.
+    
+    After ordering, mark as ORDERED in dashboard.
+  `;
+
+  try {
+    await base44.integrations.Core.SendEmail({
+      to: ownerEmail,
+      subject: emailSubject,
+      body: emailBody
+    });
+    console.log('Base rug ordering alarm sent');
+  } catch (error) {
+    console.error('Failed to send base rug ordering alarm:', error);
   }
 }
