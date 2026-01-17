@@ -104,9 +104,6 @@ export default function Orders() {
                         )}
                         <div className="flex-1">
                          <p className="font-semibold">{item.name}</p>
-                         {item.product_number && (
-                           <p className="text-xs font-mono text-gray-500">{item.product_number}</p>
-                         )}
                          <p className="text-sm text-gray-600">Size: {item.size}</p>
                          {item.baseColor && <p className="text-sm text-gray-600">Base: {item.baseColor}</p>}
                         </div>

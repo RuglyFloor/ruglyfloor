@@ -22,7 +22,6 @@ export default function Shop() {
     const cartItem = {
       type: 'original',
       product_id: product.id,
-      product_number: product.product_number,
       name: product.name,
       size: product.size,
       price: product.price,
@@ -105,12 +104,7 @@ export default function Shop() {
                       )}
                     </div>
                     <CardContent className="p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="text-xl font-bold">{product.name}</h3>
-                        {product.product_number && (
-                          <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded">{product.product_number}</span>
-                        )}
-                      </div>
+                      <h3 className="text-xl font-bold mb-2">{product.name}</h3>
                       <p className="text-gray-600 text-sm mb-2">{product.description}</p>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-500">{product.size}</span>

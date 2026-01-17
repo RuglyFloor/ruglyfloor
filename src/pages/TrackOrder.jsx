@@ -189,9 +189,6 @@ export default function TrackOrder() {
                         )}
                         <div className="flex-1">
                          <p className="font-semibold">{item.name}</p>
-                         {item.product_number && (
-                           <p className="text-xs font-mono text-gray-500 mb-1">{item.product_number}</p>
-                         )}
                          {item.serial_number && (
                            <p className="text-xs font-mono text-blue-600 mb-1">SN: {item.serial_number}</p>
                          )}
