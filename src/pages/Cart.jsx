@@ -168,6 +168,9 @@ export default function Cart() {
                     )}
                     <div className="flex-1">
                       <h3 className="font-bold text-lg">{item.name}</h3>
+                      {item.product_number && (
+                        <p className="text-xs font-mono text-gray-500">{item.product_number}</p>
+                      )}
                       <p className="text-sm text-gray-600">Size: {item.size}</p>
                       {item.baseColor && <p className="text-sm text-gray-600">Base: {item.baseColor}</p>}
                       {item.paintColor && <p className="text-sm text-gray-600">Paint: {item.paintColor}</p>}
