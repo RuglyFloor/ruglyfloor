@@ -17,26 +17,24 @@ import SEOHead from '../components/seo/SEOHead';
 import { useSEO } from '../components/seo/useSEO';
 
 const SIZES = [
-  { id: 'tiny', label: 'Tiny', value: 'tiny', price: 79, originalPrice: 99, measurement: '2x3' },
-  { id: 'sm', label: 'Small', value: 'small', price: 200, originalPrice: 225, measurement: '4x6' },
-  { id: 'md', label: 'Medium', value: 'medium', price: 300, originalPrice: 350, measurement: '5x7' },
-  { id: 'lg', label: 'Large', value: 'large', price: 400, originalPrice: 450, measurement: '8x10' },
-  { id: 'hg', label: 'Huge', value: 'huge', price: 500, originalPrice: 550, measurement: '9x11' },
-  { id: 'rd', label: '3.14', value: '4ft round', price: 250, originalPrice: 275, measurement: '4 foot round' }
+  { id: 'tiny', label: 'Tiny', value: 'tiny', price: 79, step: 0, measurement: '2x3' },
+  { id: 'sm', label: 'Small', value: 'small', price: 200, step: 1, measurement: '4x6' },
+  { id: 'md', label: 'Medium', value: 'medium', price: 300, step: 2, measurement: '5x7' },
+  { id: 'lg', label: 'Large', value: 'large', price: 400, step: 3, measurement: '8x10' },
+  { id: 'hg', label: 'Huge', value: 'huge', price: 500, step: 4, measurement: '9x11' },
+  { id: 'rd', label: '3.14', value: '4ft round', price: 250, step: 1, measurement: '4 foot round' }
 ];
 
-const getColorPrice = (size, numColors) => {
-  if (numColors === 2) return 0;
-  const sizeMap = { tiny: 39, small: 69, medium: 99, large: 129, huge: 159, '4ft round': 69 };
-  const basePrice = sizeMap[size] || 39;
-  if (numColors === 3) return basePrice;
-  if (numColors === 4) return basePrice * 2;
-  return 0;
+const getShadingFee = (size) => {
+  const sizeData = SIZES.find(s => s.value === size);
+  if (!sizeData) return 0;
+  return 30 + (10 * sizeData.step);
 };
 
-const get3DPrice = (size) => {
-  const sizeMap = { tiny: 100, small: 200, medium: 250, large: 300, huge: 350, '4ft round': 200 };
-  return sizeMap[size] || 200;
+const getSecondColorFee = (size) => {
+  const sizeData = SIZES.find(s => s.value === size);
+  if (!sizeData) return 0;
+  return 30 + (10 * sizeData.step);
 };
 
 const BASE_COLORS = [
@@ -93,7 +91,8 @@ export default function CustomBuilder() {
     previewUrl: '',
     numColors: 2,
     designInstructions: '',
-    is3D: false
+    hasShading: false,
+    hasSecondColor: false
   });
   const [uploading, setUploading] = useState(false);
   const [isRush, setIsRush] = useState(false);
@@ -131,9 +130,10 @@ export default function CustomBuilder() {
   const handleAddToCart = () => {
     const selectedSize = SIZES.find(s => s.value === config.size);
     const basePrice = selectedSize.price;
-    const colorPrice = getColorPrice(config.size, config.numColors);
-    const rushFee = isRush ? 99 : 0;
-    const price = basePrice + colorPrice + rushFee;
+    const shadingFee = config.hasShading ? getShadingFee(config.size) : 0;
+    const secondColorFee = config.hasSecondColor ? getSecondColorFee(config.size) : 0;
+    const rushFee = isRush ? 100 : 0;
+    const price = basePrice + shadingFee + secondColorFee + rushFee;
     
     const cartItem = {
       type: 'custom',
@@ -143,7 +143,8 @@ export default function CustomBuilder() {
       secondPaintColor: config.secondPaintColor || null,
       imageUrl: config.imageUrl,
       previewUrl: config.previewUrl,
-      numColors: config.numColors,
+      hasShading: config.hasShading,
+      hasSecondColor: config.hasSecondColor,
       designInstructions: config.designInstructions || '',
       price: price,
       name: `Custom Rug - ${selectedSize.label}${isRush ? ' (Rush)' : ''}`,
@@ -161,9 +162,10 @@ export default function CustomBuilder() {
     if (!config.size) return 0;
     const selectedSize = SIZES.find(s => s.value === config.size);
     const basePrice = selectedSize.price;
-    const colorPrice = getColorPrice(config.size, config.numColors);
-    const rushFee = isRush ? 99 : 0;
-    return basePrice + colorPrice + rushFee;
+    const shadingFee = config.hasShading ? getShadingFee(config.size) : 0;
+    const secondColorFee = config.hasSecondColor ? getSecondColorFee(config.size) : 0;
+    const rushFee = isRush ? 100 : 0;
+    return basePrice + shadingFee + secondColorFee + rushFee;
   };
 
   return (
@@ -289,22 +291,11 @@ export default function CustomBuilder() {
                     </div>
 
                     <div className="flex items-baseline gap-2">
-                      <span className={`text-lg line-through ${
-                        config.size === size.value ? 'text-gray-400' : 'text-gray-400'
-                      }`}>
-                        ${size.originalPrice}
-                      </span>
                       <span className={`text-3xl font-black ${
                         config.size === size.value ? 'text-gray-900' : 'text-gray-900'
                       }`}>
                         ${size.price}
                       </span>
-                    </div>
-
-                    <div className={`mt-3 text-xs font-semibold ${
-                      config.size === size.value ? 'text-green-600' : 'text-green-600'
-                    }`}>
-                      SAVE ${size.originalPrice - size.price}
                     </div>
                   </div>
                 </button>
@@ -394,50 +385,99 @@ export default function CustomBuilder() {
                       </div>
                     </div>
 
-                    {/* Separator */}
-                    <div className="relative my-4">
-                      <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-300"></div>
-                      </div>
-                      <div className="relative flex justify-center">
-                        <span className="bg-white px-3 text-xs text-gray-500">Add 2nd Color (Optional +${getColorPrice(config.size, 3)})</span>
-                      </div>
+                    {/* Add-ons Section */}
+                    <div className="relative my-6">
+                     <div className="absolute inset-0 flex items-center">
+                       <div className="w-full border-t border-gray-300"></div>
+                     </div>
+                     <div className="relative flex justify-center">
+                       <span className="bg-white px-3 text-sm font-semibold text-gray-700">Add-ons (Optional)</span>
+                     </div>
                     </div>
 
-                    {/* Second Set - Universal colors for 2nd paint color */}
-                    <div className="mb-4">
-                      <p className="text-xs text-gray-600 mb-2 font-semibold">2nd Paint Color (Universal Colors)</p>
-                      <div className="grid grid-cols-3 gap-4">
-                        {PAINT_COLORS.filter(color => color.type === 'both').map((color, idx) => (
-                          <button
-                            key={`both-${color.name}-${color.hex}-${idx}`}
-                            onClick={() => setConfig(prev => ({ 
-                              ...prev, 
-                              secondPaintColor: prev.secondPaintColor === color.name ? '' : color.name,
-                              numColors: prev.secondPaintColor === color.name ? 2 : 3
-                            }))}
-                            className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all group relative ${
-                              config.secondPaintColor === color.name ? 'border-green-600 bg-green-50' : 'border-gray-200 hover:border-gray-300'
-                            }`}
-                            title={`Add ${color.name} as a second color (+$${getColorPrice(config.size, 3)})`}
-                          >
-                            <span className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
-                              Add {color.name} as 2nd paint color<br/>Adds ${getColorPrice(config.size, 3)} to price
-                            </span>
-                            <div 
-                              className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
-                              style={{ backgroundColor: color.hex }}
-                            />
-                            <span className="text-xs text-center">{color.name}</span>
-                          </button>
-                        ))}
-                      </div>
-                      {config.secondPaintColor && (
-                        <p className="text-xs text-green-600 mt-2 font-semibold">
-                          ✓ 2nd color selected: {config.secondPaintColor}
-                        </p>
-                      )}
+                    <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                     <p className="text-xs text-gray-600 mb-3">Add-ons are optional. Shading = more depth. Second color = more chaos (in a good way).</p>
+
+                     <div className="space-y-3">
+                       {/* Shading Add-on */}
+                       <button
+                         onClick={() => setConfig(prev => ({ ...prev, hasShading: !prev.hasShading }))}
+                         className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+                           config.hasShading ? 'border-blue-600 bg-blue-50' : 'border-gray-300 hover:border-gray-400 bg-white'
+                         }`}
+                       >
+                         <div className="flex justify-between items-center">
+                           <div>
+                             <div className="font-semibold">Shading</div>
+                             <div className="text-xs text-gray-600">Adds depth and dimension</div>
+                           </div>
+                           <div className={`text-lg font-bold ${config.hasShading ? 'text-blue-600' : 'text-gray-900'}`}>
+                             +${config.size ? getShadingFee(config.size) : 30}
+                           </div>
+                         </div>
+                         {config.hasShading && (
+                           <div className="mt-2 text-xs text-blue-600 font-semibold">✓ Added</div>
+                         )}
+                       </button>
+
+                       {/* Second Color Add-on */}
+                       <button
+                         onClick={() => setConfig(prev => ({ 
+                           ...prev, 
+                           hasSecondColor: !prev.hasSecondColor,
+                           secondPaintColor: prev.hasSecondColor ? '' : prev.secondPaintColor
+                         }))}
+                         className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+                           config.hasSecondColor ? 'border-green-600 bg-green-50' : 'border-gray-300 hover:border-gray-400 bg-white'
+                         }`}
+                       >
+                         <div className="flex justify-between items-center">
+                           <div>
+                             <div className="font-semibold">Second Color</div>
+                             <div className="text-xs text-gray-600">Add a 2nd paint color</div>
+                           </div>
+                           <div className={`text-lg font-bold ${config.hasSecondColor ? 'text-green-600' : 'text-gray-900'}`}>
+                             +${config.size ? getSecondColorFee(config.size) : 30}
+                           </div>
+                         </div>
+                         {config.hasSecondColor && (
+                           <div className="mt-2 text-xs text-green-600 font-semibold">✓ Added</div>
+                         )}
+                       </button>
+                     </div>
                     </div>
+
+                    {/* Second Color Picker (only show if second color addon is selected) */}
+                    {config.hasSecondColor && (
+                     <div className="mb-4">
+                       <p className="text-xs text-gray-600 mb-2 font-semibold">Choose 2nd Paint Color</p>
+                       <div className="grid grid-cols-3 gap-4">
+                         {PAINT_COLORS.filter(color => color.type === 'both').map((color, idx) => (
+                           <button
+                             key={`both-${color.name}-${color.hex}-${idx}`}
+                             onClick={() => setConfig(prev => ({ 
+                               ...prev, 
+                               secondPaintColor: color.name
+                             }))}
+                             className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all group relative ${
+                               config.secondPaintColor === color.name ? 'border-green-600 bg-green-50' : 'border-gray-200 hover:border-gray-300'
+                             }`}
+                           >
+                             <div 
+                               className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
+                               style={{ backgroundColor: color.hex }}
+                             />
+                             <span className="text-xs text-center">{color.name}</span>
+                           </button>
+                         ))}
+                       </div>
+                       {config.secondPaintColor && (
+                         <p className="text-xs text-green-600 mt-2 font-semibold">
+                           ✓ 2nd color: {config.secondPaintColor}
+                         </p>
+                       )}
+                     </div>
+                    )}
 
 
                   </div>
@@ -601,7 +641,7 @@ export default function CustomBuilder() {
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <div className="flex justify-between items-center mb-3">
-                    <span className="font-semibold">Base Price:</span>
+                    <span className="font-semibold">Total Price:</span>
                     <span className="text-3xl font-bold text-blue-600">${currentPrice()}</span>
                   </div>
                   <div className="text-xs text-gray-700 space-y-1">
@@ -609,10 +649,22 @@ export default function CustomBuilder() {
                       <span>{SIZES.find(s => s.value === config.size)?.label} Base:</span>
                       <span className="font-semibold">${SIZES.find(s => s.value === config.size)?.price}</span>
                     </div>
-                    {config.numColors > 2 && (
+                    {config.hasShading && (
                       <div className="flex justify-between">
-                        <span>{config.numColors} Colors:</span>
-                        <span className="font-semibold">+${getColorPrice(config.size, config.numColors)}</span>
+                        <span>Shading:</span>
+                        <span className="font-semibold">+${getShadingFee(config.size)}</span>
+                      </div>
+                    )}
+                    {config.hasSecondColor && (
+                      <div className="flex justify-between">
+                        <span>Second Color:</span>
+                        <span className="font-semibold">+${getSecondColorFee(config.size)}</span>
+                      </div>
+                    )}
+                    {isRush && (
+                      <div className="flex justify-between">
+                        <span>Rush Processing:</span>
+                        <span className="font-semibold">+$100</span>
                       </div>
                     )}
                   </div>
