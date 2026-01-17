@@ -61,7 +61,7 @@ Deno.serve(async (req) => {
     const assetsStatus = requirementMet ? 'COMPLETE' : 'PARTIAL';
 
     // Update order
-    const updated = await base44.asServiceRole.entities.RuglyOrder.update(order.id, {
+    const updateData = {
       customer_images_originals: originals,
       customer_images_manifest: JSON.stringify(manifest),
       image_type_received: imageTypeReceived,
@@ -69,7 +69,14 @@ Deno.serve(async (req) => {
       assets_status: assetsStatus,
       assets_first_received_at: order.assets_first_received_at || new Date().toISOString(),
       assets_last_updated_at: new Date().toISOString()
-    });
+    };
+
+    // If assets are complete, update order status
+    if (assetsStatus === 'COMPLETE' && (order.order_status === 'NEW_UNREAD' || order.order_status === 'CONFIRMED')) {
+      updateData.order_status = 'ASSETS_RECEIVED';
+    }
+
+    const updated = await base44.asServiceRole.entities.RuglyOrder.update(order.id, updateData);
 
     console.log('Customer image uploaded:', file_url);
 
