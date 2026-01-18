@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Package, FileText, TrendingUp, LogOut, ShoppingBag, Mail } from 'lucide-react';
+import { Package, FileText, TrendingUp, LogOut, ShoppingBag, Mail, Award } from 'lucide-react';
 import { createPageUrl } from '../utils';
 import { base44 } from '@/api/base44Client';
 
@@ -79,6 +79,13 @@ export default function AdminPortal() {
       description: 'View and manage contact messages',
       page: 'AdminInbox',
       color: 'bg-pink-500'
+    },
+    {
+      title: 'Documents',
+      icon: Award,
+      description: 'Generate certificates of authenticity',
+      page: 'AdminDocuments',
+      color: 'bg-teal-500'
     }
   ];
 
