@@ -16,6 +16,30 @@ import BuilderSidebar from '../components/custom/BuilderSidebar';
 import SEOHead from '../components/seo/SEOHead';
 import { useSEO } from '../components/seo/useSEO';
 
+const QUALITY_TIERS = [
+  { 
+    id: 'budget', 
+    label: 'Budget Friendly', 
+    description: 'Affordable synthetics (polyester, nylon) and natural fibers (jute, sisal) for high traffic areas',
+    priceMultiplier: 0.7,
+    materialDetail: 'Durable synthetic or natural fiber base'
+  },
+  { 
+    id: 'good', 
+    label: 'Good Rug', 
+    description: 'Mid-range wool blends offering quality and value',
+    priceMultiplier: 1.0,
+    materialDetail: 'Premium wool blend construction'
+  },
+  { 
+    id: 'highend', 
+    label: 'High-End', 
+    description: 'Premium hand-knotted wool/silk with high KPSI for intricate designs and luxury',
+    priceMultiplier: 2.5,
+    materialDetail: 'Hand-knotted wool/silk, museum-quality'
+  }
+];
+
 const SIZES = [
   { id: 'tiny', label: 'Tiny', value: 'tiny', price: 79, step: 0, measurement: '2x3' },
   { id: 'sm', label: 'Small', value: 'small', price: 200, step: 1, measurement: '4x6' },
@@ -67,6 +91,14 @@ const PAINT_COLORS = [
   { name: 'Vermillion', hex: '#ff4500', type: 'both' }
 ];
 
+// Limited colors for mid-range and high-end tiers
+const LIMITED_PAINT_COLORS = [
+  { name: 'Tan', hex: '#d2b48c', type: 'both' },
+  { name: 'Black', hex: '#000000', type: 'both' },
+  { name: 'White', hex: '#ffffff', type: 'both' },
+  { name: 'Off-White', hex: '#f5f5dc', type: 'both' }
+];
+
 export default function CustomBuilder() {
   const navigate = useNavigate();
   const seoData = useSEO('custom-builder');
@@ -82,6 +114,7 @@ export default function CustomBuilder() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [step]);
   const [config, setConfig] = useState({
+    qualityTier: '',
     size: '',
     baseColor: '',
     paintColor: '',
@@ -129,7 +162,8 @@ export default function CustomBuilder() {
 
   const handleAddToCart = () => {
     const selectedSize = SIZES.find(s => s.value === config.size);
-    const basePrice = selectedSize.price;
+    const selectedTier = QUALITY_TIERS.find(t => t.id === config.qualityTier);
+    const basePrice = Math.round(selectedSize.price * selectedTier.priceMultiplier);
     const shadingFee = config.hasShading ? getShadingFee(config.size) : 0;
     const secondColorFee = config.hasSecondColor ? getSecondColorFee(config.size) : 0;
     const rushFee = isRush ? 100 : 0;
@@ -137,6 +171,9 @@ export default function CustomBuilder() {
     
     const cartItem = {
       type: 'custom',
+      qualityTier: config.qualityTier,
+      qualityLabel: selectedTier.label,
+      materialDetail: selectedTier.materialDetail,
       size: selectedSize.label,
       baseColor: config.baseColor,
       paintColor: config.paintColor,
@@ -147,7 +184,7 @@ export default function CustomBuilder() {
       hasSecondColor: config.hasSecondColor,
       designInstructions: config.designInstructions || '',
       price: price,
-      name: `Custom Rug - ${selectedSize.label}${isRush ? ' (Rush)' : ''}`,
+      name: `Custom ${selectedTier.label} Rug - ${selectedSize.label}${isRush ? ' (Rush)' : ''}`,
       isRush: isRush
     };
 
@@ -159,13 +196,26 @@ export default function CustomBuilder() {
   };
 
   const currentPrice = () => {
-    if (!config.size) return 0;
+    if (!config.size || !config.qualityTier) return 0;
     const selectedSize = SIZES.find(s => s.value === config.size);
-    const basePrice = selectedSize.price;
+    const selectedTier = QUALITY_TIERS.find(t => t.id === config.qualityTier);
+    const basePrice = Math.round(selectedSize.price * selectedTier.priceMultiplier);
     const shadingFee = config.hasShading ? getShadingFee(config.size) : 0;
     const secondColorFee = config.hasSecondColor ? getSecondColorFee(config.size) : 0;
     const rushFee = isRush ? 100 : 0;
     return basePrice + shadingFee + secondColorFee + rushFee;
+  };
+
+  const getAvailablePaintColors = () => {
+    if (!config.qualityTier) return PAINT_COLORS;
+    
+    // Budget tier gets all colors
+    if (config.qualityTier === 'budget') {
+      return PAINT_COLORS;
+    }
+    
+    // Mid-range and high-end get limited colors
+    return LIMITED_PAINT_COLORS;
   };
 
   return (
@@ -182,11 +232,12 @@ export default function CustomBuilder() {
 
         {/* Progress Indicator */}
         <div className="relative mb-12">
-          <div className="flex items-center justify-between max-w-2xl mx-auto">
+          <div className="flex items-center justify-between max-w-3xl mx-auto">
             {[
-              { num: 1, label: 'Size' },
-              { num: 2, label: 'Colors' },
-              { num: 3, label: 'Design & Confirm' }
+              { num: 1, label: 'Quality' },
+              { num: 2, label: 'Size' },
+              { num: 3, label: 'Colors' },
+              { num: 4, label: 'Design & Confirm' }
             ].map((s, idx) => (
               <div key={s.num} className="flex flex-col items-center flex-1">
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all ${
@@ -199,10 +250,10 @@ export default function CustomBuilder() {
                 <span className={`text-xs mt-2 font-medium ${step >= s.num ? 'text-gray-900' : 'text-gray-400'}`}>
                   {s.label}
                 </span>
-                {idx < 2 && (
+                {idx < 3 && (
                   <div className="absolute top-6 left-0 right-0 h-0.5 -z-10" style={{ 
-                    left: `${(idx * 50) + 25}%`, 
-                    width: '50%',
+                    left: `${(idx * 33.33) + 16.66}%`, 
+                    width: '33.33%',
                     background: step > s.num ? '#1f2937' : '#e5e7eb'
                   }} />
                 )}
@@ -211,7 +262,7 @@ export default function CustomBuilder() {
           </div>
         </div>
 
-        {config.previewUrl && step === 3 && (
+        {config.previewUrl && step === 4 && (
         <div className="fixed bottom-6 right-6 z-50 lg:hidden">
           <Button
             onClick={handleAddToCart}
@@ -225,8 +276,79 @@ export default function CustomBuilder() {
 
       <div className="grid lg:grid-cols-3 gap-8 items-start">
           <div className="lg:col-span-2 space-y-6">
-            {/* Step 1: Size Selection */}
+            {/* Step 1: Quality Tier Selection */}
             {step === 1 && (
+              <div className={`space-y-6 transition-opacity duration-300 ${transitioning ? 'opacity-50' : 'opacity-100'}`}>
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-bold mb-3 text-gray-900">
+                    Choose Your Quality Level
+                  </h2>
+                  <p className="text-gray-600 text-lg">Select the material quality that matches your needs</p>
+                </div>
+
+                <div className="grid gap-5 max-w-4xl mx-auto">
+                  {QUALITY_TIERS.map((tier) => (
+                    <button
+                      key={tier.id}
+                      onClick={() => {
+                        setTransitioning(true);
+                        setConfig(prev => ({ ...prev, qualityTier: tier.id }));
+                        setTimeout(() => {
+                          setStep(2);
+                          setTransitioning(false);
+                        }, 400);
+                      }}
+                      className={`group relative overflow-hidden rounded-2xl transition-all duration-300 ${
+                        config.qualityTier === tier.id 
+                          ? 'border-4 border-gray-900 shadow-2xl scale-105' 
+                          : 'border-2 border-gray-300 hover:border-gray-400 hover:shadow-xl hover:scale-102 shadow-md'
+                      }`}
+                    >
+                      <div className={`absolute inset-0 transition-opacity ${
+                        config.qualityTier === tier.id 
+                          ? 'bg-white opacity-100' 
+                          : 'bg-gray-50 opacity-100 group-hover:bg-white'
+                      }`} />
+
+                      <div className="relative p-8">
+                        {config.qualityTier === tier.id && (
+                          <div className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                            <CheckCircle className="w-5 h-5 text-blue-600" />
+                          </div>
+                        )}
+
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="text-left flex-1">
+                            <h3 className={`text-2xl font-bold mb-2 ${
+                              config.qualityTier === tier.id ? 'text-gray-900' : 'text-gray-900'
+                            }`}>
+                              {tier.label}
+                            </h3>
+                            <p className={`text-sm mb-2 ${
+                              config.qualityTier === tier.id ? 'text-gray-700' : 'text-gray-600'
+                            }`}>
+                              {tier.description}
+                            </p>
+                            <p className="text-xs text-gray-500 italic">{tier.materialDetail}</p>
+                          </div>
+                          <div className="text-right ml-6">
+                            <div className="text-sm text-gray-600 mb-1">Price Range</div>
+                            <div className={`text-2xl font-black ${
+                              config.qualityTier === tier.id ? 'text-blue-600' : 'text-gray-900'
+                            }`}>
+                              {tier.priceMultiplier < 1 ? '$$' : tier.priceMultiplier === 1 ? '$$$' : '$$$$'}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Step 2: Size Selection */}
+            {step === 2 && (
            <div className={`space-y-6 transition-opacity duration-300 ${transitioning ? 'opacity-50' : 'opacity-100'}`}>
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold mb-3 text-gray-900">
@@ -243,7 +365,7 @@ export default function CustomBuilder() {
                     setTransitioning(true);
                     setConfig(prev => ({ ...prev, size: size.value }));
                     setTimeout(() => {
-                      setStep(2);
+                      setStep(3);
                       setTransitioning(false);
                     }, 400);
                   }}
@@ -294,7 +416,7 @@ export default function CustomBuilder() {
                       <span className={`text-3xl font-black ${
                         config.size === size.value ? 'text-gray-900' : 'text-gray-900'
                       }`}>
-                        ${size.price}
+                        ${config.qualityTier ? Math.round(size.price * QUALITY_TIERS.find(t => t.id === config.qualityTier).priceMultiplier) : size.price}
                       </span>
                     </div>
                   </div>
@@ -303,11 +425,16 @@ export default function CustomBuilder() {
             </div>
 
 
+                <div className="flex justify-center mt-6">
+                  <Button variant="outline" onClick={() => setStep(1)}>
+                    ← Back to Quality Selection
+                  </Button>
+                </div>
             </div>
           )}
 
-          {/* Step 2: Color Selection */}
-          {step === 2 && (
+          {/* Step 3: Color Selection */}
+          {step === 3 && (
             <Card>
               <CardHeader>
                 <div className="text-center mb-6">
@@ -356,14 +483,15 @@ export default function CustomBuilder() {
 
                     {/* First Set - Base-specific colors */}
                     <div className="mb-3">
-                      <p className="text-xs text-gray-600 mb-2 font-semibold">Primary Colors</p>
-                      <div className="grid grid-cols-3 gap-4">
-                        {PAINT_COLORS.filter(color => {
-                          if (!config.baseColor) return color.type === 'dark';
-                          const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
-                          if (!selectedBase) return color.type === 'dark';
-                          return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
-                        }).map((color) => (
+                     <p className="text-xs text-gray-600 mb-2 font-semibold">Primary Colors</p>
+                     <div className="grid grid-cols-3 gap-4">
+                       {getAvailablePaintColors().filter(color => {
+                         if (!config.baseColor) return color.type === 'dark' || color.type === 'both';
+                         const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
+                         if (!selectedBase) return color.type === 'dark' || color.type === 'both';
+                         if (color.type === 'both') return true;
+                         return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
+                       }).map((color) => (
                           <button
                             key={`primary-${color.name}-${color.hex}`}
                             onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
@@ -452,7 +580,7 @@ export default function CustomBuilder() {
                      <div className="mb-4">
                        <p className="text-xs text-gray-600 mb-2 font-semibold">Choose 2nd Paint Color</p>
                        <div className="grid grid-cols-3 gap-4">
-                         {PAINT_COLORS.filter(color => color.type === 'both').map((color, idx) => (
+                         {getAvailablePaintColors().filter(color => color.type === 'both').map((color, idx) => (
                            <button
                              key={`both-${color.name}-${color.hex}-${idx}`}
                              onClick={() => setConfig(prev => ({ 
@@ -483,11 +611,11 @@ export default function CustomBuilder() {
                   </div>
                 </div>
                 <div className="flex gap-3 mt-6">
-                   <Button variant="outline" onClick={() => setStep(1)}>
+                   <Button variant="outline" onClick={() => setStep(2)}>
                      Back
                    </Button>
                    <Button 
-                     onClick={() => setStep(3)} 
+                     onClick={() => setStep(4)} 
                      disabled={!config.baseColor || !config.paintColor}
                      title="Continue to design selection"
                      className="flex-1 border-4 border-gray-900 bg-white hover:bg-gray-50 text-gray-900 font-bold text-lg py-6 group relative disabled:opacity-50 disabled:cursor-not-allowed"
@@ -502,15 +630,15 @@ export default function CustomBuilder() {
                  </Card>
                  )}
 
-          {/* Step 3: Create Design & Confirm */}
-          {step === 3 && (
+          {/* Step 4: Create Design & Confirm */}
+          {step === 4 && (
             <Card>
             <CardHeader>
               <div className="flex items-center gap-3 mb-2">
-                <Button variant="outline" size="sm" onClick={() => setStep(2)}>
+                <Button variant="outline" size="sm" onClick={() => setStep(3)}>
                   ← Back
                 </Button>
-                <CardTitle className="flex-1">Step 3: Create Your Design & Confirm</CardTitle>
+                <CardTitle className="flex-1">Step 4: Create Your Design & Confirm</CardTitle>
               </div>
               <p className="text-sm text-gray-600 mt-2">
                 Design your rug and preview before adding to cart
@@ -568,7 +696,7 @@ export default function CustomBuilder() {
                 {/* Upload Mode */}
                 {designMode === 'upload' && (
                   <StencilCreator
-                    paintColor={PAINT_COLORS.find(c => c.name === config.paintColor)?.hex || '#000000'}
+                    paintColor={getAvailablePaintColors().find(c => c.name === config.paintColor)?.hex || '#000000'}
                     baseColor={BASE_COLORS.find(c => c.name === config.baseColor)?.hex || '#86cb92'}
                     onSaveStencil={(stencilUrl) => {
                       setConfig(prev => ({ ...prev, imageUrl: stencilUrl, previewUrl: stencilUrl }));
@@ -587,8 +715,8 @@ export default function CustomBuilder() {
                       setConfig(prev => ({ ...prev, numColors: count }));
                     }}
                     availableColors={[
-                      { name: config.paintColor, hex: PAINT_COLORS.find(c => c.name === config.paintColor)?.hex || '#000000' },
-                      ...(config.secondPaintColor ? [{ name: config.secondPaintColor, hex: PAINT_COLORS.find(c => c.name === config.secondPaintColor)?.hex }] : [])
+                      { name: config.paintColor, hex: getAvailablePaintColors().find(c => c.name === config.paintColor)?.hex || '#000000' },
+                      ...(config.secondPaintColor ? [{ name: config.secondPaintColor, hex: getAvailablePaintColors().find(c => c.name === config.secondPaintColor)?.hex }] : [])
                     ].filter(c => c.hex)}
                     size={config.size}
                   />
@@ -601,7 +729,7 @@ export default function CustomBuilder() {
                       <InteractiveRugPreview
                         designUrl={config.previewUrl}
                         baseColor={BASE_COLORS.find(c => c.name === config.baseColor)?.hex || '#ffffff'}
-                        paintColor={PAINT_COLORS.find(c => c.name === config.paintColor)?.hex || '#000000'}
+                        paintColor={getAvailablePaintColors().find(c => c.name === config.paintColor)?.hex || '#000000'}
                         size={config.size}
                       />
                       <p className="text-sm text-green-700 my-4">
@@ -610,6 +738,10 @@ export default function CustomBuilder() {
 
                         {/* Final Summary */}
                         <div className="bg-white rounded-lg p-4 mb-4 space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Quality:</span>
+                            <span className="font-semibold">{QUALITY_TIERS.find(t => t.id === config.qualityTier)?.label}</span>
+                          </div>
                           <div className="flex justify-between">
                             <span className="text-gray-600">Size:</span>
                             <span className="font-semibold">{SIZES.find(s => s.value === config.size)?.label}</span>
@@ -646,8 +778,8 @@ export default function CustomBuilder() {
                   </div>
                   <div className="text-xs text-gray-700 space-y-1">
                     <div className="flex justify-between">
-                      <span>{SIZES.find(s => s.value === config.size)?.label} Base:</span>
-                      <span className="font-semibold">${SIZES.find(s => s.value === config.size)?.price}</span>
+                      <span>{SIZES.find(s => s.value === config.size)?.label} ({QUALITY_TIERS.find(t => t.id === config.qualityTier)?.label}):</span>
+                      <span className="font-semibold">${config.qualityTier && config.size ? Math.round(SIZES.find(s => s.value === config.size)?.price * QUALITY_TIERS.find(t => t.id === config.qualityTier)?.priceMultiplier) : SIZES.find(s => s.value === config.size)?.price}</span>
                     </div>
                     {config.hasShading && (
                       <div className="flex justify-between">
