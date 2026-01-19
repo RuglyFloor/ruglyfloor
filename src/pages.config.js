@@ -1,5 +1,6 @@
 import About from './pages/About';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminDocuments from './pages/AdminDocuments';
 import AdminInbox from './pages/AdminInbox';
 import AdminLogin from './pages/AdminLogin';
 import AdminOrderDetail from './pages/AdminOrderDetail';
@@ -20,13 +21,13 @@ import Policies from './pages/Policies';
 import Shop from './pages/Shop';
 import Success from './pages/Success';
 import TrackOrder from './pages/TrackOrder';
-import AdminDocuments from './pages/AdminDocuments';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "About": About,
     "AdminDashboard": AdminDashboard,
+    "AdminDocuments": AdminDocuments,
     "AdminInbox": AdminInbox,
     "AdminLogin": AdminLogin,
     "AdminOrderDetail": AdminOrderDetail,
@@ -47,7 +48,6 @@ export const PAGES = {
     "Shop": Shop,
     "Success": Success,
     "TrackOrder": TrackOrder,
-    "AdminDocuments": AdminDocuments,
 }
 
 export const pagesConfig = {
