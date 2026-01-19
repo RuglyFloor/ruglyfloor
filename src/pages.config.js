@@ -23,6 +23,7 @@ import Shop from './pages/Shop';
 import Success from './pages/Success';
 import TrackOrder from './pages/TrackOrder';
 import SMSConsent from './pages/SMSConsent';
+import SMSComplianceSample from './pages/SMSComplianceSample';
 import __Layout from './Layout.jsx';
 
 
@@ -52,6 +53,7 @@ export const PAGES = {
     "Success": Success,
     "TrackOrder": TrackOrder,
     "SMSConsent": SMSConsent,
+    "SMSComplianceSample": SMSComplianceSample,
 }
 
 export const pagesConfig = {
