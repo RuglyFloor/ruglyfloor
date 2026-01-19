@@ -4,11 +4,24 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json();
-    const { orderId, customerEmail, customerName, newStatus } = body;
+    const { order_id, custom_message } = body;
 
-    if (!orderId || !customerEmail || !newStatus) {
-      return Response.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!order_id) {
+      return Response.json({ error: 'order_id is required' }, { status: 400 });
     }
+
+    const order = await base44.asServiceRole.entities.Order.get(order_id);
+    if (!order) {
+      return Response.json({ error: 'Order not found' }, { status: 404 });
+    }
+
+    const { customer_email: customerEmail, customer_name: customerName, status: newStatus, order_number } = order;
+
+    if (!customerEmail) {
+      return Response.json({ error: 'Customer email not found' }, { status: 400 });
+    }
+
+    const orderId = order_number || order_id.slice(0, 8);
 
     const statusMessages = {
       rug_ordered: 'Your order has been confirmed and production will begin shortly!',
@@ -20,10 +33,10 @@ Deno.serve(async (req) => {
     };
 
     const trackingUrl = `https://ruglyfloors.com/track?order=${orderId}`;
-    const message = statusMessages[newStatus] || `Your order status has been updated to: ${newStatus}`;
+    const message = custom_message || statusMessages[newStatus] || `Your order status has been updated to: ${newStatus}`;
 
     const emailBody = `
-Hi ${customerName},
+Hi ${customerName || 'Valued Customer'},
 
 ${message}
 

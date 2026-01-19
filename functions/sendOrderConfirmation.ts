@@ -4,16 +4,29 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json();
-    const { orderId, customerEmail, customerName, totalAmount, items } = body;
+    const { order_id } = body;
 
-    if (!orderId || !customerEmail) {
-      return Response.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!order_id) {
+      return Response.json({ error: 'order_id is required' }, { status: 400 });
+    }
+
+    const order = await base44.asServiceRole.entities.Order.get(order_id);
+    if (!order) {
+      return Response.json({ error: 'Order not found' }, { status: 404 });
+    }
+
+    const { customer_email: customerEmail, customer_name: customerName, total_amount: totalAmount, items, order_number } = order;
+
+    if (!customerEmail) {
+      return Response.json({ error: 'Customer email not found' }, { status: 400 });
     }
 
     const itemsList = items.map(item => `- ${item.name} (${item.size}): $${item.price}`).join('\n');
 
+    const orderId = order_number || order_id.slice(0, 8);
+
     const emailBody = `
-Hi ${customerName},
+Hi ${customerName || 'Valued Customer'},
 
 Thank you for your order! We're excited to bring your custom rug to life.
 
