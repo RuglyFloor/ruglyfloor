@@ -149,6 +149,15 @@ Deno.serve(async (req) => {
       referrer_source: referrerSource
     });
 
+    // Log order to Notion
+    try {
+      await base44.asServiceRole.functions.invoke('logOrderToNotion', {
+        orderData: order
+      });
+    } catch (notionError) {
+      console.error('Failed to log to Notion (non-critical):', notionError);
+    }
+
     // Create Stripe checkout session
     const origin = req.headers.get('origin') || 'https://ruglyfloors.com';
     const session = await stripe.checkout.sessions.create({
