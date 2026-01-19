@@ -6,6 +6,7 @@ import AdminLogin from './pages/AdminLogin';
 import AdminOrderDetail from './pages/AdminOrderDetail';
 import AdminOrders from './pages/AdminOrders';
 import AdminPortal from './pages/AdminPortal';
+import AdminPricing from './pages/AdminPricing';
 import AdminProducts from './pages/AdminProducts';
 import AdminSEO from './pages/AdminSEO';
 import Blog from './pages/Blog';
@@ -21,7 +22,6 @@ import Policies from './pages/Policies';
 import Shop from './pages/Shop';
 import Success from './pages/Success';
 import TrackOrder from './pages/TrackOrder';
-import AdminPricing from './pages/AdminPricing';
 import __Layout from './Layout.jsx';
 
 
@@ -34,6 +34,7 @@ export const PAGES = {
     "AdminOrderDetail": AdminOrderDetail,
     "AdminOrders": AdminOrders,
     "AdminPortal": AdminPortal,
+    "AdminPricing": AdminPricing,
     "AdminProducts": AdminProducts,
     "AdminSEO": AdminSEO,
     "Blog": Blog,
@@ -49,7 +50,6 @@ export const PAGES = {
     "Shop": Shop,
     "Success": Success,
     "TrackOrder": TrackOrder,
-    "AdminPricing": AdminPricing,
 }
 
 export const pagesConfig = {

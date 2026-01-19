@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import SEOHead from '../components/seo/SEOHead';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ export default function Cart() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [designInstructions, setDesignInstructions] = useState('');
+  const [smsConsent, setSmsConsent] = useState(false);
 
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem('rugly_cart') || '[]');
@@ -53,6 +55,11 @@ export default function Cart() {
     const referrerSource = sessionStorage.getItem('rugly_referrer') || document.referrer || 'direct';
     if (!customerInfo.name || !customerInfo.email || !customerInfo.street || !customerInfo.city) {
       alert('Please fill in all required fields');
+      return;
+    }
+
+    if (customerInfo.phone && !smsConsent) {
+      alert('Please consent to receive text messages if you provide a phone number');
       return;
     }
 
@@ -224,8 +231,28 @@ export default function Cart() {
                   <Input 
                     value={customerInfo.phone}
                     onChange={(e) => setCustomerInfo(prev => ({ ...prev, phone: e.target.value }))}
+                    placeholder="(555) 123-4567"
                   />
                 </div>
+                
+                {/* SMS Consent */}
+                {customerInfo.phone && (
+                  <div className="flex items-start space-x-2 p-3 bg-blue-50 border border-blue-200 rounded">
+                    <Checkbox 
+                      id="sms-consent" 
+                      checked={smsConsent}
+                      onCheckedChange={setSmsConsent}
+                    />
+                    <div className="flex-1">
+                      <label
+                        htmlFor="sms-consent"
+                        className="text-xs leading-tight cursor-pointer"
+                      >
+                        By checking this box, I consent to receive text messages from Rugly Floors at the number provided, including messages sent by autodialer. Consent is not a condition of purchase. Message frequency varies. Message and data rates may apply. Reply STOP to cancel or HELP for help.
+                      </label>
+                    </div>
+                  </div>
+                )}
                 <div>
                   <Label>Street Address *</Label>
                   <Input 

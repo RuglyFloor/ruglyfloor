@@ -94,6 +94,89 @@ export default function Policies() {
           </CardContent>
         </Card>
 
+        {/* SMS/Text Messaging Policy */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>SMS/Text Messaging Policy</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 text-gray-700">
+            <p className="font-semibold">Effective Date: January 19, 2026</p>
+            
+            <div>
+              <h3 className="font-semibold text-lg mb-2">Consent to Receive Text Messages</h3>
+              <p>
+                By providing your phone number and consenting to receive text messages from Rugly Floors (Homesteads, LLC), 
+                you agree to receive text messages at the phone number provided. Messages may be sent using an autodialer or prerecorded voice. 
+                Consent is not required as a condition of purchase.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-lg mb-2">Message Frequency & Content</h3>
+              <p>
+                Message frequency varies depending on your order status and communications. You may receive:
+              </p>
+              <ul className="list-disc ml-6 mt-2 space-y-1">
+                <li>Order confirmation messages</li>
+                <li>Production status updates</li>
+                <li>Shipping and delivery notifications</li>
+                <li>Customer service responses</li>
+                <li>Occasional promotional messages (if opted in)</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-lg mb-2">Message & Data Rates</h3>
+              <p>
+                Message and data rates may apply based on your mobile carrier's plan. Please contact your wireless carrier for details.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-lg mb-2">How to Opt-Out</h3>
+              <p>
+                You may opt-out of receiving text messages at any time by replying <strong>STOP</strong> to any message. 
+                After opting out, you will receive one final confirmation message. You may also contact us at (517) 777-8474 or 
+                contact@ruglyfloor.com to be removed from our text messaging list.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-lg mb-2">Help & Support</h3>
+              <p>
+                For help or questions about text messages, reply <strong>HELP</strong> to any message, or contact us at:
+              </p>
+              <ul className="list-disc ml-6 mt-2 space-y-1">
+                <li>Phone: (517) 777-8474</li>
+                <li>Email: contact@ruglyfloor.com</li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-lg mb-2">Supported Carriers</h3>
+              <p>
+                Supported carriers include AT&T, T-Mobile, Verizon, Sprint, and most major U.S. carriers. 
+                Message delivery is subject to carrier availability and service.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-lg mb-2">Privacy</h3>
+              <p>
+                Your phone number and text message data are subject to our Privacy Policy. 
+                We will never sell or share your phone number with third parties for marketing purposes.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-lg mb-2">Age Restriction</h3>
+              <p>
+                You must be 18 years or older to consent to receive text messages from Rugly Floors.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Terms of Service */}
         <Card className="mb-6">
           <CardHeader>
@@ -162,6 +245,7 @@ export default function Policies() {
                 <li>Shipping address</li>
                 <li>Payment information (processed securely through Stripe)</li>
                 <li>Design files and preferences you provide</li>
+                <li>SMS opt-in status (if you consent to text messages)</li>
               </ul>
             </div>
 
@@ -174,6 +258,7 @@ export default function Policies() {
                 <li>Process and fulfill your order</li>
                 <li>Communicate order updates and shipping information</li>
                 <li>Provide customer support</li>
+                <li>Send text message updates (only if you've opted in)</li>
                 <li>Improve our products and services</li>
               </ul>
             </div>
