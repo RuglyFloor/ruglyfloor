@@ -40,7 +40,7 @@ export default function Orders() {
   return (
     <div className="min-h-screen py-12 px-6">
       <SEOHead
-        title="Rugly Floor - My Orders"
+        title="Rugly Floors - My Orders"
         description="Track your custom rug orders and view order history."
         url="/orders"
       />

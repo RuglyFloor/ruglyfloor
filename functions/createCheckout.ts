@@ -72,36 +72,22 @@ Deno.serve(async (req) => {
 
     const shippingCost = calculateShipping(cart);
 
-    // Create line items for Stripe
-    const lineItems = cart.map(item => ({
+    // Create deposit line item ($100 deposit instead of full price)
+    const DEPOSIT_AMOUNT = 100;
+    const lineItems = [{
       price_data: {
         currency: 'usd',
         product_data: {
-          name: item.name,
-          description: item.type === 'custom' 
-            ? `Custom ${item.size} rug - ${item.baseColor} base with ${item.paintColor} paint${item.is3D ? ' (3-D Effect)' : ''}` 
-            : item.description || '',
-          images: item.previewUrl ? [item.previewUrl] : [],
+          name: 'Custom Rug Deposit',
+          description: `Deposit for ${cart.length} custom rug${cart.length > 1 ? 's' : ''} (Balance due before shipping)`,
+          images: cart[0]?.previewUrl ? [cart[0].previewUrl] : [],
         },
-        unit_amount: Math.round(item.price * 100), // Convert to cents
+        unit_amount: DEPOSIT_AMOUNT * 100, // $100 in cents
       },
       quantity: 1,
-    }));
+    }];
 
-    // Add shipping line item if applicable
-    if (shippingCost > 0) {
-      lineItems.push({
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: 'Shipping',
-            description: 'Ground shipping within the US',
-          },
-          unit_amount: shippingCost * 100,
-        },
-        quantity: 1,
-      });
-    }
+    // Note: Shipping will be charged with the balance due
 
     // Create order record first - map cart items to order item format
     const orderNumber = 'RUG-' + Date.now();
