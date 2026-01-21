@@ -1062,27 +1062,44 @@ export default function CustomBuilder() {
                     </div>
 
                     {/* Second Paint Color Section */}
-                    <div className="border-t-2 border-gray-200 pt-6">
-                      <div className="flex items-center justify-between mb-3">
-                        <Label className="text-lg">2nd Paint Color (Optional)</Label>
-                        <button
-                          onClick={() => setConfig(prev => ({ 
-                            ...prev, 
-                            hasSecondColor: !prev.hasSecondColor,
-                            secondPaintColor: prev.hasSecondColor ? '' : prev.secondPaintColor
-                          }))}
-                          className={`px-4 py-2 rounded-lg border-2 font-semibold transition-all ${
-                            config.hasSecondColor ? 'border-green-600 bg-green-50 text-green-600' : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
-                          }`}
-                        >
-                          {config.hasSecondColor ? '✓ Added' : 'Add'} +${config.size ? getSecondColorFee(config.size) : 30}
-                        </button>
+                    <div className="border-t-4 border-gray-900 pt-8 mt-8">
+                      <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg mb-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <div>
+                            <Label className="text-xl font-bold text-gray-900">Want a 2nd Paint Color?</Label>
+                            <p className="text-sm text-gray-600 mt-1">Add another color to your design for more detail</p>
+                          </div>
+                          <button
+                            onClick={() => setConfig(prev => ({ 
+                              ...prev, 
+                              hasSecondColor: !prev.hasSecondColor,
+                              secondPaintColor: prev.hasSecondColor ? '' : prev.secondPaintColor
+                            }))}
+                            className={`px-6 py-3 rounded-lg border-2 font-bold transition-all text-lg ${
+                              config.hasSecondColor ? 'border-green-600 bg-green-600 text-white shadow-lg scale-105' : 'border-gray-900 bg-white text-gray-900 hover:bg-gray-900 hover:text-white'
+                            }`}
+                          >
+                            {config.hasSecondColor ? '✓ 2nd Color Added' : 'Add 2nd Color'} +${config.size ? getSecondColorFee(config.size) : 30}
+                          </button>
+                        </div>
                       </div>
 
                       {config.hasSecondColor && (
-                        <div className="space-y-6">
-                          <div>
-                            <p className="text-sm font-semibold text-gray-700 mb-3">Group 1</p>
+                        <div className="space-y-8 p-6 bg-green-50 rounded-lg border-2 border-green-200">
+                          <div className="text-center mb-4">
+                            <p className="text-lg font-bold text-green-900">Select Your Second Paint Color</p>
+                            <p className="text-sm text-gray-600">This will be applied on top of your first color</p>
+                          </div>
+
+                          <div className="bg-white p-6 rounded-lg">
+                            <div className="flex items-center justify-between mb-4">
+                              <p className="text-sm font-bold text-gray-900 uppercase tracking-wide">Group 1 Colors</p>
+                              {config.secondPaintColor && PAINT_COLORS_GROUP_1.find(c => c.name === config.secondPaintColor) && (
+                                <span className="text-xs bg-green-100 text-green-800 px-3 py-1 rounded-full font-semibold">
+                                  Selected: {config.secondPaintColor}
+                                </span>
+                              )}
+                            </div>
                             <div className="grid grid-cols-4 gap-4">
                               {PAINT_COLORS_GROUP_1.map((color) => (
                                 <button
@@ -1092,21 +1109,30 @@ export default function CustomBuilder() {
                                     secondPaintColor: color.name
                                   }))}
                                   className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
-                                    config.secondPaintColor === color.name ? 'border-green-600 bg-green-50' : 'border-gray-200 hover:border-gray-300'
+                                    config.secondPaintColor === color.name ? 'border-green-600 bg-green-50 shadow-lg scale-110' : 'border-gray-200 hover:border-gray-400'
                                   }`}
                                 >
                                   <div 
                                     className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
                                     style={{ backgroundColor: color.hex }}
                                   />
-                                  <span className="text-xs text-center">{color.name}</span>
+                                  <span className="text-xs text-center font-medium">{color.name}</span>
                                 </button>
                               ))}
                             </div>
                           </div>
 
-                          <div>
-                            <p className="text-sm font-semibold text-gray-700 mb-3">Group 2</p>
+                          <div className="h-px bg-gray-300"></div>
+
+                          <div className="bg-white p-6 rounded-lg">
+                            <div className="flex items-center justify-between mb-4">
+                              <p className="text-sm font-bold text-gray-900 uppercase tracking-wide">Group 2 Colors</p>
+                              {config.secondPaintColor && PAINT_COLORS_GROUP_2.find(c => c.name === config.secondPaintColor) && (
+                                <span className="text-xs bg-green-100 text-green-800 px-3 py-1 rounded-full font-semibold">
+                                  Selected: {config.secondPaintColor}
+                                </span>
+                              )}
+                            </div>
                             <div className="grid grid-cols-4 gap-4">
                               {PAINT_COLORS_GROUP_2.map((color) => (
                                 <button
@@ -1116,14 +1142,14 @@ export default function CustomBuilder() {
                                     secondPaintColor: color.name
                                   }))}
                                   className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
-                                    config.secondPaintColor === color.name ? 'border-green-600 bg-green-50' : 'border-gray-200 hover:border-gray-300'
+                                    config.secondPaintColor === color.name ? 'border-green-600 bg-green-50 shadow-lg scale-110' : 'border-gray-200 hover:border-gray-400'
                                   }`}
                                 >
                                   <div 
                                     className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
                                     style={{ backgroundColor: color.hex }}
                                   />
-                                  <span className="text-xs text-center">{color.name}</span>
+                                  <span className="text-xs text-center font-medium">{color.name}</span>
                                 </button>
                               ))}
                             </div>
