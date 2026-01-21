@@ -19,11 +19,11 @@ import Home from './pages/Home';
 import NotionSync from './pages/NotionSync';
 import Orders from './pages/Orders';
 import Policies from './pages/Policies';
+import SMSComplianceSample from './pages/SMSComplianceSample';
+import SMSConsent from './pages/SMSConsent';
 import Shop from './pages/Shop';
 import Success from './pages/Success';
 import TrackOrder from './pages/TrackOrder';
-import SMSConsent from './pages/SMSConsent';
-import SMSComplianceSample from './pages/SMSComplianceSample';
 import __Layout from './Layout.jsx';
 
 
@@ -49,11 +49,11 @@ export const PAGES = {
     "NotionSync": NotionSync,
     "Orders": Orders,
     "Policies": Policies,
+    "SMSComplianceSample": SMSComplianceSample,
+    "SMSConsent": SMSConsent,
     "Shop": Shop,
     "Success": Success,
     "TrackOrder": TrackOrder,
-    "SMSConsent": SMSConsent,
-    "SMSComplianceSample": SMSComplianceSample,
 }
 
 export const pagesConfig = {

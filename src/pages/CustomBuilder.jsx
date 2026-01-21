@@ -33,10 +33,10 @@ const QUALITY_TIERS = [
   },
   { 
     id: 'highend', 
-    label: 'High-End', 
-    description: 'Premium hand-knotted wool/silk with high KPSI for intricate designs and luxury',
+    label: 'Commission a Rugly', 
+    description: 'Ruglys are the cat\'s meow—you tell us what you\'re thinking and we make it happen with no limits',
     priceMultiplier: 2.5,
-    materialDetail: 'Hand-knotted wool/silk, museum-quality'
+    materialDetail: 'Custom hand-painted, limitless possibilities'
   }
 ];
 
