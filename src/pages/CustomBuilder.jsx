@@ -1171,7 +1171,7 @@ export default function CustomBuilder() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                   <button
                     onClick={() => setDesignMode('library')}
-                    className={`w-full p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center h-full ${
+                    className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center min-h-[160px] ${
                       designMode === 'library' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
@@ -1181,7 +1181,7 @@ export default function CustomBuilder() {
                   </button>
                   <button
                     onClick={() => setDesignMode('draw')}
-                    className={`w-full p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center h-full ${
+                    className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center min-h-[160px] ${
                       designMode === 'draw' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
@@ -1191,7 +1191,7 @@ export default function CustomBuilder() {
                   </button>
                   <button
                     onClick={() => setDesignMode('upload')}
-                    className={`w-full p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center h-full ${
+                    className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center min-h-[160px] ${
                       designMode === 'upload' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
