@@ -46,7 +46,7 @@ const QUALITY_TIERS = [
     priceMultiplier: 2.5,
     materialDetail: 'Premium materials, custom hand-painted',
     lifespan: 'Premium durability',
-    washable: true,
+    washable: false,
     customization: 'Limitless possibilities',
     priceRange: '$$$$'
   }
