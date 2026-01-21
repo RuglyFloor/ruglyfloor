@@ -85,8 +85,7 @@ const BASE_COLORS = [
   { name: 'Khaki', hex: '#c3b091', type: 'light' }
 ];
 
-const PAINT_COLORS = [
-  // First set - Only for light base rugs
+const PAINT_COLORS_GROUP_1 = [
   { name: 'Sun Yellow', hex: '#ffd700', type: 'dark' },
   { name: 'Bright Orange', hex: '#ff4500', type: 'dark' },
   { name: 'Red', hex: '#dc143c', type: 'dark' },
@@ -94,8 +93,10 @@ const PAINT_COLORS = [
   { name: 'Blue', hex: '#2e5090', type: 'dark' },
   { name: 'Bright Green', hex: '#00a651', type: 'dark' },
   { name: 'Black', hex: '#000000', type: 'dark' },
-  { name: 'White', hex: '#ffffff', type: 'dark' },
-  // Second set - Works with both light and dark base rugs
+  { name: 'White', hex: '#ffffff', type: 'dark' }
+];
+
+const PAINT_COLORS_GROUP_2 = [
   { name: 'Emerald Green', hex: '#046307', type: 'both' },
   { name: 'Crimson', hex: '#c8102e', type: 'both' },
   { name: 'Purple', hex: '#5b3a70', type: 'both' },
@@ -103,6 +104,8 @@ const PAINT_COLORS = [
   { name: 'Hansa Yellow', hex: '#ffd300', type: 'both' },
   { name: 'Vermillion', hex: '#ff4500', type: 'both' }
 ];
+
+const PAINT_COLORS = [...PAINT_COLORS_GROUP_1, ...PAINT_COLORS_GROUP_2];
 
 // Limited colors for mid-range and high-end tiers
 const LIMITED_PAINT_COLORS = [
@@ -976,25 +979,54 @@ export default function CustomBuilder() {
                       </div>
 
                       {config.hasSecondColor && (
-                        <div className="grid grid-cols-4 gap-4">
-                          {getAvailablePaintColors().map((color) => (
-                            <button
-                              key={`second-${color.name}-${color.hex}`}
-                              onClick={() => setConfig(prev => ({ 
-                                ...prev, 
-                                secondPaintColor: color.name
-                              }))}
-                              className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
-                                config.secondPaintColor === color.name ? 'border-green-600 bg-green-50' : 'border-gray-200 hover:border-gray-300'
-                              }`}
-                            >
-                              <div 
-                                className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
-                                style={{ backgroundColor: color.hex }}
-                              />
-                              <span className="text-xs text-center">{color.name}</span>
-                            </button>
-                          ))}
+                        <div className="space-y-6">
+                          <div>
+                            <p className="text-sm font-semibold text-gray-700 mb-3">Group 1</p>
+                            <div className="grid grid-cols-4 gap-4">
+                              {PAINT_COLORS_GROUP_1.map((color) => (
+                                <button
+                                  key={`second-g1-${color.name}-${color.hex}`}
+                                  onClick={() => setConfig(prev => ({ 
+                                    ...prev, 
+                                    secondPaintColor: color.name
+                                  }))}
+                                  className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                                    config.secondPaintColor === color.name ? 'border-green-600 bg-green-50' : 'border-gray-200 hover:border-gray-300'
+                                  }`}
+                                >
+                                  <div 
+                                    className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
+                                    style={{ backgroundColor: color.hex }}
+                                  />
+                                  <span className="text-xs text-center">{color.name}</span>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div>
+                            <p className="text-sm font-semibold text-gray-700 mb-3">Group 2</p>
+                            <div className="grid grid-cols-4 gap-4">
+                              {PAINT_COLORS_GROUP_2.map((color) => (
+                                <button
+                                  key={`second-g2-${color.name}-${color.hex}`}
+                                  onClick={() => setConfig(prev => ({ 
+                                    ...prev, 
+                                    secondPaintColor: color.name
+                                  }))}
+                                  className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                                    config.secondPaintColor === color.name ? 'border-green-600 bg-green-50' : 'border-gray-200 hover:border-gray-300'
+                                  }`}
+                                >
+                                  <div 
+                                    className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
+                                    style={{ backgroundColor: color.hex }}
+                                  />
+                                  <span className="text-xs text-center">{color.name}</span>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
                         </div>
                       )}
                     </div>
