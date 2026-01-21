@@ -892,17 +892,88 @@ export default function CustomBuilder() {
                     </div>
                   </button>
 
+                  {/* Add Second Color */}
+                  <div className={`border-2 rounded-lg transition-all ${
+                    config.hasSecondColor ? 'border-yellow-600 bg-yellow-50' : 'border-gray-300 bg-white'
+                  }`}>
+                    <button
+                      onClick={() => {
+                        setConfig(prev => ({ ...prev, hasSecondColor: !prev.hasSecondColor }));
+                      }}
+                      className="w-full p-6 text-left"
+                    >
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <div className="font-semibold text-lg">Add 2nd Color</div>
+                          <div className="text-sm text-gray-600">Paint with a second color</div>
+                        </div>
+                        <div className={`text-xl font-bold ${config.hasSecondColor ? 'text-yellow-600' : 'text-gray-900'}`}>
+                          +${config.size ? getSecondColorFee(config.size) : 30}
+                        </div>
+                      </div>
+                    </button>
+
+                    {config.hasSecondColor && (
+                      <div className="px-6 pb-6 space-y-4">
+                        <div className="text-center font-semibold text-sm">
+                          {config.secondPaintColor ? `✓ Selected: ${config.secondPaintColor}` : 'Select a second color:'}
+                        </div>
+                        
+                        <div className="grid grid-cols-4 gap-3">
+                          {PAINT_COLORS_GROUP_1.map((color) => (
+                            <button
+                              key={color.name}
+                              onClick={() => setConfig(prev => ({ ...prev, secondPaintColor: color.name }))}
+                              className={`p-2 rounded-lg border-2 transition-all ${
+                                config.secondPaintColor === color.name 
+                                  ? 'border-yellow-600 bg-yellow-100 ring-2 ring-yellow-400' 
+                                  : 'border-gray-300 hover:border-yellow-400'
+                              }`}
+                            >
+                              <div 
+                                className="w-full aspect-square rounded-full border-2 border-white shadow-md mb-1"
+                                style={{ backgroundColor: color.hex }}
+                              />
+                              <div className="text-xs text-center font-medium">{color.name}</div>
+                            </button>
+                          ))}
+                        </div>
+
+                        <div className="grid grid-cols-4 gap-3">
+                          {PAINT_COLORS_GROUP_2.map((color) => (
+                            <button
+                              key={color.name}
+                              onClick={() => setConfig(prev => ({ ...prev, secondPaintColor: color.name }))}
+                              className={`p-2 rounded-lg border-2 transition-all ${
+                                config.secondPaintColor === color.name 
+                                  ? 'border-yellow-600 bg-yellow-100 ring-2 ring-yellow-400' 
+                                  : 'border-gray-300 hover:border-yellow-400'
+                              }`}
+                            >
+                              <div 
+                                className="w-full aspect-square rounded-full border-2 border-white shadow-md mb-1"
+                                style={{ backgroundColor: color.hex }}
+                              />
+                              <div className="text-xs text-center font-medium">{color.name}</div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   <button
                     onClick={() => setStep(4)}
-                    className="w-full p-6 rounded-lg border-2 border-green-600 bg-green-50 hover:bg-green-100 transition-all text-left"
+                    disabled={config.hasSecondColor && !config.secondPaintColor}
+                    className="w-full p-6 rounded-lg border-2 border-green-600 bg-green-50 hover:bg-green-100 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <div className="flex justify-between items-center">
                       <div>
-                        <div className="font-semibold text-lg">2nd Stencil Design</div>
-                        <div className="text-sm text-gray-600">Add another design layer</div>
+                        <div className="font-semibold text-lg">Continue to Design</div>
+                        <div className="text-sm text-gray-600">Create your rug design</div>
                       </div>
                       <div className="text-xl font-bold text-green-600">
-                        Continue →
+                        →
                       </div>
                     </div>
                   </button>
