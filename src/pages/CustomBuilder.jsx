@@ -22,7 +22,7 @@ const QUALITY_TIERS = [
     label: 'Budget Crugly', 
     description: 'Synthetic but effective in covering up floors, creating a cool effect, dorm rooms, kids love it. Can be gently machine washed.',
     priceMultiplier: 0.7,
-    materialDetail: 'Durable synthetic base'
+    materialDetail: 'Synthetic, thinner non-slip floor covering that looks great, lasts 2 years with high traffic, 20 with no on'
   },
   { 
     id: 'good', 
