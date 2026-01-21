@@ -78,6 +78,7 @@ export default function InteractiveRugPreview({
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
+      console.log('Image loaded successfully:', designUrl);
       // Draw design directly on rug
       const aspectRatio = img.width / img.height;
       let drawWidth = rugWidth * 0.8;
@@ -102,10 +103,19 @@ export default function InteractiveRugPreview({
         ctx.fillRect(rugX, rugY + i, rugWidth, 1);
       }
     };
-    img.onerror = () => {
-      console.error('Failed to load design image:', designUrl);
+    img.onerror = (e) => {
+      console.error('Failed to load design image:', designUrl, e);
+      // Show error state on canvas
+      ctx.fillStyle = '#fee';
+      ctx.fillRect(rugX, rugY, rugWidth, rugHeight);
+      ctx.fillStyle = '#c00';
+      ctx.font = '16px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Failed to load image', rugX + rugWidth/2, rugY + rugHeight/2);
     };
-    img.src = designUrl + '?t=' + Date.now(); // Cache bust
+    
+    // Try loading without cache bust first
+    img.src = designUrl;
   }, [designUrl, baseColor, paintColor, opacity, size, placeholder]);
 
   return (

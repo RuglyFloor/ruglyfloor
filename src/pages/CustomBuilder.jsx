@@ -1307,52 +1307,36 @@ export default function CustomBuilder() {
                   />
                 )}
 
-                {config.previewUrl && (
-                  <div className="space-y-4">
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                      <Label className="block mb-2 font-semibold text-green-900">✨ Your Custom Rug Preview</Label>
-                      <InteractiveRugPreview
-                        designUrl={config.previewUrl}
-                        baseColor={BASE_COLORS.find(c => c.name === config.baseColor)?.hex || '#ffffff'}
-                        paintColor={getAvailablePaintColors().find(c => c.name === config.paintColor)?.hex || '#000000'}
-                        size={config.size}
-                      />
-                      <p className="text-sm text-green-700 my-4">
-                        Real-time preview • Colors and design update instantly
-                      </p>
-
-                        {/* Final Summary */}
-                        <div className="bg-white rounded-lg p-4 mb-4 space-y-2 text-sm">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Quality:</span>
-                            <span className="font-semibold">{QUALITY_TIERS.find(t => t.id === config.qualityTier)?.label}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Size:</span>
-                            <span className="font-semibold">{SIZES.find(s => s.value === config.size)?.label}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Base Color:</span>
-                            <span className="font-semibold">{config.baseColor}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Paint Colors:</span>
-                            <span className="font-semibold">{config.paintColor}{config.secondPaintColor ? `, ${config.secondPaintColor}` : ''}</span>
-                          </div>
-                        </div>
-
-                        <Button
-                          onClick={handleAddToCart}
-                          className="w-full border-4 border-gray-900 bg-white hover:bg-gray-50 text-gray-900 font-bold text-lg py-6 group relative"
-                          title="Add this custom rug to your shopping cart"
-                        >
-                          Add to Cart - ${currentPrice()}
-                          <span className="absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                            Adds this rug to your cart • You can checkout or keep designing
-                          </span>
-                        </Button>
+                {config.imageUrl && (
+                  <div className="bg-green-50 border-2 border-green-500 rounded-lg p-6 mt-6">
+                    <Label className="block mb-4 font-bold text-green-900 text-xl text-center">✨ Your Custom Rug Preview</Label>
+                    
+                    {/* Final Summary */}
+                    <div className="bg-white rounded-lg p-4 mb-4 space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Quality:</span>
+                        <span className="font-semibold">{QUALITY_TIERS.find(t => t.id === config.qualityTier)?.label}</span>
                       </div>
-                    )}
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Size:</span>
+                        <span className="font-semibold">{SIZES.find(s => s.value === config.size)?.label}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Base Color:</span>
+                        <span className="font-semibold">{config.baseColor}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Paint Colors:</span>
+                        <span className="font-semibold">{config.paintColor}{config.secondPaintColor ? `, ${config.secondPaintColor}` : ''}</span>
+                      </div>
+                    </div>
+
+                    <Button
+                      onClick={handleAddToCart}
+                      className="w-full border-4 border-gray-900 bg-white hover:bg-gray-50 text-gray-900 font-bold text-xl py-8"
+                    >
+                      Add to Cart - ${currentPrice()}
+                    </Button>
                   </div>
                 )}
 
@@ -1396,7 +1380,7 @@ export default function CustomBuilder() {
 
         </div>
 
-        {step >= 4 && (
+        {step >= 4 && config.imageUrl && (
           <div className="hidden lg:block sticky top-6 self-start">
             <BuilderSidebar
               step={step}
