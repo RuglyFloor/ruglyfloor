@@ -222,15 +222,8 @@ export default function CustomBuilder() {
   };
 
   const getAvailablePaintColors = () => {
-    if (!config.qualityTier) return PAINT_COLORS;
-    
-    // Budget tier gets all colors
-    if (config.qualityTier === 'budget') {
-      return PAINT_COLORS;
-    }
-    
-    // Mid-range and high-end get limited colors
-    return LIMITED_PAINT_COLORS;
+    // All tiers get all paint colors - only base rug colors are limited for Standard Crugly
+    return PAINT_COLORS;
   };
 
   return (
