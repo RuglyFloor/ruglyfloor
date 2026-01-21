@@ -19,17 +19,17 @@ import { useSEO } from '../components/seo/useSEO';
 const QUALITY_TIERS = [
   { 
     id: 'budget', 
-    label: 'Budget Friendly', 
-    description: 'Affordable synthetics (polyester, nylon) and natural fibers (jute, sisal) for high traffic areas',
+    label: 'Budget Crugly', 
+    description: 'Synthetic but effective in covering up floors, creating a cool effect, dorm rooms, kids love it. Can be gently machine washed.',
     priceMultiplier: 0.7,
-    materialDetail: 'Durable synthetic or natural fiber base'
+    materialDetail: 'Durable synthetic base'
   },
   { 
     id: 'good', 
-    label: 'Good Rug', 
-    description: 'Mid-range wool blends offering quality and value',
+    label: 'Crugly', 
+    description: 'Expect the same life-span as any ordinary rug.',
     priceMultiplier: 1.0,
-    materialDetail: 'Premium wool blend construction'
+    materialDetail: 'Standard rug construction'
   },
   { 
     id: 'highend', 
