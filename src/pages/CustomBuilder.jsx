@@ -311,7 +311,26 @@ export default function CustomBuilder() {
                                 Create Your Own & See It Now!
                               </div>
                             )}
-                            <div className="font-bold text-xl text-gray-900 mt-2">{tier.label}</div>
+                            <button
+                              onClick={() => {
+                                if (tier.id === 'highend') {
+                                  navigate(createPageUrl('Commission'));
+                                } else {
+                                  setSelectedItem(tier.id);
+                                  setTransitioning(true);
+                                  setConfig(prev => ({ ...prev, qualityTier: tier.id }));
+                                  setTimeout(() => {
+                                    setStep(2);
+                                    setTransitioning(false);
+                                    setSelectedItem(null);
+                                  }, 700);
+                                }
+                              }}
+                              disabled={transitioning}
+                              className="font-bold text-xl text-gray-900 mt-2 hover:text-blue-600 transition-colors cursor-pointer"
+                            >
+                              {tier.label}
+                            </button>
                           </th>
                         ))}
                       </tr>
