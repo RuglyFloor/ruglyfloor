@@ -376,6 +376,30 @@ export default function CustomBuilder() {
                           </td>
                         ))}
                       </tr>
+                      <tr className="border-b border-gray-200 bg-gray-50">
+                        <td className="p-4 font-medium text-gray-700">Time before it's on your floor</td>
+                        {QUALITY_TIERS.map((tier) => (
+                          <td key={tier.id} className={`p-4 text-center text-sm ${
+                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
+                          }`}>
+                            {tier.id === 'budget' && (
+                              <div>
+                                <div className="font-semibold text-gray-900">10-14 days</div>
+                                <div className="text-green-600 font-bold mt-1">FREE SHIPPING!</div>
+                              </div>
+                            )}
+                            {tier.id === 'good' && (
+                              <div>
+                                <div className="font-semibold text-gray-900">10-20 days</div>
+                                <div className="text-gray-600 mt-1">Flat rate shipping</div>
+                              </div>
+                            )}
+                            {tier.id === 'highend' && (
+                              <div className="font-semibold text-gray-900">2-4 weeks</div>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
                       <tr className="border-b-2 border-gray-300 bg-gray-50">
                         <td className="p-4 font-medium text-gray-700">Starting Price</td>
                         {QUALITY_TIERS.map((tier) => (
