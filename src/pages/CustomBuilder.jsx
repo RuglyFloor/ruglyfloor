@@ -299,7 +299,7 @@ export default function CustomBuilder() {
                 </div>
 
                 {/* Comparison Table */}
-                <div className="max-w-6xl mx-auto overflow-x-auto">
+                <div className="max-w-6xl mx-auto overflow-x-auto pt-6">
                   <table className="w-full border-collapse">
                     <thead>
                       <tr className="border-b-2 border-gray-300">
