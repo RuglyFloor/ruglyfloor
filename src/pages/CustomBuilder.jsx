@@ -661,331 +661,159 @@ export default function CustomBuilder() {
             </div>
           )}
 
-          {/* Step 3.5: Paint Color Selection */}
-          {step === 3.5 && (
+
+
+          {/* Step 3: All Color Selections */}
+          {step === 3 && (
             <Card>
               <CardHeader>
                 <div className="text-center mb-6">
-                  <h2 className="text-3xl font-bold mb-3 text-gray-900">
-                    Choose 1st Paint Color
-                  </h2>
-                  <p className="text-gray-600 text-lg">Select the paint color for your design</p>
+                  <h2 className="text-3xl font-bold mb-3 text-gray-900">Choose Your Colors</h2>
+                  <p className="text-gray-600 text-lg">Select base rug color, paint colors, and optional add-ons</p>
                 </div>
               </CardHeader>
-              <CardContent>
-                {/* Floating Selections Display */}
-                <div className="flex justify-center gap-4 mb-8">
-                  {floatingSelections.map((sel, idx) => (
-                    <motion.div
-                      key={idx}
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      className="relative"
-                    >
-                      <div 
-                        className="w-20 h-20 rounded-lg border-4 border-white shadow-2xl"
-                        style={{ backgroundColor: sel.color }}
-                      />
-                      <div className="text-xs text-center mt-2 font-semibold">{sel.name}</div>
-                    </motion.div>
-                  ))}
+              <CardContent className="space-y-8">
+                {/* Base Color */}
+                <div>
+                  <Label className="text-xl font-bold mb-4 block">1. Rug Base Color</Label>
+                  <div className="grid grid-cols-4 gap-3">
+                    {BASE_COLORS.map((color) => (
+                      <button
+                        key={color.name}
+                        onClick={() => setConfig(prev => ({ ...prev, baseColor: color.name }))}
+                        className={`p-3 rounded-lg border-2 transition-all ${
+                          config.baseColor === color.name ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-300' : 'border-gray-200 hover:border-gray-300'
+                        }`}
+                      >
+                        <div className="w-full aspect-square rounded-lg mb-2 border-2 border-white shadow-md" style={{ backgroundColor: color.hex }} />
+                        <div className="text-xs text-center font-medium">{color.name}</div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                <div className="space-y-6">
-                  <div>
-                    <p className="text-sm font-semibold text-gray-700 mb-3">Group 1</p>
-                    <div className="grid grid-cols-4 gap-6">
-                      {PAINT_COLORS_GROUP_1.filter(color => {
-                        if (!config.baseColor) return color.type === 'dark' || color.type === 'both';
-                        const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
-                        if (!selectedBase) return color.type === 'dark' || color.type === 'both';
-                        if (color.type === 'both') return true;
-                        return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
-                      }).map((color) => (
-                        <motion.button
-                          key={`paint1-g1-${color.name}`}
-                          initial={{ opacity: 1, scale: 1 }}
-                          animate={
-                            transitioning && selectedItem === color.name
-                              ? { scale: 1.3, y: -50, z: 100 }
-                              : transitioning && selectedItem && selectedItem !== color.name
-                              ? { 
-                                  y: Math.random() > 0.5 ? -200 : 200,
-                                  x: (Math.random() - 0.5) * 300,
-                                  rotate: (Math.random() - 0.5) * 90,
-                                  opacity: 0,
-                                  scale: 0.4
-                                }
-                              : { opacity: 1, scale: 1, y: 0, x: 0, rotate: 0 }
-                          }
-                          transition={{ duration: 0.6, ease: "easeInOut" }}
-                          onClick={() => {
-                            setSelectedItem(color.name);
-                            setTransitioning(true);
-                            setConfig(prev => ({ ...prev, paintColor: color.name }));
-                            setFloatingSelections(prev => [...prev, { type: 'paint', color: color.hex, name: color.name }]);
-                            setTimeout(() => {
-                              setStep(3.7);
-                              setTransitioning(false);
-                              setSelectedItem(null);
-                            }, 700);
-                          }}
-                          disabled={transitioning}
-                          className="flex flex-col items-center gap-3"
-                        >
-                          {/* Droplet Shape */}
-                          <div 
-                            className="relative w-16 h-20 border-2 border-white shadow-lg"
-                            style={{ 
-                              backgroundColor: color.hex,
-                              borderRadius: '50% 50% 50% 0',
-                              transform: 'rotate(-45deg)'
-                            }}
+                {/* First Paint Color */}
+                <div>
+                  <Label className="text-xl font-bold mb-4 block">2. First Paint Color</Label>
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-600 mb-2">Group 1</p>
+                      <div className="grid grid-cols-4 gap-3">
+                        {PAINT_COLORS_GROUP_1.map((color) => (
+                          <button
+                            key={color.name}
+                            onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
+                            className={`p-3 rounded-lg border-2 transition-all ${
+                              config.paintColor === color.name ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-300' : 'border-gray-200 hover:border-gray-300'
+                            }`}
                           >
-                            <div 
-                              className="absolute inset-2 bg-white rounded-full opacity-30"
-                              style={{ top: '20%', left: '20%', width: '30%', height: '30%' }}
-                            />
-                          </div>
-                          <span className="text-xs text-center font-medium">{color.name}</span>
-                        </motion.button>
-                      ))}
+                            <div className="w-full aspect-square rounded-full mb-2 border-2 border-white shadow-md" style={{ backgroundColor: color.hex }} />
+                            <div className="text-xs text-center font-medium">{color.name}</div>
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-
-                  <div>
-                    <p className="text-sm font-semibold text-gray-700 mb-3">Group 2</p>
-                    <div className="grid grid-cols-4 gap-6">
-                      {PAINT_COLORS_GROUP_2.filter(color => {
-                        if (!config.baseColor) return color.type === 'dark' || color.type === 'both';
-                        const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
-                        if (!selectedBase) return color.type === 'dark' || color.type === 'both';
-                        if (color.type === 'both') return true;
-                        return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
-                      }).map((color) => (
-                        <motion.button
-                          key={`paint1-g2-${color.name}`}
-                          initial={{ opacity: 1, scale: 1 }}
-                          animate={
-                            transitioning && selectedItem === color.name
-                              ? { scale: 1.3, y: -50, z: 100 }
-                              : transitioning && selectedItem && selectedItem !== color.name
-                              ? { 
-                                  y: Math.random() > 0.5 ? -200 : 200,
-                                  x: (Math.random() - 0.5) * 300,
-                                  rotate: (Math.random() - 0.5) * 90,
-                                  opacity: 0,
-                                  scale: 0.4
-                                }
-                              : { opacity: 1, scale: 1, y: 0, x: 0, rotate: 0 }
-                          }
-                          transition={{ duration: 0.6, ease: "easeInOut" }}
-                          onClick={() => {
-                            setSelectedItem(color.name);
-                            setTransitioning(true);
-                            setConfig(prev => ({ ...prev, paintColor: color.name }));
-                            setFloatingSelections(prev => [...prev, { type: 'paint', color: color.hex, name: color.name }]);
-                            setTimeout(() => {
-                              setStep(3.7);
-                              setTransitioning(false);
-                              setSelectedItem(null);
-                            }, 700);
-                          }}
-                          disabled={transitioning}
-                          className="flex flex-col items-center gap-3"
-                        >
-                          {/* Droplet Shape */}
-                          <div 
-                            className="relative w-16 h-20 border-2 border-white shadow-lg"
-                            style={{ 
-                              backgroundColor: color.hex,
-                              borderRadius: '50% 50% 50% 0',
-                              transform: 'rotate(-45deg)'
-                            }}
+                    <div>
+                      <p className="text-sm font-semibold text-gray-600 mb-2">Group 2</p>
+                      <div className="grid grid-cols-4 gap-3">
+                        {PAINT_COLORS_GROUP_2.map((color) => (
+                          <button
+                            key={color.name}
+                            onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
+                            className={`p-3 rounded-lg border-2 transition-all ${
+                              config.paintColor === color.name ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-300' : 'border-gray-200 hover:border-gray-300'
+                            }`}
                           >
-                            <div 
-                              className="absolute inset-2 bg-white rounded-full opacity-30"
-                              style={{ top: '20%', left: '20%', width: '30%', height: '30%' }}
-                            />
-                          </div>
-                          <span className="text-xs text-center font-medium">{color.name}</span>
-                        </motion.button>
-                      ))}
+                            <div className="w-full aspect-square rounded-full mb-2 border-2 border-white shadow-md" style={{ backgroundColor: color.hex }} />
+                            <div className="text-xs text-center font-medium">{color.name}</div>
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex gap-3 mt-6">
-                  <Button variant="outline" onClick={() => setStep(3)}>
-                    Back
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Step 3.7: Shading & Second Stencil */}
-          {step === 3.7 && (
-            <Card>
-              <CardHeader>
-                <div className="text-center mb-6">
-                  <h2 className="text-3xl font-bold mb-3 text-gray-900">
-                    Add-ons (Optional)
-                  </h2>
-                  <p className="text-gray-600 text-lg">Enhance your design with shading or a second stencil</p>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {/* Floating Selections Display */}
-                <div className="flex justify-center gap-3 mb-8 flex-wrap">
-                  {floatingSelections.map((sel, idx) => (
-                    <motion.div
-                      key={idx}
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ delay: idx * 0.1 }}
-                      className="relative"
-                    >
-                      {sel.type === 'paint' ? (
-                        <div 
-                          className="w-16 h-20 border-4 border-white shadow-2xl"
-                          style={{ 
-                            backgroundColor: sel.color,
-                            borderRadius: '50% 50% 50% 0',
-                            transform: 'rotate(-45deg)'
-                          }}
-                        />
-                      ) : (
-                        <div 
-                          className="w-16 h-16 rounded-lg border-4 border-white shadow-2xl"
-                          style={{ backgroundColor: sel.color }}
-                        />
-                      )}
-                      <div className="text-xs text-center mt-2 font-semibold">{sel.name}</div>
-                    </motion.div>
-                  ))}
-                </div>
-
-                <div className="space-y-4">
-                  <button
-                    onClick={() => {
-                      const newHasShading = !config.hasShading;
-                      setConfig(prev => ({ ...prev, hasShading: newHasShading }));
-                      if (newHasShading) {
-                        setFloatingSelections(prev => [...prev, { type: 'shading', color: '#888', name: 'Shading' }]);
-                      } else {
-                        setFloatingSelections(prev => prev.filter(s => s.type !== 'shading'));
-                      }
-                    }}
-                    className={`w-full p-6 rounded-lg border-2 transition-all text-left ${
-                      config.hasShading ? 'border-blue-600 bg-blue-50' : 'border-gray-300 hover:border-gray-400 bg-white'
-                    }`}
-                  >
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <div className="font-semibold text-lg">Shading</div>
-                        <div className="text-sm text-gray-600">Adds depth and dimension</div>
-                      </div>
-                      <div className={`text-xl font-bold ${config.hasShading ? 'text-blue-600' : 'text-gray-900'}`}>
-                        +${config.size ? getShadingFee(config.size) : 30}
-                      </div>
-                    </div>
-                  </button>
-
-                  {/* Add Second Color */}
-                  <div className={`border-2 rounded-lg transition-all ${
-                    config.hasSecondColor ? 'border-yellow-600 bg-yellow-50' : 'border-gray-300 bg-white'
-                  }`}>
+                {/* Optional Add-ons */}
+                <div>
+                  <Label className="text-xl font-bold mb-4 block">3. Optional Add-ons</Label>
+                  <div className="space-y-3">
+                    {/* Shading */}
                     <button
-                      onClick={() => {
-                        setConfig(prev => ({ ...prev, hasSecondColor: !prev.hasSecondColor }));
-                      }}
-                      className="w-full p-6 text-left"
+                      onClick={() => setConfig(prev => ({ ...prev, hasShading: !prev.hasShading }))}
+                      className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+                        config.hasShading ? 'border-purple-600 bg-purple-50' : 'border-gray-300 hover:border-gray-400'
+                      }`}
                     >
                       <div className="flex justify-between items-center">
                         <div>
-                          <div className="font-semibold text-lg">Add 2nd Color</div>
-                          <div className="text-sm text-gray-600">Paint with a second color</div>
+                          <div className="font-semibold">Shading</div>
+                          <div className="text-xs text-gray-600">Adds depth and dimension</div>
                         </div>
-                        <div className={`text-xl font-bold ${config.hasSecondColor ? 'text-yellow-600' : 'text-gray-900'}`}>
-                          +${config.size ? getSecondColorFee(config.size) : 30}
+                        <div className={`font-bold ${config.hasShading ? 'text-purple-600' : 'text-gray-900'}`}>
+                          {config.hasShading ? '✓' : '+'} ${config.size ? getShadingFee(config.size) : 30}
                         </div>
                       </div>
                     </button>
 
-                    {config.hasSecondColor && (
-                      <div className="px-6 pb-6 space-y-4">
-                        <div className="text-center font-semibold text-sm">
-                          {config.secondPaintColor ? `✓ Selected: ${config.secondPaintColor}` : 'Select a second color:'}
+                    {/* Second Color */}
+                    <div className={`border-2 rounded-lg transition-all ${config.hasSecondColor ? 'border-yellow-600 bg-yellow-50' : 'border-gray-300'}`}>
+                      <button
+                        onClick={() => setConfig(prev => ({ ...prev, hasSecondColor: !prev.hasSecondColor, secondPaintColor: !prev.hasSecondColor ? prev.secondPaintColor : '' }))}
+                        className="w-full p-4 text-left"
+                      >
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <div className="font-semibold">2nd Paint Color</div>
+                            <div className="text-xs text-gray-600">{config.hasSecondColor && config.secondPaintColor ? `Selected: ${config.secondPaintColor}` : 'Add another color to your design'}</div>
+                          </div>
+                          <div className={`font-bold ${config.hasSecondColor ? 'text-yellow-600' : 'text-gray-900'}`}>
+                            {config.hasSecondColor ? '✓' : '+'} ${config.size ? getSecondColorFee(config.size) : 30}
+                          </div>
                         </div>
-                        
-                        <div className="grid grid-cols-4 gap-3">
-                          {PAINT_COLORS_GROUP_1.map((color) => (
-                            <button
-                              key={color.name}
-                              onClick={() => setConfig(prev => ({ ...prev, secondPaintColor: color.name }))}
-                              className={`p-2 rounded-lg border-2 transition-all ${
-                                config.secondPaintColor === color.name 
-                                  ? 'border-yellow-600 bg-yellow-100 ring-2 ring-yellow-400' 
-                                  : 'border-gray-300 hover:border-yellow-400'
-                              }`}
-                            >
-                              <div 
-                                className="w-full aspect-square rounded-full border-2 border-white shadow-md mb-1"
-                                style={{ backgroundColor: color.hex }}
-                              />
-                              <div className="text-xs text-center font-medium">{color.name}</div>
-                            </button>
-                          ))}
-                        </div>
+                      </button>
 
-                        <div className="grid grid-cols-4 gap-3">
-                          {PAINT_COLORS_GROUP_2.map((color) => (
-                            <button
-                              key={color.name}
-                              onClick={() => setConfig(prev => ({ ...prev, secondPaintColor: color.name }))}
-                              className={`p-2 rounded-lg border-2 transition-all ${
-                                config.secondPaintColor === color.name 
-                                  ? 'border-yellow-600 bg-yellow-100 ring-2 ring-yellow-400' 
-                                  : 'border-gray-300 hover:border-yellow-400'
-                              }`}
-                            >
-                              <div 
-                                className="w-full aspect-square rounded-full border-2 border-white shadow-md mb-1"
-                                style={{ backgroundColor: color.hex }}
-                              />
-                              <div className="text-xs text-center font-medium">{color.name}</div>
-                            </button>
-                          ))}
+                      {config.hasSecondColor && (
+                        <div className="px-4 pb-4 space-y-3">
+                          <div className="grid grid-cols-4 gap-2">
+                            {PAINT_COLORS_GROUP_1.map((color) => (
+                              <button
+                                key={color.name}
+                                onClick={() => setConfig(prev => ({ ...prev, secondPaintColor: color.name }))}
+                                className={`p-2 rounded-lg border-2 transition-all ${
+                                  config.secondPaintColor === color.name ? 'border-yellow-600 bg-yellow-100 ring-2 ring-yellow-400' : 'border-gray-300 hover:border-yellow-400'
+                                }`}
+                              >
+                                <div className="w-full aspect-square rounded-full border-2 border-white shadow-md mb-1" style={{ backgroundColor: color.hex }} />
+                                <div className="text-xs text-center font-medium">{color.name}</div>
+                              </button>
+                            ))}
+                          </div>
+                          <div className="grid grid-cols-4 gap-2">
+                            {PAINT_COLORS_GROUP_2.map((color) => (
+                              <button
+                                key={color.name}
+                                onClick={() => setConfig(prev => ({ ...prev, secondPaintColor: color.name }))}
+                                className={`p-2 rounded-lg border-2 transition-all ${
+                                  config.secondPaintColor === color.name ? 'border-yellow-600 bg-yellow-100 ring-2 ring-yellow-400' : 'border-gray-300 hover:border-yellow-400'
+                                }`}
+                              >
+                                <div className="w-full aspect-square rounded-full border-2 border-white shadow-md mb-1" style={{ backgroundColor: color.hex }} />
+                                <div className="text-xs text-center font-medium">{color.name}</div>
+                              </button>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <button
-                    onClick={() => setStep(4)}
-                    disabled={config.hasSecondColor && !config.secondPaintColor}
-                    className="w-full p-6 rounded-lg border-2 border-green-600 bg-green-50 hover:bg-green-100 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <div className="font-semibold text-lg">Continue to Design</div>
-                        <div className="text-sm text-gray-600">Create your rug design</div>
-                      </div>
-                      <div className="text-xl font-bold text-green-600">
-                        →
-                      </div>
+                      )}
                     </div>
-                  </button>
+                  </div>
                 </div>
 
-                <div className="flex gap-3 mt-6">
-                  <Button variant="outline" onClick={() => setStep(3.5)}>
-                    Back
-                  </Button>
+                <div className="flex gap-3 pt-4">
+                  <Button variant="outline" onClick={() => setStep(2)}>← Back</Button>
                   <Button 
-                    onClick={() => setStep(4)}
-                    className="flex-1 border-4 border-gray-900 bg-gray-900 hover:bg-gray-800 text-white font-bold text-lg py-6"
+                    onClick={() => setStep(4)} 
+                    disabled={!config.baseColor || !config.paintColor || (config.hasSecondColor && !config.secondPaintColor)}
+                    className="flex-1 bg-gray-900 text-white hover:bg-gray-800 disabled:opacity-50"
                   >
                     Continue to Design →
                   </Button>
@@ -993,306 +821,6 @@ export default function CustomBuilder() {
               </CardContent>
             </Card>
           )}
-
-          {/* Step 3: Color Selection (Original - now just base color) */}
-          {step === 3 && (
-            <Card>
-              <CardHeader>
-                <div className="text-center mb-6">
-                  <h2 className="text-3xl font-bold mb-3 text-gray-900">
-                    Choose Colors
-                  </h2>
-                  <p className="text-gray-600 text-lg">Pick the actual rug color and the paint color for your design</p>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  <div>
-                    <Label className="text-lg mb-3 block">Rug Base Color</Label>
-                    <div className="grid grid-cols-4 gap-4">
-                      {BASE_COLORS.map((color) => (
-                        <motion.button
-                          key={color.name}
-                          initial={{ opacity: 1, scale: 1 }}
-                          animate={
-                            transitioning && selectedItem === color.name
-                              ? { scale: 1.2, y: -50, z: 100 }
-                              : transitioning && selectedItem && selectedItem !== color.name
-                              ? { 
-                                  y: Math.random() > 0.5 ? -200 : 200,
-                                  x: (Math.random() - 0.5) * 300,
-                                  rotate: (Math.random() - 0.5) * 90,
-                                  opacity: 0,
-                                  scale: 0.4
-                                }
-                              : { opacity: 1, scale: 1, y: 0, x: 0, rotate: 0 }
-                          }
-                          transition={{ duration: 0.6, ease: "easeInOut" }}
-                          onClick={() => {
-                            setSelectedItem(color.name);
-                            setTransitioning(true);
-                            setConfig(prev => ({ ...prev, baseColor: color.name }));
-                            setFloatingSelections([{ type: 'base', color: color.hex, name: color.name }]);
-                            setTimeout(() => {
-                              setStep(3.5);
-                              setTransitioning(false);
-                              setSelectedItem(null);
-                            }, 700);
-                          }}
-                          disabled={transitioning}
-                          className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all group relative ${
-                            config.baseColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                          title={`Set ${color.name} as your rug's base color`}
-                        >
-                          <span className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
-                            Make the base color of your rug {color.name}
-                          </span>
-                          <div 
-                           className="relative w-16 h-12 rounded-sm border-2 border-white shadow-md overflow-hidden"
-                           style={{ backgroundColor: color.hex }}
-                          >
-                           <div 
-                             className="absolute inset-0 opacity-30"
-                             style={{
-                               backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000' fill-opacity='0.15' fill-rule='evenodd'%3E%3Cpath d='M0 0h20v20H0V0zm20 20h20v20H20V20z'/%3E%3C/g%3E%3C/svg%3E")`,
-                               backgroundSize: '6px 6px'
-                             }}
-                           />
-                          </div>
-                          <span className="text-xs text-center">{color.name}</span>
-                        </motion.button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <Label className="text-lg mb-3 block">First Paint Color</Label>
-
-                    <div className="space-y-6 mb-6">
-                      <div>
-                        <p className="text-sm font-semibold text-gray-700 mb-3">Group 1</p>
-                        <div className="grid grid-cols-4 gap-4">
-                          {PAINT_COLORS_GROUP_1.filter(color => {
-                            if (!config.baseColor) return color.type === 'dark' || color.type === 'both';
-                            const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
-                            if (!selectedBase) return color.type === 'dark' || color.type === 'both';
-                            if (color.type === 'both') return true;
-                            return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
-                          }).map((color) => (
-                            <button
-                              key={`primary-g1-${color.name}-${color.hex}`}
-                              onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
-                              className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
-                                config.paintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                              }`}
-                            >
-                              <div 
-                                className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
-                                style={{ backgroundColor: color.hex }}
-                              />
-                              <span className="text-xs text-center">{color.name}</span>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div>
-                        <p className="text-sm font-semibold text-gray-700 mb-3">Group 2</p>
-                        <div className="grid grid-cols-4 gap-4">
-                          {PAINT_COLORS_GROUP_2.filter(color => {
-                            if (!config.baseColor) return color.type === 'dark' || color.type === 'both';
-                            const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
-                            if (!selectedBase) return color.type === 'dark' || color.type === 'both';
-                            if (color.type === 'both') return true;
-                            return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
-                          }).map((color) => (
-                            <button
-                              key={`primary-g2-${color.name}-${color.hex}`}
-                              onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
-                              className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
-                                config.paintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                              }`}
-                            >
-                              <div 
-                                className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
-                                style={{ backgroundColor: color.hex }}
-                              />
-                              <span className="text-xs text-center">{color.name}</span>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Shading Add-on */}
-                    <div className="bg-gray-50 p-4 rounded-lg mb-6">
-                      <button
-                        onClick={() => setConfig(prev => ({ ...prev, hasShading: !prev.hasShading }))}
-                        className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-                          config.hasShading ? 'border-blue-600 bg-blue-50' : 'border-gray-300 hover:border-gray-400 bg-white'
-                        }`}
-                      >
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <div className="font-semibold">Add Shading (Optional)</div>
-                            <div className="text-xs text-gray-600">Adds depth and dimension</div>
-                          </div>
-                          <div className={`text-lg font-bold ${config.hasShading ? 'text-blue-600' : 'text-gray-900'}`}>
-                            +${config.size ? getShadingFee(config.size) : 30}
-                          </div>
-                        </div>
-                        {config.hasShading && (
-                          <div className="mt-2 text-xs text-blue-600 font-semibold">✓ Added</div>
-                        )}
-                      </button>
-                    </div>
-
-                    {/* Second Paint Color */}
-                    <div className="border-t-4 border-gray-900 pt-8 mt-8 bg-yellow-50 p-6 rounded-lg">
-                      <div className="mb-6">
-                        <Label className="text-2xl font-bold text-gray-900 block mb-4">Want a 2nd Paint Color?</Label>
-                        <p className="text-sm text-gray-600 mb-4">Add another color for more detail (+${config.size ? getSecondColorFee(config.size) : 30})</p>
-                        
-                        <div className="flex items-center gap-4 bg-white p-4 rounded-lg border-2 border-gray-300">
-                          <input
-                            type="checkbox"
-                            id="enable-second-color"
-                            checked={config.hasSecondColor}
-                            onChange={(e) => {
-                              const isChecked = e.target.checked;
-                              console.log('Checkbox changed:', isChecked);
-                              setConfig(prev => {
-                                const newConfig = { 
-                                  ...prev, 
-                                  hasSecondColor: isChecked,
-                                  secondPaintColor: isChecked ? prev.secondPaintColor : ''
-                                };
-                                console.log('New config:', newConfig);
-                                return newConfig;
-                              });
-                            }}
-                            className="w-6 h-6 cursor-pointer"
-                          />
-                          <label htmlFor="enable-second-color" className="text-lg font-semibold cursor-pointer">
-                            Yes, add a second paint color
-                          </label>
-                        </div>
-                      </div>
-
-                      {config.hasSecondColor && (
-                        <div className="space-y-6 p-6 bg-white rounded-lg border-4 border-yellow-500">
-                          <div className="bg-yellow-100 p-4 rounded-lg text-center border-2 border-yellow-600">
-                            <p className="text-sm text-gray-600 mb-1">First Color: <strong>{config.paintColor || 'None'}</strong></p>
-                            <p className="text-xl font-bold text-gray-900">
-                              Second Color: {config.secondPaintColor ? <span className="text-green-700">✓ {config.secondPaintColor}</span> : <span className="text-red-600">Not Selected</span>}
-                            </p>
-                          </div>
-
-                          <div>
-                            <p className="font-bold text-gray-900 text-lg mb-3 bg-gray-100 p-2 rounded">Group 1 - Click to Select</p>
-                            <div className="grid grid-cols-4 gap-4">
-                              {PAINT_COLORS_GROUP_1.map((color) => {
-                                const isSelected = config.secondPaintColor === color.name;
-                                return (
-                                  <button
-                                    key={`second-${color.name}-${color.hex}`}
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      console.log('Clicking second color:', color.name);
-                                      setConfig(prev => {
-                                        const newConfig = { ...prev, secondPaintColor: color.name };
-                                        console.log('Setting secondPaintColor to:', color.name, 'Full config:', newConfig);
-                                        return newConfig;
-                                      });
-                                    }}
-                                    className={`p-4 rounded-lg border-3 transition-all transform hover:scale-105 ${
-                                      isSelected 
-                                        ? 'border-green-600 bg-green-100 ring-4 ring-green-400 shadow-2xl scale-110' 
-                                        : 'border-gray-400 bg-white hover:border-yellow-500 hover:shadow-lg'
-                                    }`}
-                                  >
-                                    {isSelected && (
-                                      <div className="text-center text-green-700 font-bold text-sm mb-2 bg-green-200 rounded py-1">
-                                        ✓ SELECTED
-                                      </div>
-                                    )}
-                                    <div 
-                                      className="w-full aspect-square rounded-full border-4 border-white shadow-lg mx-auto mb-2"
-                                      style={{ backgroundColor: color.hex }}
-                                    />
-                                    <p className="text-sm text-center font-bold">{color.name}</p>
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          </div>
-
-                          <div className="h-2 bg-gray-300 rounded"></div>
-
-                          <div>
-                            <p className="font-bold text-gray-900 text-lg mb-3 bg-gray-100 p-2 rounded">Group 2 - Click to Select</p>
-                            <div className="grid grid-cols-4 gap-4">
-                              {PAINT_COLORS_GROUP_2.map((color) => {
-                                const isSelected = config.secondPaintColor === color.name;
-                                return (
-                                  <button
-                                    key={`second-${color.name}-${color.hex}`}
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      console.log('Clicking second color:', color.name);
-                                      setConfig(prev => {
-                                        const newConfig = { ...prev, secondPaintColor: color.name };
-                                        console.log('Setting secondPaintColor to:', color.name, 'Full config:', newConfig);
-                                        return newConfig;
-                                      });
-                                    }}
-                                    className={`p-4 rounded-lg border-3 transition-all transform hover:scale-105 ${
-                                      isSelected 
-                                        ? 'border-green-600 bg-green-100 ring-4 ring-green-400 shadow-2xl scale-110' 
-                                        : 'border-gray-400 bg-white hover:border-yellow-500 hover:shadow-lg'
-                                    }`}
-                                  >
-                                    {isSelected && (
-                                      <div className="text-center text-green-700 font-bold text-sm mb-2 bg-green-200 rounded py-1">
-                                        ✓ SELECTED
-                                      </div>
-                                    )}
-                                    <div 
-                                      className="w-full aspect-square rounded-full border-4 border-white shadow-lg mx-auto mb-2"
-                                      style={{ backgroundColor: color.hex }}
-                                    />
-                                    <p className="text-sm text-center font-bold">{color.name}</p>
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex gap-3 mt-6">
-                   <Button variant="outline" onClick={() => setStep(2)}>
-                     Back
-                   </Button>
-                   <Button 
-                     onClick={() => setStep(4)} 
-                     disabled={!config.baseColor || !config.paintColor || (config.hasSecondColor && !config.secondPaintColor)}
-                     title="Continue to design selection"
-                     className="flex-1 border-4 border-gray-900 bg-white hover:bg-gray-50 text-gray-900 font-bold text-lg py-6 group relative disabled:opacity-50 disabled:cursor-not-allowed"
-                   >
-                     BUILD MY RUG →
-                     <span className="absolute -top-14 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
-                       Next: Choose or create your design
-                     </span>
-                   </Button>
-                 </div>
-                 </CardContent>
-                 </Card>
-                 )}
 
           {/* Step 4: Create Design & Confirm */}
           {step === 4 && (
