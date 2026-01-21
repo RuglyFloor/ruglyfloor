@@ -37,7 +37,7 @@ const QUALITY_TIERS = [
     materialDetail: 'Standard rug construction',
     lifespan: 'Standard rug lifespan',
     washable: true,
-    customization: 'Custom painted designs',
+    customization: 'Standard',
     priceRange: '$$$'
   },
   { 
