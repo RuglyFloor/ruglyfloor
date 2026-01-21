@@ -26,14 +26,14 @@ const QUALITY_TIERS = [
   },
   { 
     id: 'good', 
-    label: 'Crugly', 
+    label: 'Standard Crugly', 
     description: 'Expect the same life-span as any ordinary rug.',
     priceMultiplier: 1.0,
     materialDetail: 'Standard rug construction'
   },
   { 
     id: 'highend', 
-    label: 'Commission a Rugly', 
+    label: 'Rugly', 
     description: 'Ruglys are the cat\'s meow—you tell us what you\'re thinking and we make it happen with no limits',
     priceMultiplier: 2.5,
     materialDetail: 'Custom hand-painted, limitless possibilities'
