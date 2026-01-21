@@ -25,7 +25,7 @@ const QUALITY_TIERS = [
     materialDetail: 'Synthetic, thinner non-slip floor covering that looks great',
     lifespan: '2 years with high traffic, 20+ with low',
     washable: true,
-    customization: 'Standard designs',
+    customization: 'standard',
     priceRange: '$$'
   },
   { 
