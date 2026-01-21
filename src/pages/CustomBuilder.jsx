@@ -316,7 +316,6 @@ export default function CustomBuilder() {
                               </div>
                             )}
                             <div className="font-bold text-xl text-gray-900 mt-2">{tier.label}</div>
-                            <div className="text-sm font-normal text-gray-600 mt-1">{tier.priceRange}</div>
                           </th>
                         ))}
                       </tr>
