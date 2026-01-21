@@ -1067,129 +1067,94 @@ export default function CustomBuilder() {
                       </button>
                     </div>
 
-                    {/* Second Paint Color Section */}
+                    {/* Second Paint Color - Simplified */}
                     <div className="border-t-4 border-gray-900 pt-8 mt-8">
-                      <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg mb-4 border-2 border-green-400">
-                        <div className="flex flex-col gap-4">
-                          <div>
-                            <Label className="text-2xl font-bold text-gray-900 block mb-2">Want a 2nd Paint Color?</Label>
-                            <p className="text-sm text-gray-600">Add another color to your design for more detail (+${config.size ? getSecondColorFee(config.size) : 30})</p>
-                          </div>
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              console.log('Toggle 2nd color clicked. Current:', config.hasSecondColor);
+                      <div className="bg-yellow-100 border-2 border-yellow-500 p-6 rounded-lg mb-6">
+                        <Label className="text-xl font-bold text-gray-900 block mb-3">Add a 2nd Paint Color? (+${config.size ? getSecondColorFee(config.size) : 30})</Label>
+                        
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={config.hasSecondColor}
+                            onChange={(e) => {
+                              const checked = e.target.checked;
                               setConfig(prev => ({ 
                                 ...prev, 
-                                hasSecondColor: !prev.hasSecondColor,
-                                secondPaintColor: !prev.hasSecondColor ? prev.secondPaintColor : ''
+                                hasSecondColor: checked,
+                                secondPaintColor: checked ? prev.secondPaintColor : ''
                               }));
                             }}
-                            type="button"
-                            className={`w-full px-6 py-4 rounded-lg border-3 font-bold transition-all text-xl ${
-                              config.hasSecondColor 
-                                ? 'border-green-600 bg-green-600 text-white shadow-lg' 
-                                : 'border-gray-900 bg-white text-gray-900 hover:bg-gray-900 hover:text-white'
-                            }`}
-                          >
-                            {config.hasSecondColor ? '✓ 2nd Color Enabled - Select Below' : 'Click to Add 2nd Color'}
-                          </button>
-                        </div>
+                            className="w-6 h-6"
+                          />
+                          <span className="text-lg font-semibold">Yes, I want to add a second color</span>
+                        </label>
                       </div>
 
                       {config.hasSecondColor && (
-                        <div className="space-y-6 p-8 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border-4 border-green-600 shadow-xl">
-                          <div className="text-center mb-6 bg-white rounded-lg p-4 border-2 border-green-600">
-                            <p className="text-2xl font-bold text-green-900 mb-2">👇 Pick Your 2nd Color</p>
-                            <p className="text-sm text-gray-600">Click any color below to select it</p>
-                            {config.secondPaintColor && (
-                              <p className="text-lg font-bold text-green-700 mt-2">
-                                ✓ Selected: {config.secondPaintColor}
-                              </p>
-                            )}
+                        <div className="space-y-6 p-6 bg-yellow-50 rounded-lg border-2 border-yellow-400">
+                          <div className="bg-white p-4 rounded-lg text-center border-2 border-yellow-500">
+                            <p className="text-xl font-bold text-gray-900 mb-2">
+                              {config.secondPaintColor ? `✓ Second Color: ${config.secondPaintColor}` : '👇 Click a Color Below'}
+                            </p>
                           </div>
 
-                          <div className="bg-white p-8 rounded-xl border-2 border-gray-300 shadow-lg">
-                            <p className="text-lg font-bold text-gray-900 uppercase tracking-wide mb-4 text-center">Group 1 Colors</p>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                              {PAINT_COLORS_GROUP_1.map((color, idx) => (
-                                <button
-                                  key={`2nd-color-g1-${idx}`}
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    console.log('Selected 2nd color:', color.name);
-                                    setConfig(prev => ({ 
-                                      ...prev, 
-                                      secondPaintColor: color.name
-                                    }));
-                                  }}
-                                  className={`flex flex-col items-center gap-3 p-4 rounded-xl border-3 transition-all transform hover:scale-105 ${
-                                    config.secondPaintColor === color.name 
-                                      ? 'border-green-600 bg-green-50 shadow-2xl scale-110 ring-4 ring-green-300' 
-                                      : 'border-gray-300 hover:border-green-400 bg-white hover:shadow-xl'
-                                  }`}
-                                >
-                                  {config.secondPaintColor === color.name && (
-                                    <div className="absolute -top-2 -right-2 bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-lg">
-                                      ✓
-                                    </div>
-                                  )}
-                                  <div 
-                                    className="w-16 h-16 rounded-full border-4 border-white shadow-lg"
-                                    style={{ backgroundColor: color.hex }}
-                                  />
-                                  <span className="text-sm text-center font-semibold">{color.name}</span>
-                                </button>
-                              ))}
+                          <div className="space-y-4">
+                            <p className="font-bold text-gray-900">Group 1</p>
+                            <div className="grid grid-cols-4 gap-3">
+                              {PAINT_COLORS_GROUP_1.map((color) => {
+                                const isSelected = config.secondPaintColor === color.name;
+                                return (
+                                  <div
+                                    key={color.name + color.hex}
+                                    onClick={() => {
+                                      setConfig(prev => ({ ...prev, secondPaintColor: color.name }));
+                                    }}
+                                    className={`cursor-pointer p-3 rounded-lg border-2 transition-all ${
+                                      isSelected ? 'border-yellow-600 bg-yellow-100 ring-4 ring-yellow-300' : 'border-gray-300 hover:border-yellow-400'
+                                    }`}
+                                  >
+                                    {isSelected && (
+                                      <div className="text-center text-yellow-700 font-bold text-xs mb-1">✓ SELECTED</div>
+                                    )}
+                                    <div 
+                                      className="w-full aspect-square rounded-full border-2 border-white shadow-md mx-auto"
+                                      style={{ backgroundColor: color.hex }}
+                                    />
+                                    <p className="text-xs text-center mt-2 font-medium">{color.name}</p>
+                                  </div>
+                                );
+                              })}
                             </div>
                           </div>
 
-                          <div className="h-1 bg-gradient-to-r from-green-300 via-green-500 to-green-300 rounded-full"></div>
-
-                          <div className="bg-white p-8 rounded-xl border-2 border-gray-300 shadow-lg">
-                            <p className="text-lg font-bold text-gray-900 uppercase tracking-wide mb-4 text-center">Group 2 Colors</p>
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                              {PAINT_COLORS_GROUP_2.map((color, idx) => (
-                                <button
-                                  key={`2nd-color-g2-${idx}`}
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    console.log('Selected 2nd color:', color.name);
-                                    setConfig(prev => ({ 
-                                      ...prev, 
-                                      secondPaintColor: color.name
-                                    }));
-                                  }}
-                                  className={`flex flex-col items-center gap-3 p-4 rounded-xl border-3 transition-all transform hover:scale-105 relative ${
-                                    config.secondPaintColor === color.name 
-                                      ? 'border-green-600 bg-green-50 shadow-2xl scale-110 ring-4 ring-green-300' 
-                                      : 'border-gray-300 hover:border-green-400 bg-white hover:shadow-xl'
-                                  }`}
-                                >
-                                  {config.secondPaintColor === color.name && (
-                                    <div className="absolute -top-2 -right-2 bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-lg">
-                                      ✓
-                                    </div>
-                                  )}
-                                  <div 
-                                    className="w-16 h-16 rounded-full border-4 border-white shadow-lg"
-                                    style={{ backgroundColor: color.hex }}
-                                  />
-                                  <span className="text-sm text-center font-semibold">{color.name}</span>
-                                </button>
-                              ))}
+                          <div className="space-y-4">
+                            <p className="font-bold text-gray-900">Group 2</p>
+                            <div className="grid grid-cols-4 gap-3">
+                              {PAINT_COLORS_GROUP_2.map((color) => {
+                                const isSelected = config.secondPaintColor === color.name;
+                                return (
+                                  <div
+                                    key={color.name + color.hex}
+                                    onClick={() => {
+                                      setConfig(prev => ({ ...prev, secondPaintColor: color.name }));
+                                    }}
+                                    className={`cursor-pointer p-3 rounded-lg border-2 transition-all ${
+                                      isSelected ? 'border-yellow-600 bg-yellow-100 ring-4 ring-yellow-300' : 'border-gray-300 hover:border-yellow-400'
+                                    }`}
+                                  >
+                                    {isSelected && (
+                                      <div className="text-center text-yellow-700 font-bold text-xs mb-1">✓ SELECTED</div>
+                                    )}
+                                    <div 
+                                      className="w-full aspect-square rounded-full border-2 border-white shadow-md mx-auto"
+                                      style={{ backgroundColor: color.hex }}
+                                    />
+                                    <p className="text-xs text-center mt-2 font-medium">{color.name}</p>
+                                  </div>
+                                );
+                              })}
                             </div>
                           </div>
-
-                          {!config.secondPaintColor && (
-                            <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-4 text-center">
-                              <p className="text-yellow-800 font-bold">⚠️ Please select a 2nd color from above to continue</p>
-                            </div>
-                          )}
                         </div>
                       )}
                     </div>
