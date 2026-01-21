@@ -1168,10 +1168,10 @@ export default function CustomBuilder() {
             <CardContent>
               <div className="space-y-6">
                 {/* Mode Selection */}
-                <div className="grid md:grid-cols-3 gap-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                   <button
                     onClick={() => setDesignMode('library')}
-                    className={`p-6 rounded-lg border-2 transition-all ${
+                    className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center min-h-[180px] ${
                       designMode === 'library' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
@@ -1181,7 +1181,7 @@ export default function CustomBuilder() {
                   </button>
                   <button
                     onClick={() => setDesignMode('draw')}
-                    className={`p-6 rounded-lg border-2 transition-all ${
+                    className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center min-h-[180px] ${
                       designMode === 'draw' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
@@ -1191,7 +1191,7 @@ export default function CustomBuilder() {
                   </button>
                   <button
                     onClick={() => setDesignMode('upload')}
-                    className={`p-6 rounded-lg border-2 transition-all ${
+                    className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center min-h-[180px] ${
                       designMode === 'upload' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
