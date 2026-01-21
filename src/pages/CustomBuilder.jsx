@@ -527,7 +527,9 @@ export default function CustomBuilder() {
                                     Selected
                                   </>
                                 ) : (
-                                  tier.id === 'highend' ? 'Commission Rugly' : 'Select'
+                                  tier.id === 'budget' ? 'Budget Friendly Option' :
+                                  tier.id === 'good' ? 'The OG Crugly' :
+                                  'GOAT Rugly'
                                 )}
                               </Button>
                             </motion.div>
