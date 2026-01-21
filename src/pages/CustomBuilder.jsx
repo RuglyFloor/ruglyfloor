@@ -421,12 +421,16 @@ export default function CustomBuilder() {
                           }`}>
                             <Button
                               onClick={() => {
-                                setTransitioning(true);
-                                setConfig(prev => ({ ...prev, qualityTier: tier.id }));
-                                setTimeout(() => {
-                                  setStep(2);
-                                  setTransitioning(false);
-                                }, 400);
+                                if (tier.id === 'highend') {
+                                  navigate(createPageUrl('Commission'));
+                                } else {
+                                  setTransitioning(true);
+                                  setConfig(prev => ({ ...prev, qualityTier: tier.id }));
+                                  setTimeout(() => {
+                                    setStep(2);
+                                    setTransitioning(false);
+                                  }, 400);
+                                }
                               }}
                               className={`w-full ${
                                 config.qualityTier === tier.id
@@ -442,7 +446,7 @@ export default function CustomBuilder() {
                                   Selected
                                 </>
                               ) : (
-                                'Select'
+                                tier.id === 'highend' ? 'Commission Rugly' : 'Select'
                               )}
                             </Button>
                           </td>
