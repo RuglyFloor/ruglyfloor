@@ -1171,7 +1171,7 @@ export default function CustomBuilder() {
                    </Button>
                    <Button 
                      onClick={() => setStep(4)} 
-                     disabled={!config.baseColor || !config.paintColor}
+                     disabled={!config.baseColor || !config.paintColor || (config.hasSecondColor && !config.secondPaintColor)}
                      title="Continue to design selection"
                      className="flex-1 border-4 border-gray-900 bg-white hover:bg-gray-50 text-gray-900 font-bold text-lg py-6 group relative disabled:opacity-50 disabled:cursor-not-allowed"
                    >
