@@ -419,7 +419,7 @@ export default function CustomBuilder() {
                             tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
                           }`}>
                             {tier.id === 'budget' && '—'}
-                            {tier.id === 'good' && '—'}
+                            {tier.id === 'good' && 'Standard'}
                             {tier.id === 'highend' && 'Unlimited'}
                           </td>
                         ))}
