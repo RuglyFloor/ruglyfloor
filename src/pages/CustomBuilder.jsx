@@ -119,6 +119,7 @@ export default function CustomBuilder() {
   const [transitioning, setTransitioning] = useState(false);
   const [designMode, setDesignMode] = useState('draw'); // 'library', 'upload', or 'draw'
   const [selectedItem, setSelectedItem] = useState(null);
+  const [floatingSelections, setFloatingSelections] = useState([]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -288,8 +289,8 @@ export default function CustomBuilder() {
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto">
-          <div className="space-y-6">
+      <div className={step >= 4 ? "grid lg:grid-cols-3 gap-8 items-start" : "max-w-7xl mx-auto"}>
+          <div className={step >= 4 ? "lg:col-span-2 space-y-6" : "space-y-6"}>
             {/* Step 1: Quality Tier Selection - Comparison Table */}
             {step === 1 && (
               <div className={`space-y-6 transition-opacity duration-300 ${transitioning ? 'opacity-50' : 'opacity-100'}`}>
@@ -618,7 +619,203 @@ export default function CustomBuilder() {
             </div>
           )}
 
-          {/* Step 3: Color Selection */}
+          {/* Step 3.5: Paint Color Selection */}
+          {step === 3.5 && (
+            <Card>
+              <CardHeader>
+                <div className="text-center mb-6">
+                  <h2 className="text-3xl font-bold mb-3 text-gray-900">
+                    Choose 1st Paint Color
+                  </h2>
+                  <p className="text-gray-600 text-lg">Select the paint color for your design</p>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {/* Floating Selections Display */}
+                <div className="flex justify-center gap-4 mb-8">
+                  {floatingSelections.map((sel, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="relative"
+                    >
+                      <div 
+                        className="w-20 h-20 rounded-lg border-4 border-white shadow-2xl"
+                        style={{ backgroundColor: sel.color }}
+                      />
+                      <div className="text-xs text-center mt-2 font-semibold">{sel.name}</div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                <div className="grid grid-cols-4 gap-6">
+                  {getAvailablePaintColors().filter(color => {
+                    if (!config.baseColor) return color.type === 'dark' || color.type === 'both';
+                    const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
+                    if (!selectedBase) return color.type === 'dark' || color.type === 'both';
+                    if (color.type === 'both') return true;
+                    return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
+                  }).map((color) => (
+                    <motion.button
+                      key={color.name}
+                      initial={{ opacity: 1, scale: 1 }}
+                      animate={
+                        transitioning && selectedItem === color.name
+                          ? { scale: 1.3, y: -50, z: 100 }
+                          : transitioning && selectedItem && selectedItem !== color.name
+                          ? { 
+                              y: Math.random() > 0.5 ? -200 : 200,
+                              x: (Math.random() - 0.5) * 300,
+                              rotate: (Math.random() - 0.5) * 90,
+                              opacity: 0,
+                              scale: 0.4
+                            }
+                          : { opacity: 1, scale: 1, y: 0, x: 0, rotate: 0 }
+                      }
+                      transition={{ duration: 0.6, ease: "easeInOut" }}
+                      onClick={() => {
+                        setSelectedItem(color.name);
+                        setTransitioning(true);
+                        setConfig(prev => ({ ...prev, paintColor: color.name }));
+                        setFloatingSelections(prev => [...prev, { type: 'paint', color: color.hex, name: color.name }]);
+                        setTimeout(() => {
+                          setStep(3.7);
+                          setTransitioning(false);
+                          setSelectedItem(null);
+                        }, 700);
+                      }}
+                      disabled={transitioning}
+                      className="flex flex-col items-center gap-3"
+                    >
+                      {/* Droplet Shape */}
+                      <div 
+                        className="relative w-16 h-20 border-2 border-white shadow-lg"
+                        style={{ 
+                          backgroundColor: color.hex,
+                          borderRadius: '50% 50% 50% 0',
+                          transform: 'rotate(-45deg)'
+                        }}
+                      >
+                        <div 
+                          className="absolute inset-2 bg-white rounded-full opacity-30"
+                          style={{ top: '20%', left: '20%', width: '30%', height: '30%' }}
+                        />
+                      </div>
+                      <span className="text-xs text-center font-medium">{color.name}</span>
+                    </motion.button>
+                  ))}
+                </div>
+
+                <div className="flex gap-3 mt-6">
+                  <Button variant="outline" onClick={() => setStep(3)}>
+                    Back
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Step 3.7: Shading & Second Stencil */}
+          {step === 3.7 && (
+            <Card>
+              <CardHeader>
+                <div className="text-center mb-6">
+                  <h2 className="text-3xl font-bold mb-3 text-gray-900">
+                    Add-ons (Optional)
+                  </h2>
+                  <p className="text-gray-600 text-lg">Enhance your design with shading or a second stencil</p>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {/* Floating Selections Display */}
+                <div className="flex justify-center gap-3 mb-8 flex-wrap">
+                  {floatingSelections.map((sel, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: idx * 0.1 }}
+                      className="relative"
+                    >
+                      {sel.type === 'paint' ? (
+                        <div 
+                          className="w-16 h-20 border-4 border-white shadow-2xl"
+                          style={{ 
+                            backgroundColor: sel.color,
+                            borderRadius: '50% 50% 50% 0',
+                            transform: 'rotate(-45deg)'
+                          }}
+                        />
+                      ) : (
+                        <div 
+                          className="w-16 h-16 rounded-lg border-4 border-white shadow-2xl"
+                          style={{ backgroundColor: sel.color }}
+                        />
+                      )}
+                      <div className="text-xs text-center mt-2 font-semibold">{sel.name}</div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                <div className="space-y-4">
+                  <button
+                    onClick={() => {
+                      const newHasShading = !config.hasShading;
+                      setConfig(prev => ({ ...prev, hasShading: newHasShading }));
+                      if (newHasShading) {
+                        setFloatingSelections(prev => [...prev, { type: 'shading', color: '#888', name: 'Shading' }]);
+                      } else {
+                        setFloatingSelections(prev => prev.filter(s => s.type !== 'shading'));
+                      }
+                    }}
+                    className={`w-full p-6 rounded-lg border-2 transition-all text-left ${
+                      config.hasShading ? 'border-blue-600 bg-blue-50' : 'border-gray-300 hover:border-gray-400 bg-white'
+                    }`}
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <div className="font-semibold text-lg">Shading</div>
+                        <div className="text-sm text-gray-600">Adds depth and dimension</div>
+                      </div>
+                      <div className={`text-xl font-bold ${config.hasShading ? 'text-blue-600' : 'text-gray-900'}`}>
+                        +${config.size ? getShadingFee(config.size) : 30}
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => setStep(4)}
+                    className="w-full p-6 rounded-lg border-2 border-green-600 bg-green-50 hover:bg-green-100 transition-all text-left"
+                  >
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <div className="font-semibold text-lg">2nd Stencil Design</div>
+                        <div className="text-sm text-gray-600">Add another design layer</div>
+                      </div>
+                      <div className="text-xl font-bold text-green-600">
+                        Continue →
+                      </div>
+                    </div>
+                  </button>
+                </div>
+
+                <div className="flex gap-3 mt-6">
+                  <Button variant="outline" onClick={() => setStep(3.5)}>
+                    Back
+                  </Button>
+                  <Button 
+                    onClick={() => setStep(4)}
+                    className="flex-1 border-4 border-gray-900 bg-gray-900 hover:bg-gray-800 text-white font-bold text-lg py-6"
+                  >
+                    Continue to Design →
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Step 3: Color Selection (Original - now just base color) */}
           {step === 3 && (
             <Card>
               <CardHeader>
@@ -635,9 +832,35 @@ export default function CustomBuilder() {
                     <Label className="text-lg mb-3 block">Rug Base Color</Label>
                     <div className="grid grid-cols-4 gap-4">
                       {BASE_COLORS.map((color) => (
-                        <button
+                        <motion.button
                           key={color.name}
-                          onClick={() => setConfig(prev => ({ ...prev, baseColor: color.name }))}
+                          initial={{ opacity: 1, scale: 1 }}
+                          animate={
+                            transitioning && selectedItem === color.name
+                              ? { scale: 1.2, y: -50, z: 100 }
+                              : transitioning && selectedItem && selectedItem !== color.name
+                              ? { 
+                                  y: Math.random() > 0.5 ? -200 : 200,
+                                  x: (Math.random() - 0.5) * 300,
+                                  rotate: (Math.random() - 0.5) * 90,
+                                  opacity: 0,
+                                  scale: 0.4
+                                }
+                              : { opacity: 1, scale: 1, y: 0, x: 0, rotate: 0 }
+                          }
+                          transition={{ duration: 0.6, ease: "easeInOut" }}
+                          onClick={() => {
+                            setSelectedItem(color.name);
+                            setTransitioning(true);
+                            setConfig(prev => ({ ...prev, baseColor: color.name }));
+                            setFloatingSelections([{ type: 'base', color: color.hex, name: color.name }]);
+                            setTimeout(() => {
+                              setStep(3.5);
+                              setTransitioning(false);
+                              setSelectedItem(null);
+                            }, 700);
+                          }}
+                          disabled={transitioning}
                           className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all group relative ${
                             config.baseColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                           }`}
@@ -659,7 +882,7 @@ export default function CustomBuilder() {
                            />
                           </div>
                           <span className="text-xs text-center">{color.name}</span>
-                        </button>
+                        </motion.button>
                       ))}
                     </div>
                   </div>
@@ -995,8 +1218,23 @@ export default function CustomBuilder() {
 
 
         </div>
+
+        {step >= 4 && (
+          <div className="hidden lg:block sticky top-6 self-start">
+            <BuilderSidebar
+              step={step}
+              config={config}
+              currentPrice={currentPrice()}
+              baseColors={BASE_COLORS}
+              paintColors={PAINT_COLORS}
+              isRush={isRush}
+              onToggleRush={() => setIsRush(!isRush)}
+              key={`${config.baseColor}-${config.paintColor}-${config.imageUrl}`}
+            />
+          </div>
+        )}
         </div>
-      </div>
-    </div>
-  );
-}
+        </div>
+        </div>
+        );
+        }
