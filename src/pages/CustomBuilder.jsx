@@ -442,9 +442,7 @@ export default function CustomBuilder() {
                                 <div className="text-gray-600 mt-1">Flat rate shipping</div>
                               </div>
                             )}
-                            {tier.id === 'highend' && (
-                              <div className="font-semibold text-gray-900">2-4 weeks</div>
-                            )}
+                            {tier.id === 'highend' && '—'}
                           </td>
                         ))}
                       </tr>
