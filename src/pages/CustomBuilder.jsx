@@ -305,8 +305,17 @@ export default function CustomBuilder() {
                       <tr className="border-b-2 border-gray-300">
                         <th className="text-left p-4 font-semibold text-gray-700 bg-gray-50">Feature</th>
                         {QUALITY_TIERS.map((tier) => (
-                          <th key={tier.id} className="p-4 text-center bg-gray-50">
-                            <div className="font-bold text-xl text-gray-900">{tier.label}</div>
+                          <th key={tier.id} className={`p-4 text-center relative ${
+                            tier.id === 'budget' || tier.id === 'good' 
+                              ? 'bg-blue-50 border-2 border-blue-500' 
+                              : 'bg-gray-50'
+                          }`}>
+                            {(tier.id === 'budget' || tier.id === 'good') && (
+                              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap shadow-lg">
+                                Create Your Own & See It Now!
+                              </div>
+                            )}
+                            <div className="font-bold text-xl text-gray-900 mt-2">{tier.label}</div>
                             <div className="text-sm font-normal text-gray-600 mt-1">{tier.priceRange}</div>
                           </th>
                         ))}
@@ -316,7 +325,9 @@ export default function CustomBuilder() {
                       <tr className="border-b border-gray-200">
                         <td className="p-4 font-medium text-gray-700">Description</td>
                         {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className="p-4 text-center text-sm text-gray-600">
+                          <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
+                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
+                          }`}>
                             {tier.description}
                           </td>
                         ))}
@@ -324,7 +335,9 @@ export default function CustomBuilder() {
                       <tr className="border-b border-gray-200 bg-gray-50">
                         <td className="p-4 font-medium text-gray-700">Material</td>
                         {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className="p-4 text-center text-sm text-gray-600">
+                          <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
+                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
+                          }`}>
                             {tier.materialDetail}
                           </td>
                         ))}
@@ -332,7 +345,9 @@ export default function CustomBuilder() {
                       <tr className="border-b border-gray-200">
                         <td className="p-4 font-medium text-gray-700">Expected Lifespan</td>
                         {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className="p-4 text-center text-sm text-gray-600">
+                          <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
+                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
+                          }`}>
                             {tier.lifespan}
                           </td>
                         ))}
@@ -340,7 +355,9 @@ export default function CustomBuilder() {
                       <tr className="border-b border-gray-200 bg-gray-50">
                         <td className="p-4 font-medium text-gray-700">Machine Washable</td>
                         {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className="p-4 text-center">
+                          <td key={tier.id} className={`p-4 text-center ${
+                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
+                          }`}>
                             {tier.washable ? (
                               <CheckCircle className="w-5 h-5 text-green-600 mx-auto" />
                             ) : (
@@ -352,7 +369,9 @@ export default function CustomBuilder() {
                       <tr className="border-b border-gray-200">
                         <td className="p-4 font-medium text-gray-700">Customization</td>
                         {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className="p-4 text-center text-sm text-gray-600">
+                          <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
+                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
+                          }`}>
                             {tier.customization}
                           </td>
                         ))}
@@ -360,7 +379,9 @@ export default function CustomBuilder() {
                       <tr className="border-b-2 border-gray-300 bg-gray-50">
                         <td className="p-4 font-medium text-gray-700">Starting Price</td>
                         {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className="p-4 text-center">
+                          <td key={tier.id} className={`p-4 text-center ${
+                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
+                          }`}>
                             <div className="text-2xl font-bold text-gray-900">
                               ${Math.round(79 * tier.priceMultiplier)}
                             </div>
@@ -371,7 +392,9 @@ export default function CustomBuilder() {
                       <tr>
                         <td className="p-4"></td>
                         {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className="p-4">
+                          <td key={tier.id} className={`p-4 ${
+                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
+                          }`}>
                             <Button
                               onClick={() => {
                                 setTransitioning(true);
@@ -384,6 +407,8 @@ export default function CustomBuilder() {
                               className={`w-full ${
                                 config.qualityTier === tier.id
                                   ? 'border-4 border-gray-900 bg-gray-900 text-white'
+                                  : tier.id === 'budget' || tier.id === 'good'
+                                  ? 'border-2 border-blue-600 bg-blue-600 text-white hover:bg-blue-700'
                                   : 'border-2 border-gray-300 bg-white text-gray-900 hover:border-gray-900'
                               }`}
                             >
