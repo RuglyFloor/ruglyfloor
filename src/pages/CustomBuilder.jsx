@@ -913,28 +913,61 @@ export default function CustomBuilder() {
                   </div>
                   <div>
                     <Label className="text-lg mb-3 block">First Paint Color</Label>
-                    <div className="grid grid-cols-4 gap-4 mb-6">
-                      {getAvailablePaintColors().filter(color => {
-                        if (!config.baseColor) return color.type === 'dark' || color.type === 'both';
-                        const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
-                        if (!selectedBase) return color.type === 'dark' || color.type === 'both';
-                        if (color.type === 'both') return true;
-                        return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
-                      }).map((color) => (
-                        <button
-                          key={`primary-${color.name}-${color.hex}`}
-                          onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
-                          className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
-                            config.paintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                        >
-                          <div 
-                            className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
-                            style={{ backgroundColor: color.hex }}
-                          />
-                          <span className="text-xs text-center">{color.name}</span>
-                        </button>
-                      ))}
+
+                    <div className="space-y-6 mb-6">
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700 mb-3">Group 1</p>
+                        <div className="grid grid-cols-4 gap-4">
+                          {PAINT_COLORS_GROUP_1.filter(color => {
+                            if (!config.baseColor) return color.type === 'dark' || color.type === 'both';
+                            const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
+                            if (!selectedBase) return color.type === 'dark' || color.type === 'both';
+                            if (color.type === 'both') return true;
+                            return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
+                          }).map((color) => (
+                            <button
+                              key={`primary-g1-${color.name}-${color.hex}`}
+                              onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
+                              className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                                config.paintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                              }`}
+                            >
+                              <div 
+                                className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
+                                style={{ backgroundColor: color.hex }}
+                              />
+                              <span className="text-xs text-center">{color.name}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700 mb-3">Group 2</p>
+                        <div className="grid grid-cols-4 gap-4">
+                          {PAINT_COLORS_GROUP_2.filter(color => {
+                            if (!config.baseColor) return color.type === 'dark' || color.type === 'both';
+                            const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
+                            if (!selectedBase) return color.type === 'dark' || color.type === 'both';
+                            if (color.type === 'both') return true;
+                            return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
+                          }).map((color) => (
+                            <button
+                              key={`primary-g2-${color.name}-${color.hex}`}
+                              onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
+                              className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                                config.paintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                              }`}
+                            >
+                              <div 
+                                className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
+                                style={{ backgroundColor: color.hex }}
+                              />
+                              <span className="text-xs text-center">{color.name}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
                     </div>
 
                     {/* Shading Add-on */}
