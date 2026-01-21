@@ -8,6 +8,7 @@ import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import StencilCreator from '../components/custom/StencilCreator';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import DrawingCanvas from '../components/custom/DrawingCanvas';
 import DesignLibrary from '../components/custom/DesignLibrary';
@@ -117,6 +118,7 @@ export default function CustomBuilder() {
   const [step, setStep] = useState(1);
   const [transitioning, setTransitioning] = useState(false);
   const [designMode, setDesignMode] = useState('draw'); // 'library', 'upload', or 'draw'
+  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -452,36 +454,57 @@ export default function CustomBuilder() {
                           <td key={tier.id} className={`p-4 ${
                             tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
                           }`}>
-                            <Button
-                              onClick={() => {
-                                if (tier.id === 'highend') {
-                                  navigate(createPageUrl('Commission'));
-                                } else {
-                                  setTransitioning(true);
-                                  setConfig(prev => ({ ...prev, qualityTier: tier.id }));
-                                  setTimeout(() => {
-                                    setStep(2);
-                                    setTransitioning(false);
-                                  }, 400);
-                                }
-                              }}
-                              className={`w-full ${
-                                config.qualityTier === tier.id
-                                  ? 'border-4 border-gray-900 bg-gray-900 text-white'
-                                  : tier.id === 'budget' || tier.id === 'good'
-                                  ? 'border-2 border-blue-600 bg-blue-600 text-white hover:bg-blue-700'
-                                  : 'border-2 border-gray-300 bg-white text-gray-900 hover:border-gray-900'
-                              }`}
+                            <motion.div
+                              initial={{ opacity: 1, scale: 1 }}
+                              animate={
+                                transitioning && selectedItem === tier.id
+                                  ? { scale: 1.2, z: 50, opacity: 1 }
+                                  : transitioning && selectedItem && selectedItem !== tier.id
+                                  ? { 
+                                      y: Math.random() > 0.5 ? -200 : 200,
+                                      x: (Math.random() - 0.5) * 400,
+                                      rotate: (Math.random() - 0.5) * 90,
+                                      opacity: 0,
+                                      scale: 0.5
+                                    }
+                                  : { opacity: 1, scale: 1, y: 0, x: 0, rotate: 0 }
+                              }
+                              transition={{ duration: 0.6, ease: "easeInOut" }}
                             >
-                              {config.qualityTier === tier.id ? (
-                                <>
-                                  <CheckCircle className="w-4 h-4 mr-2" />
-                                  Selected
-                                </>
-                              ) : (
-                                tier.id === 'highend' ? 'Commission Rugly' : 'Select'
-                              )}
-                            </Button>
+                              <Button
+                                onClick={() => {
+                                  if (tier.id === 'highend') {
+                                    navigate(createPageUrl('Commission'));
+                                  } else {
+                                    setSelectedItem(tier.id);
+                                    setTransitioning(true);
+                                    setConfig(prev => ({ ...prev, qualityTier: tier.id }));
+                                    setTimeout(() => {
+                                      setStep(2);
+                                      setTransitioning(false);
+                                      setSelectedItem(null);
+                                    }, 700);
+                                  }
+                                }}
+                                disabled={transitioning}
+                                className={`w-full ${
+                                  config.qualityTier === tier.id
+                                    ? 'border-4 border-gray-900 bg-gray-900 text-white'
+                                    : tier.id === 'budget' || tier.id === 'good'
+                                    ? 'border-2 border-blue-600 bg-blue-600 text-white hover:bg-blue-700'
+                                    : 'border-2 border-gray-300 bg-white text-gray-900 hover:border-gray-900'
+                                }`}
+                              >
+                                {config.qualityTier === tier.id ? (
+                                  <>
+                                    <CheckCircle className="w-4 h-4 mr-2" />
+                                    Selected
+                                  </>
+                                ) : (
+                                  tier.id === 'highend' ? 'Commission Rugly' : 'Select'
+                                )}
+                              </Button>
+                            </motion.div>
                           </td>
                         ))}
                       </tr>
@@ -503,16 +526,34 @@ export default function CustomBuilder() {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
               {SIZES.map((size) => (
-                <button
+                <motion.button
                   key={size.id}
+                  initial={{ opacity: 1, scale: 1 }}
+                  animate={
+                    transitioning && selectedItem === size.id
+                      ? { scale: 1.3, z: 100, opacity: 1, rotateY: 360 }
+                      : transitioning && selectedItem && selectedItem !== size.id
+                      ? { 
+                          y: Math.random() > 0.5 ? -300 : 300,
+                          x: (Math.random() - 0.5) * 500,
+                          rotate: (Math.random() - 0.5) * 180,
+                          opacity: 0,
+                          scale: 0.3
+                        }
+                      : { opacity: 1, scale: 1, y: 0, x: 0, rotate: 0, rotateY: 0 }
+                  }
+                  transition={{ duration: 0.7, ease: "easeInOut" }}
                   onClick={() => {
+                    setSelectedItem(size.id);
                     setTransitioning(true);
                     setConfig(prev => ({ ...prev, size: size.value }));
                     setTimeout(() => {
                       setStep(3);
                       setTransitioning(false);
-                    }, 400);
+                      setSelectedItem(null);
+                    }, 800);
                   }}
+                  disabled={transitioning}
                   className={`group relative overflow-hidden rounded-2xl transition-all duration-300 ${
                     config.size === size.value 
                       ? 'border-4 border-gray-900 shadow-2xl scale-105' 
@@ -563,10 +604,10 @@ export default function CustomBuilder() {
                         ${config.qualityTier ? Math.round(size.price * QUALITY_TIERS.find(t => t.id === config.qualityTier).priceMultiplier) : size.price}
                       </span>
                     </div>
-                  </div>
-                </button>
-              ))}
-            </div>
+                    </div>
+                    </motion.button>
+                    ))}
+                    </div>
 
 
                 <div className="flex justify-center mt-6">
