@@ -145,6 +145,15 @@ export default function CustomBuilder() {
     hasShading: false,
     hasSecondColor: false
   });
+
+  // Debug logger
+  useEffect(() => {
+    console.log('CONFIG STATE:', {
+      paintColor: config.paintColor,
+      secondPaintColor: config.secondPaintColor,
+      hasSecondColor: config.hasSecondColor
+    });
+  }, [config.paintColor, config.secondPaintColor, config.hasSecondColor]);
   const [uploading, setUploading] = useState(false);
   const [isRush, setIsRush] = useState(false);
 
@@ -1067,90 +1076,124 @@ export default function CustomBuilder() {
                       </button>
                     </div>
 
-                    {/* Second Paint Color - Simplified */}
-                    <div className="border-t-4 border-gray-900 pt-8 mt-8">
-                      <div className="bg-yellow-100 border-2 border-yellow-500 p-6 rounded-lg mb-6">
-                        <Label className="text-xl font-bold text-gray-900 block mb-3">Add a 2nd Paint Color? (+${config.size ? getSecondColorFee(config.size) : 30})</Label>
+                    {/* Second Paint Color */}
+                    <div className="border-t-4 border-gray-900 pt-8 mt-8 bg-yellow-50 p-6 rounded-lg">
+                      <div className="mb-6">
+                        <Label className="text-2xl font-bold text-gray-900 block mb-4">Want a 2nd Paint Color?</Label>
+                        <p className="text-sm text-gray-600 mb-4">Add another color for more detail (+${config.size ? getSecondColorFee(config.size) : 30})</p>
                         
-                        <label className="flex items-center gap-3 cursor-pointer">
+                        <div className="flex items-center gap-4 bg-white p-4 rounded-lg border-2 border-gray-300">
                           <input
                             type="checkbox"
+                            id="enable-second-color"
                             checked={config.hasSecondColor}
                             onChange={(e) => {
-                              const checked = e.target.checked;
-                              setConfig(prev => ({ 
-                                ...prev, 
-                                hasSecondColor: checked,
-                                secondPaintColor: checked ? prev.secondPaintColor : ''
-                              }));
+                              const isChecked = e.target.checked;
+                              console.log('Checkbox changed:', isChecked);
+                              setConfig(prev => {
+                                const newConfig = { 
+                                  ...prev, 
+                                  hasSecondColor: isChecked,
+                                  secondPaintColor: isChecked ? prev.secondPaintColor : ''
+                                };
+                                console.log('New config:', newConfig);
+                                return newConfig;
+                              });
                             }}
-                            className="w-6 h-6"
+                            className="w-6 h-6 cursor-pointer"
                           />
-                          <span className="text-lg font-semibold">Yes, I want to add a second color</span>
-                        </label>
+                          <label htmlFor="enable-second-color" className="text-lg font-semibold cursor-pointer">
+                            Yes, add a second paint color
+                          </label>
+                        </div>
                       </div>
 
                       {config.hasSecondColor && (
-                        <div className="space-y-6 p-6 bg-yellow-50 rounded-lg border-2 border-yellow-400">
-                          <div className="bg-white p-4 rounded-lg text-center border-2 border-yellow-500">
-                            <p className="text-xl font-bold text-gray-900 mb-2">
-                              {config.secondPaintColor ? `✓ Second Color: ${config.secondPaintColor}` : '👇 Click a Color Below'}
+                        <div className="space-y-6 p-6 bg-white rounded-lg border-4 border-yellow-500">
+                          <div className="bg-yellow-100 p-4 rounded-lg text-center border-2 border-yellow-600">
+                            <p className="text-sm text-gray-600 mb-1">First Color: <strong>{config.paintColor || 'None'}</strong></p>
+                            <p className="text-xl font-bold text-gray-900">
+                              Second Color: {config.secondPaintColor ? <span className="text-green-700">✓ {config.secondPaintColor}</span> : <span className="text-red-600">Not Selected</span>}
                             </p>
                           </div>
 
-                          <div className="space-y-4">
-                            <p className="font-bold text-gray-900">Group 1</p>
-                            <div className="grid grid-cols-4 gap-3">
+                          <div>
+                            <p className="font-bold text-gray-900 text-lg mb-3 bg-gray-100 p-2 rounded">Group 1 - Click to Select</p>
+                            <div className="grid grid-cols-4 gap-4">
                               {PAINT_COLORS_GROUP_1.map((color) => {
                                 const isSelected = config.secondPaintColor === color.name;
                                 return (
-                                  <div
-                                    key={color.name + color.hex}
-                                    onClick={() => {
-                                      setConfig(prev => ({ ...prev, secondPaintColor: color.name }));
+                                  <button
+                                    key={`second-${color.name}-${color.hex}`}
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      console.log('Clicking second color:', color.name);
+                                      setConfig(prev => {
+                                        const newConfig = { ...prev, secondPaintColor: color.name };
+                                        console.log('Setting secondPaintColor to:', color.name, 'Full config:', newConfig);
+                                        return newConfig;
+                                      });
                                     }}
-                                    className={`cursor-pointer p-3 rounded-lg border-2 transition-all ${
-                                      isSelected ? 'border-yellow-600 bg-yellow-100 ring-4 ring-yellow-300' : 'border-gray-300 hover:border-yellow-400'
+                                    className={`p-4 rounded-lg border-3 transition-all transform hover:scale-105 ${
+                                      isSelected 
+                                        ? 'border-green-600 bg-green-100 ring-4 ring-green-400 shadow-2xl scale-110' 
+                                        : 'border-gray-400 bg-white hover:border-yellow-500 hover:shadow-lg'
                                     }`}
                                   >
                                     {isSelected && (
-                                      <div className="text-center text-yellow-700 font-bold text-xs mb-1">✓ SELECTED</div>
+                                      <div className="text-center text-green-700 font-bold text-sm mb-2 bg-green-200 rounded py-1">
+                                        ✓ SELECTED
+                                      </div>
                                     )}
                                     <div 
-                                      className="w-full aspect-square rounded-full border-2 border-white shadow-md mx-auto"
+                                      className="w-full aspect-square rounded-full border-4 border-white shadow-lg mx-auto mb-2"
                                       style={{ backgroundColor: color.hex }}
                                     />
-                                    <p className="text-xs text-center mt-2 font-medium">{color.name}</p>
-                                  </div>
+                                    <p className="text-sm text-center font-bold">{color.name}</p>
+                                  </button>
                                 );
                               })}
                             </div>
                           </div>
 
-                          <div className="space-y-4">
-                            <p className="font-bold text-gray-900">Group 2</p>
-                            <div className="grid grid-cols-4 gap-3">
+                          <div className="h-2 bg-gray-300 rounded"></div>
+
+                          <div>
+                            <p className="font-bold text-gray-900 text-lg mb-3 bg-gray-100 p-2 rounded">Group 2 - Click to Select</p>
+                            <div className="grid grid-cols-4 gap-4">
                               {PAINT_COLORS_GROUP_2.map((color) => {
                                 const isSelected = config.secondPaintColor === color.name;
                                 return (
-                                  <div
-                                    key={color.name + color.hex}
-                                    onClick={() => {
-                                      setConfig(prev => ({ ...prev, secondPaintColor: color.name }));
+                                  <button
+                                    key={`second-${color.name}-${color.hex}`}
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      console.log('Clicking second color:', color.name);
+                                      setConfig(prev => {
+                                        const newConfig = { ...prev, secondPaintColor: color.name };
+                                        console.log('Setting secondPaintColor to:', color.name, 'Full config:', newConfig);
+                                        return newConfig;
+                                      });
                                     }}
-                                    className={`cursor-pointer p-3 rounded-lg border-2 transition-all ${
-                                      isSelected ? 'border-yellow-600 bg-yellow-100 ring-4 ring-yellow-300' : 'border-gray-300 hover:border-yellow-400'
+                                    className={`p-4 rounded-lg border-3 transition-all transform hover:scale-105 ${
+                                      isSelected 
+                                        ? 'border-green-600 bg-green-100 ring-4 ring-green-400 shadow-2xl scale-110' 
+                                        : 'border-gray-400 bg-white hover:border-yellow-500 hover:shadow-lg'
                                     }`}
                                   >
                                     {isSelected && (
-                                      <div className="text-center text-yellow-700 font-bold text-xs mb-1">✓ SELECTED</div>
+                                      <div className="text-center text-green-700 font-bold text-sm mb-2 bg-green-200 rounded py-1">
+                                        ✓ SELECTED
+                                      </div>
                                     )}
                                     <div 
-                                      className="w-full aspect-square rounded-full border-2 border-white shadow-md mx-auto"
+                                      className="w-full aspect-square rounded-full border-4 border-white shadow-lg mx-auto mb-2"
                                       style={{ backgroundColor: color.hex }}
                                     />
-                                    <p className="text-xs text-center mt-2 font-medium">{color.name}</p>
-                                  </div>
+                                    <p className="text-sm text-center font-bold">{color.name}</p>
+                                  </button>
                                 );
                               })}
                             </div>
