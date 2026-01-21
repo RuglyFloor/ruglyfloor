@@ -299,7 +299,13 @@ export default function CustomBuilder() {
 
                 {/* Comparison Table */}
                 <div className="max-w-6xl mx-auto overflow-x-auto pt-6">
-                  <table className="w-full border-collapse">
+                  <table className="w-full border-collapse table-fixed">
+                    <colgroup>
+                      <col style={{ width: '25%' }} />
+                      <col style={{ width: '25%' }} />
+                      <col style={{ width: '25%' }} />
+                      <col style={{ width: '25%' }} />
+                    </colgroup>
                     <thead>
                       <tr className="border-b-2 border-gray-300">
                         <th className="text-left p-4 font-semibold text-gray-700 bg-gray-50">Feature</th>
