@@ -1171,33 +1171,33 @@ export default function CustomBuilder() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                   <button
                     onClick={() => setDesignMode('library')}
-                    className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center min-h-[180px] ${
+                    className={`w-full p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center h-full ${
                       designMode === 'library' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    <FileText className="w-8 h-8 mx-auto mb-3 text-blue-600" />
+                    <FileText className="w-8 h-8 mb-3 text-blue-600" />
                     <div className="font-semibold text-lg mb-1">Design Library</div>
-                    <div className="text-sm text-gray-600">Choose from our collection</div>
+                    <div className="text-sm text-gray-600 text-center">Choose from our collection</div>
                   </button>
                   <button
                     onClick={() => setDesignMode('draw')}
-                    className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center min-h-[180px] ${
+                    className={`w-full p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center h-full ${
                       designMode === 'draw' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    <Pencil className="w-8 h-8 mx-auto mb-3 text-blue-600" />
+                    <Pencil className="w-8 h-8 mb-3 text-blue-600" />
                     <div className="font-semibold text-lg mb-1">Draw Your Own</div>
-                    <div className="text-sm text-gray-600">Create with our drawing tools</div>
+                    <div className="text-sm text-gray-600 text-center">Create with our drawing tools</div>
                   </button>
                   <button
                     onClick={() => setDesignMode('upload')}
-                    className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center min-h-[180px] ${
+                    className={`w-full p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center h-full ${
                       designMode === 'upload' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
-                    <Upload className="w-8 h-8 mx-auto mb-3 text-blue-600" />
+                    <Upload className="w-8 h-8 mb-3 text-blue-600" />
                     <div className="font-semibold text-lg mb-1">Upload & Convert</div>
-                    <div className="text-sm text-gray-600">Upload an image and convert to stencil</div>
+                    <div className="text-sm text-gray-600 text-center">Upload an image and convert to stencil</div>
                   </button>
                 </div>
 
