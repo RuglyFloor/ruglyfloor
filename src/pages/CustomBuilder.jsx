@@ -288,8 +288,8 @@ export default function CustomBuilder() {
         </div>
       )}
 
-      <div className="grid lg:grid-cols-3 gap-8 items-start">
-          <div className="lg:col-span-2 space-y-6">
+      <div className="max-w-7xl mx-auto">
+          <div className="space-y-6">
             {/* Step 1: Quality Tier Selection - Comparison Table */}
             {step === 1 && (
               <div className={`space-y-6 transition-opacity duration-300 ${transitioning ? 'opacity-50' : 'opacity-100'}`}>
@@ -306,7 +306,7 @@ export default function CustomBuilder() {
                     <thead>
                       <tr className="border-b-2 border-gray-300">
                         <th className="text-left p-4 font-semibold text-gray-700 bg-gray-50">Feature</th>
-                        {QUALITY_TIERS.filter(tier => tier.id !== 'highend').map((tier) => (
+                        {QUALITY_TIERS.map((tier) => (
                           <th key={tier.id} className={`p-4 text-center relative ${
                             tier.id === 'budget' || tier.id === 'good' 
                               ? 'bg-blue-50 border-2 border-blue-500' 
@@ -325,7 +325,7 @@ export default function CustomBuilder() {
                     <tbody>
                       <tr className="border-b border-gray-200">
                         <td className="p-4 font-medium text-gray-700">Description</td>
-                        {QUALITY_TIERS.filter(tier => tier.id !== 'highend').map((tier) => (
+                        {QUALITY_TIERS.map((tier) => (
                           <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
                             tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
                           }`}>
@@ -335,7 +335,7 @@ export default function CustomBuilder() {
                       </tr>
                       <tr className="border-b border-gray-200 bg-gray-50">
                         <td className="p-4 font-medium text-gray-700">Material</td>
-                        {QUALITY_TIERS.filter(tier => tier.id !== 'highend').map((tier) => (
+                        {QUALITY_TIERS.map((tier) => (
                           <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
                             tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
                           }`}>
@@ -345,7 +345,7 @@ export default function CustomBuilder() {
                       </tr>
                       <tr className="border-b border-gray-200">
                         <td className="p-4 font-medium text-gray-700">Expected Lifespan</td>
-                        {QUALITY_TIERS.filter(tier => tier.id !== 'highend').map((tier) => (
+                        {QUALITY_TIERS.map((tier) => (
                           <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
                             tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
                           }`}>
@@ -355,7 +355,7 @@ export default function CustomBuilder() {
                       </tr>
                       <tr className="border-b border-gray-200 bg-gray-50">
                         <td className="p-4 font-medium text-gray-700">Machine Washable</td>
-                        {QUALITY_TIERS.filter(tier => tier.id !== 'highend').map((tier) => (
+                        {QUALITY_TIERS.map((tier) => (
                           <td key={tier.id} className={`p-4 text-center ${
                             tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
                           }`}>
@@ -369,7 +369,7 @@ export default function CustomBuilder() {
                       </tr>
                       <tr className="border-b border-gray-200">
                         <td className="p-4 font-medium text-gray-700">First color included</td>
-                        {QUALITY_TIERS.filter(tier => tier.id !== 'highend').map((tier) => (
+                        {QUALITY_TIERS.map((tier) => (
                           <td key={tier.id} className={`p-4 text-center ${
                             tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
                           }`}>
@@ -379,7 +379,7 @@ export default function CustomBuilder() {
                       </tr>
                       <tr className="border-b border-gray-200 bg-gray-50">
                         <td className="p-4 font-medium text-gray-700">2nd color</td>
-                        {QUALITY_TIERS.filter(tier => tier.id !== 'highend').map((tier) => (
+                        {QUALITY_TIERS.map((tier) => (
                           <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
                             tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
                           }`}>
@@ -391,7 +391,7 @@ export default function CustomBuilder() {
                       </tr>
                       <tr className="border-b border-gray-200">
                         <td className="p-4 font-medium text-gray-700">Backing</td>
-                        {QUALITY_TIERS.filter(tier => tier.id !== 'highend').map((tier) => (
+                        {QUALITY_TIERS.map((tier) => (
                           <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
                             tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
                           }`}>
@@ -403,7 +403,7 @@ export default function CustomBuilder() {
                       </tr>
                       <tr className="border-b border-gray-200">
                         <td className="p-4 font-medium text-gray-700">Customization</td>
-                        {QUALITY_TIERS.filter(tier => tier.id !== 'highend').map((tier) => (
+                        {QUALITY_TIERS.map((tier) => (
                           <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
                             tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
                           }`}>
@@ -413,7 +413,7 @@ export default function CustomBuilder() {
                       </tr>
                       <tr className="border-b border-gray-200 bg-gray-50">
                         <td className="p-4 font-medium text-gray-700">Time before it's on your floor</td>
-                        {QUALITY_TIERS.filter(tier => tier.id !== 'highend').map((tier) => (
+                        {QUALITY_TIERS.map((tier) => (
                           <td key={tier.id} className={`p-4 text-center text-sm ${
                             tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
                           }`}>
@@ -437,7 +437,7 @@ export default function CustomBuilder() {
                       </tr>
                       <tr className="border-b-2 border-gray-300 bg-gray-50">
                         <td className="p-4 font-medium text-gray-700">Starting Price</td>
-                        {QUALITY_TIERS.filter(tier => tier.id !== 'highend').map((tier) => (
+                        {QUALITY_TIERS.map((tier) => (
                           <td key={tier.id} className={`p-4 text-center ${
                             tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
                           }`}>
@@ -450,7 +450,7 @@ export default function CustomBuilder() {
                       </tr>
                       <tr>
                         <td className="p-4"></td>
-                        {QUALITY_TIERS.filter(tier => tier.id !== 'highend').map((tier) => (
+                        {QUALITY_TIERS.map((tier) => (
                           <td key={tier.id} className={`p-4 ${
                             tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
                           }`}>
@@ -995,20 +995,7 @@ export default function CustomBuilder() {
 
 
         </div>
-
-        <div className="hidden lg:block sticky top-6 self-start">
-          <BuilderSidebar
-            step={step}
-            config={config}
-            currentPrice={currentPrice()}
-            baseColors={BASE_COLORS}
-            paintColors={PAINT_COLORS}
-            isRush={isRush}
-            onToggleRush={() => setIsRush(!isRush)}
-            key={`${config.baseColor}-${config.paintColor}-${config.imageUrl}`}
-          />
         </div>
-      </div>
       </div>
     </div>
   );
