@@ -674,62 +674,128 @@ export default function CustomBuilder() {
                   ))}
                 </div>
 
-                <div className="grid grid-cols-4 gap-6">
-                  {getAvailablePaintColors().filter(color => {
-                    if (!config.baseColor) return color.type === 'dark' || color.type === 'both';
-                    const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
-                    if (!selectedBase) return color.type === 'dark' || color.type === 'both';
-                    if (color.type === 'both') return true;
-                    return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
-                  }).map((color) => (
-                    <motion.button
-                      key={color.name}
-                      initial={{ opacity: 1, scale: 1 }}
-                      animate={
-                        transitioning && selectedItem === color.name
-                          ? { scale: 1.3, y: -50, z: 100 }
-                          : transitioning && selectedItem && selectedItem !== color.name
-                          ? { 
-                              y: Math.random() > 0.5 ? -200 : 200,
-                              x: (Math.random() - 0.5) * 300,
-                              rotate: (Math.random() - 0.5) * 90,
-                              opacity: 0,
-                              scale: 0.4
-                            }
-                          : { opacity: 1, scale: 1, y: 0, x: 0, rotate: 0 }
-                      }
-                      transition={{ duration: 0.6, ease: "easeInOut" }}
-                      onClick={() => {
-                        setSelectedItem(color.name);
-                        setTransitioning(true);
-                        setConfig(prev => ({ ...prev, paintColor: color.name }));
-                        setFloatingSelections(prev => [...prev, { type: 'paint', color: color.hex, name: color.name }]);
-                        setTimeout(() => {
-                          setStep(3.7);
-                          setTransitioning(false);
-                          setSelectedItem(null);
-                        }, 700);
-                      }}
-                      disabled={transitioning}
-                      className="flex flex-col items-center gap-3"
-                    >
-                      {/* Droplet Shape */}
-                      <div 
-                        className="relative w-16 h-20 border-2 border-white shadow-lg"
-                        style={{ 
-                          backgroundColor: color.hex,
-                          borderRadius: '50% 50% 50% 0',
-                          transform: 'rotate(-45deg)'
-                        }}
-                      >
-                        <div 
-                          className="absolute inset-2 bg-white rounded-full opacity-30"
-                          style={{ top: '20%', left: '20%', width: '30%', height: '30%' }}
-                        />
-                      </div>
-                      <span className="text-xs text-center font-medium">{color.name}</span>
-                    </motion.button>
-                  ))}
+                <div className="space-y-6">
+                  <div>
+                    <p className="text-sm font-semibold text-gray-700 mb-3">Group 1</p>
+                    <div className="grid grid-cols-4 gap-6">
+                      {PAINT_COLORS_GROUP_1.filter(color => {
+                        if (!config.baseColor) return color.type === 'dark' || color.type === 'both';
+                        const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
+                        if (!selectedBase) return color.type === 'dark' || color.type === 'both';
+                        if (color.type === 'both') return true;
+                        return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
+                      }).map((color) => (
+                        <motion.button
+                          key={`paint1-g1-${color.name}`}
+                          initial={{ opacity: 1, scale: 1 }}
+                          animate={
+                            transitioning && selectedItem === color.name
+                              ? { scale: 1.3, y: -50, z: 100 }
+                              : transitioning && selectedItem && selectedItem !== color.name
+                              ? { 
+                                  y: Math.random() > 0.5 ? -200 : 200,
+                                  x: (Math.random() - 0.5) * 300,
+                                  rotate: (Math.random() - 0.5) * 90,
+                                  opacity: 0,
+                                  scale: 0.4
+                                }
+                              : { opacity: 1, scale: 1, y: 0, x: 0, rotate: 0 }
+                          }
+                          transition={{ duration: 0.6, ease: "easeInOut" }}
+                          onClick={() => {
+                            setSelectedItem(color.name);
+                            setTransitioning(true);
+                            setConfig(prev => ({ ...prev, paintColor: color.name }));
+                            setFloatingSelections(prev => [...prev, { type: 'paint', color: color.hex, name: color.name }]);
+                            setTimeout(() => {
+                              setStep(3.7);
+                              setTransitioning(false);
+                              setSelectedItem(null);
+                            }, 700);
+                          }}
+                          disabled={transitioning}
+                          className="flex flex-col items-center gap-3"
+                        >
+                          {/* Droplet Shape */}
+                          <div 
+                            className="relative w-16 h-20 border-2 border-white shadow-lg"
+                            style={{ 
+                              backgroundColor: color.hex,
+                              borderRadius: '50% 50% 50% 0',
+                              transform: 'rotate(-45deg)'
+                            }}
+                          >
+                            <div 
+                              className="absolute inset-2 bg-white rounded-full opacity-30"
+                              style={{ top: '20%', left: '20%', width: '30%', height: '30%' }}
+                            />
+                          </div>
+                          <span className="text-xs text-center font-medium">{color.name}</span>
+                        </motion.button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-sm font-semibold text-gray-700 mb-3">Group 2</p>
+                    <div className="grid grid-cols-4 gap-6">
+                      {PAINT_COLORS_GROUP_2.filter(color => {
+                        if (!config.baseColor) return color.type === 'dark' || color.type === 'both';
+                        const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
+                        if (!selectedBase) return color.type === 'dark' || color.type === 'both';
+                        if (color.type === 'both') return true;
+                        return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
+                      }).map((color) => (
+                        <motion.button
+                          key={`paint1-g2-${color.name}`}
+                          initial={{ opacity: 1, scale: 1 }}
+                          animate={
+                            transitioning && selectedItem === color.name
+                              ? { scale: 1.3, y: -50, z: 100 }
+                              : transitioning && selectedItem && selectedItem !== color.name
+                              ? { 
+                                  y: Math.random() > 0.5 ? -200 : 200,
+                                  x: (Math.random() - 0.5) * 300,
+                                  rotate: (Math.random() - 0.5) * 90,
+                                  opacity: 0,
+                                  scale: 0.4
+                                }
+                              : { opacity: 1, scale: 1, y: 0, x: 0, rotate: 0 }
+                          }
+                          transition={{ duration: 0.6, ease: "easeInOut" }}
+                          onClick={() => {
+                            setSelectedItem(color.name);
+                            setTransitioning(true);
+                            setConfig(prev => ({ ...prev, paintColor: color.name }));
+                            setFloatingSelections(prev => [...prev, { type: 'paint', color: color.hex, name: color.name }]);
+                            setTimeout(() => {
+                              setStep(3.7);
+                              setTransitioning(false);
+                              setSelectedItem(null);
+                            }, 700);
+                          }}
+                          disabled={transitioning}
+                          className="flex flex-col items-center gap-3"
+                        >
+                          {/* Droplet Shape */}
+                          <div 
+                            className="relative w-16 h-20 border-2 border-white shadow-lg"
+                            style={{ 
+                              backgroundColor: color.hex,
+                              borderRadius: '50% 50% 50% 0',
+                              transform: 'rotate(-45deg)'
+                            }}
+                          >
+                            <div 
+                              className="absolute inset-2 bg-white rounded-full opacity-30"
+                              style={{ top: '20%', left: '20%', width: '30%', height: '30%' }}
+                            />
+                          </div>
+                          <span className="text-xs text-center font-medium">{color.name}</span>
+                        </motion.button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex gap-3 mt-6">
