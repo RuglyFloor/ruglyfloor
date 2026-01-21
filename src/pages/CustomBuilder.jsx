@@ -20,23 +20,35 @@ const QUALITY_TIERS = [
   { 
     id: 'budget', 
     label: 'Budget Crugly', 
-    description: 'Synthetic but effective in covering up floors, creating a cool effect, dorm rooms, kids love it. Can be gently machine washed.',
+    description: 'Synthetic but effective in covering up floors, creating a cool effect, dorm rooms, kids love it.',
     priceMultiplier: 0.7,
-    materialDetail: 'Synthetic, thinner non-slip floor covering that looks great, lasts 2 years with high traffic, 20 with no on'
+    materialDetail: 'Synthetic, thinner non-slip floor covering that looks great',
+    lifespan: '2 years with high traffic, 20+ with low',
+    washable: true,
+    customization: 'Standard designs',
+    priceRange: '$$'
   },
   { 
     id: 'good', 
     label: 'Standard Crugly', 
     description: 'Expect the same life-span as any ordinary rug.',
     priceMultiplier: 1.0,
-    materialDetail: 'Standard rug construction'
+    materialDetail: 'Standard rug construction',
+    lifespan: 'Standard rug lifespan',
+    washable: true,
+    customization: 'Custom painted designs',
+    priceRange: '$$$'
   },
   { 
     id: 'highend', 
     label: 'Rugly', 
     description: 'Ruglys are the cat\'s meow—you tell us what you\'re thinking and we make it happen with no limits',
     priceMultiplier: 2.5,
-    materialDetail: 'Custom hand-painted, limitless possibilities'
+    materialDetail: 'Premium materials, custom hand-painted',
+    lifespan: 'Premium durability',
+    washable: true,
+    customization: 'Limitless possibilities',
+    priceRange: '$$$$'
   }
 ];
 
@@ -276,73 +288,119 @@ export default function CustomBuilder() {
 
       <div className="grid lg:grid-cols-3 gap-8 items-start">
           <div className="lg:col-span-2 space-y-6">
-            {/* Step 1: Quality Tier Selection */}
+            {/* Step 1: Quality Tier Selection - Comparison Table */}
             {step === 1 && (
               <div className={`space-y-6 transition-opacity duration-300 ${transitioning ? 'opacity-50' : 'opacity-100'}`}>
                 <div className="text-center mb-8">
                   <h2 className="text-3xl font-bold mb-3 text-gray-900">
                     Choose Your Quality Level
                   </h2>
-                  <p className="text-gray-600 text-lg">Select the material quality that matches your needs</p>
+                  <p className="text-gray-600 text-lg">Compare our quality tiers side-by-side</p>
                 </div>
 
-                <div className="grid gap-5 max-w-4xl mx-auto">
-                  {QUALITY_TIERS.map((tier) => (
-                    <button
-                      key={tier.id}
-                      onClick={() => {
-                        setTransitioning(true);
-                        setConfig(prev => ({ ...prev, qualityTier: tier.id }));
-                        setTimeout(() => {
-                          setStep(2);
-                          setTransitioning(false);
-                        }, 400);
-                      }}
-                      className={`group relative overflow-hidden rounded-2xl transition-all duration-300 ${
-                        config.qualityTier === tier.id 
-                          ? 'border-4 border-gray-900 shadow-2xl scale-105' 
-                          : 'border-2 border-gray-300 hover:border-gray-400 hover:shadow-xl hover:scale-102 shadow-md'
-                      }`}
-                    >
-                      <div className={`absolute inset-0 transition-opacity ${
-                        config.qualityTier === tier.id 
-                          ? 'bg-white opacity-100' 
-                          : 'bg-gray-50 opacity-100 group-hover:bg-white'
-                      }`} />
-
-                      <div className="relative p-8">
-                        {config.qualityTier === tier.id && (
-                          <div className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                            <CheckCircle className="w-5 h-5 text-blue-600" />
-                          </div>
-                        )}
-
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="text-left flex-1">
-                            <h3 className={`text-2xl font-bold mb-2 ${
-                              config.qualityTier === tier.id ? 'text-gray-900' : 'text-gray-900'
-                            }`}>
-                              {tier.label}
-                            </h3>
-                            <p className={`text-sm mb-2 ${
-                              config.qualityTier === tier.id ? 'text-gray-700' : 'text-gray-600'
-                            }`}>
-                              {tier.description}
-                            </p>
-                            <p className="text-xs text-gray-500 italic">{tier.materialDetail}</p>
-                          </div>
-                          <div className="text-right ml-6">
-                            <div className="text-sm text-gray-600 mb-1">Price Range</div>
-                            <div className={`text-2xl font-black ${
-                              config.qualityTier === tier.id ? 'text-blue-600' : 'text-gray-900'
-                            }`}>
-                              {tier.priceMultiplier < 1 ? '$$' : tier.priceMultiplier === 1 ? '$$$' : '$$$$'}
+                {/* Comparison Table */}
+                <div className="max-w-6xl mx-auto overflow-x-auto">
+                  <table className="w-full border-collapse">
+                    <thead>
+                      <tr className="border-b-2 border-gray-300">
+                        <th className="text-left p-4 font-semibold text-gray-700 bg-gray-50">Feature</th>
+                        {QUALITY_TIERS.map((tier) => (
+                          <th key={tier.id} className="p-4 text-center bg-gray-50">
+                            <div className="font-bold text-xl text-gray-900">{tier.label}</div>
+                            <div className="text-sm font-normal text-gray-600 mt-1">{tier.priceRange}</div>
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr className="border-b border-gray-200">
+                        <td className="p-4 font-medium text-gray-700">Description</td>
+                        {QUALITY_TIERS.map((tier) => (
+                          <td key={tier.id} className="p-4 text-center text-sm text-gray-600">
+                            {tier.description}
+                          </td>
+                        ))}
+                      </tr>
+                      <tr className="border-b border-gray-200 bg-gray-50">
+                        <td className="p-4 font-medium text-gray-700">Material</td>
+                        {QUALITY_TIERS.map((tier) => (
+                          <td key={tier.id} className="p-4 text-center text-sm text-gray-600">
+                            {tier.materialDetail}
+                          </td>
+                        ))}
+                      </tr>
+                      <tr className="border-b border-gray-200">
+                        <td className="p-4 font-medium text-gray-700">Expected Lifespan</td>
+                        {QUALITY_TIERS.map((tier) => (
+                          <td key={tier.id} className="p-4 text-center text-sm text-gray-600">
+                            {tier.lifespan}
+                          </td>
+                        ))}
+                      </tr>
+                      <tr className="border-b border-gray-200 bg-gray-50">
+                        <td className="p-4 font-medium text-gray-700">Machine Washable</td>
+                        {QUALITY_TIERS.map((tier) => (
+                          <td key={tier.id} className="p-4 text-center">
+                            {tier.washable ? (
+                              <CheckCircle className="w-5 h-5 text-green-600 mx-auto" />
+                            ) : (
+                              <span className="text-gray-400">—</span>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                      <tr className="border-b border-gray-200">
+                        <td className="p-4 font-medium text-gray-700">Customization</td>
+                        {QUALITY_TIERS.map((tier) => (
+                          <td key={tier.id} className="p-4 text-center text-sm text-gray-600">
+                            {tier.customization}
+                          </td>
+                        ))}
+                      </tr>
+                      <tr className="border-b-2 border-gray-300 bg-gray-50">
+                        <td className="p-4 font-medium text-gray-700">Starting Price</td>
+                        {QUALITY_TIERS.map((tier) => (
+                          <td key={tier.id} className="p-4 text-center">
+                            <div className="text-2xl font-bold text-gray-900">
+                              ${Math.round(79 * tier.priceMultiplier)}
                             </div>
-                          </div>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
+                            <div className="text-xs text-gray-500 mt-1">(Tiny size)</div>
+                          </td>
+                        ))}
+                      </tr>
+                      <tr>
+                        <td className="p-4"></td>
+                        {QUALITY_TIERS.map((tier) => (
+                          <td key={tier.id} className="p-4">
+                            <Button
+                              onClick={() => {
+                                setTransitioning(true);
+                                setConfig(prev => ({ ...prev, qualityTier: tier.id }));
+                                setTimeout(() => {
+                                  setStep(2);
+                                  setTransitioning(false);
+                                }, 400);
+                              }}
+                              className={`w-full ${
+                                config.qualityTier === tier.id
+                                  ? 'border-4 border-gray-900 bg-gray-900 text-white'
+                                  : 'border-2 border-gray-300 bg-white text-gray-900 hover:border-gray-900'
+                              }`}
+                            >
+                              {config.qualityTier === tier.id ? (
+                                <>
+                                  <CheckCircle className="w-4 h-4 mr-2" />
+                                  Selected
+                                </>
+                              ) : (
+                                'Select'
+                              )}
+                            </Button>
+                          </td>
+                        ))}
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             )}
