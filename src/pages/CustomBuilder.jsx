@@ -890,135 +890,95 @@ export default function CustomBuilder() {
                     </div>
                   </div>
                   <div>
-                    <Label className="text-lg mb-3 block">1st Paint Color for Design</Label>
+                    <Label className="text-lg mb-3 block">First Paint Color</Label>
+                    <div className="grid grid-cols-4 gap-4 mb-6">
+                      {getAvailablePaintColors().filter(color => {
+                        if (!config.baseColor) return color.type === 'dark' || color.type === 'both';
+                        const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
+                        if (!selectedBase) return color.type === 'dark' || color.type === 'both';
+                        if (color.type === 'both') return true;
+                        return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
+                      }).map((color) => (
+                        <button
+                          key={`primary-${color.name}-${color.hex}`}
+                          onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
+                          className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                            config.paintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div 
+                            className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
+                            style={{ backgroundColor: color.hex }}
+                          />
+                          <span className="text-xs text-center">{color.name}</span>
+                        </button>
+                      ))}
+                    </div>
 
-                    {/* First Set - Base-specific colors */}
-                    <div className="mb-3">
-                     <p className="text-xs text-gray-600 mb-2 font-semibold">Primary Colors</p>
-                     <div className="grid grid-cols-3 gap-4">
-                       {getAvailablePaintColors().filter(color => {
-                         if (!config.baseColor) return color.type === 'dark' || color.type === 'both';
-                         const selectedBase = BASE_COLORS.find(c => c.name === config.baseColor);
-                         if (!selectedBase) return color.type === 'dark' || color.type === 'both';
-                         if (color.type === 'both') return true;
-                         return selectedBase.type === 'light' ? color.type === 'dark' : color.type === 'light';
-                       }).map((color) => (
-                          <button
-                            key={`primary-${color.name}-${color.hex}`}
-                            onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
-                            className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all group relative ${
-                              config.paintColor === color.name ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                            }`}
-                            title={`Paint your design in ${color.name}`}
-                          >
-                            <span className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50">
-                              Paint your design in {color.name}
-                            </span>
-                            <div 
-                              className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
-                              style={{ backgroundColor: color.hex }}
-                            />
-                            <span className="text-xs text-center">{color.name}</span>
-                          </button>
-                        ))}
+                    {/* Shading Add-on */}
+                    <div className="bg-gray-50 p-4 rounded-lg mb-6">
+                      <button
+                        onClick={() => setConfig(prev => ({ ...prev, hasShading: !prev.hasShading }))}
+                        className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+                          config.hasShading ? 'border-blue-600 bg-blue-50' : 'border-gray-300 hover:border-gray-400 bg-white'
+                        }`}
+                      >
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <div className="font-semibold">Add Shading (Optional)</div>
+                            <div className="text-xs text-gray-600">Adds depth and dimension</div>
+                          </div>
+                          <div className={`text-lg font-bold ${config.hasShading ? 'text-blue-600' : 'text-gray-900'}`}>
+                            +${config.size ? getShadingFee(config.size) : 30}
+                          </div>
+                        </div>
+                        {config.hasShading && (
+                          <div className="mt-2 text-xs text-blue-600 font-semibold">✓ Added</div>
+                        )}
+                      </button>
+                    </div>
+
+                    {/* Second Paint Color Section */}
+                    <div className="border-t-2 border-gray-200 pt-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <Label className="text-lg">2nd Paint Color (Optional)</Label>
+                        <button
+                          onClick={() => setConfig(prev => ({ 
+                            ...prev, 
+                            hasSecondColor: !prev.hasSecondColor,
+                            secondPaintColor: prev.hasSecondColor ? '' : prev.secondPaintColor
+                          }))}
+                          className={`px-4 py-2 rounded-lg border-2 font-semibold transition-all ${
+                            config.hasSecondColor ? 'border-green-600 bg-green-50 text-green-600' : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                          }`}
+                        >
+                          {config.hasSecondColor ? '✓ Added' : 'Add'} +${config.size ? getSecondColorFee(config.size) : 30}
+                        </button>
                       </div>
+
+                      {config.hasSecondColor && (
+                        <div className="grid grid-cols-4 gap-4">
+                          {getAvailablePaintColors().map((color) => (
+                            <button
+                              key={`second-${color.name}-${color.hex}`}
+                              onClick={() => setConfig(prev => ({ 
+                                ...prev, 
+                                secondPaintColor: color.name
+                              }))}
+                              className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all ${
+                                config.secondPaintColor === color.name ? 'border-green-600 bg-green-50' : 'border-gray-200 hover:border-gray-300'
+                              }`}
+                            >
+                              <div 
+                                className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
+                                style={{ backgroundColor: color.hex }}
+                              />
+                              <span className="text-xs text-center">{color.name}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
-
-                    {/* Add-ons Section */}
-                    <div className="relative my-6">
-                     <div className="absolute inset-0 flex items-center">
-                       <div className="w-full border-t border-gray-300"></div>
-                     </div>
-                     <div className="relative flex justify-center">
-                       <span className="bg-white px-3 text-sm font-semibold text-gray-700">Add-ons (Optional)</span>
-                     </div>
-                    </div>
-
-                    <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                     <p className="text-xs text-gray-600 mb-3">Add-ons are optional. Shading = more depth. Second color = more chaos (in a good way).</p>
-
-                     <div className="space-y-3">
-                       {/* Shading Add-on */}
-                       <button
-                         onClick={() => setConfig(prev => ({ ...prev, hasShading: !prev.hasShading }))}
-                         className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-                           config.hasShading ? 'border-blue-600 bg-blue-50' : 'border-gray-300 hover:border-gray-400 bg-white'
-                         }`}
-                       >
-                         <div className="flex justify-between items-center">
-                           <div>
-                             <div className="font-semibold">Shading</div>
-                             <div className="text-xs text-gray-600">Adds depth and dimension</div>
-                           </div>
-                           <div className={`text-lg font-bold ${config.hasShading ? 'text-blue-600' : 'text-gray-900'}`}>
-                             +${config.size ? getShadingFee(config.size) : 30}
-                           </div>
-                         </div>
-                         {config.hasShading && (
-                           <div className="mt-2 text-xs text-blue-600 font-semibold">✓ Added</div>
-                         )}
-                       </button>
-
-                       {/* Second Color Add-on */}
-                       <button
-                         onClick={() => setConfig(prev => ({ 
-                           ...prev, 
-                           hasSecondColor: !prev.hasSecondColor,
-                           secondPaintColor: prev.hasSecondColor ? '' : prev.secondPaintColor
-                         }))}
-                         className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-                           config.hasSecondColor ? 'border-green-600 bg-green-50' : 'border-gray-300 hover:border-gray-400 bg-white'
-                         }`}
-                       >
-                         <div className="flex justify-between items-center">
-                           <div>
-                             <div className="font-semibold">Second Color</div>
-                             <div className="text-xs text-gray-600">Add a 2nd paint color</div>
-                           </div>
-                           <div className={`text-lg font-bold ${config.hasSecondColor ? 'text-green-600' : 'text-gray-900'}`}>
-                             +${config.size ? getSecondColorFee(config.size) : 30}
-                           </div>
-                         </div>
-                         {config.hasSecondColor && (
-                           <div className="mt-2 text-xs text-green-600 font-semibold">✓ Added</div>
-                         )}
-                       </button>
-                     </div>
-                    </div>
-
-                    {/* Second Color Picker (only show if second color addon is selected) */}
-                    {config.hasSecondColor && (
-                     <div className="mb-4">
-                       <p className="text-xs text-gray-600 mb-2 font-semibold">Choose 2nd Paint Color</p>
-                       <div className="grid grid-cols-3 gap-4">
-                         {getAvailablePaintColors().filter(color => color.type === 'both').map((color, idx) => (
-                           <button
-                             key={`both-${color.name}-${color.hex}-${idx}`}
-                             onClick={() => setConfig(prev => ({ 
-                               ...prev, 
-                               secondPaintColor: color.name
-                             }))}
-                             className={`flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all group relative ${
-                               config.secondPaintColor === color.name ? 'border-green-600 bg-green-50' : 'border-gray-200 hover:border-gray-300'
-                             }`}
-                           >
-                             <div 
-                               className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
-                               style={{ backgroundColor: color.hex }}
-                             />
-                             <span className="text-xs text-center">{color.name}</span>
-                           </button>
-                         ))}
-                       </div>
-                       {config.secondPaintColor && (
-                         <p className="text-xs text-green-600 mt-2 font-semibold">
-                           ✓ 2nd color: {config.secondPaintColor}
-                         </p>
-                       )}
-                     </div>
-                    )}
-
-
                   </div>
                 </div>
                 <div className="flex gap-3 mt-6">
