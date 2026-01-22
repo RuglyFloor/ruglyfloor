@@ -703,11 +703,23 @@ export default function CustomBuilder() {
                           <button
                             key={color.name}
                             onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
-                            className={`p-3 rounded-lg border-2 transition-all ${
+                            className={`p-3 rounded-lg border-2 transition-all flex flex-col items-center ${
                               config.paintColor === color.name ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-300' : 'border-gray-200 hover:border-gray-300'
                             }`}
                           >
-                            <div className="w-full aspect-square rounded-full mb-2 border-2 border-white shadow-md" style={{ backgroundColor: color.hex }} />
+                            <div 
+                              className="w-12 h-16 mb-2 border-2 border-white shadow-md relative"
+                              style={{ 
+                                backgroundColor: color.hex,
+                                borderRadius: '50% 50% 50% 0',
+                                transform: 'rotate(-45deg)'
+                              }}
+                            >
+                              <div 
+                                className="absolute bg-white rounded-full opacity-30"
+                                style={{ top: '20%', left: '20%', width: '30%', height: '30%' }}
+                              />
+                            </div>
                             <div className="text-xs text-center font-medium">{color.name}</div>
                           </button>
                         ))}
@@ -720,11 +732,23 @@ export default function CustomBuilder() {
                           <button
                             key={color.name}
                             onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
-                            className={`p-3 rounded-lg border-2 transition-all ${
+                            className={`p-3 rounded-lg border-2 transition-all flex flex-col items-center ${
                               config.paintColor === color.name ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-300' : 'border-gray-200 hover:border-gray-300'
                             }`}
                           >
-                            <div className="w-full aspect-square rounded-full mb-2 border-2 border-white shadow-md" style={{ backgroundColor: color.hex }} />
+                            <div 
+                              className="w-12 h-16 mb-2 border-2 border-white shadow-md relative"
+                              style={{ 
+                                backgroundColor: color.hex,
+                                borderRadius: '50% 50% 50% 0',
+                                transform: 'rotate(-45deg)'
+                              }}
+                            >
+                              <div 
+                                className="absolute bg-white rounded-full opacity-30"
+                                style={{ top: '20%', left: '20%', width: '30%', height: '30%' }}
+                              />
+                            </div>
                             <div className="text-xs text-center font-medium">{color.name}</div>
                           </button>
                         ))}
@@ -779,11 +803,23 @@ export default function CustomBuilder() {
                               <button
                                 key={color.name}
                                 onClick={() => setConfig(prev => ({ ...prev, secondPaintColor: color.name }))}
-                                className={`p-2 rounded-lg border-2 transition-all ${
+                                className={`p-2 rounded-lg border-2 transition-all flex flex-col items-center ${
                                   config.secondPaintColor === color.name ? 'border-yellow-600 bg-yellow-100 ring-2 ring-yellow-400' : 'border-gray-300 hover:border-yellow-400'
                                 }`}
                               >
-                                <div className="w-full aspect-square rounded-full border-2 border-white shadow-md mb-1" style={{ backgroundColor: color.hex }} />
+                                <div 
+                                  className="w-10 h-14 mb-1 border-2 border-white shadow-md relative"
+                                  style={{ 
+                                    backgroundColor: color.hex,
+                                    borderRadius: '50% 50% 50% 0',
+                                    transform: 'rotate(-45deg)'
+                                  }}
+                                >
+                                  <div 
+                                    className="absolute bg-white rounded-full opacity-30"
+                                    style={{ top: '20%', left: '20%', width: '30%', height: '30%' }}
+                                  />
+                                </div>
                                 <div className="text-xs text-center font-medium">{color.name}</div>
                               </button>
                             ))}
@@ -793,11 +829,23 @@ export default function CustomBuilder() {
                               <button
                                 key={color.name}
                                 onClick={() => setConfig(prev => ({ ...prev, secondPaintColor: color.name }))}
-                                className={`p-2 rounded-lg border-2 transition-all ${
+                                className={`p-2 rounded-lg border-2 transition-all flex flex-col items-center ${
                                   config.secondPaintColor === color.name ? 'border-yellow-600 bg-yellow-100 ring-2 ring-yellow-400' : 'border-gray-300 hover:border-yellow-400'
                                 }`}
                               >
-                                <div className="w-full aspect-square rounded-full border-2 border-white shadow-md mb-1" style={{ backgroundColor: color.hex }} />
+                                <div 
+                                  className="w-10 h-14 mb-1 border-2 border-white shadow-md relative"
+                                  style={{ 
+                                    backgroundColor: color.hex,
+                                    borderRadius: '50% 50% 50% 0',
+                                    transform: 'rotate(-45deg)'
+                                  }}
+                                >
+                                  <div 
+                                    className="absolute bg-white rounded-full opacity-30"
+                                    style={{ top: '20%', left: '20%', width: '30%', height: '30%' }}
+                                  />
+                                </div>
                                 <div className="text-xs text-center font-medium">{color.name}</div>
                               </button>
                             ))}
