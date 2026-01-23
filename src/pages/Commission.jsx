@@ -90,7 +90,7 @@ export default function Commission() {
       const rushFee = formData.rushOrder ? 159 : 0;
       const totalDeposit = depositAmount + rushFee;
       
-      await base44.entities.Order.create({
+      const orderData = {
         order_number: orderNumber,
         customer_name: formData.name,
         customer_email: formData.email,
@@ -102,11 +102,7 @@ export default function Commission() {
           type: 'commission',
           name: 'Custom Commission - Deposit',
           price: depositAmount
-        }, ...(formData.rushOrder ? [{
-          type: 'commission',
-          name: 'Rush Order Fee',
-          price: rushFee
-        }] : [])],
+        }],
         notes: JSON.stringify({
           type: 'commission',
           inspirationImages: formData.inspirationImages,
@@ -121,7 +117,17 @@ export default function Commission() {
           depositAmount: depositAmount,
           rushFee: rushFee
         })
-      });
+      };
+
+      if (formData.rushOrder) {
+        orderData.items.push({
+          type: 'commission',
+          name: 'Rush Order Fee',
+          price: rushFee
+        });
+      }
+
+      await base44.entities.Order.create(orderData);
 
       await base44.functions.invoke('notifyNewOrder', { 
         orderData: {
@@ -136,7 +142,8 @@ export default function Commission() {
 
       setSubmitted(true);
     } catch (error) {
-      alert('Failed to submit commission request. Please try again.');
+      console.error('Commission submission error:', error);
+      alert('Failed to submit commission request. Please try again. Error: ' + error.message);
     } finally {
       setSubmitting(false);
     }
