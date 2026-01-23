@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Upload, CheckCircle, Pencil, FileText } from 'lucide-react';
+import { Upload, CheckCircle, Pencil, FileText, Lightbulb } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -14,6 +14,7 @@ import DrawingCanvas from '../components/custom/DrawingCanvas';
 import DesignLibrary from '../components/custom/DesignLibrary';
 import InteractiveRugPreview from '../components/custom/InteractiveRugPreview';
 import BuilderSidebar from '../components/custom/BuilderSidebar';
+import AIAssistant from '../components/custom/AIAssistant';
 import SEOHead from '../components/seo/SEOHead';
 import { useSEO } from '../components/seo/useSEO';
 
@@ -186,6 +187,30 @@ export default function CustomBuilder() {
   };
 
 
+
+  const handleApplyAIColors = (colors) => {
+    if (colors && colors.length > 0) {
+      const firstColorHex = colors[0];
+      const secondColorHex = colors[1];
+      
+      const paintColorMatch = PAINT_COLORS.find(c => c.hex.toLowerCase() === firstColorHex.toLowerCase());
+      const secondPaintColorMatch = secondColorHex ? PAINT_COLORS.find(c => c.hex.toLowerCase() === secondColorHex.toLowerCase()) : null;
+      
+      setConfig(prev => ({
+        ...prev,
+        paintColor: paintColorMatch?.name || prev.paintColor,
+        secondPaintColor: secondPaintColorMatch?.name || '',
+        hasSecondColor: !!secondPaintColorMatch
+      }));
+    }
+  };
+
+  const handleCopyAISuggestion = (suggestion, type) => {
+    setConfig(prev => ({ 
+      ...prev, 
+      designInstructions: (prev.designInstructions ? prev.designInstructions + '\n\n' : '') + `AI ${type}: ${suggestion}` 
+    }));
+  };
 
   const handleAddToCart = () => {
     const selectedSize = SIZES.find(s => s.value === config.size);
@@ -887,7 +912,17 @@ export default function CustomBuilder() {
             <CardContent>
               <div className="space-y-6">
                 {/* Mode Selection */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                  <button
+                    onClick={() => setDesignMode('ai')}
+                    className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center min-h-[160px] ${
+                      designMode === 'ai' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <Lightbulb className="w-8 h-8 mb-3 text-blue-600" />
+                    <div className="font-semibold text-lg mb-1">AI Assistant</div>
+                    <div className="text-sm text-gray-600 text-center">Get AI design suggestions</div>
+                  </button>
                   <button
                     onClick={() => setDesignMode('library')}
                     className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center min-h-[160px] ${
@@ -919,6 +954,16 @@ export default function CustomBuilder() {
                     <div className="text-sm text-gray-600 text-center">Upload an image and convert to stencil</div>
                   </button>
                 </div>
+
+                {/* AI Assistant Mode */}
+                {designMode === 'ai' && (
+                  <AIAssistant
+                    currentImageUrl={config.imageUrl}
+                    rugSize={config.size}
+                    onApplyColors={handleApplyAIColors}
+                    onCopySuggestion={handleCopyAISuggestion}
+                  />
+                )}
 
                 {/* Design Library Mode */}
                 {designMode === 'library' && (
