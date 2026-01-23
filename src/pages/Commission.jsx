@@ -90,6 +90,22 @@ export default function Commission() {
       const rushFee = formData.rushOrder ? 159 : 0;
       const totalDeposit = depositAmount + rushFee;
       
+      const items = [
+        {
+          type: 'commission',
+          name: 'Custom Commission - Deposit',
+          price: depositAmount
+        }
+      ];
+
+      if (formData.rushOrder) {
+        items.push({
+          type: 'commission',
+          name: 'Rush Order Fee',
+          price: rushFee
+        });
+      }
+
       const orderData = {
         order_number: orderNumber,
         customer_name: formData.name,
@@ -98,11 +114,7 @@ export default function Commission() {
         total_amount: totalDeposit,
         status: 'pending',
         payment_status: 'pending',
-        items: [{
-          type: 'commission',
-          name: 'Custom Commission - Deposit',
-          price: depositAmount
-        }],
+        items: items,
         notes: JSON.stringify({
           type: 'commission',
           inspirationImages: formData.inspirationImages,
@@ -119,15 +131,9 @@ export default function Commission() {
         })
       };
 
-      if (formData.rushOrder) {
-        orderData.items.push({
-          type: 'commission',
-          name: 'Rush Order Fee',
-          price: rushFee
-        });
-      }
-
-      await base44.entities.Order.create(orderData);
+      console.log('Creating order with data:', orderData);
+      const createdOrder = await base44.entities.Order.create(orderData);
+      console.log('Order created successfully:', createdOrder);
 
       await base44.functions.invoke('notifyNewOrder', { 
         orderData: {
