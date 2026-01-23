@@ -83,12 +83,6 @@ export default function Commission() {
       return;
     }
 
-    // Check if running in iframe (preview mode)
-    if (window.self !== window.top) {
-      alert('Checkout only works from the published app, not the preview. Please publish your app first.');
-      return;
-    }
-
     setSubmitting(true);
     try {
       const response = await base44.functions.invoke('createCommissionCheckout', { 
