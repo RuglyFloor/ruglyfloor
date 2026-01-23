@@ -83,74 +83,27 @@ export default function Commission() {
       return;
     }
 
+    // Check if running in iframe (preview mode)
+    if (window.self !== window.top) {
+      alert('Checkout only works from the published app, not the preview. Please publish your app first.');
+      return;
+    }
+
     setSubmitting(true);
     try {
-      const orderNumber = 'COMM-' + Date.now();
-      const depositAmount = 300;
-      const rushFee = formData.rushOrder ? 159 : 0;
-      const totalDeposit = depositAmount + rushFee;
-      
-      const items = [
-        {
-          type: 'commission',
-          name: 'Custom Commission - Deposit',
-          price: depositAmount
-        }
-      ];
-
-      if (formData.rushOrder) {
-        items.push({
-          type: 'commission',
-          name: 'Rush Order Fee',
-          price: rushFee
-        });
-      }
-
-      const orderData = {
-        order_number: orderNumber,
-        customer_name: formData.name,
-        customer_email: formData.email,
-        customer_phone: formData.phone,
-        total_amount: totalDeposit,
-        status: 'pending',
-        payment_status: 'pending',
-        items: items,
-        notes: JSON.stringify({
-          type: 'commission',
-          inspirationImages: formData.inspirationImages,
-          description: formData.description,
-          preferredSize: formData.preferredSize,
-          preferredColors: formData.preferredColors,
-          numColors: formData.numColors,
-          budgetRange: formData.budgetRange,
-          projectType: formData.projectType,
-          businessName: formData.businessName,
-          rushOrder: formData.rushOrder,
-          depositAmount: depositAmount,
-          rushFee: rushFee
-        })
-      };
-
-      console.log('Creating order with data:', orderData);
-      const createdOrder = await base44.entities.Order.create(orderData);
-      console.log('Order created successfully:', createdOrder);
-
-      await base44.functions.invoke('notifyNewOrder', { 
-        orderData: {
-          order_number: orderNumber,
-          customer_name: formData.name,
-          customer_email: formData.email,
-          customer_phone: formData.phone,
-          total_amount: totalDeposit,
-          items: [{ type: 'commission', name: 'Custom Commission' }]
-        }
+      const response = await base44.functions.invoke('createCommissionCheckout', { 
+        formData: formData
       });
 
-      setSubmitted(true);
+      if (response.data.url) {
+        // Redirect to Stripe checkout
+        window.location.href = response.data.url;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
     } catch (error) {
       console.error('Commission submission error:', error);
-      alert('Failed to submit commission request. Please try again. Error: ' + error.message);
-    } finally {
+      alert('Failed to create checkout session. Please try again. Error: ' + error.message);
       setSubmitting(false);
     }
   };
