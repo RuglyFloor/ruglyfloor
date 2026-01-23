@@ -21,11 +21,12 @@ export default function AdminPricing() {
       { label: 'High-End', priceMultiplier: 1.5, materialDetail: 'Luxury wool blend' }
     ],
     sizes: [
-      { label: 'Small (4x6)', basePrice: 150, stepFee: 30 },
-      { label: 'Medium (5x7)', basePrice: 250, stepFee: 50 },
-      { label: 'Large (8x10)', basePrice: 450, stepFee: 90 },
-      { label: 'Huge (9x11)', basePrice: 650, stepFee: 130 },
-      { label: 'Round (5ft)', basePrice: 200, stepFee: 40 }
+      { label: 'Tiny (2x3)', basePrice: 79, stepFee: 30 },
+      { label: 'Small (4x6)', basePrice: 200, stepFee: 30 },
+      { label: 'Medium (5x7)', basePrice: 300, stepFee: 50 },
+      { label: 'Large (8x10)', basePrice: 400, stepFee: 90 },
+      { label: 'Huge (9x11)', basePrice: 500, stepFee: 130 },
+      { label: 'Round (4ft)', basePrice: 250, stepFee: 40 }
     ],
     color_fees: {
       one_color: 0,
