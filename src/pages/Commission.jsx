@@ -177,12 +177,12 @@ export default function Commission() {
         <div className="bg-blue-50 border-2 border-blue-600 rounded-lg p-6 mb-8">
           <div className="flex items-start gap-4">
             <div className="flex-1">
-              <h3 className="font-bold text-lg mb-2">$300 Deposit Required</h3>
+              <h3 className="font-bold text-lg mb-2">Reserve Your Masterpiece for $300</h3>
               <p className="text-sm text-gray-700 mb-2">
-                The deposit covers the cost of creating a detailed estimate and design mockup. It's applied to your final rug cost.
+                This deposit gets you a detailed estimate and custom design mockup, then goes toward your final rug cost.
               </p>
               <p className="text-xs text-gray-600">
-                <strong>Non-refundable after estimate approval.</strong> Typical timeline: 3 weeks production + shipping
+                <strong>Refundable if you decline the estimate.</strong> Typical timeline: 3 weeks production + shipping
               </p>
             </div>
           </div>
