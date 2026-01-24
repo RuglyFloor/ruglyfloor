@@ -21,21 +21,32 @@ export default function Layout({ children, currentPageName }) {
       sessionStorage.setItem('rugly_referrer', document.referrer || 'direct');
     }
 
-    // Google Analytics
-    const script1 = document.createElement('script');
-    script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-6DSQKNVFMB';
-    script1.async = true;
-    document.head.appendChild(script1);
+    // Google Analytics - Load scripts
+    if (!window.gtag) {
+      const script1 = document.createElement('script');
+      script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-6DSQKNVFMB';
+      script1.async = true;
+      document.head.appendChild(script1);
 
-    const script2 = document.createElement('script');
-    script2.innerHTML = `
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-6DSQKNVFMB');
-    `;
-    document.head.appendChild(script2);
+      window.gtag = function() { window.dataLayer.push(arguments); };
+      window.gtag('js', new Date());
+      window.gtag('config', 'G-6DSQKNVFMB', {
+        send_page_view: true
+      });
+    }
   }, []);
+
+  // Track page views on navigation
+  React.useEffect(() => {
+    if (window.gtag) {
+      window.gtag('event', 'page_view', {
+        page_title: currentPageName,
+        page_location: window.location.href,
+        page_path: window.location.pathname
+      });
+    }
+  }, [currentPageName]);
 
   const navLinks = [
     { name: 'Home', page: 'Home' },
