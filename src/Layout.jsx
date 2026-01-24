@@ -20,6 +20,21 @@ export default function Layout({ children, currentPageName }) {
     if (!sessionStorage.getItem('rugly_referrer')) {
       sessionStorage.setItem('rugly_referrer', document.referrer || 'direct');
     }
+
+    // Google Analytics
+    const script1 = document.createElement('script');
+    script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-6DSQKNVFMB';
+    script1.async = true;
+    document.head.appendChild(script1);
+
+    const script2 = document.createElement('script');
+    script2.innerHTML = `
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-6DSQKNVFMB');
+    `;
+    document.head.appendChild(script2);
   }, []);
 
   const navLinks = [
@@ -36,18 +51,6 @@ export default function Layout({ children, currentPageName }) {
     <div className="min-h-screen bg-gray-50">
       {/* Favicon */}
       <link rel="icon" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/d71f153d8_RUGLYMASTERLOGO-92.png" />
-
-      {/* Google Analytics */}
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-6DSQKNVFMB"></script>
-      <script dangerouslySetInnerHTML={{
-        __html: `
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-6DSQKNVFMB');
-        `
-      }}></script>
-
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,700;0,900;1,100;1,700&family=Baumans&family=Kameron:wght@400..700&family=Major+Mono+Display&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Allerta+Stencil&family=Big+Shoulders+Stencil+Display:wght@400;700;900&family=Saira+Stencil+One&family=Black+Ops+One&family=Wallpoet&family=Kenia&family=Plaster&family=Emblema+One&family=Protest+Guerrilla&display=swap');
