@@ -21,19 +21,24 @@ export default function Layout({ children, currentPageName }) {
       sessionStorage.setItem('rugly_referrer', document.referrer || 'direct');
     }
 
-    // Google Analytics - Load scripts
-    if (!window.gtag) {
-      const script1 = document.createElement('script');
-      script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-6DSQKNVFMB';
-      script1.async = true;
-      document.head.appendChild(script1);
-
-      window.dataLayer = window.dataLayer || [];
-      window.gtag = function() { window.dataLayer.push(arguments); };
-      window.gtag('js', new Date());
-      window.gtag('config', 'G-6DSQKNVFMB', {
-        send_page_view: true
-      });
+    // Google Analytics - Initialize
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){window.dataLayer.push(arguments);}
+    window.gtag = gtag;
+    
+    if (!document.querySelector('script[src*="googletagmanager"]')) {
+      const script = document.createElement('script');
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=G-6DSQKNVFMB';
+      script.async = true;
+      script.onload = () => {
+        gtag('js', new Date());
+        gtag('config', 'G-6DSQKNVFMB', {
+          send_page_view: true,
+          debug_mode: true
+        });
+        console.log('Google Analytics loaded');
+      };
+      document.head.appendChild(script);
     }
   }, []);
 
@@ -45,6 +50,7 @@ export default function Layout({ children, currentPageName }) {
         page_location: window.location.href,
         page_path: window.location.pathname
       });
+      console.log('GA page view:', currentPageName);
     }
   }, [currentPageName]);
 
