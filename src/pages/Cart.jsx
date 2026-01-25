@@ -27,6 +27,9 @@ export default function Cart() {
   const [submitting, setSubmitting] = useState(false);
   const [designInstructions, setDesignInstructions] = useState('');
   const [smsConsent, setSmsConsent] = useState(false);
+  const [couponCode, setCouponCode] = useState('');
+  const [couponValidation, setCouponValidation] = useState(null);
+  const [validatingCoupon, setValidatingCoupon] = useState(false);
 
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem('rugly_cart') || '[]');
@@ -47,6 +50,35 @@ export default function Cart() {
   };
 
   const totalAmount = cart.reduce((sum, item) => sum + item.price, 0);
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+
+    setValidatingCoupon(true);
+    try {
+      const depositAmount = 100;
+      const response = await base44.functions.invoke('validateCoupon', {
+        code: couponCode.toUpperCase(),
+        orderAmount: depositAmount
+      });
+
+      setCouponValidation(response.data);
+      if (!response.data.valid) {
+        alert(response.data.error || 'Invalid coupon code');
+      }
+    } catch (error) {
+      console.error('Coupon validation error:', error);
+      alert('Failed to validate coupon');
+      setCouponValidation(null);
+    } finally {
+      setValidatingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setCouponCode('');
+    setCouponValidation(null);
+  };
 
   const handleCheckout = async () => {
     // Track time on site
@@ -78,7 +110,8 @@ export default function Cart() {
           timeOnSite,
           referrerSource
         },
-        designInstructions 
+        designInstructions,
+        couponCode: couponValidation?.valid ? couponCode : null
       });
 
       if (response.data.url) {
@@ -320,20 +353,70 @@ export default function Cart() {
                   </div>
                 </div>
 
+                {/* Coupon Code Section */}
                 <div className="border-t pt-4 mt-4">
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-lg font-semibold">Total:</span>
-                    <span className="text-3xl font-bold text-gray-900">${totalAmount}</span>
+                  <Label className="text-sm font-medium mb-2 block">Promo Code</Label>
+                  {!couponValidation?.valid ? (
+                    <div className="flex gap-2">
+                      <Input
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                        placeholder="Enter code"
+                        disabled={validatingCoupon}
+                        onKeyPress={(e) => e.key === 'Enter' && handleApplyCoupon()}
+                      />
+                      <Button
+                        onClick={handleApplyCoupon}
+                        variant="outline"
+                        disabled={!couponCode.trim() || validatingCoupon}
+                      >
+                        {validatingCoupon ? 'Checking...' : 'Apply'}
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-3">
+                      <div>
+                        <div className="font-semibold text-green-800">{couponValidation.coupon.code}</div>
+                        <div className="text-xs text-green-600">{couponValidation.coupon.description}</div>
+                      </div>
+                      <Button
+                        onClick={handleRemoveCoupon}
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="border-t pt-4 mt-4">
+                  <div className="space-y-2 mb-4">
+                    <div className="flex justify-between">
+                      <span>Deposit Required</span>
+                      <span className="font-semibold">$100.00</span>
+                    </div>
+                    {couponValidation?.valid && (
+                      <div className="flex justify-between text-green-600">
+                        <span>Discount ({couponValidation.coupon.code})</span>
+                        <span className="font-semibold">-${couponValidation.discount_amount.toFixed(2)}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between text-lg font-bold pt-2 border-t">
+                      <span>Total Due Now</span>
+                      <span className="text-2xl">${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : '100.00'}</span>
+                    </div>
                   </div>
                   <Button 
                     className="w-full border-4 border-gray-900 bg-white hover:bg-gray-50 text-gray-900 font-bold"
                     onClick={handleCheckout}
                     disabled={submitting}
                   >
-                    {submitting ? 'Processing...' : 'Place Order'}
+                    {submitting ? 'Processing...' : `Pay $${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : '100'} Deposit`}
                   </Button>
                   <p className="text-xs text-gray-500 text-center mt-2">
-                    We'll contact you for payment details
+                    Full payment due before shipping
                   </p>
                 </div>
               </CardContent>
