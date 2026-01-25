@@ -7,7 +7,7 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
 
-    const { cart, customerInfo, designInstructions } = await req.json();
+    const { cart, customerInfo, designInstructions, couponCode } = await req.json();
     
     // Debug logging
     console.log('=== CHECKOUT DEBUG ===');
@@ -72,17 +72,39 @@ Deno.serve(async (req) => {
 
     const shippingCost = calculateShipping(cart);
 
-    // Create deposit line item ($100 deposit instead of full price)
-    const DEPOSIT_AMOUNT = 100;
+    // Apply coupon if provided
+    let depositAmount = 100;
+    let couponDiscount = 0;
+    let appliedCoupon = null;
+
+    if (couponCode) {
+      const couponValidation = await base44.asServiceRole.functions.invoke('validateCoupon', {
+        code: couponCode,
+        orderAmount: depositAmount
+      });
+
+      if (couponValidation.data.valid) {
+        appliedCoupon = couponValidation.data.coupon;
+        couponDiscount = couponValidation.data.discount_amount;
+        depositAmount = couponValidation.data.final_amount;
+
+        // Increment coupon usage
+        await base44.asServiceRole.entities.Coupon.update(appliedCoupon.id, {
+          times_used: (await base44.asServiceRole.entities.Coupon.filter({ id: appliedCoupon.id }))[0].times_used + 1
+        });
+      }
+    }
+
+    // Create deposit line item
     const lineItems = [{
       price_data: {
         currency: 'usd',
         product_data: {
-          name: 'Custom Rug Deposit',
+          name: 'Custom Rug Deposit' + (appliedCoupon ? ` (${appliedCoupon.code} applied)` : ''),
           description: `Deposit for ${cart.length} custom rug${cart.length > 1 ? 's' : ''} (Balance due before shipping)`,
           images: cart[0]?.previewUrl ? [cart[0].previewUrl] : [],
         },
-        unit_amount: DEPOSIT_AMOUNT * 100, // $100 in cents
+        unit_amount: Math.round(depositAmount * 100), // in cents
       },
       quantity: 1,
     }];

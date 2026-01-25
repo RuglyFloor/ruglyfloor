@@ -6,7 +6,7 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'));
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
-    const { formData } = await req.json();
+    const { formData, couponCode } = await req.json();
     
     console.log('=== COMMISSION CHECKOUT DEBUG ===');
     console.log('Form data:', JSON.stringify(formData, null, 2));
@@ -25,8 +25,30 @@ Deno.serve(async (req) => {
     }
 
     const orderNumber = 'COMM-' + Date.now();
-    const depositAmount = 300;
+    let depositAmount = 300;
     const rushFee = formData.rushOrder ? 159 : 0;
+    let couponDiscount = 0;
+    let appliedCoupon = null;
+
+    // Apply coupon if provided
+    if (couponCode) {
+      const couponValidation = await base44.asServiceRole.functions.invoke('validateCoupon', {
+        code: couponCode,
+        orderAmount: depositAmount
+      });
+
+      if (couponValidation.data.valid) {
+        appliedCoupon = couponValidation.data.coupon;
+        couponDiscount = couponValidation.data.discount_amount;
+        depositAmount = couponValidation.data.final_amount;
+
+        // Increment coupon usage
+        await base44.asServiceRole.entities.Coupon.update(appliedCoupon.id, {
+          times_used: (await base44.asServiceRole.entities.Coupon.filter({ id: appliedCoupon.id }))[0].times_used + 1
+        });
+      }
+    }
+
     const totalDeposit = depositAmount + rushFee;
 
     // Get highest customer number
@@ -97,11 +119,11 @@ Deno.serve(async (req) => {
         price_data: {
           currency: 'usd',
           product_data: {
-            name: 'Rugley Commission Deposit',
+            name: 'Rugley Commission Deposit' + (appliedCoupon ? ` (${appliedCoupon.code} applied)` : ''),
             description: 'Deposit for custom commission estimate and design mockup',
             images: formData.inspirationImages?.[0] ? [formData.inspirationImages[0]] : [],
           },
-          unit_amount: depositAmount * 100, // $300 in cents
+          unit_amount: Math.round(depositAmount * 100), // in cents
         },
         quantity: 1,
       }
