@@ -4,6 +4,7 @@ import { createPageUrl } from './utils';
 import { ShoppingCart, Menu, X, Facebook, Instagram, Twitter, Mail, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
+import GoogleAnalytics from './components/GoogleAnalytics';
 
 export default function Layout({ children, currentPageName }) {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
@@ -20,39 +21,7 @@ export default function Layout({ children, currentPageName }) {
     if (!sessionStorage.getItem('rugly_referrer')) {
       sessionStorage.setItem('rugly_referrer', document.referrer || 'direct');
     }
-
-    // Google Analytics - Initialize
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){window.dataLayer.push(arguments);}
-    window.gtag = gtag;
-    
-    if (!document.querySelector('script[src*="googletagmanager"]')) {
-      const script = document.createElement('script');
-      script.src = 'https://www.googletagmanager.com/gtag/js?id=G-6DSQKNVFMB';
-      script.async = true;
-      script.onload = () => {
-        gtag('js', new Date());
-        gtag('config', 'G-6DSQKNVFMB', {
-          send_page_view: true,
-          debug_mode: true
-        });
-        console.log('Google Analytics loaded');
-      };
-      document.head.appendChild(script);
-    }
   }, []);
-
-  // Track page views on navigation
-  React.useEffect(() => {
-    if (window.gtag) {
-      window.gtag('event', 'page_view', {
-        page_title: currentPageName,
-        page_location: window.location.href,
-        page_path: window.location.pathname
-      });
-      console.log('GA page view:', currentPageName);
-    }
-  }, [currentPageName]);
 
   const navLinks = [
     { name: 'Home', page: 'Home' },
@@ -66,6 +35,7 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <GoogleAnalytics />
       {/* Favicon */}
       <link rel="icon" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/d71f153d8_RUGLYMASTERLOGO-92.png" />
       <style>{`
