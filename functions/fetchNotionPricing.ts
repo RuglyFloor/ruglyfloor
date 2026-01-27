@@ -7,6 +7,8 @@ Deno.serve(async (req) => {
     // Get Notion access token
     const accessToken = await base44.asServiceRole.connectors.getAccessToken('notion');
     const databaseId = Deno.env.get('NOTION_DATABASE_ID');
+    
+    console.log('Using database ID:', databaseId);
 
     // Query the database
     const response = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
