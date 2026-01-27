@@ -50,6 +50,8 @@ export default function CustomBuilderTabs() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('quality');
   const [designMode, setDesignMode] = useState('draw');
+  const [showWarning, setShowWarning] = useState(false);
+  const [pendingTab, setPendingTab] = useState('');
   
   const [config, setConfig] = useState({
     qualityTier: '',
@@ -64,6 +66,42 @@ export default function CustomBuilderTabs() {
     referenceNotes: '',
     artworkMode: ''
   });
+
+  const handleTabChange = (newTab) => {
+    // If going back to quality and other fields are filled, warn user
+    if (newTab === 'quality' && (config.size || config.paintColor || config.imageUrl)) {
+      setShowWarning(true);
+      setPendingTab(newTab);
+      return;
+    }
+    // If going back to size and colors/design are filled, warn user
+    if (newTab === 'size' && (config.paintColor || config.imageUrl)) {
+      setShowWarning(true);
+      setPendingTab(newTab);
+      return;
+    }
+    // If going back to colors and design is filled, warn user
+    if (newTab === 'colors' && config.imageUrl) {
+      setShowWarning(true);
+      setPendingTab(newTab);
+      return;
+    }
+    setActiveTab(newTab);
+  };
+
+  const confirmTabChange = () => {
+    // Reset dependent fields based on which tab we're going back to
+    if (pendingTab === 'quality') {
+      setConfig(prev => ({ ...prev, size: '', baseColor: '', paintColor: '', imageUrl: '', artworkMode: '', referenceNotes: '' }));
+    } else if (pendingTab === 'size') {
+      setConfig(prev => ({ ...prev, baseColor: '', paintColor: '', imageUrl: '', artworkMode: '', referenceNotes: '' }));
+    } else if (pendingTab === 'colors') {
+      setConfig(prev => ({ ...prev, imageUrl: '', artworkMode: '', referenceNotes: '' }));
+    }
+    setActiveTab(pendingTab);
+    setShowWarning(false);
+    setPendingTab('');
+  };
 
   const currentPrice = () => {
     if (!config.size || !config.qualityTier) return 0;
@@ -118,12 +156,12 @@ export default function CustomBuilderTabs() {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Builder Tabs */}
           <div className="lg:col-span-2">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
               <TabsList className="grid w-full grid-cols-4 mb-6">
                 <TabsTrigger value="quality">Quality</TabsTrigger>
-                <TabsTrigger value="size" disabled={!config.qualityTier}>Size</TabsTrigger>
-                <TabsTrigger value="colors" disabled={!config.size}>Colors</TabsTrigger>
-                <TabsTrigger value="design" disabled={!config.paintColor}>Design</TabsTrigger>
+                <TabsTrigger value="size">Size</TabsTrigger>
+                <TabsTrigger value="colors">Colors</TabsTrigger>
+                <TabsTrigger value="design">Design</TabsTrigger>
               </TabsList>
 
               {/* Quality Tab */}
@@ -364,6 +402,48 @@ export default function CustomBuilderTabs() {
             </Card>
           </div>
         </div>
+
+        {/* Warning Dialog */}
+        {showWarning && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <Card className="max-w-md">
+              <CardHeader>
+                <CardTitle className="text-yellow-600">⚠️ Warning</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-gray-700">
+                  Changing this option will reset your selections for the following steps. You'll need to re-choose:
+                </p>
+                <ul className="list-disc list-inside text-sm text-gray-600">
+                  {pendingTab === 'quality' && (
+                    <>
+                      <li>Size</li>
+                      <li>Colors</li>
+                      <li>Design & Artwork</li>
+                    </>
+                  )}
+                  {pendingTab === 'size' && (
+                    <>
+                      <li>Colors</li>
+                      <li>Design & Artwork</li>
+                    </>
+                  )}
+                  {pendingTab === 'colors' && (
+                    <li>Design & Artwork</li>
+                  )}
+                </ul>
+                <div className="flex gap-3">
+                  <Button variant="outline" onClick={() => setShowWarning(false)} className="flex-1">
+                    Cancel
+                  </Button>
+                  <Button onClick={confirmTabChange} className="flex-1 bg-yellow-600 hover:bg-yellow-700">
+                    Continue
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
