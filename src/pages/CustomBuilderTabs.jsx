@@ -10,9 +10,9 @@ import { createPageUrl } from '../utils';
 import { base44 } from '@/api/base44Client';
 
 const QUALITY_TIERS = [
-  { id: 'budget', label: 'Budget Crugly', description: 'Synthetic but effective', priceMultiplier: 0.7 },
-  { id: 'good', label: 'Standard Crugly', description: 'Standard rug lifespan', priceMultiplier: 1.0 },
-  { id: 'highend', label: 'Rugly', description: 'Premium hand-painted', priceMultiplier: 2.5 }
+  { id: 'budget', label: 'Crugly', description: 'Synthetic but effective', priceMultiplier: 0.7 },
+  { id: 'good', label: 'Rugly', description: 'Standard rug lifespan', priceMultiplier: 1.0 },
+  { id: 'highend', label: 'Rugly Lux', description: 'Premium hand-painted', priceMultiplier: 2.5 }
 ];
 
 const SIZES = [
