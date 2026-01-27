@@ -24,6 +24,9 @@ import SMSConsent from './pages/SMSConsent';
 import Shop from './pages/Shop';
 import Success from './pages/Success';
 import TrackOrder from './pages/TrackOrder';
+import CustomBuilderTabs from './pages/CustomBuilderTabs';
+import CustomBuilderDrawer from './pages/CustomBuilderDrawer';
+import CustomBuilderSimple from './pages/CustomBuilderSimple';
 import __Layout from './Layout.jsx';
 
 
@@ -54,6 +57,9 @@ export const PAGES = {
     "Shop": Shop,
     "Success": Success,
     "TrackOrder": TrackOrder,
+    "CustomBuilderTabs": CustomBuilderTabs,
+    "CustomBuilderDrawer": CustomBuilderDrawer,
+    "CustomBuilderSimple": CustomBuilderSimple,
 }
 
 export const pagesConfig = {
