@@ -24,57 +24,27 @@ Please provide:
 
 Make your suggestions practical, creative, and suitable for a hand-painted custom rug.`;
 
-        let llmResponse;
+        // When using file_urls (images), don't use JSON schema - vision models handle it better without
+        const updatedPrompt = llmPrompt + '\n\nFormat your response as valid JSON with this structure: {"palettes": [{"name": "Palette Name", "colors": ["#hex1", "#hex2", "#hex3"]}], "patterns": ["pattern 1", "pattern 2", "pattern 3"], "layouts": ["layout 1", "layout 2", "layout 3"]}';
         
+        const llmResponse = await base44.integrations.Core.InvokeLLM({
+            prompt: updatedPrompt,
+            add_context_from_internet: false,
+            file_urls: file_urls
+        });
+
+        // Parse the text response
+        let parsedResponse;
         try {
-            llmResponse = await base44.integrations.Core.InvokeLLM({
-                prompt: llmPrompt,
-                add_context_from_internet: false,
-                file_urls: file_urls,
-                response_json_schema: {
-                    type: "object",
-                    properties: {
-                        palettes: {
-                            type: "array",
-                            items: {
-                                type: "object",
-                                properties: {
-                                    name: { type: "string" },
-                                    colors: { 
-                                        type: "array", 
-                                        items: { type: "string" }
-                                    }
-                                },
-                                required: ["name", "colors"]
-                            }
-                        },
-                        patterns: { type: "array", items: { type: "string" } },
-                        layouts: { type: "array", items: { type: "string" } }
-                    },
-                    required: ["palettes", "patterns", "layouts"]
-                }
-            });
-        } catch (llmError) {
-            console.error("LLM Error:", llmError.message);
-            // If JSON schema fails, try without it
-            const fallbackResponse = await base44.integrations.Core.InvokeLLM({
-                prompt: llmPrompt + '\n\nIMPORTANT: Format your response as valid JSON with this exact structure: {"palettes": [{"name": "...", "colors": ["#...", "..."]}], "patterns": ["...", "...", "..."], "layouts": ["...", "...", "..."]}',
-                add_context_from_internet: false,
-                file_urls: file_urls
-            });
-            
-            // Parse the text response
-            try {
-                llmResponse = JSON.parse(fallbackResponse);
-            } catch {
-                // If still can't parse, return a generic error
-                return Response.json({ 
-                    error: 'The AI is having trouble generating suggestions. Please try a more specific prompt or try again.' 
-                }, { status: 500 });
-            }
+            parsedResponse = typeof llmResponse === 'string' ? JSON.parse(llmResponse) : llmResponse;
+        } catch (parseError) {
+            console.error("Failed to parse LLM response:", parseError);
+            return Response.json({ 
+                error: 'The AI is having trouble generating suggestions. Please try a simpler prompt.' 
+            }, { status: 500 });
         }
 
-        return Response.json(llmResponse);
+        return Response.json(parsedResponse);
 
     } catch (error) {
         console.error("AI Assistant Error:", error);
