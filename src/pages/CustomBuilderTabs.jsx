@@ -1,17 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
-import { Upload, CheckCircle, Pencil, FileText, Lightbulb } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { Upload, CheckCircle, Pencil } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import StencilCreator from '../components/custom/StencilCreator';
-import DrawingCanvas from '../components/custom/DrawingCanvas';
-import DesignLibrary from '../components/custom/DesignLibrary';
-import InteractiveRugPreview from '../components/custom/InteractiveRugPreview';
-import AIAssistant from '../components/custom/AIAssistant';
 
 const QUALITY_TIERS = [
   { id: 'budget', label: 'Budget Crugly', description: 'Synthetic but effective', priceMultiplier: 0.7 },
