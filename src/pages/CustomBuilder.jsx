@@ -973,6 +973,17 @@ export default function CustomBuilder() {
                         setConfig(prev => ({ ...prev, imageUrl: url, previewUrl: url }));
                       }}
                     />
+                    {config.imageUrl && (
+                      <div className="mt-6 p-6 bg-green-50 border-2 border-green-500 rounded-lg">
+                        <div className="text-center mb-4">
+                          <div className="text-green-900 font-bold text-lg mb-2">✓ Design Selected!</div>
+                          <p className="text-sm text-gray-600">Your design will appear on the rug preview</p>
+                        </div>
+                        <div className="bg-white rounded-lg p-4 flex items-center justify-center">
+                          <img src={config.imageUrl} alt="Selected design" className="max-w-full max-h-48 object-contain" />
+                        </div>
+                      </div>
+                    )}
                   </>
                 )}
 
