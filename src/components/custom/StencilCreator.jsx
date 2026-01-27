@@ -94,22 +94,30 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
     // Apply blur
     imageData = applyGaussianBlur(imageData, blur);
 
-    // Apply threshold with colors/layers
-    const layerStep = 255 / colors;
+    // Apply posterization with multiple color levels
+    const paintR = parseInt(paintColor.slice(1, 3), 16);
+    const paintG = parseInt(paintColor.slice(3, 5), 16);
+    const paintB = parseInt(paintColor.slice(5, 7), 16);
+    
     for (let i = 0; i < imageData.data.length; i += 4) {
       const gray = imageData.data[i];
-      const layerValue = Math.floor(gray / layerStep) * layerStep;
       
-      if (layerValue < threshold) {
-        imageData.data[i] = parseInt(paintColor.slice(1, 3), 16);
-        imageData.data[i + 1] = parseInt(paintColor.slice(3, 5), 16);
-        imageData.data[i + 2] = parseInt(paintColor.slice(5, 7), 16);
-        imageData.data[i + 3] = 255;
-      } else {
+      // Posterize into color levels
+      const level = Math.floor((gray / 255) * colors);
+      const normalizedLevel = level / (colors - 1);
+      
+      // Keep transparent if above threshold
+      if (gray > threshold) {
         imageData.data[i] = 0;
         imageData.data[i + 1] = 0;
         imageData.data[i + 2] = 0;
         imageData.data[i + 3] = 0;
+      } else {
+        // Create color gradient from paint color to lighter shades
+        imageData.data[i] = Math.round(paintR + (255 - paintR) * normalizedLevel);
+        imageData.data[i + 1] = Math.round(paintG + (255 - paintG) * normalizedLevel);
+        imageData.data[i + 2] = Math.round(paintB + (255 - paintB) * normalizedLevel);
+        imageData.data[i + 3] = 255;
       }
     }
 
