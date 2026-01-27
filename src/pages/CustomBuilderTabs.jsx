@@ -3,9 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Upload, CheckCircle, Pencil } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
+import { base44 } from '@/api/base44Client';
 
 const QUALITY_TIERS = [
   { id: 'budget', label: 'Budget Crugly', description: 'Synthetic but effective', priceMultiplier: 0.7 },
@@ -58,7 +60,9 @@ export default function CustomBuilderTabs() {
     imageUrl: '',
     previewUrl: '',
     hasShading: false,
-    hasSecondColor: false
+    hasSecondColor: false,
+    referenceNotes: '',
+    artworkMode: ''
   });
 
   const currentPrice = () => {
@@ -68,10 +72,25 @@ export default function CustomBuilderTabs() {
     return Math.round(selectedSize.price * selectedTier.priceMultiplier);
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     const selectedSize = SIZES.find(s => s.value === config.size);
     const selectedTier = QUALITY_TIERS.find(t => t.id === config.qualityTier);
     
+    // Submit to Notion
+    try {
+      await base44.functions.invoke('submitArtworkToNotion', {
+        qualityLevel: selectedTier.label,
+        size: selectedSize.label,
+        color: config.baseColor,
+        artworkMode: config.artworkMode || 'Paint (in-browser)',
+        artworkFile: config.imageUrl,
+        referenceNotes: config.referenceNotes
+      });
+      console.log('Artwork submitted to Notion');
+    } catch (error) {
+      console.error('Failed to submit to Notion:', error);
+    }
+
     const cartItem = {
       type: 'custom',
       qualityTier: config.qualityTier,
@@ -235,28 +254,67 @@ export default function CustomBuilderTabs() {
                     <CardTitle>Create Your Design</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <button
-                        onClick={() => setDesignMode('draw')}
-                        className={`p-4 rounded-lg border-2 ${
-                          designMode === 'draw' ? 'border-blue-600 bg-blue-50' : 'border-gray-200'
-                        }`}
-                      >
-                        <Pencil className="w-6 h-6 mx-auto mb-2" />
-                        <div className="text-sm font-semibold">Draw</div>
-                      </button>
-                      <button
-                        onClick={() => setDesignMode('upload')}
-                        className={`p-4 rounded-lg border-2 ${
-                          designMode === 'upload' ? 'border-blue-600 bg-blue-50' : 'border-gray-200'
-                        }`}
-                      >
-                        <Upload className="w-6 h-6 mx-auto mb-2" />
-                        <div className="text-sm font-semibold">Upload</div>
-                      </button>
+                    <div>
+                      <Label className="mb-2 block">Artwork Method</Label>
+                      <div className="grid grid-cols-2 gap-4">
+                        <button
+                          onClick={() => {
+                            setDesignMode('draw');
+                            setConfig(prev => ({ ...prev, artworkMode: 'Paint (in-browser)' }));
+                          }}
+                          className={`p-4 rounded-lg border-2 ${
+                            designMode === 'draw' ? 'border-blue-600 bg-blue-50' : 'border-gray-200'
+                          }`}
+                        >
+                          <Pencil className="w-6 h-6 mx-auto mb-2" />
+                          <div className="text-sm font-semibold">Paint (in-browser)</div>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setDesignMode('upload');
+                            setConfig(prev => ({ ...prev, artworkMode: 'Upload image' }));
+                          }}
+                          className={`p-4 rounded-lg border-2 ${
+                            designMode === 'upload' ? 'border-blue-600 bg-blue-50' : 'border-gray-200'
+                          }`}
+                        >
+                          <Upload className="w-6 h-6 mx-auto mb-2" />
+                          <div className="text-sm font-semibold">Upload Image</div>
+                        </button>
+                      </div>
                     </div>
 
-                    {config.imageUrl && (
+                    {designMode === 'upload' && (
+                      <div>
+                        <Label>Upload Your Design</Label>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const formData = new FormData();
+                              formData.append('file', file);
+                              const { file_url } = await base44.integrations.Core.UploadFile({ file });
+                              setConfig(prev => ({ ...prev, imageUrl: file_url }));
+                            }
+                          }}
+                          className="mt-2 w-full border-2 border-gray-200 rounded-lg p-2"
+                        />
+                      </div>
+                    )}
+
+                    <div>
+                      <Label>Notes for AI (Optional)</Label>
+                      <Textarea
+                        value={config.referenceNotes}
+                        onChange={(e) => setConfig(prev => ({ ...prev, referenceNotes: e.target.value }))}
+                        placeholder="Example: Make it bold, vintage style, vibrant colors..."
+                        className="mt-2"
+                      />
+                    </div>
+
+                    {(config.imageUrl || designMode === 'draw') && (
                       <Button onClick={handleAddToCart} className="w-full" size="lg">
                         Add to Cart - ${currentPrice()}
                       </Button>

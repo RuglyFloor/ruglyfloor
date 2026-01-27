@@ -15,6 +15,9 @@ import Commission from './pages/Commission';
 import Contact from './pages/Contact';
 import ContentManager from './pages/ContentManager';
 import CustomBuilder from './pages/CustomBuilder';
+import CustomBuilderDrawer from './pages/CustomBuilderDrawer';
+import CustomBuilderSimple from './pages/CustomBuilderSimple';
+import CustomBuilderTabs from './pages/CustomBuilderTabs';
 import Home from './pages/Home';
 import NotionSync from './pages/NotionSync';
 import Orders from './pages/Orders';
@@ -24,9 +27,6 @@ import SMSConsent from './pages/SMSConsent';
 import Shop from './pages/Shop';
 import Success from './pages/Success';
 import TrackOrder from './pages/TrackOrder';
-import CustomBuilderTabs from './pages/CustomBuilderTabs';
-import CustomBuilderDrawer from './pages/CustomBuilderDrawer';
-import CustomBuilderSimple from './pages/CustomBuilderSimple';
 import __Layout from './Layout.jsx';
 
 
@@ -48,6 +48,9 @@ export const PAGES = {
     "Contact": Contact,
     "ContentManager": ContentManager,
     "CustomBuilder": CustomBuilder,
+    "CustomBuilderDrawer": CustomBuilderDrawer,
+    "CustomBuilderSimple": CustomBuilderSimple,
+    "CustomBuilderTabs": CustomBuilderTabs,
     "Home": Home,
     "NotionSync": NotionSync,
     "Orders": Orders,
@@ -57,9 +60,6 @@ export const PAGES = {
     "Shop": Shop,
     "Success": Success,
     "TrackOrder": TrackOrder,
-    "CustomBuilderTab": CustomBuilderTabs,
-    "CustomBuilderDrawer": CustomBuilderDrawer,
-    "CustomBuilderSimple": CustomBuilderSimple,
 }
 
 export const pagesConfig = {
