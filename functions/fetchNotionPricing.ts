@@ -7,10 +7,10 @@ Deno.serve(async (req) => {
     // Get Notion access token
     const accessToken = await base44.asServiceRole.connectors.getAccessToken('notion');
     
-    // Use hardcoded database ID temporarily (environment variable not propagating)
-    const databaseId = '2f501466b24b8056a65bdbabdc59d94a';
+    // Try the collection/data source ID format (with hyphens)
+    const databaseId = '2f501466-b24b-801f-9b9c-000b7eef2847';
     
-    console.log('Using hardcoded database ID (last 6 chars):', databaseId.slice(-6));
+    console.log('Using collection ID format:', databaseId);
 
     // Query the database
     const response = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
