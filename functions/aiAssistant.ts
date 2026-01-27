@@ -25,7 +25,7 @@ Please provide:
 Make your suggestions practical, creative, and suitable for a hand-painted custom rug.`;
 
         // When using file_urls (images), don't use JSON schema - vision models handle it better without
-        const updatedPrompt = llmPrompt + '\n\nFormat your response as valid JSON with this structure: {"palettes": [{"name": "Palette Name", "colors": ["#hex1", "#hex2", "#hex3"]}], "patterns": ["pattern 1", "pattern 2", "pattern 3"], "layouts": ["layout 1", "layout 2", "layout 3"]}';
+        const updatedPrompt = llmPrompt + '\n\nYou MUST respond with ONLY valid JSON (no markdown, no code blocks, no explanation). Use this exact structure: {"palettes": [{"name": "Palette Name", "colors": ["#hex1", "#hex2", "#hex3"]}], "patterns": ["pattern 1", "pattern 2", "pattern 3"], "layouts": ["layout 1", "layout 2", "layout 3"]}';
         
         const llmResponse = await base44.integrations.Core.InvokeLLM({
             prompt: updatedPrompt,
@@ -33,14 +33,20 @@ Make your suggestions practical, creative, and suitable for a hand-painted custo
             file_urls: file_urls
         });
 
-        // Parse the text response
+        // Parse the text response, stripping markdown code blocks if present
         let parsedResponse;
         try {
-            parsedResponse = typeof llmResponse === 'string' ? JSON.parse(llmResponse) : llmResponse;
+            let responseText = typeof llmResponse === 'string' ? llmResponse : JSON.stringify(llmResponse);
+            
+            // Remove markdown code blocks if present
+            responseText = responseText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+            
+            parsedResponse = JSON.parse(responseText);
         } catch (parseError) {
             console.error("Failed to parse LLM response:", parseError);
+            console.error("Raw response:", llmResponse);
             return Response.json({ 
-                error: 'The AI is having trouble generating suggestions. Please try a simpler prompt.' 
+                error: 'The AI is having trouble generating suggestions. Please try again.' 
             }, { status: 500 });
         }
 
