@@ -57,7 +57,7 @@ export const PAGES = {
     "Shop": Shop,
     "Success": Success,
     "TrackOrder": TrackOrder,
-    "CustomBuilderTabs": CustomBuilderTabs,
+    "CustomBuilderTab": CustomBuilderTabs,
     "CustomBuilderDrawer": CustomBuilderDrawer,
     "CustomBuilderSimple": CustomBuilderSimple,
 }
