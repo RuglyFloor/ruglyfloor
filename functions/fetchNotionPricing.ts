@@ -23,23 +23,11 @@ Deno.serve(async (req) => {
 
     const data = await response.json();
     
-    // Extract pricing structure
-    const pricingData = data.results.map(page => {
-      const props = page.properties;
-      return {
-        qualityLevel: props['Question 2']?.multi_select?.map(s => s.name) || [],
-        size: props['Size Matters. Seriously, right now, get a tape measure and see how big it is.']?.multi_select?.map(s => s.name) || [],
-        color: props['Color']?.select?.name || null,
-        price: props['Price']?.number || null,
-        // Look for any price-related fields
-        allProperties: Object.keys(props)
-      };
-    });
+    console.log('Notion response:', JSON.stringify(data, null, 2));
 
     return Response.json({ 
       success: true,
-      pricing: pricingData,
-      samplePage: data.results[0]?.properties || {}
+      rawData: data
     });
 
   } catch (error) {
