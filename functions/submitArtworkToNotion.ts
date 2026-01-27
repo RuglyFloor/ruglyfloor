@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
 
     // Get Notion access token
     const accessToken = await base44.asServiceRole.connectors.getAccessToken('notion');
-    const databaseId = Deno.env.get('NOTION_DATABASE_ID');
+    const databaseId = '2f501466b24b8056a65bdbabdc59d94a';
 
     // Build properties object
     const properties = {
