@@ -4,16 +4,27 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     
-    // Get Notion access token
+    // Get Notion access token and database ID
     const accessToken = await base44.asServiceRole.connectors.getAccessToken('notion');
     const databaseId = Deno.env.get('NOTION_DATABASE_ID');
     
-    // Log the database ID (mask most of it for security)
-    if (databaseId) {
-      const masked = databaseId.length > 6 ? '...' + databaseId.slice(-6) : databaseId;
-      console.log('Using database ID (last 6 chars):', masked);
-    } else {
-      console.log('NOTION_DATABASE_ID is not set!');
+    // Debug logging
+    console.log('Environment check - DB ID last 6 chars:', databaseId ? databaseId.slice(-6) : 'NOT SET');
+    console.log('Expected last 6: d94a');
+    
+    if (!databaseId) {
+      return Response.json({ 
+        success: false, 
+        error: 'NOTION_DATABASE_ID environment variable is not set' 
+      }, { status: 500 });
+    }
+    
+    if (databaseId.includes('@')) {
+      return Response.json({ 
+        success: false, 
+        error: 'NOTION_DATABASE_ID appears to be an email address, not a database ID. Expected format: 32 character hex string',
+        receivedValue: '...' + databaseId.slice(-10)
+      }, { status: 500 });
     }
 
     // Query the database
