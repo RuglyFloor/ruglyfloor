@@ -195,12 +195,12 @@ export default function DesignLibrary({ onSelectDesign }) {
             <button
               key={design.id}
               onClick={() => onSelectDesign(design.url)}
-              className="group relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 hover:border-blue-600 transition-all"
+              className="group relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 hover:border-blue-600 transition-all bg-transparent"
             >
               <img
                 src={design.url}
                 alt={design.name}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                className="w-full h-full object-contain group-hover:scale-110 transition-transform"
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all flex items-center justify-center">
                 <span className="text-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
