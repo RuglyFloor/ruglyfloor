@@ -8,7 +8,13 @@ Deno.serve(async (req) => {
     const accessToken = await base44.asServiceRole.connectors.getAccessToken('notion');
     const databaseId = Deno.env.get('NOTION_DATABASE_ID');
     
-    console.log('Using database ID:', databaseId);
+    // Log the database ID (mask most of it for security)
+    if (databaseId) {
+      const masked = databaseId.length > 6 ? '...' + databaseId.slice(-6) : databaseId;
+      console.log('Using database ID (last 6 chars):', masked);
+    } else {
+      console.log('NOTION_DATABASE_ID is not set!');
+    }
 
     // Query the database
     const response = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
