@@ -24,33 +24,55 @@ Please provide:
 
 Make your suggestions practical, creative, and suitable for a hand-painted custom rug.`;
 
-        const llmResponse = await base44.integrations.Core.InvokeLLM({
-            prompt: llmPrompt,
-            add_context_from_internet: false,
-            file_urls: file_urls,
-            response_json_schema: {
-                type: "object",
-                properties: {
-                    palettes: {
-                        type: "array",
-                        items: {
-                            type: "object",
-                            properties: {
-                                name: { type: "string" },
-                                colors: { 
-                                    type: "array", 
-                                    items: { type: "string" }
-                                }
-                            },
-                            required: ["name", "colors"]
-                        }
+        let llmResponse;
+        
+        try {
+            llmResponse = await base44.integrations.Core.InvokeLLM({
+                prompt: llmPrompt,
+                add_context_from_internet: false,
+                file_urls: file_urls,
+                response_json_schema: {
+                    type: "object",
+                    properties: {
+                        palettes: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    name: { type: "string" },
+                                    colors: { 
+                                        type: "array", 
+                                        items: { type: "string" }
+                                    }
+                                },
+                                required: ["name", "colors"]
+                            }
+                        },
+                        patterns: { type: "array", items: { type: "string" } },
+                        layouts: { type: "array", items: { type: "string" } }
                     },
-                    patterns: { type: "array", items: { type: "string" } },
-                    layouts: { type: "array", items: { type: "string" } }
-                },
-                required: ["palettes", "patterns", "layouts"]
+                    required: ["palettes", "patterns", "layouts"]
+                }
+            });
+        } catch (llmError) {
+            console.error("LLM Error:", llmError.message);
+            // If JSON schema fails, try without it
+            const fallbackResponse = await base44.integrations.Core.InvokeLLM({
+                prompt: llmPrompt + '\n\nIMPORTANT: Format your response as valid JSON with this exact structure: {"palettes": [{"name": "...", "colors": ["#...", "..."]}], "patterns": ["...", "...", "..."], "layouts": ["...", "...", "..."]}',
+                add_context_from_internet: false,
+                file_urls: file_urls
+            });
+            
+            // Parse the text response
+            try {
+                llmResponse = JSON.parse(fallbackResponse);
+            } catch {
+                // If still can't parse, return a generic error
+                return Response.json({ 
+                    error: 'The AI is having trouble generating suggestions. Please try a more specific prompt or try again.' 
+                }, { status: 500 });
             }
-        });
+        }
 
         return Response.json(llmResponse);
 
