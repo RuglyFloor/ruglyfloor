@@ -7,10 +7,10 @@ Deno.serve(async (req) => {
     // Get Notion access token
     const accessToken = await base44.asServiceRole.connectors.getAccessToken('notion');
     
-    // Try the collection/data source ID format (with hyphens)
-    const databaseId = '2f501466-b24b-801f-9b9c-000b7eef2847';
+    // Try the ID from the iframe URL
+    const databaseId = '2f501466b24b80bc9621fd3a60ae7bda';
     
-    console.log('Using collection ID format:', databaseId);
+    console.log('Using iframe URL database ID:', databaseId);
 
     // Query the database
     const response = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
