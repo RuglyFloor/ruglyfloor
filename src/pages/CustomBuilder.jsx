@@ -21,7 +21,7 @@ import { useSEO } from '../components/seo/useSEO';
 const QUALITY_TIERS = [
   { 
     id: 'budget', 
-    label: 'Budget Crugly', 
+    label: 'Crugly', 
     description: 'Synthetic but effective in covering up floors, creating a cool effect, dorm rooms, kids love it.',
     priceMultiplier: 0.7,
     materialDetail: 'Synthetic, thinner non-slip floor covering that looks great',
@@ -32,7 +32,7 @@ const QUALITY_TIERS = [
   },
   { 
     id: 'good', 
-    label: 'Standard Crugly', 
+    label: 'Rugly', 
     description: 'Expect the same life-span as any ordinary rug.',
     priceMultiplier: 1.0,
     materialDetail: 'Standard rug construction',
@@ -43,8 +43,8 @@ const QUALITY_TIERS = [
   },
   { 
     id: 'highend', 
-    label: 'Rugly', 
-    description: 'Ruglys are the cat\'s meow—you tell us what you\'re thinking and we make it happen with no limits',
+    label: 'Rugly Lux', 
+    description: 'Rugly Lux is the cat\'s meow—you tell us what you\'re thinking and we make it happen with no limits',
     priceMultiplier: 2.5,
     materialDetail: 'Premium materials, custom hand-painted',
     lifespan: 'Premium durability',
