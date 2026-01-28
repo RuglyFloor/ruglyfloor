@@ -242,7 +242,7 @@ export default function DrawingCanvas({ onSaveDrawing, availableColors = [] }) {
   return (
     <div className="space-y-4">
       <div className="bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg p-4 text-white text-center">
-        <AlertCircle className="w-5 h-5 inline mr-2" />
+        <AlertCircle size={20} className="inline mr-2" />
         <span className="font-bold">PRO TIP:</span> Use your iPad or tablet for the best drawing experience!
       </div>
 
@@ -257,7 +257,7 @@ export default function DrawingCanvas({ onSaveDrawing, availableColors = [] }) {
                   size="sm"
                   onClick={() => setTool('pen')}
                 >
-                  <Pencil className="w-4 h-4 mr-2" />
+                  <Pencil size={16} />
                   Pen
                 </Button>
                 <Button
@@ -265,7 +265,7 @@ export default function DrawingCanvas({ onSaveDrawing, availableColors = [] }) {
                   size="sm"
                   onClick={() => setTool('eraser')}
                 >
-                  <Eraser className="w-4 h-4 mr-2" />
+                  <Eraser size={16} />
                   Eraser
                 </Button>
                 <Button
@@ -273,7 +273,7 @@ export default function DrawingCanvas({ onSaveDrawing, availableColors = [] }) {
                   size="sm"
                   onClick={() => setTool('text')}
                 >
-                  <Type className="w-4 h-4 mr-2" />
+                  <Type size={16} />
                   Text
                 </Button>
                 <Button
@@ -281,7 +281,7 @@ export default function DrawingCanvas({ onSaveDrawing, availableColors = [] }) {
                   size="sm"
                   onClick={() => setTool('rectangle')}
                 >
-                  <Square className="w-4 h-4 mr-2" />
+                  <Square size={16} />
                   Rectangle
                 </Button>
                 <Button
@@ -289,7 +289,7 @@ export default function DrawingCanvas({ onSaveDrawing, availableColors = [] }) {
                   size="sm"
                   onClick={() => setTool('circle')}
                 >
-                  <Circle className="w-4 h-4 mr-2" />
+                  <Circle size={16} />
                   Circle
                 </Button>
               </div>
@@ -390,15 +390,15 @@ export default function DrawingCanvas({ onSaveDrawing, availableColors = [] }) {
 
             <div className="flex gap-2 pt-2 flex-wrap">
               <Button variant="outline" size="sm" onClick={undo} disabled={historyStep <= 0}>
-                <Undo className="w-4 h-4 mr-2" />
+                <Undo size={16} />
                 Undo
               </Button>
               <Button variant="outline" size="sm" onClick={redo} disabled={historyStep >= history.length - 1}>
-                <Redo className="w-4 h-4 mr-2" />
+                <Redo size={16} />
                 Redo
               </Button>
               <Button variant="outline" size="sm" onClick={clearCanvas}>
-                <Trash2 className="w-4 h-4 mr-2" />
+                <Trash2 size={16} />
                 Clear
               </Button>
               <Button 
@@ -407,7 +407,7 @@ export default function DrawingCanvas({ onSaveDrawing, availableColors = [] }) {
                 className="ml-auto bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold group relative"
                 title="Save your drawing and see it on your rug preview"
               >
-                <Save className="w-4 h-4 mr-2" />
+                <Save size={16} />
                 Save Drawing
                 <span className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                   Saves your drawing and shows preview below
