@@ -88,8 +88,8 @@ export default function Home() {
     <div className="min-h-screen">
       <SEOHead
         title={seoData?.seo_title || "Buy Custom Hand-Painted Rugs | Unique Gifts for Mother's Day & Father's Day"}
-        description={seoData?.seo_description || "Shop custom hand-painted rugs for sale - perfect Mother's Day gifts, Father's Day gifts, and unique gifts for hard to buy for people. Commission bespoke rug designs, personalized floor art, and unique hand-painted home decor. Luxury hand-painted carpet designs for modern homes and interior designers."}
-        keywords={seoData?.seo_keywords || ['mothers day gifts', 'fathers day gifts', 'unique gifts for hard to buy for people', 'buy custom hand-painted rugs', 'bespoke hand-painted area rugs', 'commission custom rug design', 'hand-painted rugs for sale', 'personalized floor art rugs', 'unique hand-painted home decor', 'luxury hand-painted carpet designs', 'artistic area rugs for modern homes', 'custom painted washable rugs']}
+        description={typeof seoData?.seo_description === 'string' ? seoData.seo_description : "Shop custom hand-painted rugs for sale - perfect Mother's Day gifts, Father's Day gifts, and unique gifts for hard to buy for people. Commission bespoke rug designs, personalized floor art, and unique hand-painted home decor. Luxury hand-painted carpet designs for modern homes and interior designers."}
+        keywords={Array.isArray(seoData?.seo_keywords) ? seoData.seo_keywords : ['mothers day gifts', 'fathers day gifts', 'unique gifts for hard to buy for people', 'buy custom hand-painted rugs', 'bespoke hand-painted area rugs', 'commission custom rug design', 'hand-painted rugs for sale', 'personalized floor art rugs', 'unique hand-painted home decor', 'luxury hand-painted carpet designs', 'artistic area rugs for modern homes', 'custom painted washable rugs']}
         url="/"
         type="website"
         schema={generateOrganizationSchema()} />
