@@ -50,9 +50,9 @@ Make your suggestions practical, creative, and suitable for a hand-painted custo
         
         const llmResponse = await base44.integrations.Core.InvokeLLM({
             prompt: llmPrompt,
-            add_context_from_internet: false,
+            add_context_from_internet: file_urls.length > 0 ? true : false,
             file_urls: file_urls.length > 0 ? file_urls : undefined,
-            response_json_schema: file_urls.length > 0 ? undefined : schema
+            response_json_schema: schema
         });
 
         // If we got a string response (from vision model), parse it
