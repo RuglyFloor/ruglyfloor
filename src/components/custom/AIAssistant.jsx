@@ -2,197 +2,251 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Lightbulb, Palette, LayoutDashboard, Copy, Loader2, Image as ImageIcon, Sparkles } from 'lucide-react';
+import { Label } from '@/components/ui/label';
+import { Sparkles, Loader2, Copy, Upload, X, CheckCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function AIAssistant({ currentImageUrl, rugSize, onApplyColors, onCopySuggestion }) {
-    const [prompt, setPrompt] = useState('');
-    const [suggestions, setSuggestions] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
+  const [prompt, setPrompt] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState(null);
+  const [error, setError] = useState(null);
+  const [inspirationImage, setInspirationImage] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
-    const handleGenerateSuggestions = async () => {
-        setLoading(true);
-        setError(null);
-        setSuggestions(null);
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-        try {
-            const response = await base44.functions.invoke('aiAssistant', {
-                prompt: prompt,
-                imageUrl: currentImageUrl,
-                rugSize: rugSize
-            });
+    setUploadingImage(true);
+    try {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setInspirationImage({ url: file_url, name: file.name });
+    } catch (error) {
+      setError('Failed to upload image');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
 
-            if (response.data && !response.data.error) {
-                setSuggestions(response.data);
-            } else {
-                setError(response.data?.error || "Failed to get AI suggestions.");
-            }
-        } catch (err) {
-            console.error("Error invoking AI assistant:", err);
-            setError("An unexpected error occurred while generating suggestions.");
-        } finally {
-            setLoading(false);
-        }
-    };
+  const generateSuggestions = async () => {
+    if (!prompt.trim() && !inspirationImage) {
+      setError('Please enter a design prompt or upload an inspiration image');
+      return;
+    }
+    
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await base44.functions.invoke('aiAssistant', {
+        prompt: prompt || 'Analyze this image and suggest rug design elements including colors, patterns, and style',
+        rugSize: rugSize,
+        imageUrl: inspirationImage?.url
+      });
+      
+      if (response.data) {
+        setSuggestions(response.data);
+      } else {
+        setError('Failed to generate suggestions');
+      }
+    } catch (err) {
+      setError('An error occurred. Please try again.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    return (
-        <div className="space-y-6">
-            <Card className="border-2 border-blue-200 bg-blue-50/50">
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Sparkles className="w-5 h-5 text-blue-600" /> AI Design Assistant
-                    </CardTitle>
-                    <p className="text-sm text-gray-600 mt-2">
-                        Describe your vision and get personalized color palettes, pattern ideas, and layout suggestions.
-                    </p>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <Textarea
-                        placeholder="Example: 'I want a cozy rug for my modern living room with warm earthy tones' or 'A playful geometric pattern inspired by nature for a child's bedroom' or 'Abstract art style with bold contrasting colors'"
-                        value={prompt}
-                        onChange={(e) => setPrompt(e.target.value)}
-                        rows={4}
-                        className="resize-none bg-white"
-                    />
-                    {currentImageUrl && (
-                        <div className="flex items-center gap-2 text-sm text-blue-700 bg-blue-100 p-3 rounded-lg">
-                            <ImageIcon className="w-4 h-4" /> 
-                            <span>AI will analyze your uploaded image for inspiration</span>
-                        </div>
-                    )}
-                    <Button
-                        onClick={handleGenerateSuggestions}
-                        disabled={loading || !prompt}
-                        className="w-full bg-blue-600 hover:bg-blue-700"
-                    >
-                        {loading ? (
-                            <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Generating Ideas...
-                            </>
-                        ) : (
-                            <>
-                                <Sparkles className="mr-2 h-4 w-4" />
-                                Generate Design Ideas
-                            </>
-                        )}
-                    </Button>
-                    {error && (
-                        <div className="bg-red-50 border border-red-200 text-red-700 p-3 rounded-lg text-sm">
-                            {error}
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
-
-            {suggestions && (
-                <div className="space-y-6 animate-in fade-in duration-500">
-                    {/* Color Palettes */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <Palette className="w-5 h-5 text-purple-600" /> Color Palettes
-                            </CardTitle>
-                            <p className="text-sm text-gray-600">Click to apply a palette to your rug</p>
-                        </CardHeader>
-                        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {suggestions.palettes?.map((palette, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => onApplyColors(palette.colors)}
-                                    className="border-2 border-gray-200 hover:border-purple-400 p-4 rounded-lg space-y-3 transition-all hover:shadow-lg cursor-pointer text-left"
-                                >
-                                    <h4 className="font-semibold text-base">{palette.name}</h4>
-                                    <div className="flex gap-2 flex-wrap">
-                                        {palette.colors?.map((color, colorIndex) => (
-                                            <div
-                                                key={colorIndex}
-                                                className="w-10 h-10 rounded-lg border-2 border-white shadow-md"
-                                                style={{ backgroundColor: color }}
-                                                title={color}
-                                            ></div>
-                                        ))}
-                                    </div>
-                                    <div className="text-xs text-gray-500 font-medium pt-2 border-t">
-                                        Click to apply →
-                                    </div>
-                                </button>
-                            ))}
-                        </CardContent>
-                    </Card>
-
-                    {/* Pattern Ideas */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <LayoutDashboard className="w-5 h-5 text-green-600" /> Pattern Ideas
-                            </CardTitle>
-                            <p className="text-sm text-gray-600">Creative pattern suggestions for your rug</p>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                            {suggestions.patterns?.map((pattern, index) => (
-                                <div key={index} className="flex items-start justify-between gap-3 p-4 border-2 border-gray-200 rounded-lg hover:border-green-300 transition-all">
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded">
-                                                Pattern {index + 1}
-                                            </span>
-                                        </div>
-                                        <p className="text-sm text-gray-700">{pattern}</p>
-                                    </div>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => {
-                                            navigator.clipboard.writeText(pattern);
-                                            onCopySuggestion(pattern, 'pattern');
-                                        }}
-                                        className="flex-shrink-0"
-                                    >
-                                        <Copy className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                            ))}
-                        </CardContent>
-                    </Card>
-
-                    {/* Layout Suggestions */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                                <LayoutDashboard className="w-5 h-5 text-orange-600" /> Layout Suggestions
-                            </CardTitle>
-                            <p className="text-sm text-gray-600">How to arrange your design elements</p>
-                        </CardHeader>
-                        <CardContent className="space-y-3">
-                            {suggestions.layouts?.map((layout, index) => (
-                                <div key={index} className="flex items-start justify-between gap-3 p-4 border-2 border-gray-200 rounded-lg hover:border-orange-300 transition-all">
-                                    <div className="flex-1">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <span className="text-xs font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded">
-                                                Layout {index + 1}
-                                            </span>
-                                        </div>
-                                        <p className="text-sm text-gray-700">{layout}</p>
-                                    </div>
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => {
-                                            navigator.clipboard.writeText(layout);
-                                            onCopySuggestion(layout, 'layout');
-                                        }}
-                                        className="flex-shrink-0"
-                                    >
-                                        <Copy className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                            ))}
-                        </CardContent>
-                    </Card>
-                </div>
-            )}
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-purple-500" />
+          AI Design Assistant
+        </CardTitle>
+        <p className="text-sm text-gray-600 mt-2">
+          Describe your vision or upload inspiration images, and AI will suggest colors, patterns, and design concepts
+        </p>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div>
+          <Label className="mb-2 block font-semibold">Design Prompt</Label>
+          <Textarea
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="e.g., 'Create a bohemian style rug with floral patterns and earthy tones' or 'Modern geometric design with bold colors' or 'Vintage Persian inspired with rich jewel tones'"
+            className="min-h-[120px]"
+          />
         </div>
-    );
+
+        <div>
+          <Label className="mb-2 block font-semibold">Upload Inspiration Image (Optional)</Label>
+          <div className="space-y-3">
+            {inspirationImage ? (
+              <div className="relative border-2 border-blue-500 rounded-lg p-3 bg-blue-50">
+                <button
+                  onClick={() => setInspirationImage(null)}
+                  className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600"
+                >
+                  <X size={16} />
+                </button>
+                <img
+                  src={inspirationImage.url}
+                  alt="Inspiration"
+                  className="w-full h-48 object-cover rounded-lg mb-2"
+                />
+                <p className="text-sm text-gray-700 font-medium">{inspirationImage.name}</p>
+              </div>
+            ) : (
+              <label className="border-2 border-dashed border-gray-300 rounded-lg p-8 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  disabled={uploadingImage}
+                />
+                {uploadingImage ? (
+                  <Loader2 className="w-8 h-8 text-blue-500 animate-spin mb-2" />
+                ) : (
+                  <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                )}
+                <span className="text-sm text-gray-600 text-center">
+                  {uploadingImage ? 'Uploading...' : 'Click to upload inspiration image'}
+                </span>
+                <span className="text-xs text-gray-500 mt-1">
+                  AI will analyze colors, patterns, and style
+                </span>
+              </label>
+            )}
+          </div>
+        </div>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            {error}
+          </div>
+        )}
+
+        <Button 
+          onClick={generateSuggestions} 
+          disabled={loading || (!prompt.trim() && !inspirationImage) || uploadingImage}
+          className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              AI Analyzing...
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-4 h-4 mr-2" />
+              Generate Design Suggestions
+            </>
+          )}
+        </Button>
+
+        {suggestions && (
+          <div className="space-y-4 mt-6">
+            {/* Color Palettes */}
+            {suggestions.palettes && suggestions.palettes.length > 0 && (
+              <div className="space-y-3">
+                <h3 className="font-bold text-lg text-gray-900 flex items-center gap-2">
+                  🎨 Color Palettes
+                </h3>
+                {suggestions.palettes.map((palette, idx) => (
+                  <Card key={idx} className="border-2 border-purple-200 bg-purple-50">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base">{palette.name}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex gap-2 mb-3 flex-wrap">
+                        {palette.colors.map((color, colorIdx) => (
+                          <div key={colorIdx} className="flex flex-col items-center gap-1">
+                            <div
+                              className="w-14 h-14 rounded-lg shadow-md border-2 border-white"
+                              style={{ backgroundColor: color }}
+                            />
+                            <span className="text-xs font-mono">{color}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <Button
+                        size="sm"
+                        onClick={() => onApplyColors(palette.colors)}
+                        className="w-full bg-purple-600 hover:bg-purple-700"
+                      >
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Apply This Palette
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {/* Pattern Ideas */}
+            {suggestions.patterns && suggestions.patterns.length > 0 && (
+              <Card className="border-2 border-green-200 bg-green-50">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    ✨ Pattern Ideas
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 mb-4">
+                    {suggestions.patterns.map((pattern, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <span className="text-green-600 mt-1 font-bold">{idx + 1}.</span>
+                        <span className="text-gray-700">{pattern}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => onCopySuggestion(suggestions.patterns.join('\n\n'), 'Pattern Ideas')}
+                    className="w-full"
+                  >
+                    <Copy className="w-3 h-3 mr-2" />
+                    Copy All to Instructions
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Layout Suggestions */}
+            {suggestions.layouts && suggestions.layouts.length > 0 && (
+              <Card className="border-2 border-blue-200 bg-blue-50">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    📐 Layout Suggestions
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 mb-4">
+                    {suggestions.layouts.map((layout, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <span className="text-blue-600 mt-1 font-bold">{idx + 1}.</span>
+                        <span className="text-gray-700">{layout}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => onCopySuggestion(suggestions.layouts.join('\n\n'), 'Layout Suggestions')}
+                    className="w-full"
+                  >
+                    <Copy className="w-3 h-3 mr-2" />
+                    Copy All to Instructions
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
 }
