@@ -54,7 +54,7 @@ const QUALITY_TIERS = [
   }
 ];
 
-const SIZES = [
+const DEFAULT_SIZES = [
   { id: 'tiny', label: 'Tiny', value: 'tiny', price: 79, step: 0, measurement: '2x3' },
   { id: 'sm', label: 'Small', value: 'small', price: 200, step: 1, measurement: '4x6' },
   { id: 'md', label: 'Medium', value: 'medium', price: 300, step: 2, measurement: '5x7' },
@@ -124,6 +124,35 @@ export default function CustomBuilder() {
   const [designMode, setDesignMode] = useState('draw'); // 'library', 'upload', or 'draw'
   const [selectedItem, setSelectedItem] = useState(null);
   const [floatingSelections, setFloatingSelections] = useState([]);
+  const [SIZES, setSIZES] = useState(DEFAULT_SIZES);
+  const [loadingPricing, setLoadingPricing] = useState(true);
+
+  // Fetch pricing from Notion on mount
+  useEffect(() => {
+    const fetchPricing = async () => {
+      try {
+        const response = await base44.functions.invoke('getPricing');
+        if (response.data?.success && response.data.pricing?.sizes?.length > 0) {
+          // Add step property to each size
+          const sizesWithSteps = response.data.pricing.sizes.map((size, index) => ({
+            ...size,
+            step: index
+          }));
+          setSIZES(sizesWithSteps);
+          console.log('✓ Loaded pricing from Notion:', sizesWithSteps);
+        } else {
+          console.warn('Using default pricing - Notion data unavailable');
+        }
+      } catch (error) {
+        console.error('Failed to load pricing from Notion:', error);
+        console.warn('Using default pricing');
+      } finally {
+        setLoadingPricing(false);
+      }
+    };
+
+    fetchPricing();
+  }, []);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
