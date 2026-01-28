@@ -155,7 +155,16 @@ export default function Cart() {
                   <Card key={index}>
                     <CardContent className="p-4 flex gap-4 items-center">
                       {item.previewUrl && (
-                        <img src={item.previewUrl} alt={item.name} className="w-16 h-16 object-cover rounded" />
+                        <div 
+                          className="w-16 h-16 rounded flex items-center justify-center"
+                          style={{ 
+                            background: 'linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%), linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%)', 
+                            backgroundSize: '8px 8px', 
+                            backgroundPosition: '0 0, 4px 4px' 
+                          }}
+                        >
+                          <img src={item.previewUrl} alt={item.name} className="max-w-full max-h-full object-contain" />
+                        </div>
                       )}
                       <div className="flex-1 text-left">
                         <h4 className="font-semibold">{item.name}</h4>
@@ -204,7 +213,16 @@ export default function Cart() {
                 <CardContent className="p-4">
                   <div className="flex gap-4">
                     {item.previewUrl && (
-                      <img src={item.previewUrl} alt={item.name} className="w-24 h-24 object-cover rounded" />
+                      <div 
+                        className="w-24 h-24 rounded flex items-center justify-center"
+                        style={{ 
+                          background: 'linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%), linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%)', 
+                          backgroundSize: '10px 10px', 
+                          backgroundPosition: '0 0, 5px 5px' 
+                        }}
+                      >
+                        <img src={item.previewUrl} alt={item.name} className="max-w-full max-h-full object-contain" />
+                      </div>
                     )}
                     <div className="flex-1">
                       <h3 className="font-bold text-lg">{item.name}</h3>
