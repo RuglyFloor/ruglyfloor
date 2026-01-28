@@ -46,12 +46,13 @@ export default function AIAssistant({ currentImageUrl, rugSize, onApplyColors, o
       
       if (response.data) {
         setSuggestions(response.data);
+        setError(null);
       } else {
         setError('Failed to generate suggestions');
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
-      console.error(err);
+      console.error('AI Assistant error:', err);
+      setError(err.response?.data?.error || err.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
