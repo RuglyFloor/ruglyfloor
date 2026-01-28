@@ -24,30 +24,53 @@ Please provide:
 
 Make your suggestions practical, creative, and suitable for a hand-painted custom rug.`;
 
-        // When using file_urls (images), don't use JSON schema - vision models handle it better without
-        const updatedPrompt = llmPrompt + '\n\nYou MUST respond with ONLY valid JSON (no markdown, no code blocks, no explanation). Use this exact structure: {"palettes": [{"name": "Palette Name", "colors": ["#hex1", "#hex2", "#hex3"]}], "patterns": ["pattern 1", "pattern 2", "pattern 3"], "layouts": ["layout 1", "layout 2", "layout 3"]}';
+        const schema = {
+            type: "object",
+            properties: {
+                palettes: {
+                    type: "array",
+                    items: {
+                        type: "object",
+                        properties: {
+                            name: { type: "string" },
+                            colors: { type: "array", items: { type: "string" } }
+                        }
+                    }
+                },
+                patterns: {
+                    type: "array",
+                    items: { type: "string" }
+                },
+                layouts: {
+                    type: "array",
+                    items: { type: "string" }
+                }
+            }
+        };
         
         const llmResponse = await base44.integrations.Core.InvokeLLM({
-            prompt: updatedPrompt,
+            prompt: llmPrompt,
             add_context_from_internet: false,
-            file_urls: file_urls
+            file_urls: file_urls.length > 0 ? file_urls : undefined,
+            response_json_schema: file_urls.length > 0 ? undefined : schema
         });
 
-        // Parse the text response, stripping markdown code blocks if present
+        // If we got a string response (from vision model), parse it
         let parsedResponse;
-        try {
-            let responseText = typeof llmResponse === 'string' ? llmResponse : JSON.stringify(llmResponse);
-            
-            // Remove markdown code blocks if present
-            responseText = responseText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
-            
-            parsedResponse = JSON.parse(responseText);
-        } catch (parseError) {
-            console.error("Failed to parse LLM response:", parseError);
-            console.error("Raw response:", llmResponse);
-            return Response.json({ 
-                error: 'The AI is having trouble generating suggestions. Please try again.' 
-            }, { status: 500 });
+        if (typeof llmResponse === 'string') {
+            try {
+                // Remove markdown code blocks if present
+                let cleanedResponse = llmResponse.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+                parsedResponse = JSON.parse(cleanedResponse);
+            } catch (parseError) {
+                console.error("Failed to parse LLM response:", parseError);
+                console.error("Raw response:", llmResponse);
+                return Response.json({ 
+                    error: 'The AI is having trouble generating suggestions. Please try again.' 
+                }, { status: 500 });
+            }
+        } else {
+            parsedResponse = llmResponse;
         }
 
         return Response.json(parsedResponse);

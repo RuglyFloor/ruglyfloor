@@ -89,24 +89,32 @@ export default function InteractiveRugPreview({
       // Draw image to temp canvas
       tempCtx.drawImage(img, 0, 0);
       
-      // Get image data to check for transparency
+      // Check if image already has transparency
       const imageData = tempCtx.getImageData(0, 0, img.width, img.height);
       const data = imageData.data;
       
-      // Replace white pixels (or near-white) with transparent
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        
-        // If pixel is white or very light (threshold of 240)
-        if (r > 240 && g > 240 && b > 240) {
-          data[i + 3] = 0; // Set alpha to 0 (transparent)
+      let hasTransparency = false;
+      for (let i = 3; i < data.length; i += 4) {
+        if (data[i] < 255) {
+          hasTransparency = true;
+          break;
         }
       }
       
-      // Put processed image back
-      tempCtx.putImageData(imageData, 0, 0);
+      // Only remove white if image doesn't already have transparency (PNG with alpha)
+      if (!hasTransparency) {
+        for (let i = 0; i < data.length; i += 4) {
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
+          
+          // If pixel is pure white, make it transparent
+          if (r > 250 && g > 250 && b > 250) {
+            data[i + 3] = 0;
+          }
+        }
+        tempCtx.putImageData(imageData, 0, 0);
+      }
       
       // Draw design directly on rug
       const aspectRatio = img.width / img.height;
