@@ -196,14 +196,13 @@ export default function DesignLibrary({ onSelectDesign }) {
               key={design.id}
               onClick={() => onSelectDesign(design.url)}
               className="group relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 hover:border-blue-600 transition-all"
-              style={{ background: 'transparent' }}
+              style={{ background: 'linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%), linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%)', backgroundSize: '20px 20px', backgroundPosition: '0 0, 10px 10px' }}
             >
-              <div className="w-full h-full flex items-center justify-center p-2">
+              <div className="w-full h-full flex items-center justify-center p-2 bg-white/80">
                 <img
                   src={design.url}
                   alt={design.name}
                   className="max-w-full max-h-full object-contain group-hover:scale-110 transition-transform"
-                  style={{ background: 'transparent' }}
                 />
               </div>
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all flex items-center justify-center pointer-events-none">

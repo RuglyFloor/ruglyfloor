@@ -1025,38 +1025,43 @@ export default function CustomBuilder() {
                   />
                 )}
 
-                {config.imageUrl && (
-                  <div className="bg-green-50 border-2 border-green-500 rounded-lg p-6 mt-6">
-                    <Label className="block mb-4 font-bold text-green-900 text-xl text-center">✨ Your Custom Rug Preview</Label>
-                    
-                    {/* Final Summary */}
-                    <div className="bg-white rounded-lg p-4 mb-4 space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Quality:</span>
-                        <span className="font-semibold">{QUALITY_TIERS.find(t => t.id === config.qualityTier)?.label}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Size:</span>
-                        <span className="font-semibold">{SIZES.find(s => s.value === config.size)?.label}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Base Color:</span>
-                        <span className="font-semibold">{config.baseColor}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Paint Colors:</span>
-                        <span className="font-semibold">{config.paintColor}{config.secondPaintColor ? `, ${config.secondPaintColor}` : ''}</span>
-                      </div>
+                <div className="bg-green-50 border-2 border-green-500 rounded-lg p-6 mt-6">
+                  <Label className="block mb-4 font-bold text-green-900 text-xl text-center">
+                    {config.imageUrl ? '✨ Your Custom Rug Preview' : '✨ Ready to Order'}
+                  </Label>
+                  
+                  {/* Final Summary */}
+                  <div className="bg-white rounded-lg p-4 mb-4 space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Quality:</span>
+                      <span className="font-semibold">{QUALITY_TIERS.find(t => t.id === config.qualityTier)?.label}</span>
                     </div>
-
-                    <Button
-                      onClick={handleAddToCart}
-                      className="w-full border-4 border-gray-900 bg-white hover:bg-gray-50 text-gray-900 font-bold text-xl py-8"
-                    >
-                      Add to Cart - ${currentPrice()}
-                    </Button>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Size:</span>
+                      <span className="font-semibold">{SIZES.find(s => s.value === config.size)?.label}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Base Color:</span>
+                      <span className="font-semibold">{config.baseColor}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Paint Colors:</span>
+                      <span className="font-semibold">{config.paintColor}{config.secondPaintColor ? `, ${config.secondPaintColor}` : ''}</span>
+                    </div>
+                    {!config.imageUrl && designMode === 'ai' && (
+                      <div className="pt-2 border-t text-xs text-gray-500">
+                        Note: You can add design instructions during checkout
+                      </div>
+                    )}
                   </div>
-                )}
+
+                  <Button
+                    onClick={handleAddToCart}
+                    className="w-full border-4 border-gray-900 bg-white hover:bg-gray-50 text-gray-900 font-bold text-xl py-8"
+                  >
+                    Add to Cart - ${currentPrice()}
+                  </Button>
+                </div>
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <div className="flex justify-between items-center mb-3">
