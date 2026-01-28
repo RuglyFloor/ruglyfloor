@@ -957,12 +957,19 @@ export default function CustomBuilder() {
 
                 {/* AI Assistant Mode */}
                 {designMode === 'ai' && (
-                  <AIAssistant
-                    currentImageUrl={config.imageUrl}
-                    rugSize={config.size}
-                    onApplyColors={handleApplyAIColors}
-                    onCopySuggestion={handleCopyAISuggestion}
-                  />
+                  <>
+                    <AIAssistant
+                      currentImageUrl={config.imageUrl}
+                      rugSize={config.size}
+                      onApplyColors={handleApplyAIColors}
+                      onCopySuggestion={handleCopyAISuggestion}
+                    />
+                    <div className="mt-6 p-4 bg-yellow-50 border-2 border-yellow-400 rounded-lg">
+                      <p className="text-sm text-gray-700">
+                        <strong>💡 Tip:</strong> AI Assistant provides color and pattern suggestions. To add a design image to your rug, switch to "Design Library", "Upload & Convert", or "Draw Your Own" modes.
+                      </p>
+                    </div>
+                  </>
                 )}
 
                 {/* Design Library Mode */}

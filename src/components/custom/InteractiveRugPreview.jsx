@@ -79,6 +79,35 @@ export default function InteractiveRugPreview({
     img.crossOrigin = 'anonymous';
     img.onload = () => {
       console.log('Image loaded successfully:', designUrl);
+      
+      // Create a temporary canvas to process the image
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCanvas.width = img.width;
+      tempCanvas.height = img.height;
+      
+      // Draw image to temp canvas
+      tempCtx.drawImage(img, 0, 0);
+      
+      // Get image data to check for transparency
+      const imageData = tempCtx.getImageData(0, 0, img.width, img.height);
+      const data = imageData.data;
+      
+      // Replace white pixels (or near-white) with transparent
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i + 1];
+        const b = data[i + 2];
+        
+        // If pixel is white or very light (threshold of 240)
+        if (r > 240 && g > 240 && b > 240) {
+          data[i + 3] = 0; // Set alpha to 0 (transparent)
+        }
+      }
+      
+      // Put processed image back
+      tempCtx.putImageData(imageData, 0, 0);
+      
       // Draw design directly on rug
       const aspectRatio = img.width / img.height;
       let drawWidth = rugWidth * 0.8;
@@ -94,7 +123,7 @@ export default function InteractiveRugPreview({
       
       ctx.save();
       ctx.globalAlpha = opacity;
-      ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
+      ctx.drawImage(tempCanvas, drawX, drawY, drawWidth, drawHeight);
       ctx.restore();
 
       // Rug texture overlay
