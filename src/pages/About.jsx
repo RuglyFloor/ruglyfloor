@@ -21,8 +21,8 @@ export default function About() {
     <div className="min-h-screen">
       <SEOHead
         title={seoData?.seo_title || "Rugly Floors - About"}
-        description={seoData?.seo_description || "Meet Ryan Hensley, founder of Rugly Floor. Learn about our passion for large-scale art and hand-painted custom rugs that transform spaces."}
-        keywords={seoData?.seo_keywords || ['about rugly', 'ryan hensley', 'custom rug artist', 'hand painted rug creator']}
+        description={typeof seoData?.seo_description === 'string' ? seoData.seo_description : "Meet Ryan Hensley, founder of Rugly Floor. Learn about our passion for large-scale art and hand-painted custom rugs that transform spaces."}
+        keywords={Array.isArray(seoData?.seo_keywords) ? seoData.seo_keywords : ['about rugly', 'ryan hensley', 'custom rug artist', 'hand painted rug creator']}
         url="/about"
       />
       {/* Hero Section */}
