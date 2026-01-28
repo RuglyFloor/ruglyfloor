@@ -21,7 +21,7 @@ import { useSEO } from '../components/seo/useSEO';
 const QUALITY_TIERS = [
   { 
     id: 'budget', 
-    label: 'Crugly', 
+    label: 'Budget Crugly', 
     description: 'Synthetic but effective in covering up floors, creating a cool effect, dorm rooms, kids love it.',
     priceMultiplier: 0.7,
     materialDetail: 'Synthetic, thinner non-slip floor covering that looks great',
@@ -32,7 +32,7 @@ const QUALITY_TIERS = [
   },
   { 
     id: 'good', 
-    label: 'Rugly', 
+    label: 'Standard Crugly', 
     description: 'Expect the same life-span as any ordinary rug.',
     priceMultiplier: 1.0,
     materialDetail: 'Standard rug construction',
@@ -43,8 +43,8 @@ const QUALITY_TIERS = [
   },
   { 
     id: 'highend', 
-    label: 'Rugly Lux', 
-    description: 'Rugly Lux is the cat\'s meow—you tell us what you\'re thinking and we make it happen with no limits',
+    label: 'Rugly', 
+    description: 'Ruglys are the cat\'s meow—you tell us what you\'re thinking and we make it happen with no limits',
     priceMultiplier: 2.5,
     materialDetail: 'Premium materials, custom hand-painted',
     lifespan: 'Premium durability',
@@ -54,7 +54,7 @@ const QUALITY_TIERS = [
   }
 ];
 
-const DEFAULT_SIZES = [
+const SIZES = [
   { id: 'tiny', label: 'Tiny', value: 'tiny', price: 79, step: 0, measurement: '2x3' },
   { id: 'sm', label: 'Small', value: 'small', price: 200, step: 1, measurement: '4x6' },
   { id: 'md', label: 'Medium', value: 'medium', price: 300, step: 2, measurement: '5x7' },
@@ -124,35 +124,6 @@ export default function CustomBuilder() {
   const [designMode, setDesignMode] = useState('draw'); // 'library', 'upload', or 'draw'
   const [selectedItem, setSelectedItem] = useState(null);
   const [floatingSelections, setFloatingSelections] = useState([]);
-  const [SIZES, setSIZES] = useState(DEFAULT_SIZES);
-  const [loadingPricing, setLoadingPricing] = useState(true);
-
-  // Fetch pricing from Notion on mount
-  useEffect(() => {
-    const fetchPricing = async () => {
-      try {
-        const response = await base44.functions.invoke('getPricing');
-        if (response.data?.success && response.data.pricing?.sizes?.length > 0) {
-          // Add step property to each size
-          const sizesWithSteps = response.data.pricing.sizes.map((size, index) => ({
-            ...size,
-            step: index
-          }));
-          setSIZES(sizesWithSteps);
-          console.log('✓ Loaded pricing from Notion:', sizesWithSteps);
-        } else {
-          console.warn('Using default pricing - Notion data unavailable');
-        }
-      } catch (error) {
-        console.error('Failed to load pricing from Notion:', error);
-        console.warn('Using default pricing');
-      } finally {
-        setLoadingPricing(false);
-      }
-    };
-
-    fetchPricing();
-  }, []);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -986,19 +957,12 @@ export default function CustomBuilder() {
 
                 {/* AI Assistant Mode */}
                 {designMode === 'ai' && (
-                  <>
-                    <AIAssistant
-                      currentImageUrl={config.imageUrl}
-                      rugSize={config.size}
-                      onApplyColors={handleApplyAIColors}
-                      onCopySuggestion={handleCopyAISuggestion}
-                    />
-                    <div className="mt-6 p-4 bg-yellow-50 border-2 border-yellow-400 rounded-lg">
-                      <p className="text-sm text-gray-700">
-                        <strong>💡 Tip:</strong> AI Assistant provides color and pattern suggestions. To add a design image to your rug, switch to "Design Library", "Upload & Convert", or "Draw Your Own" modes.
-                      </p>
-                    </div>
-                  </>
+                  <AIAssistant
+                    currentImageUrl={config.imageUrl}
+                    rugSize={config.size}
+                    onApplyColors={handleApplyAIColors}
+                    onCopySuggestion={handleCopyAISuggestion}
+                  />
                 )}
 
                 {/* Design Library Mode */}
@@ -1009,17 +973,6 @@ export default function CustomBuilder() {
                         setConfig(prev => ({ ...prev, imageUrl: url, previewUrl: url }));
                       }}
                     />
-                    {config.imageUrl && (
-                      <div className="mt-6 p-6 bg-green-50 border-2 border-green-500 rounded-lg">
-                        <div className="text-center mb-4">
-                          <div className="text-green-900 font-bold text-lg mb-2">✓ Design Selected!</div>
-                          <p className="text-sm text-gray-600">Your design will appear on the rug preview</p>
-                        </div>
-                        <div className="bg-white rounded-lg p-4 flex items-center justify-center">
-                          <img src={config.imageUrl} alt="Selected design" className="max-w-full max-h-48 object-contain" />
-                        </div>
-                      </div>
-                    )}
                   </>
                 )}
 
@@ -1054,43 +1007,38 @@ export default function CustomBuilder() {
                   />
                 )}
 
-                <div className="bg-green-50 border-2 border-green-500 rounded-lg p-6 mt-6">
-                  <Label className="block mb-4 font-bold text-green-900 text-xl text-center">
-                    {config.imageUrl ? '✨ Your Custom Rug Preview' : '✨ Ready to Order'}
-                  </Label>
-                  
-                  {/* Final Summary */}
-                  <div className="bg-white rounded-lg p-4 mb-4 space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Quality:</span>
-                      <span className="font-semibold">{QUALITY_TIERS.find(t => t.id === config.qualityTier)?.label}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Size:</span>
-                      <span className="font-semibold">{SIZES.find(s => s.value === config.size)?.label}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Base Color:</span>
-                      <span className="font-semibold">{config.baseColor}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Paint Colors:</span>
-                      <span className="font-semibold">{config.paintColor}{config.secondPaintColor ? `, ${config.secondPaintColor}` : ''}</span>
-                    </div>
-                    {!config.imageUrl && designMode === 'ai' && (
-                      <div className="pt-2 border-t text-xs text-gray-500">
-                        Note: You can add design instructions during checkout
+                {config.imageUrl && (
+                  <div className="bg-green-50 border-2 border-green-500 rounded-lg p-6 mt-6">
+                    <Label className="block mb-4 font-bold text-green-900 text-xl text-center">✨ Your Custom Rug Preview</Label>
+                    
+                    {/* Final Summary */}
+                    <div className="bg-white rounded-lg p-4 mb-4 space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Quality:</span>
+                        <span className="font-semibold">{QUALITY_TIERS.find(t => t.id === config.qualityTier)?.label}</span>
                       </div>
-                    )}
-                  </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Size:</span>
+                        <span className="font-semibold">{SIZES.find(s => s.value === config.size)?.label}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Base Color:</span>
+                        <span className="font-semibold">{config.baseColor}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Paint Colors:</span>
+                        <span className="font-semibold">{config.paintColor}{config.secondPaintColor ? `, ${config.secondPaintColor}` : ''}</span>
+                      </div>
+                    </div>
 
-                  <Button
-                    onClick={handleAddToCart}
-                    className="w-full border-4 border-gray-900 bg-white hover:bg-gray-50 text-gray-900 font-bold text-xl py-8"
-                  >
-                    Add to Cart - ${currentPrice()}
-                  </Button>
-                </div>
+                    <Button
+                      onClick={handleAddToCart}
+                      className="w-full border-4 border-gray-900 bg-white hover:bg-gray-50 text-gray-900 font-bold text-xl py-8"
+                    >
+                      Add to Cart - ${currentPrice()}
+                    </Button>
+                  </div>
+                )}
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <div className="flex justify-between items-center mb-3">
