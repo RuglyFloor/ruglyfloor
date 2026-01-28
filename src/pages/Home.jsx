@@ -171,7 +171,7 @@ export default function Home() {
                       </div>
                       <div className="text-center space-y-4">
                         <h3 className="text-2xl font-bold">{product.name}</h3>
-                        <p className="text-slate-600 text-lg">{product.description}</p>
+                        <p className="text-slate-600 text-lg">{typeof product.description === 'string' ? product.description : product.description?.description || ''}</p>
                         <div className="flex flex-col items-center justify-center gap-4 pt-4">
                           {product.in_stock ? (
                             <>

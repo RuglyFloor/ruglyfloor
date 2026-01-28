@@ -105,7 +105,7 @@ export default function Shop() {
                     </div>
                     <CardContent className="p-4">
                       <h3 className="text-xl font-bold mb-2">{product.name}</h3>
-                      <p className="text-gray-600 text-sm mb-2">{product.description}</p>
+                      <p className="text-gray-600 text-sm mb-2">{typeof product.description === 'string' ? product.description : product.description?.description || ''}</p>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-500">{product.size}</span>
                         <span className="text-2xl font-bold text-blue-600">${product.price}</span>
