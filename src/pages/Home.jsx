@@ -232,7 +232,7 @@ export default function Home() {
           {/* Yelp Embed Widget */}
           <div className="bg-white rounded-2xl shadow-2xl overflow-hidden mb-6">
             <iframe 
-              src="https://www.yelp.com/embed/business/rugly-floor-detroit" 
+              src="https://www.yelp.com/embed/business/rugly-floors-lansing" 
               width="100%" 
               height="600" 
               frameBorder="0"
@@ -243,7 +243,7 @@ export default function Home() {
 
           <div className="text-center">
             <a 
-              href="https://www.yelp.com/biz/rugly-floor-detroit" 
+              href="https://www.yelp.com/biz/rugly-floors-lansing" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-gray-600 hover:text-gray-900 transition-colors text-sm inline-flex items-center gap-2"
