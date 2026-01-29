@@ -252,35 +252,47 @@ export default function About() {
 
       {/* Yelp Reviews Section */}
       <section className="py-16 px-6 bg-gradient-to-br from-yellow-50 to-orange-50">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-5xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <div className="inline-block px-4 py-2 bg-red-600 rounded-full mb-6">
-              <span className="text-white font-semibold text-sm">⭐ Customer Reviews</span>
+            <div className="text-center mb-8">
+              <div className="inline-block px-4 py-2 bg-red-600 rounded-full mb-6">
+                <span className="text-white font-semibold text-sm">⭐ Customer Reviews</span>
+              </div>
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                See What Our Customers Say
+              </h2>
+              <p className="text-xl text-gray-600 mb-8">
+                Real reviews from people who've transformed their spaces with Rugly
+              </p>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              See What Our Customers Say
-            </h2>
-            <p className="text-xl text-gray-600 mb-8">
-              Read real reviews from people who've transformed their spaces with Rugly
-            </p>
-            <a 
-              href="https://www.yelp.com/biz/rugly-floor-detroit" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="inline-block"
-            >
-              <Button size="lg" className="bg-red-600 hover:bg-red-700 text-white text-lg px-10 py-6 h-auto font-bold shadow-xl">
-                <svg className="w-6 h-6 mr-3" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
-                </svg>
-                View Our Yelp Reviews
-              </Button>
-            </a>
+
+            {/* Yelp Embed Widget */}
+            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden mb-6">
+              <iframe 
+                src="https://www.yelp.com/embed/business/rugly-floor-detroit" 
+                width="100%" 
+                height="600" 
+                frameBorder="0"
+                allowFullScreen
+                className="w-full"
+              />
+            </div>
+
+            <div className="text-center">
+              <a 
+                href="https://www.yelp.com/biz/rugly-floor-detroit" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gray-600 hover:text-gray-900 transition-colors text-sm inline-flex items-center gap-2"
+              >
+                View all reviews on Yelp →
+              </a>
+            </div>
           </motion.div>
         </div>
       </section>
