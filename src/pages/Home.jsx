@@ -131,7 +131,7 @@ export default function Home() {
       </section>
 
       {/* Shop for Original Ruglys Section */}
-      <section className="py-20 px-6 bg-white">
+      <section className="py-20 px-6 bg-white pb-40">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center gap-3 mb-12 justify-center">
             <Package className="w-8 h-8 text-blue-600" />
