@@ -186,8 +186,10 @@ export default function Home() {
                               >
                                 {isCheckingOut ? 'Loading...' : 'GRAB IT'}
                               </Button>
-                              <div className="inline-block px-4 py-2 bg-red-600 rounded-full">
-                                <span className="text-white font-semibold text-sm">⭐ Customer Reviews</span>
+                              <div className="mt-4">
+                                <div className="inline-block px-4 py-2 bg-red-600 rounded-full">
+                                  <span className="text-white font-semibold text-sm">⭐ Customer Reviews</span>
+                                </div>
                               </div>
                             </>
                           ) : (
