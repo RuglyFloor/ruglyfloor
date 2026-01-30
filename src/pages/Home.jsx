@@ -215,7 +215,7 @@ export default function Home() {
       </section>
 
       {/* Yelp Reviews Section */}
-      <section className="py-32 px-6 bg-gradient-to-br from-yellow-50 to-orange-50 mt-40">
+      <section className="py-32 px-6 bg-gradient-to-br from-yellow-50 to-orange-50" style={{ marginTop: '200px' }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8">
             <div className="inline-block px-4 py-2 bg-red-600 rounded-full mb-6">
