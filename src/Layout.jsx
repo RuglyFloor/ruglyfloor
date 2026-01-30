@@ -52,7 +52,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Favicon */}
       <link rel="icon" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/d71f153d8_RUGLYMASTERLOGO-92.png" />
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,700;0,900;1,100;1,700&family=Baumans&family=Kameron:wght@400..700&family=Major+Mono+Display&family=Inter:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,700;0,900;1,100;1,700&family=Baumans&family=Kameron:wght@400..700&family=Major+Mono+Display&family=Roboto:wght@400;500;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Allerta+Stencil&family=Big+Shoulders+Stencil+Display:wght@400;700;900&family=Saira+Stencil+One&family=Black+Ops+One&family=Wallpoet&family=Kenia&family=Plaster&family=Emblema+One&family=Protest+Guerrilla&display=swap');
 
         :root {
@@ -68,7 +68,7 @@ export default function Layout({ children, currentPageName }) {
 
           /* Typography */
           --font-heading: 'Barlow Condensed', sans-serif;
-          --font-body: 'Inter', sans-serif;
+          --font-body: 'Roboto', sans-serif;
           --font-accent: 'Baumans', sans-serif;
           --font-display: 'Boldonse', sans-serif;
           --font-serif: 'Kameron', serif;
