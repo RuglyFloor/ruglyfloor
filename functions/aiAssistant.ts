@@ -3,26 +3,29 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
-        const { prompt, imageUrl, rugSize } = await req.json();
+        const { prompt, imageUrl, rugSize, qualityTier, generateVariations } = await req.json();
 
         if (!prompt) {
             return Response.json({ error: 'Prompt is required' }, { status: 400 });
         }
 
         const file_urls = imageUrl ? [imageUrl] : [];
+        const isLuxTier = qualityTier === 'highend';
 
-        const llmPrompt = `You are a professional interior designer specializing in custom rugs. The user wants design suggestions for a custom hand-painted rug.
+        let llmPrompt = `You are a professional interior designer specializing in custom rugs. The user wants design suggestions for a custom hand-painted rug.
 
 User's request: "${prompt}"
 ${rugSize ? `Rug size: ${rugSize}` : ''}
 ${imageUrl ? 'The user has uploaded a reference image for inspiration.' : ''}
+${isLuxTier ? 'This is for a LUXURY PREMIUM rug - provide sophisticated, high-end design suggestions with exceptional attention to detail.' : ''}
 
 Please provide:
-1. Three distinct color palettes (each with a descriptive name and 3-5 hex color codes that work well together for a rug design).
-2. Three unique pattern ideas (creative, specific descriptions that the user can actually paint or stencil onto their rug).
-3. Three layout suggestions (describe how to arrange the design elements on the rug, considering composition and visual balance).
+1. ${isLuxTier ? 'Four' : 'Three'} distinct color palettes (each with a descriptive name and ${isLuxTier ? '5-7' : '3-5'} hex color codes that work well together for a rug design).
+2. ${isLuxTier ? 'Four' : 'Three'} unique pattern ideas (creative, specific descriptions that the user can actually paint or stencil onto their rug).
+3. ${isLuxTier ? 'Four' : 'Three'} layout suggestions (describe how to arrange the design elements on the rug, considering composition and visual balance).
+${isLuxTier ? '4. Three texture and finishing technique suggestions (advanced techniques like shading, gradients, layering, or special effects that enhance the luxury feel).' : ''}
 
-Make your suggestions practical, creative, and suitable for a hand-painted custom rug.`;
+${isLuxTier ? 'Focus on premium, artistic designs with sophisticated color theory and complex compositions suitable for a luxury hand-painted rug.' : 'Make your suggestions practical, creative, and suitable for a hand-painted custom rug.'}`;
 
         const schema = {
             type: "object",
@@ -44,7 +47,14 @@ Make your suggestions practical, creative, and suitable for a hand-painted custo
                 layouts: {
                     type: "array",
                     items: { type: "string" }
-                }
+                },
+                ...(isLuxTier && {
+                    techniques: {
+                        type: "array",
+                        items: { type: "string" },
+                        description: "Advanced finishing techniques for luxury rugs"
+                    }
+                })
             }
         };
         

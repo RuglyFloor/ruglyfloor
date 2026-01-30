@@ -356,21 +356,17 @@ export default function CustomBuilder() {
                             )}
                             <button
                               onClick={() => {
-                                if (tier.id === 'highend') {
-                                  navigate(createPageUrl('Commission'));
-                                } else {
-                                  setSelectedItem(tier.id);
-                                  setTransitioning(true);
-                                  setConfig(prev => ({ ...prev, qualityTier: tier.id }));
-                                  setTimeout(() => {
-                                    setStep(2);
-                                    setTransitioning(false);
-                                    setSelectedItem(null);
-                                  }, 700);
-                                }
+                                setSelectedItem(tier.id);
+                                setTransitioning(true);
+                                setConfig(prev => ({ ...prev, qualityTier: tier.id }));
+                                setTimeout(() => {
+                                  setStep(2);
+                                  setTransitioning(false);
+                                  setSelectedItem(null);
+                                }, 700);
                               }}
                               disabled={transitioning}
-                              className="font-bold text-xl text-gray-900 mt-2 hover:text-blue-600 transition-colors cursor-pointer"
+                              className="font-bold text-xl text-gray-900 mt-2 hover:text-purple-600 transition-colors cursor-pointer"
                             >
                               {tier.label}
                             </button>
@@ -539,18 +535,14 @@ export default function CustomBuilder() {
                             >
                               <Button
                                 onClick={() => {
-                                  if (tier.id === 'highend') {
-                                    navigate(createPageUrl('Commission'));
-                                  } else {
-                                    setSelectedItem(tier.id);
-                                    setTransitioning(true);
-                                    setConfig(prev => ({ ...prev, qualityTier: tier.id }));
-                                    setTimeout(() => {
-                                      setStep(2);
-                                      setTransitioning(false);
-                                      setSelectedItem(null);
-                                    }, 700);
-                                  }
+                                  setSelectedItem(tier.id);
+                                  setTransitioning(true);
+                                  setConfig(prev => ({ ...prev, qualityTier: tier.id }));
+                                  setTimeout(() => {
+                                    setStep(2);
+                                    setTransitioning(false);
+                                    setSelectedItem(null);
+                                  }, 700);
                                 }}
                                 disabled={transitioning}
                                 className={`w-full ${
@@ -558,7 +550,7 @@ export default function CustomBuilder() {
                                     ? 'border-4 border-gray-900 bg-gray-900 text-white'
                                     : tier.id === 'budget' || tier.id === 'good'
                                     ? 'border-2 border-blue-600 bg-blue-600 text-white hover:bg-blue-700'
-                                    : 'border-2 border-gray-300 bg-white text-gray-900 hover:border-gray-900'
+                                    : 'border-2 border-purple-600 bg-purple-600 text-white hover:bg-purple-700'
                                 }`}
                               >
                                 {config.qualityTier === tier.id ? (
@@ -569,7 +561,7 @@ export default function CustomBuilder() {
                                 ) : (
                                   tier.id === 'budget' ? 'Budget Friendly Option' :
                                   tier.id === 'good' ? 'The OG Crugly' :
-                                  'GOAT Rugly'
+                                  'Premium Lux with AI'
                                 )}
                               </Button>
                             </motion.div>
@@ -960,8 +952,15 @@ export default function CustomBuilder() {
                   <AIAssistant
                     currentImageUrl={config.imageUrl}
                     rugSize={config.size}
+                    qualityTier={config.qualityTier}
+                    baseColor={config.baseColor}
+                    paintColor={config.paintColor}
+                    secondPaintColor={config.secondPaintColor}
                     onApplyColors={handleApplyAIColors}
                     onCopySuggestion={handleCopyAISuggestion}
+                    onGenerateDesign={(designUrl) => {
+                      setConfig(prev => ({ ...prev, imageUrl: designUrl, previewUrl: designUrl }));
+                    }}
                   />
                 )}
 

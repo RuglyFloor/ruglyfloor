@@ -6,13 +6,15 @@ import { Label } from '@/components/ui/label';
 import { Sparkles, Loader2, Copy, Upload, X, CheckCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
-export default function AIAssistant({ currentImageUrl, rugSize, onApplyColors, onCopySuggestion }) {
+export default function AIAssistant({ currentImageUrl, rugSize, qualityTier, baseColor, paintColor, secondPaintColor, onApplyColors, onCopySuggestion, onGenerateDesign }) {
   const [prompt, setPrompt] = useState('');
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState(null);
   const [error, setError] = useState(null);
   const [inspirationImage, setInspirationImage] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [generatingImage, setGeneratingImage] = useState(false);
+  const [activeTab, setActiveTab] = useState('suggestions');
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -41,7 +43,9 @@ export default function AIAssistant({ currentImageUrl, rugSize, onApplyColors, o
       const response = await base44.functions.invoke('aiAssistant', {
         prompt: prompt || 'Analyze this image and suggest rug design elements including colors, patterns, and style',
         rugSize: rugSize,
-        imageUrl: inspirationImage?.url
+        imageUrl: inspirationImage?.url,
+        qualityTier: qualityTier,
+        generateVariations: qualityTier === 'highend'
       });
       
       if (response.data) {
@@ -58,15 +62,81 @@ export default function AIAssistant({ currentImageUrl, rugSize, onApplyColors, o
     }
   };
 
+  const generateDesignImage = async () => {
+    if (!prompt.trim()) {
+      setError('Please enter a design prompt to generate an image');
+      return;
+    }
+    
+    setGeneratingImage(true);
+    setError(null);
+    try {
+      const designPrompt = `Create a detailed, artistic rug design based on this description: ${prompt}. ${baseColor ? `Use ${baseColor} as the base color.` : ''} ${paintColor ? `Primary design color: ${paintColor}.` : ''} ${secondPaintColor ? `Secondary design color: ${secondPaintColor}.` : ''} The design should be suitable for hand-painting on a ${rugSize || 'medium'} rug. Make it visually striking and well-balanced. High quality, detailed, suitable for a luxury custom rug.`;
+      
+      const response = await base44.integrations.Core.GenerateImage({
+        prompt: designPrompt,
+        existing_image_urls: inspirationImage?.url ? [inspirationImage.url] : undefined
+      });
+      
+      if (response.url && onGenerateDesign) {
+        onGenerateDesign(response.url);
+        setActiveTab('preview');
+        setError(null);
+      } else {
+        setError('Failed to generate design image');
+      }
+    } catch (err) {
+      console.error('Image generation error:', err);
+      setError(err.message || 'Failed to generate design image. Please try again.');
+    } finally {
+      setGeneratingImage(false);
+    }
+  };
+
+  const generateVariations = async () => {
+    if (!currentImageUrl) {
+      setError('Please generate or upload a design first to create variations');
+      return;
+    }
+    
+    setGeneratingImage(true);
+    setError(null);
+    try {
+      const variationPrompt = `Create a variation of this rug design. Keep the same general style and theme, but alter the patterns, details, and composition to make it unique while maintaining visual coherence. ${baseColor ? `Use ${baseColor} as the base color.` : ''} ${paintColor ? `Primary design color: ${paintColor}.` : ''} Suitable for a ${rugSize || 'medium'} luxury custom rug.`;
+      
+      const response = await base44.integrations.Core.GenerateImage({
+        prompt: variationPrompt,
+        existing_image_urls: [currentImageUrl]
+      });
+      
+      if (response.url && onGenerateDesign) {
+        onGenerateDesign(response.url);
+        setError(null);
+      } else {
+        setError('Failed to generate variation');
+      }
+    } catch (err) {
+      console.error('Variation generation error:', err);
+      setError(err.message || 'Failed to generate variation. Please try again.');
+    } finally {
+      setGeneratingImage(false);
+    }
+  };
+
+  const isLuxTier = qualityTier === 'highend';
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-purple-500" />
-          AI Design Assistant
+          AI Design Assistant {isLuxTier && <span className="text-xs bg-purple-600 text-white px-2 py-1 rounded-full">Lux Premium</span>}
         </CardTitle>
         <p className="text-sm text-gray-600 mt-2">
-          Describe your vision or upload inspiration images, and AI will suggest colors, patterns, and design concepts
+          {isLuxTier 
+            ? 'Generate complete AI designs, variations, and get expert suggestions for your luxury rug'
+            : 'Get AI-powered color palettes, patterns, and layout suggestions for your rug design'
+          }
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -129,23 +199,88 @@ export default function AIAssistant({ currentImageUrl, rugSize, onApplyColors, o
           </div>
         )}
 
-        <Button 
-          onClick={generateSuggestions} 
-          disabled={loading || (!prompt.trim() && !inspirationImage) || uploadingImage}
-          className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
-        >
-          {loading ? (
+        <div className="grid gap-2">
+          <Button 
+            onClick={generateSuggestions} 
+            disabled={loading || (!prompt.trim() && !inspirationImage) || uploadingImage || generatingImage}
+            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                AI Analyzing...
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4 mr-2" />
+                Generate Design Suggestions
+              </>
+            )}
+          </Button>
+
+          {isLuxTier && (
             <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              AI Analyzing...
-            </>
-          ) : (
-            <>
-              <Sparkles className="w-4 h-4 mr-2" />
-              Generate Design Suggestions
+              <Button 
+                onClick={generateDesignImage} 
+                disabled={generatingImage || loading || !prompt.trim() || uploadingImage}
+                className="w-full bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700"
+              >
+                {generatingImage ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Creating Design...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    ✨ Generate Complete Design (Lux)
+                  </>
+                )}
+              </Button>
+
+              {currentImageUrl && (
+                <Button 
+                  onClick={generateVariations} 
+                  disabled={generatingImage || loading || uploadingImage}
+                  variant="outline"
+                  className="w-full border-purple-600 text-purple-600 hover:bg-purple-50"
+                >
+                  {generatingImage ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Creating Variation...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Generate Design Variation
+                    </>
+                  )}
+                </Button>
+              )}
             </>
           )}
-        </Button>
+        </div>
+
+        {currentImageUrl && isLuxTier && (
+          <Card className="border-2 border-purple-300 bg-gradient-to-br from-purple-50 to-pink-50">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                ✨ AI Generated Design Preview
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <img 
+                src={currentImageUrl} 
+                alt="Generated Design" 
+                className="w-full rounded-lg shadow-lg mb-3"
+              />
+              <p className="text-xs text-gray-600 text-center">
+                This AI-generated design is ready to use. You can generate variations or continue to customize.
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         {suggestions && (
           <div className="space-y-4 mt-6">
@@ -238,6 +373,37 @@ export default function AIAssistant({ currentImageUrl, rugSize, onApplyColors, o
                     variant="outline"
                     onClick={() => onCopySuggestion(suggestions.layouts.join('\n\n'), 'Layout Suggestions')}
                     className="w-full"
+                  >
+                    <Copy className="w-3 h-3 mr-2" />
+                    Copy All to Instructions
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Luxury Techniques (Lux tier only) */}
+            {isLuxTier && suggestions.techniques && suggestions.techniques.length > 0 && (
+              <Card className="border-2 border-purple-300 bg-gradient-to-br from-purple-50 to-pink-50">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    ✨ Premium Finishing Techniques
+                    <span className="text-xs bg-purple-600 text-white px-2 py-1 rounded-full ml-2">Lux Exclusive</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-2 mb-4">
+                    {suggestions.techniques.map((technique, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <span className="text-purple-600 mt-1 font-bold">{idx + 1}.</span>
+                        <span className="text-gray-700">{technique}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => onCopySuggestion(suggestions.techniques.join('\n\n'), 'Premium Techniques')}
+                    className="w-full border-purple-600 text-purple-600 hover:bg-purple-50"
                   >
                     <Copy className="w-3 h-3 mr-2" />
                     Copy All to Instructions
