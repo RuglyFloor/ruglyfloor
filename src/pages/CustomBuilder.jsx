@@ -905,16 +905,19 @@ export default function CustomBuilder() {
               <div className="space-y-6">
                 {/* Mode Selection */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                  <button
-                    onClick={() => setDesignMode('ai')}
-                    className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center min-h-[160px] ${
-                      designMode === 'ai' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <Lightbulb className="w-8 h-8 mb-3 text-blue-600" />
-                    <div className="font-semibold text-lg mb-1">AI Assistant</div>
-                    <div className="text-sm text-gray-600 text-center">Get AI design suggestions</div>
-                  </button>
+                  {config.qualityTier === 'highend' && (
+                    <button
+                      onClick={() => setDesignMode('ai')}
+                      className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center min-h-[160px] relative ${
+                        designMode === 'ai' ? 'border-purple-600 bg-gradient-to-br from-purple-50 to-pink-50' : 'border-purple-400 bg-purple-50 hover:border-purple-600'
+                      }`}
+                    >
+                      <div className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded-full">LUX ONLY</div>
+                      <Lightbulb className="w-8 h-8 mb-3 text-purple-600" />
+                      <div className="font-semibold text-lg mb-1">AI Design Studio</div>
+                      <div className="text-sm text-gray-600 text-center">Generate complete designs with AI</div>
+                    </button>
+                  )}
                   <button
                     onClick={() => setDesignMode('library')}
                     className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center min-h-[160px] ${
