@@ -181,8 +181,8 @@ export default function Layout({ children, currentPageName }) {
               <div className="border-2 border-gray-900 rounded-xl p-6 hover:bg-gray-50 transition-colors">
                 <Mail className="w-8 h-8 mx-auto mb-3 text-gray-900" />
                 <h3 className="text-gray-900 font-bold text-lg mb-2">Email Us</h3>
-                <a href="mailto:contact@ruglyfloor.com" className="text-gray-600 hover:text-gray-900 text-lg">
-                  contact@ruglyfloor.com
+                <a href="mailto:info@ruglyfloor.com" className="text-gray-600 hover:text-gray-900 text-lg">
+                  info@ruglyfloor.com
                 </a>
               </div>
 
