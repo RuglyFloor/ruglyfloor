@@ -474,7 +474,7 @@ export default function DrawingCanvas({ onSaveDrawing, availableColors = [] }) {
 
       <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-6 text-center border-2 border-green-300">
         <p className="text-lg text-gray-800 font-bold mb-2">
-          ✅ When you're done, click "Use This Design" above
+          ✅ When you're done, click "Save Drawing" above
         </p>
         <p className="text-sm text-gray-600">
           Your drawing will be saved and you can preview it on your rug
