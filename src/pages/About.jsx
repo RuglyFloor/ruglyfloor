@@ -46,7 +46,7 @@ export default function About() {
           </motion.div>
 
           <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 tracking-tight">
-            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Rugly</span>
+            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400" style={{ fontFamily: 'var(--font-button)' }}>Rugly</span>
           </h1>
           <p className="text-2xl md:text-3xl text-blue-100 mb-12 font-light">
             Where art meets the floor
@@ -104,8 +104,8 @@ export default function About() {
               <div className="inline-block px-4 py-2 bg-blue-50 rounded-full mb-6">
                 <span className="text-blue-600 font-semibold text-sm">Founder & Artist</span>
               </div>
-              <h2 className="text-4xl lg:text-5xl font-bold mb-6 text-gray-900 leading-tight">Meet Ryan Hensley</h2>
-              <div className="space-y-5 text-gray-600 leading-relaxed text-lg">
+              <h2 className="text-4xl lg:text-5xl mb-6 text-gray-900 leading-tight" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>Meet Ryan Hensley</h2>
+              <div className="space-y-5 text-gray-600 leading-relaxed text-lg" style={{ fontFamily: 'var(--font-body)' }}>
                 <p>
                   For as long as I can remember, I've been drawn to scale. Large canvases, bold statements, art that commands a room. But here's the problem I kept running into: who actually buys large-scale art? And even if they do, how do you ship it? Store it? The logistics and costs made it nearly impossible to turn my passion into something sustainable.
                 </p>
@@ -116,7 +116,7 @@ export default function About() {
                   Then it hit me: what if the floor could be my canvas?
                 </p>
                 <p>
-                  I put everything I had—literally my last cent—into this venture. Rugly is my way of staying true to my calling while solving the challenges that held me back. By painting on rugs, I can create large-scale art that's affordable, shippable, and accessible. Every piece is hand-painted, one-of-a-kind, and designed to transform spaces in ways traditional art never could.
+                  I put everything I had—literally my last cent—into this venture. <span style={{ fontFamily: 'var(--font-button)' }}>Rugly</span> is my way of staying true to my calling while solving the challenges that held me back. By painting on rugs, I can create large-scale art that's affordable, shippable, and accessible. Every piece is hand-painted, one-of-a-kind, and designed to transform spaces in ways traditional art never could.
                 </p>
                 <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-l-4 border-blue-600 p-6 rounded-lg">
                   <p className="font-semibold text-gray-900 text-xl">
@@ -139,7 +139,7 @@ export default function About() {
               <div className="inline-block px-4 py-2 bg-purple-50 rounded-full mb-4">
                 <span className="text-purple-600 font-semibold text-sm">Portfolio</span>
               </div>
-              <h3 className="text-4xl font-bold text-gray-900">Featured Work</h3>
+              <h3 className="text-4xl text-gray-900" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>Featured Work</h3>
             </div>
             <div className="relative group max-w-4xl mx-auto">
               <div className="absolute -inset-2 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-3xl opacity-20 group-hover:opacity-30 transition-opacity duration-500 blur-xl" />
@@ -163,7 +163,7 @@ export default function About() {
               <div className="inline-block px-4 py-2 bg-white rounded-full mb-4 shadow-sm">
                 <span className="text-gray-900 font-semibold text-sm">Essential Info</span>
               </div>
-              <h3 className="text-4xl font-bold text-gray-900">Foundation Guide</h3>
+              <h3 className="text-4xl text-gray-900" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>Foundation Guide</h3>
               <p className="text-gray-600 text-lg mt-2">Read before ordering</p>
             </div>
             
@@ -178,8 +178,8 @@ export default function About() {
                 <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
                   <span className="text-2xl">🎨</span>
                 </div>
-                <h4 className="font-bold text-xl mb-3 text-gray-900">Hand-Painted, Not Printed</h4>
-                <p className="text-gray-600 leading-relaxed">Every Rugly is hand-painted in our studio. This is real hand work, not a printed design. Each piece has unique character and slight variations that make it one-of-a-kind.</p>
+                <h4 className="text-xl mb-3 text-gray-900" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>Hand-Painted, Not Printed</h4>
+                <p className="text-gray-600 leading-relaxed" style={{ fontFamily: 'var(--font-body)' }}>Every <span style={{ fontFamily: 'var(--font-button)' }}>Rugly</span> is hand-painted in our studio. This is real hand work, not a printed design. Each piece has unique character and slight variations that make it one-of-a-kind.</p>
               </motion.div>
 
               <motion.div 
@@ -192,8 +192,8 @@ export default function About() {
                 <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
                   <span className="text-2xl">✨</span>
                 </div>
-                <h4 className="font-bold text-xl mb-3 text-gray-900">Bold Designs Work Best</h4>
-                <p className="text-gray-600 leading-relaxed">High contrast designs with clear edges paint the cleanest. Bold, simple shapes and patterns will give you the most professional-looking result.</p>
+                <h4 className="text-xl mb-3 text-gray-900" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>Bold Designs Work Best</h4>
+                <p className="text-gray-600 leading-relaxed" style={{ fontFamily: 'var(--font-body)' }}>High contrast designs with clear edges paint the cleanest. Bold, simple shapes and patterns will give you the most professional-looking result.</p>
               </motion.div>
 
               <motion.div 
@@ -206,8 +206,8 @@ export default function About() {
                 <div className="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center mb-4">
                   <span className="text-2xl">🖌️</span>
                 </div>
-                <h4 className="font-bold text-xl mb-3 text-gray-900">Stencil Process</h4>
-                <p className="text-gray-600 leading-relaxed">We create custom stencils for each design. Thin lines, gradients, and extremely fine details may be simplified to work with the stencil painting process.</p>
+                <h4 className="text-xl mb-3 text-gray-900" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>Stencil Process</h4>
+                <p className="text-gray-600 leading-relaxed" style={{ fontFamily: 'var(--font-body)' }}>We create custom stencils for each design. Thin lines, gradients, and extremely fine details may be simplified to work with the stencil painting process.</p>
               </motion.div>
             </div>
 
@@ -234,7 +234,7 @@ export default function About() {
           >
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDE2YzAtNC40MTggMy41ODItOCA4LThzOCAzLjU4MiA4IDgtMy41ODIgOC04IDgtOC0zLjU4Mi04LTh6TTAgMTZjMC00LjQxOCAzLjU4Mi04IDgtOHM4IDMuNTgyIDggOC0zLjU4MiA4LTggOC04LTMuNTgyLTgtOHptMzYgMzZjMC00LjQxOCAzLjU4Mi04IDgtOHM4IDMuNTgyIDggOC0zLjU4MiA4LTggOC04LTMuNTgyLTgtOHpNMCA1MmMwLTQuNDE4IDMuNTgyLTggOC04czggMy41ODIgOCA4LTMuNTgyIDgtOCA4LTgtMy41ODItOC04eiIvPjwvZz48L2c+PC9zdmc+')] opacity-10" />
             <div className="relative z-10">
-              <h3 className="text-4xl md:text-5xl font-bold mb-4 text-white">Ready to Transform Your Space?</h3>
+              <h3 className="text-4xl md:text-5xl mb-4 text-white" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>Ready to Transform Your Space?</h3>
               <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
                 Let's create something unique together
               </p>
@@ -263,11 +263,11 @@ export default function About() {
               <div className="inline-block px-4 py-2 bg-red-600 rounded-full mb-6">
                 <span className="text-white font-semibold text-sm">⭐ Customer Reviews</span>
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              <h2 className="text-4xl md:text-5xl text-gray-900 mb-6" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>
                 See What Our Customers Say
               </h2>
-              <p className="text-xl text-gray-600 mb-8">
-                Real reviews from people who've transformed their spaces with Rugly
+              <p className="text-xl text-gray-600 mb-8" style={{ fontFamily: 'var(--font-body)' }}>
+                Real reviews from people who've transformed their spaces with <span style={{ fontFamily: 'var(--font-button)' }}>Rugly</span>
               </p>
             </div>
 
@@ -327,17 +327,17 @@ export default function About() {
           transition={{ duration: 0.8 }}
           className="max-w-4xl mx-auto text-center relative z-10"
         >
-          <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+          <h2 className="text-5xl md:text-6xl text-white mb-6 leading-tight" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>
             Art That Lives <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Where You Do</span>
           </h2>
-          <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed">
-            Every Rugly is hand-painted in our studio, crafted to bring bold, beautiful design into your everyday life.
+          <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed" style={{ fontFamily: 'var(--font-body)' }}>
+            Every <span style={{ fontFamily: 'var(--font-button)' }}>Rugly</span> is hand-painted in our studio, crafted to bring bold, beautiful design into your everyday life.
           </p>
           <Link to={createPageUrl('Shop')}>
-            <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100 text-lg px-12 py-6 h-auto font-bold shadow-2xl">
+            <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100 text-lg px-12 py-6 h-auto shadow-2xl" style={{ fontFamily: 'var(--font-button)', fontWeight: 700 }}>
               <ShoppingBag className="w-5 h-5 mr-2" />
-              Shop Original Ruglys
+              Shop Original <span style={{ fontFamily: 'var(--font-button)' }}>Ruglys</span>
             </Button>
           </Link>
         </motion.div>
