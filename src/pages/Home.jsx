@@ -200,7 +200,7 @@ export default function Home() {
               </div>
             )}
           </div>
-          <div className="flex justify-center gap-2">
+          <div className="flex justify-center gap-2 mt-8">
             {products.map((_, index) =>
             <button
               key={index}
