@@ -200,17 +200,6 @@ export default function Home() {
               </div>
             )}
           </div>
-          <div className="flex justify-center gap-2 mt-8">
-            {products.map((_, index) =>
-            <button
-              key={index}
-              onClick={() => setCurrentProduct(index)}
-              className={`w-3 h-3 rounded-full transition-all ${
-              currentProduct === index ? 'bg-blue-600 w-8' : 'bg-gray-300'}`
-              } />
-
-            )}
-          </div>
         </div>
       </section>
 
