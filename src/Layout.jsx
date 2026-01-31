@@ -205,7 +205,7 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Social Media Links */}
             <div className="flex justify-center gap-6">
-              <a href="https://facebook.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 transition-colors">
+              <a href="https://www.facebook.com/profile.php?id=61585565308752" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 transition-colors">
                 <Facebook className="w-8 h-8" />
               </a>
               <a href="https://instagram.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 transition-colors">
