@@ -191,25 +191,68 @@ function AdminOrdersContent() {
                       {/* Order Items */}
                       <div>
                         <h3 className="font-semibold mb-2">Order Items</h3>
-                        <div className="space-y-2">
+                        <div className="space-y-4">
                           {order.items?.map((item, idx) => (
-                            <div key={idx} className="flex gap-3 text-sm">
-                              {item.preview_url && (
-                                <img src={item.preview_url} alt={item.name} className="w-16 h-16 object-cover rounded" />
-                              )}
-                              <div className="flex-1">
-                                <div className="font-medium">{item.name}</div>
-                                <div className="text-gray-600">Size: {item.size}</div>
-                                {item.base_color && <div className="text-gray-600">Base: {item.base_color}</div>}
-                                <div className="text-blue-600 font-semibold">${item.price}</div>
+                            <div key={idx} className="border rounded-lg p-3">
+                              <div className="flex gap-3 text-sm mb-3">
+                                {item.preview_url && (
+                                  <img src={item.preview_url} alt={item.name} className="w-16 h-16 object-cover rounded" />
+                                )}
+                                <div className="flex-1">
+                                  <div className="font-medium">{item.name}</div>
+                                  <div className="text-gray-600">Size: {item.size}</div>
+                                  {item.base_color && <div className="text-gray-600">Base: {item.base_color}</div>}
+                                  <div className="text-blue-600 font-semibold">${item.price}</div>
+                                </div>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => window.location.href = `${createPageUrl('AdminOrderDetail')}?id=${order.id}`}
+                                >
+                                  View Details
+                                </Button>
                               </div>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => window.location.href = `${createPageUrl('AdminOrderDetail')}?id=${order.id}`}
-                              >
-                                View Details
-                              </Button>
+                              
+                              {/* All Images */}
+                              {(item.image_url || item.original_upload_url || item.processed_image_url || item.ai_preview_url) && (
+                                <div className="border-t pt-3">
+                                  <div className="text-xs font-semibold text-gray-600 mb-2">Design Images:</div>
+                                  <div className="grid grid-cols-4 gap-2">
+                                    {item.original_upload_url && (
+                                      <div>
+                                        <div className="text-xs text-gray-500 mb-1">Original</div>
+                                        <a href={item.original_upload_url} target="_blank" rel="noopener noreferrer">
+                                          <img src={item.original_upload_url} alt="Original" className="w-full aspect-square object-cover rounded border hover:border-blue-500" />
+                                        </a>
+                                      </div>
+                                    )}
+                                    {item.image_url && item.image_url !== item.original_upload_url && (
+                                      <div>
+                                        <div className="text-xs text-gray-500 mb-1">Design</div>
+                                        <a href={item.image_url} target="_blank" rel="noopener noreferrer">
+                                          <img src={item.image_url} alt="Design" className="w-full aspect-square object-cover rounded border hover:border-blue-500" />
+                                        </a>
+                                      </div>
+                                    )}
+                                    {item.processed_image_url && (
+                                      <div>
+                                        <div className="text-xs text-gray-500 mb-1">Processed</div>
+                                        <a href={item.processed_image_url} target="_blank" rel="noopener noreferrer">
+                                          <img src={item.processed_image_url} alt="Processed" className="w-full aspect-square object-cover rounded border hover:border-blue-500" />
+                                        </a>
+                                      </div>
+                                    )}
+                                    {item.ai_preview_url && (
+                                      <div>
+                                        <div className="text-xs text-gray-500 mb-1">AI Preview</div>
+                                        <a href={item.ai_preview_url} target="_blank" rel="noopener noreferrer">
+                                          <img src={item.ai_preview_url} alt="AI Preview" className="w-full aspect-square object-cover rounded border hover:border-blue-500" />
+                                        </a>
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           ))}
                         </div>
