@@ -41,13 +41,15 @@ function AdminOrdersContent() {
     queryFn: () => base44.auth.me()
   });
 
-  const { data: orders, isLoading } = useQuery({
+  const { data: orders, isLoading, error } = useQuery({
     queryKey: ['admin-orders'],
     queryFn: async () => {
+      console.log('Fetching orders...');
       const allOrders = await base44.asServiceRole.entities.Order.list('-created_date');
+      console.log('Orders fetched:', allOrders?.length);
       return allOrders;
     },
-    enabled: user?.role === 'admin'
+    enabled: !!user && user?.role === 'admin'
   });
 
   const updateOrderMutation = useMutation({
@@ -122,6 +124,13 @@ function AdminOrdersContent() {
 
         {isLoading ? (
           <div className="text-center py-12">Loading orders...</div>
+        ) : error ? (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <p className="text-red-600 font-semibold mb-2">Error loading orders</p>
+              <p className="text-gray-600 text-sm">{error.message}</p>
+            </CardContent>
+          </Card>
         ) : orders?.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center text-gray-500">
