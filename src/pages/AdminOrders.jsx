@@ -44,7 +44,7 @@ function AdminOrdersContent() {
   const { data: orders, isLoading } = useQuery({
     queryKey: ['admin-orders'],
     queryFn: async () => {
-      const allOrders = await base44.entities.Order.list('-created_date');
+      const allOrders = await base44.asServiceRole.entities.Order.list('-created_date');
       return allOrders;
     },
     enabled: user?.role === 'admin'
