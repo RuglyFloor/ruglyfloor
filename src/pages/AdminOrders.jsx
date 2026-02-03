@@ -44,11 +44,10 @@ function AdminOrdersContent() {
   const { data: orders, isLoading, error } = useQuery({
     queryKey: ['admin-orders'],
     queryFn: async () => {
-      console.log('Fetching orders...');
-      const allOrders = await base44.asServiceRole.entities.Order.list('-created_date');
-      console.log('Orders fetched:', allOrders?.length, allOrders);
-      return allOrders;
-    }
+      const response = await base44.functions.invoke('getAdminOrders');
+      return response.data.orders;
+    },
+    enabled: !!user && user?.role === 'admin'
   });
 
   const updateOrderMutation = useMutation({
