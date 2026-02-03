@@ -46,10 +46,9 @@ function AdminOrdersContent() {
     queryFn: async () => {
       console.log('Fetching orders...');
       const allOrders = await base44.asServiceRole.entities.Order.list('-created_date');
-      console.log('Orders fetched:', allOrders?.length);
+      console.log('Orders fetched:', allOrders?.length, allOrders);
       return allOrders;
-    },
-    enabled: !!user && user?.role === 'admin'
+    }
   });
 
   const updateOrderMutation = useMutation({
