@@ -54,6 +54,7 @@ export default function Layout({ children, currentPageName }) {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,700;0,900;1,100;1,700&family=Baumans&family=Kameron:wght@400..700&family=Major+Mono+Display&family=Roboto:wght@400;500;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Allerta+Stencil&family=Big+Shoulders+Stencil+Display:wght@400;700;900&family=Saira+Stencil+One&family=Black+Ops+One&family=Wallpoet&family=Kenia&family=Plaster&family=Emblema+One&family=Protest+Guerrilla&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Magistral&display=swap');
 
         :root {
           /* Primary Brand Color - Change this to customize your accent color */
@@ -74,7 +75,8 @@ export default function Layout({ children, currentPageName }) {
           --font-serif: 'Kameron', serif;
           --font-script: 'Qwitcher Grypen', cursive;
           --font-button: 'Big Shoulders Stencil Display', sans-serif;
-        }
+          --font-rugly: 'Magistral', sans-serif;
+          }
         
         body {
           font-family: var(--font-body);
@@ -88,6 +90,10 @@ export default function Layout({ children, currentPageName }) {
           font-family: var(--font-button);
           font-weight: 700;
           letter-spacing: 0.5px;
+        }
+
+        .rugly-text {
+          font-family: var(--font-rugly);
         }
         
         /* Custom primary color classes */
