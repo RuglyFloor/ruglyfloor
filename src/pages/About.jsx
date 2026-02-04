@@ -46,7 +46,7 @@ export default function About() {
           </motion.div>
 
           <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 tracking-tight">
-            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400" style={{ fontFamily: 'var(--font-button)' }}>Rugly</span>
+            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 rugly-text">Rugly</span>
           </h1>
           <p className="text-2xl md:text-3xl text-blue-100 mb-12 font-light">
             Where art meets the floor
@@ -116,7 +116,7 @@ export default function About() {
                   Then it hit me: what if the floor could be my canvas?
                 </p>
                 <p>
-                  I put everything I had—literally my last cent—into this venture. <span style={{ fontFamily: 'var(--font-button)' }}>Rugly</span> is my way of staying true to my calling while solving the challenges that held me back. By painting on rugs, I can create large-scale art that's affordable, shippable, and accessible. Every piece is hand-painted, one-of-a-kind, and designed to transform spaces in ways traditional art never could.
+                  I put everything I had—literally my last cent—into this venture. <span className="rugly-text">Rugly</span> is my way of staying true to my calling while solving the challenges that held me back. By painting on rugs, I can create large-scale art that's affordable, shippable, and accessible. Every piece is hand-painted, one-of-a-kind, and designed to transform spaces in ways traditional art never could.
                 </p>
                 <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-l-4 border-blue-600 p-6 rounded-lg">
                   <p className="font-semibold text-gray-900 text-xl">
@@ -179,7 +179,7 @@ export default function About() {
                   <span className="text-2xl">🎨</span>
                 </div>
                 <h4 className="text-xl mb-3 text-gray-900" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>Hand-Painted, Not Printed</h4>
-                <p className="text-gray-600 leading-relaxed" style={{ fontFamily: 'var(--font-body)' }}>Every <span style={{ fontFamily: 'var(--font-button)' }}>Rugly</span> is hand-painted in our studio. This is real hand work, not a printed design. Each piece has unique character and slight variations that make it one-of-a-kind.</p>
+                <p className="text-gray-600 leading-relaxed" style={{ fontFamily: 'var(--font-body)' }}>Every <span className="rugly-text">Rugly</span> is hand-painted in our studio. This is real hand work, not a printed design. Each piece has unique character and slight variations that make it one-of-a-kind.</p>
               </motion.div>
 
               <motion.div 
@@ -267,7 +267,7 @@ export default function About() {
                 See What Our Customers Say
               </h2>
               <p className="text-xl text-gray-600 mb-8" style={{ fontFamily: 'var(--font-body)' }}>
-                Real reviews from people who've transformed their spaces with <span style={{ fontFamily: 'var(--font-button)' }}>Rugly</span>
+                Real reviews from people who've transformed their spaces with <span className="rugly-text">Rugly</span>
               </p>
             </div>
 
@@ -332,12 +332,12 @@ export default function About() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Where You Do</span>
           </h2>
           <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed" style={{ fontFamily: 'var(--font-body)' }}>
-            Every <span style={{ fontFamily: 'var(--font-button)' }}>Rugly</span> is hand-painted in our studio, crafted to bring bold, beautiful design into your everyday life.
+            Every <span className="rugly-text">Rugly</span> is hand-painted in our studio, crafted to bring bold, beautiful design into your everyday life.
           </p>
           <Link to={createPageUrl('Shop')}>
             <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100 text-lg px-12 py-6 h-auto shadow-2xl" style={{ fontFamily: 'var(--font-button)', fontWeight: 700 }}>
               <ShoppingBag className="w-5 h-5 mr-2" />
-              Shop Original <span style={{ fontFamily: 'var(--font-button)' }}>Ruglys</span>
+              Shop Original <span className="rugly-text">Ruglys</span>
             </Button>
           </Link>
         </motion.div>

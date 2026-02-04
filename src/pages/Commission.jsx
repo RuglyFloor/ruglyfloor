@@ -171,20 +171,20 @@ export default function Commission() {
         url="/commission"
       />
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold mb-4 text-center">Commission a Rugley Design</h1>
+        <h1 className="text-4xl font-bold mb-4 text-center">Commission a <span className="rugly-text">Rugly</span> Design</h1>
         <p className="text-center text-gray-600 mb-4 text-lg">
-          Rugley commissions are bespoke, hand-painted rugs created for interior designers, commercial spaces, hotels, restaurants, Airbnbs, and businesses. Get a detailed estimate from our studio.
+          <span className="rugly-text">Rugly</span> commissions are bespoke, hand-painted rugs created for interior designers, commercial spaces, hotels, restaurants, Airbnbs, and businesses. Get a detailed estimate from our studio.
         </p>
 
-        {/* What is Rugley Section */}
+        {/* What is Rugly Section */}
         <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-4 text-purple-900">What is a Rugley?</h2>
+          <h2 className="text-2xl font-bold mb-4 text-purple-900">What is <span className="rugly-text">Rugly</span>?</h2>
           <div className="space-y-3 text-gray-700">
             <p>
-              <strong>Rugley</strong> is our premium commission line designed specifically for interior designers, architects, and commercial clients who need custom floor art that makes a statement.
+              <strong className="rugly-text">Rugly</strong> is our premium commission line designed specifically for interior designers, architects, and commercial clients who need custom floor art that makes a statement.
             </p>
             <p>
-              Whether you're outfitting a boutique hotel lobby, creating a branded experience for a restaurant, or adding personality to an Airbnb rental, Rugley commissions are fully custom, one-of-a-kind pieces that transform spaces.
+              Whether you're outfitting a boutique hotel lobby, creating a branded experience for a restaurant, or adding personality to an Airbnb rental, <span className="rugly-text">Rugly</span> commissions are fully custom, one-of-a-kind pieces that transform spaces.
             </p>
             <ul className="list-disc list-inside space-y-2 ml-4">
               <li><strong>Interior Designers:</strong> Collaborate with us to create signature pieces that complement your vision</li>
