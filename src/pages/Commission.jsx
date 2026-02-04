@@ -110,11 +110,6 @@ export default function Commission() {
       return;
     }
 
-    if (!formData.agreedToDeposit) {
-      alert('Please agree to the $300 deposit to proceed');
-      return;
-    }
-
     setSubmitting(true);
     try {
       const response = await base44.functions.invoke('createCommissionCheckout', { 
@@ -122,15 +117,15 @@ export default function Commission() {
         couponCode: couponValidation?.valid ? couponCode : null
       });
 
-      if (response.data.url) {
-        // Redirect to Stripe checkout
-        window.location.href = response.data.url;
+      if (response.data.orderId) {
+        // Free submission - no payment required
+        setSubmitted(true);
       } else {
-        throw new Error('No checkout URL returned');
+        throw new Error('Failed to submit commission');
       }
     } catch (error) {
       console.error('Commission submission error:', error);
-      alert('Failed to create checkout session. Please try again. Error: ' + error.message);
+      alert('Failed to submit commission. Please try again. Error: ' + error.message);
       setSubmitting(false);
     }
   };
@@ -142,7 +137,7 @@ export default function Commission() {
           <CheckCircle className="w-20 h-20 mx-auto text-green-600 mb-6" />
           <h1 className="text-4xl font-bold mb-4">Commission Request Received!</h1>
           <p className="text-xl text-gray-600 mb-4">
-            Thank you for your $300 deposit. We'll create a detailed estimate and reach out within 48 hours.
+            Thank you for your submission. We'll create a detailed estimate and reach out within 48 hours.
           </p>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
             <p className="text-sm text-gray-700">
@@ -151,7 +146,6 @@ export default function Commission() {
             <ul className="text-left text-sm text-gray-700 mt-3 space-y-2">
               <li>• We'll review your design request and create a detailed estimate</li>
               <li>• You'll receive the estimate within 48 hours</li>
-              <li>• The $300 deposit will be applied to your total cost</li>
               <li>• {formData.rushOrder ? 'Rush production: 1 week + shipping' : 'Standard production: 3 weeks + shipping'}</li>
             </ul>
           </div>
@@ -201,16 +195,16 @@ export default function Commission() {
           </div>
         </div>
 
-        {/* Deposit Info Banner */}
-        <div className="bg-blue-50 border-2 border-blue-600 rounded-lg p-6 mb-8">
+        {/* Free Commission Info Banner */}
+        <div className="bg-green-50 border-2 border-green-600 rounded-lg p-6 mb-8">
           <div className="flex items-start gap-4">
             <div className="flex-1">
-              <h3 className="font-bold text-lg mb-2">Reserve Your Masterpiece for $300</h3>
+              <h3 className="font-bold text-lg mb-2">Free Commission Request</h3>
               <p className="text-sm text-gray-700 mb-2">
-                This deposit gets you a detailed estimate and custom design mockup, then goes toward your final rug cost.
+                Submit your design vision and get a detailed estimate at no cost. No payment required until you approve the estimate.
               </p>
               <p className="text-xs text-gray-600">
-                <strong>Refundable if you decline the estimate.</strong> Typical timeline: 3 weeks production + shipping
+                Typical timeline: 3 weeks production + shipping
               </p>
             </div>
           </div>
@@ -443,99 +437,26 @@ export default function Commission() {
             </CardContent>
           </Card>
 
-          {/* Deposit Agreement */}
+          {/* Free Submission Info */}
           <Card>
             <CardHeader>
-              <CardTitle>Deposit & Agreement</CardTitle>
+              <CardTitle>Submit Your Request</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Coupon Code Section */}
-              <div className="mb-4 pb-4 border-b">
-                <Label className="text-sm font-medium mb-2 block">Promo Code</Label>
-                {!couponValidation?.valid ? (
-                  <div className="flex gap-2">
-                    <Input
-                      value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                      placeholder="Enter code"
-                      disabled={validatingCoupon}
-                      onKeyPress={(e) => e.key === 'Enter' && handleApplyCoupon()}
-                    />
-                    <Button
-                      type="button"
-                      onClick={handleApplyCoupon}
-                      variant="outline"
-                      disabled={!couponCode.trim() || validatingCoupon}
-                    >
-                      {validatingCoupon ? 'Checking...' : 'Apply'}
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-3">
-                    <div>
-                      <div className="font-semibold text-green-800">{couponValidation.coupon.code}</div>
-                      <div className="text-xs text-green-600">{couponValidation.coupon.description}</div>
-                    </div>
-                    <Button
-                      type="button"
-                      onClick={handleRemoveCoupon}
-                      variant="ghost"
-                      size="sm"
-                      className="text-red-600 hover:text-red-700"
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                )}
-              </div>
-
-              <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
-                <div className="flex justify-between items-center mb-4">
-                  <div>
-                    <div className="text-sm text-gray-600">Deposit for Estimate</div>
-                    <div className="text-2xl font-bold">$300.00</div>
-                  </div>
-                  {formData.rushOrder && (
-                    <div className="text-right">
-                      <div className="text-sm text-gray-600">Rush Fee</div>
-                      <div className="text-2xl font-bold text-orange-600">+$159.00</div>
-                    </div>
-                  )}
-                </div>
-                {couponValidation?.valid && (
-                  <div className="mb-4 pb-4 border-b">
-                    <div className="flex justify-between text-green-600">
-                      <span>Discount ({couponValidation.coupon.code})</span>
-                      <span className="font-semibold">-${couponValidation.discount_amount.toFixed(2)}</span>
-                    </div>
-                  </div>
-                )}
-                <div className="border-t pt-4">
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold">Total Due Now:</span>
-                    <span className="text-3xl font-bold text-blue-600">${totalCost().toFixed(2)}</span>
-                  </div>
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-green-600 mb-2">FREE</div>
+                  <p className="text-sm text-gray-700">
+                    No payment required at this time. We'll send you a detailed estimate within 48 hours.
+                  </p>
                 </div>
               </div>
 
               <div className="space-y-3 text-sm text-gray-700">
-                <p>• The $300 deposit covers our time creating a detailed design estimate and mockup</p>
-                <p>• This amount will be <strong>applied to your final rug cost</strong></p>
-                <p>• <strong>Non-refundable after you approve the estimate</strong></p>
-                <p>• If you decline the estimate, the deposit is refundable</p>
-              </div>
-
-              <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <input
-                  type="checkbox"
-                  id="agreedToDeposit"
-                  checked={formData.agreedToDeposit}
-                  onChange={(e) => setFormData(prev => ({ ...prev, agreedToDeposit: e.target.checked }))}
-                  className="w-5 h-5 mt-0.5"
-                />
-                <Label htmlFor="agreedToDeposit" className="text-sm cursor-pointer">
-                  I understand and agree to the $300 deposit terms. This deposit will be applied to my final rug cost and is non-refundable after estimate approval.
-                </Label>
+                <p>• Get a free, detailed design estimate and mockup</p>
+                <p>• Review the estimate and pricing before committing</p>
+                <p>• Payment only required after you approve the estimate</p>
+                <p>• No deposit, no obligation</p>
               </div>
             </CardContent>
           </Card>
@@ -543,16 +464,16 @@ export default function Commission() {
           {/* Submit */}
           <Button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-lg py-7"
-            disabled={submitting || uploading || !formData.agreedToDeposit}
+            className="w-full bg-green-600 hover:bg-green-700 text-lg py-7"
+            disabled={submitting || uploading}
           >
             {submitting ? (
               <>
                 <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                Processing...
+                Submitting...
               </>
             ) : (
-              `Submit Request & Pay $${totalCost().toFixed(2)} Deposit`
+              'Submit Free Commission Request'
             )}
           </Button>
           <p className="text-center text-xs text-gray-500">
