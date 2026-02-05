@@ -116,7 +116,7 @@ export default function Home() {
           <h2 className="text-3xl md:text-5xl font-bold mb-12 text-white">Your Rug, Your Rules
 
           </h2>
-          <p className="text-lg md:text-xl text-white mb-12 max-w-3xl mx-auto">Design a rug that's as unique as you are. Because your space should tell YOUR story. Pick your colors. Play with patterns. Watch it come to life in real-time.
+          <p className="text-lg md:text-xl text-white mb-12 max-w-3xl mx-auto">Design a rug that's as unique as you are. Choose from <strong>Crugly</strong> (budget), <strong className="rugly-text">Rugly</strong> (premium), or <strong className="rugly-text">Rugly LX</strong> (luxury). Pick your colors. Play with patterns. Watch it come to life in real-time.
 
 
           </p>
@@ -124,6 +124,11 @@ export default function Home() {
             <Link to={createPageUrl('CustomBuilder')}>
               <button className="bg-transparent border border-white text-white font-black px-12 py-6 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '1.575rem', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
                 Create It Now
+              </button>
+            </Link>
+            <Link to={createPageUrl('Commission')}>
+              <button className="bg-white/20 backdrop-blur-sm border border-white text-white font-black px-12 py-6 hover:bg-white/30 transition-all tracking-wide" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '1.575rem', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
+                Custom Quote
               </button>
             </Link>
           </div>
@@ -337,39 +342,118 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Base Rug Details */}
+      {/* Quality Tiers - Choose Your Level */}
       <section className="py-20 px-6 bg-slate-50">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold mb-12 text-center">BASE RUG DETAILS</h2>
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Palette className="w-8 h-8 text-blue-600" />
+          <h2 className="text-3xl font-bold mb-4 text-center">CHOOSE YOUR QUALITY LEVEL</h2>
+          <p className="text-center text-slate-600 mb-12 text-lg">From budget-friendly to luxury — we have the perfect rug for every space and budget</p>
+          
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <div className="bg-white border-4 border-blue-500 rounded-2xl p-8 hover:shadow-2xl transition-all">
+              <div className="text-center mb-4">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Crugly</h3>
+                <p className="text-blue-600 font-semibold">Budget-Friendly Entry Tier</p>
               </div>
-              <h3 className="font-bold mb-2">LOW-PILE</h3>
-              <p className="text-slate-600 text-sm">Flat weave for clean paint lines</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-8 h-8 text-blue-600" />
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm">Synthetic non-slip material</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm">Machine washable</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm">2-20+ year lifespan</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm">FREE shipping</span>
+                </li>
+              </ul>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-gray-900 mb-4">From $79</div>
+                <Link to={createPageUrl('CustomBuilder')}>
+                  <Button className="w-full border-2 border-blue-600 bg-blue-600 hover:bg-blue-700 text-white">
+                    Start Designing
+                  </Button>
+                </Link>
               </div>
-              <h3 className="font-bold mb-2">MATTE FINISH</h3>
-              <p className="text-slate-600 text-sm">No glare, just pure color</p>
             </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-green-600" />
+            
+            <div className="bg-white border-4 border-purple-600 rounded-2xl p-8 hover:shadow-2xl transition-all relative">
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-purple-600 text-white text-xs font-bold px-4 py-2 rounded-full">
+                MOST POPULAR
               </div>
-              <h3 className="font-bold mb-2">WASHABLE</h3>
-              <p className="text-slate-600 text-sm">Easy to clean and maintain</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-blue-600" />
+              <div className="text-center mb-4 mt-2">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2 rugly-text">Rugly</h3>
+                <p className="text-purple-600 font-semibold">Premium Standard Tier</p>
               </div>
-              <h3 className="font-bold mb-2">NON-SLIP</h3>
-              <p className="text-slate-600 text-sm">Stays exactly where you put it</p>
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm">Rabbit fur or premium material</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm">Standard rug lifespan</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm">Machine washable</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm">Flat rate shipping</span>
+                </li>
+              </ul>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-gray-900 mb-4">From $200</div>
+                <Link to={createPageUrl('CustomBuilder')}>
+                  <Button className="w-full border-2 border-purple-600 bg-purple-600 hover:bg-purple-700 text-white">
+                    Start Designing
+                  </Button>
+                </Link>
+              </div>
             </div>
+            
+            <div className="bg-gradient-to-br from-amber-50 to-yellow-50 border-4 border-amber-500 rounded-2xl p-8 hover:shadow-2xl transition-all">
+              <div className="text-center mb-4">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2 rugly-text">Rugly LX</h3>
+                <p className="text-amber-600 font-semibold">Luxury Premium Tier</p>
+              </div>
+              <ul className="space-y-3 mb-6">
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm">Shag, jute, or luxury materials</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm">Unlimited customization</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm">Premium durability</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <span className="text-sm">White glove service</span>
+                </li>
+              </ul>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-gray-900 mb-4">Custom Quote</div>
+                <Link to={createPageUrl('Commission')}>
+                  <Button className="w-full border-2 border-amber-600 bg-amber-600 hover:bg-amber-700 text-white">
+                    Request Quote
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+          
+          <div className="text-center">
+            <p className="text-slate-600 text-sm">All rugs are hand-painted in our Michigan studio • Low-pile/flat weave for crisp lines • Matte finish • Non-slip backing</p>
           </div>
         </div>
       </section>
