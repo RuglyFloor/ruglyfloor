@@ -171,6 +171,28 @@ export default function Commission() {
         url="/commission"
       />
       <div className="max-w-4xl mx-auto">
+        {/* Production Timeline Banner */}
+        <div className="mb-8 bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl p-6">
+          <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">📅 Custom Commission Timeline</h3>
+          <div className="grid md:grid-cols-3 gap-6 text-center">
+            <div>
+              <div className="text-3xl font-bold text-blue-600 mb-1">1-2 hours</div>
+              <div className="text-sm text-gray-700 font-semibold">Design Review</div>
+              <div className="text-xs text-gray-600 mt-1">We'll review your request and respond</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-purple-600 mb-1">2-4 weeks</div>
+              <div className="text-sm text-gray-700 font-semibold">Production</div>
+              <div className="text-xs text-gray-600 mt-1">Hand-painting & quality control</div>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-green-600 mb-1">3-5 days</div>
+              <div className="text-sm text-gray-700 font-semibold">Delivery</div>
+              <div className="text-xs text-gray-600 mt-1">Shipping to your door</div>
+            </div>
+          </div>
+        </div>
+
         <h1 className="text-4xl font-bold mb-4 text-center">Commission a <span className="rugly-text">Rugly</span> Design</h1>
         <p className="text-center text-gray-600 mb-4 text-lg">
           <span className="rugly-text">Rugly</span> commissions are bespoke, hand-painted rugs created for interior designers, commercial spaces, hotels, restaurants, Airbnbs, and businesses. Get a detailed estimate from our studio.
