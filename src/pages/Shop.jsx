@@ -46,7 +46,7 @@ export default function Shop() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Original Ruglys</h1>
-          <p className="text-xl text-gray-600">Unique, hand-painted designs starting at $700</p>
+          <p className="text-xl text-gray-600">Unique, hand-painted designs starting at $79</p>
         </div>
 
         {isLoading ? (
@@ -106,8 +106,21 @@ export default function Shop() {
                     <CardContent className="p-4">
                       <h3 className="text-xl font-bold mb-2">{product.name}</h3>
                       <p className="text-gray-600 text-sm mb-2">{typeof product.description === 'string' ? product.description : product.description?.description || ''}</p>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-500">{product.size}</span>
+                      <div className="space-y-2 mb-3">
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <span className="font-semibold">Size:</span>
+                          <span>{product.size || '5x7'}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <span className="font-semibold">Material:</span>
+                          <span>Low-pile synthetic</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <span className="font-semibold">Shipping:</span>
+                          <span>+ $59 (3-5 days)</span>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center pt-2 border-t">
                         <span className="text-2xl font-bold text-blue-600">${product.price}</span>
                       </div>
                     </CardContent>

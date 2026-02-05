@@ -243,19 +243,42 @@ export default function Layout({ children, currentPageName }) {
             <p className="text-sm mb-2">Homesteads, LLC</p>
             <p className="text-sm text-gray-500">Custom-painted rugs for spaces that inspire</p>
 
-            <div className="mt-6 pt-6 border-t border-gray-800 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-              <Link to={createPageUrl('Policies')} className="text-sm text-gray-400 hover:text-white transition-colors">
-                Terms & Policies
-              </Link>
-              <a href="mailto:info@ruglyfloor.com" className="text-sm text-gray-400 hover:text-white transition-colors">
-                Shipping & Returns
-              </a>
-              <Link to={createPageUrl('Contact')} className="text-sm text-gray-400 hover:text-white transition-colors">
-                Contact Support
-              </Link>
-              <Link to={createPageUrl('AdminLogin')} className="text-sm text-gray-400 hover:text-white transition-colors">
-                Admin
-              </Link>
+            <div className="mt-6 pt-6 border-t border-gray-800">
+              {/* Trust Badges */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="text-center">
+                  <div className="text-2xl mb-1">⭐</div>
+                  <div className="text-xs text-gray-400">5-Star Yelp Reviews</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl mb-1">🔒</div>
+                  <div className="text-xs text-gray-400">Secure Checkout</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl mb-1">✓</div>
+                  <div className="text-xs text-gray-400">24-Hour Guarantee</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl mb-1">🚚</div>
+                  <div className="text-xs text-gray-400">Free Ship on 2+ Rugs</div>
+                </div>
+              </div>
+
+              {/* Footer Links */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <Link to={createPageUrl('Policies')} className="text-sm text-gray-400 hover:text-white transition-colors">
+                  Terms & Policies
+                </Link>
+                <a href="mailto:info@ruglyfloor.com" className="text-sm text-gray-400 hover:text-white transition-colors">
+                  Shipping & Returns
+                </a>
+                <Link to={createPageUrl('Contact')} className="text-sm text-gray-400 hover:text-white transition-colors">
+                  Contact Support
+                </Link>
+                <Link to={createPageUrl('AdminLogin')} className="text-sm text-gray-400 hover:text-white transition-colors">
+                  Admin
+                </Link>
+              </div>
             </div>
           </div>
         </div>
