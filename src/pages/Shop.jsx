@@ -109,15 +109,27 @@ export default function Shop() {
                       <div className="space-y-2 mb-3">
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                           <span className="font-semibold">Size:</span>
-                          <span>{product.size || '5x7'}</span>
+                          <span>5x7 (60" × 84")</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                           <span className="font-semibold">Material:</span>
-                          <span>Low-pile synthetic</span>
+                          <span>Low-pile synthetic, hand-painted</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <span className="font-semibold">Care:</span>
+                          <span>Machine washable, air dry</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <span className="font-semibold">Backing:</span>
+                          <span>Non-slip rubber</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <span className="font-semibold">Warranty:</span>
+                          <span>24-hour damage guarantee</span>
                         </div>
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                           <span className="font-semibold">Shipping:</span>
-                          <span>+ $59 (3-5 days)</span>
+                          <span>$59 flat rate (3-5 days)</span>
                         </div>
                       </div>
                       <div className="flex justify-between items-center pt-2 border-t">

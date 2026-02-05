@@ -914,6 +914,25 @@ export default function CustomBuilder() {
               <p className="text-sm text-gray-600 mt-2">
                 Design your rug and preview before adding to cart
               </p>
+              
+              {/* Production Timeline */}
+              <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="font-semibold text-sm text-gray-900 mb-2">📅 Production Timeline</div>
+                <div className="grid grid-cols-3 gap-3 text-xs text-gray-700">
+                  <div>
+                    <div className="font-bold text-blue-600">Design</div>
+                    <div>1-2 hours</div>
+                  </div>
+                  <div>
+                    <div className="font-bold text-blue-600">Production</div>
+                    <div>{config.qualityTier === 'budget' ? '10-14 days' : config.qualityTier === 'good' ? '10-20 days' : '2-4 weeks'}</div>
+                  </div>
+                  <div>
+                    <div className="font-bold text-blue-600">Delivery</div>
+                    <div>3-5 days</div>
+                  </div>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
