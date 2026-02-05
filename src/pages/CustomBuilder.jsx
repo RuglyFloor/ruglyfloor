@@ -125,20 +125,6 @@ export default function CustomBuilder() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [floatingSelections, setFloatingSelections] = useState([]);
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }, []);
-
-  useEffect(() => {
-    // Auto-select AI mode for Rugly Lux
-    if (step === 4 && config.qualityTier === 'highend') {
-      setDesignMode('ai');
-    }
-  }, [step, config.qualityTier]);
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [step]);
   const [config, setConfig] = useState({
     qualityTier: '',
     size: '',
@@ -153,6 +139,21 @@ export default function CustomBuilder() {
     hasShading: false,
     hasSecondColor: false
   });
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
+
+  useEffect(() => {
+    // Auto-select AI mode for Rugly Lux
+    if (step === 4 && config.qualityTier === 'highend') {
+      setDesignMode('ai');
+    }
+  }, [step, config.qualityTier]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [step]);
 
   // Debug logger
   useEffect(() => {
