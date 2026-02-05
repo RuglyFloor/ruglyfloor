@@ -11,7 +11,14 @@ export default function Layout({ children, currentPageName }) {
   const [user, setUser] = React.useState(null);
 
   React.useEffect(() => {
-    base44.auth.me().then(setUser).catch(() => setUser(null));
+    // Optional auth check for public app
+    base44.auth.isAuthenticated().then(isAuth => {
+      if (isAuth) {
+        base44.auth.me().then(setUser).catch(() => setUser(null));
+      } else {
+        setUser(null);
+      }
+    }).catch(() => setUser(null));
     
     // Track site entry time and referrer
     if (!sessionStorage.getItem('rugly_site_start_time')) {
