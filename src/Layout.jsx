@@ -56,9 +56,6 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-          {/* Meta Tags */}
-          <title>Rugly Floor — Custom Painted Rugs</title>
-          <meta name="description" content="Custom hand-painted rugs designed for your space. Choose from Crugly, Rugly, or Rugly LX quality tiers." />
           {/* Favicon */}
           <link rel="icon" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/d71f153d8_RUGLYMASTERLOGO-92.png" />
       <style>{`
