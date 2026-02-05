@@ -119,6 +119,12 @@ const LIMITED_PAINT_COLORS = [
 export default function CustomBuilder() {
   const navigate = useNavigate();
   const seoData = useSEO('custom-builder');
+  
+  // Debug: Log component mount
+  useEffect(() => {
+    console.log('CustomBuilder mounted successfully');
+  }, []);
+  
   const [step, setStep] = useState(1);
   const [transitioning, setTransitioning] = useState(false);
   const [designMode, setDesignMode] = useState('draw'); // 'library', 'upload', or 'draw'
