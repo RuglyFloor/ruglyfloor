@@ -56,8 +56,11 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Favicon */}
-      <link rel="icon" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/d71f153d8_RUGLYMASTERLOGO-92.png" />
+          {/* Meta Tags */}
+          <title>Rugly Floor — Custom Painted Rugs</title>
+          <meta name="description" content="Custom hand-painted rugs designed for your space. Choose from Crugly, Rugly, or Rugly LX quality tiers." />
+          {/* Favicon */}
+          <link rel="icon" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/d71f153d8_RUGLYMASTERLOGO-92.png" />
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,700;0,900;1,100;1,700&family=Baumans&family=Kameron:wght@400..700&family=Major+Mono+Display&family=Roboto:wght@400;500;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Allerta+Stencil&family=Big+Shoulders+Stencil+Display:wght@400;700;900&family=Saira+Stencil+One&family=Black+Ops+One&family=Wallpoet&family=Kenia&family=Plaster&family=Emblema+One&family=Protest+Guerrilla&display=swap');
@@ -243,9 +246,15 @@ export default function Layout({ children, currentPageName }) {
             <p className="text-sm mb-2">Homesteads, LLC</p>
             <p className="text-sm text-gray-500">Custom-painted rugs for spaces that inspire</p>
 
-            <div className="mt-6 pt-6 border-t border-gray-800 flex justify-center gap-6">
+            <div className="mt-6 pt-6 border-t border-gray-800 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
               <Link to={createPageUrl('Policies')} className="text-sm text-gray-400 hover:text-white transition-colors">
                 Terms & Policies
+              </Link>
+              <a href="mailto:info@ruglyfloor.com" className="text-sm text-gray-400 hover:text-white transition-colors">
+                Shipping & Returns
+              </a>
+              <Link to={createPageUrl('Contact')} className="text-sm text-gray-400 hover:text-white transition-colors">
+                Contact Support
               </Link>
               <Link to={createPageUrl('AdminLogin')} className="text-sm text-gray-400 hover:text-white transition-colors">
                 Admin
