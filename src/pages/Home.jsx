@@ -139,7 +139,7 @@ export default function Home() {
       {/* Yelp Reviews Section - Moved after hero */}
       <section className="relative py-32 px-6 bg-gradient-to-br from-yellow-50 to-orange-50">
         {/* Background Images */}
-        <div className="absolute inset-0 z-0 opacity-30">
+        <div className="absolute inset-0 z-0 opacity-70">
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/1ef1e78ef_IMG_1668.jpg"
             alt="Capital Hippie Store"
