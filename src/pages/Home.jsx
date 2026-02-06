@@ -127,7 +127,7 @@ export default function Home() {
               </button>
             </Link>
             <Link to={createPageUrl('Commission')}>
-              <button className="bg-white/20 backdrop-blur-sm border border-white text-white font-black px-12 py-6 hover:bg-white/30 transition-all tracking-wide" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '1.575rem', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
+              <button className="bg-white border-2 border-white text-gray-900 font-black px-12 py-6 hover:bg-gray-100 transition-all tracking-wide" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '1.575rem' }}>
                 Custom Quote
               </button>
             </Link>
