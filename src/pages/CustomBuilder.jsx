@@ -67,13 +67,15 @@ const SIZES = [
 const getShadingFee = (size) => {
   const sizeData = SIZES.find(s => s.value === size);
   if (!sizeData) return 0;
-  return 30 + (10 * sizeData.step);
+  const pricing = getPricingData();
+  return pricing.shade_base + (pricing.shade_step * sizeData.step);
 };
 
 const getSecondColorFee = (size) => {
   const sizeData = SIZES.find(s => s.value === size);
   if (!sizeData) return 0;
-  return 30 + (10 * sizeData.step);
+  const pricing = getPricingData();
+  return pricing.shade_base + (pricing.shade_step * sizeData.step);
 };
 
 const BASE_COLORS = [
@@ -131,6 +133,28 @@ export default function CustomBuilder() {
     queryKey: ['catalog-variants'],
     queryFn: () => base44.entities.CatalogVariant.list()
   });
+
+  // Fetch pricing config
+  const { data: pricingConfigs = [] } = useQuery({
+    queryKey: ['pricing-config'],
+    queryFn: () => base44.entities.PricingConfig.list()
+  });
+
+  const getPricingData = () => {
+    const shadeConfig = pricingConfigs.find(c => c.config_name === 'shade_fees');
+    const qualityConfig = pricingConfigs.find(c => c.config_name === 'quality_multipliers');
+    
+    return {
+      shade_base: shadeConfig?.pricing_data?.base_fee || 15,
+      shade_step: shadeConfig?.pricing_data?.per_step_fee || 5,
+      catalog_markup: qualityConfig?.pricing_data?.catalog_markup || 1.10,
+      quality_multipliers: {
+        budget: qualityConfig?.pricing_data?.budget || 0.7,
+        good: qualityConfig?.pricing_data?.good || 1.0,
+        highend: qualityConfig?.pricing_data?.highend || 2.5
+      }
+    };
+  };
 
   // Get available base colors from catalog
   const getAvailableBaseColors = () => {
