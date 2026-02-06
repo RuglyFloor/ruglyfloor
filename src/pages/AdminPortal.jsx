@@ -38,59 +38,16 @@ export default function AdminPortal() {
 
   const adminSections = [
     {
-      title: 'Orders',
-      icon: ShoppingBag,
-      description: 'Manage and track customer orders',
-      page: 'AdminOrders',
-      color: 'bg-blue-500',
-      badge: orderCount
-    },
-    {
-      title: 'Products',
+      title: 'Catalog',
       icon: Package,
-      description: 'Manage product inventory',
-      page: 'AdminProducts',
+      description: 'Manage base rug inventory from suppliers',
+      page: 'AdminCatalog',
       color: 'bg-purple-500'
-    },
-    {
-      title: 'Content',
-      icon: FileText,
-      description: 'Manage blog posts and content',
-      page: 'ContentManager',
-      color: 'bg-green-500'
-    },
-    {
-      title: 'SEO',
-      icon: TrendingUp,
-      description: 'Optimize search engine visibility',
-      page: 'AdminSEO',
-      color: 'bg-orange-500'
-    },
-    {
-      title: 'Dashboard',
-      icon: TrendingUp,
-      description: 'View analytics and metrics',
-      page: 'AdminDashboard',
-      color: 'bg-indigo-500'
-    },
-    {
-      title: 'Inbox',
-      icon: Mail,
-      description: 'View and manage contact messages',
-      page: 'AdminInbox',
-      color: 'bg-pink-500'
-    },
-    {
-      title: 'Documents',
-      icon: Award,
-      description: 'Generate certificates of authenticity',
-      page: 'AdminDocuments',
-      color: 'bg-teal-500'
     },
     {
       title: 'Pricing',
       icon: DollarSign,
-      description: 'Manage pricing for custom and original rugs',
+      description: 'Configure pricing rules and fees',
       page: 'AdminPricing',
       color: 'bg-emerald-500'
     }
