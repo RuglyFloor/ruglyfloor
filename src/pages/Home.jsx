@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import SEOHead from '../components/seo/SEOHead';
 import { generateOrganizationSchema } from '../components/seo/SchemaGenerator';
 import { useSEO } from '../components/seo/useSEO';
+import AvailableRugsHorizontalScroll from '../components/custom/AvailableRugsHorizontalScroll';
 
 export default function Home() {
   const seoData = useSEO('');
@@ -135,82 +136,23 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Shop for Original Ruglys Section */}
-      <section className="py-20 px-6 bg-white pb-40">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex items-center gap-3 mb-12 justify-center">
-            <Package className="w-8 h-8 text-blue-600" />
-            <h2 className="text-3xl font-bold">SHOP FOR ORIGINAL RUGLYS</h2>
-          </div>
-          <div className="mb-16">
-            {products.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-slate-600">Loading featured rugs...</p>
-              </div>
-            ) : (
-              <div className="relative" style={{ minHeight: '900px' }}>
-                {products.map((product, index) => (
-                  <div
-                    key={product.id}
-                    className={`absolute inset-0 transition-opacity duration-700 ${
-                      currentProduct === index ? 'opacity-100' : 'opacity-0 pointer-events-none'
-                    }`}
-                    style={{ willChange: 'opacity' }}
-                  >
-                    <div className="max-w-3xl mx-auto">
-                      <div className="aspect-square bg-slate-100 rounded-lg overflow-hidden mb-6 relative">
-                        <img
-                          src={product.image_url}
-                          alt={product.name}
-                          className={`w-full h-full object-cover ${
-                            !product.in_stock ? 'opacity-60' : ''
-                          }`}
-                        />
-                        {!product.in_stock && (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="bg-red-600 text-white font-bold text-3xl px-8 py-4 rounded-lg transform rotate-12">
-                              SOLD
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                      <div className="text-center space-y-4">
-                        <h3 className="text-2xl font-bold">{product.name}</h3>
-                        <p className="text-slate-600 text-lg">{typeof product.description === 'string' ? product.description : product.description?.description || ''}</p>
-                        <div className="flex flex-col items-center justify-center gap-4 pt-4">
-                          {product.in_stock ? (
-                            <>
-                              <span className="text-3xl font-bold text-blue-600">
-                                ${product.price}
-                              </span>
-                              <Button 
-                                size="lg"
-                                onClick={() => handleGrabIt(product)}
-                                disabled={isCheckingOut}
-                                className="min-w-[120px]"
-                              >
-                                {isCheckingOut ? 'Loading...' : 'GRAB IT'}
-                              </Button>
-                            </>
-                          ) : (
-                            <div className="text-center space-y-2">
-                              <span className="text-3xl font-bold text-red-600 block">SOLD OUT</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+      {/* Yelp Reviews Section - Moved after hero */}
+      <section className="relative py-32 px-6 bg-gradient-to-br from-yellow-50 to-orange-50">
+        {/* Background Images */}
+        <div className="absolute inset-0 z-0 opacity-30">
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/1ef1e78ef_IMG_1668.jpg"
+            alt="Capital Hippie Store"
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-1/2 h-96 object-cover rounded-r-3xl blur-sm"
+          />
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/cf829bd48_finishedproduct.png"
+            alt="Finished Product"
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-1/2 h-96 object-cover rounded-l-3xl blur-sm"
+          />
         </div>
-      </section>
 
-      {/* Yelp Reviews Section */}
-      <section className="py-32 px-6 bg-gradient-to-br from-yellow-50 to-orange-50" style={{ marginTop: '200px' }}>
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-5xl mx-auto relative z-10">
           <div className="text-center mb-8">
             <div className="inline-block px-4 py-2 bg-red-600 rounded-full mb-6">
               <span className="text-white font-semibold text-sm">⭐ Customer Reviews</span>
@@ -241,8 +183,8 @@ export default function Home() {
                     {[...Array(5)].map((_, i) => (
                       <svg key={i} className="w-12 h-12 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    ))}
+                        </svg>
+                      ))}
                   </div>
                   <p className="text-2xl font-bold text-gray-900 mb-2">Rated 5 Stars on Yelp</p>
                   <p className="text-gray-600 mb-6">See what our customers are saying</p>
@@ -258,6 +200,11 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Shop for Original Ruglys Section - Horizontal Scroll */}
+      <AvailableRugsHorizontalScroll products={products} handleGrabIt={handleGrabIt} isCheckingOut={isCheckingOut} />
+
+
 
       {/* Before Ordering Section */}
       <section className="py-20 px-6 bg-slate-50">
