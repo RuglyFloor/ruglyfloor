@@ -143,12 +143,12 @@ export default function Home() {
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/1ef1e78ef_IMG_1668.jpg"
             alt="Capital Hippie Store"
-            className="absolute left-0 top-1/2 -translate-y-1/2 w-1/2 h-full object-contain rounded-r-3xl blur-sm"
+            className="absolute left-0 top-1/2 -translate-y-1/2 w-1/2 h-96 object-cover rounded-r-3xl blur-sm"
           />
           <img 
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/cf829bd48_finishedproduct.png"
             alt="Finished Product"
-            className="absolute right-0 top-1/2 -translate-y-1/2 w-1/2 h-full object-contain rounded-l-3xl blur-sm"
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-1/2 h-96 object-cover rounded-l-3xl blur-sm"
           />
         </div>
 
