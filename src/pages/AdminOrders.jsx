@@ -1,356 +1,146 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Package, Clock, Paintbrush, Truck, CheckCircle, XCircle, Mail } from 'lucide-react';
-import AdminProtected from '../components/AdminProtected';
+import { base44 } from '@/api/base44Client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Search, Package, ExternalLink } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
+import AdminProtected from '../components/AdminProtected';
 
-const STATUS_CONFIG = {
-  pending: { label: 'Pending Payment', icon: Clock, color: 'text-gray-500' },
-  rug_ordered: { label: 'Rug Ordered', icon: Package, color: 'text-blue-600' },
-  in_production: { label: 'In Production', icon: Clock, color: 'text-yellow-600' },
-  painting: { label: 'Painting', icon: Paintbrush, color: 'text-purple-600' },
-  shipped: { label: 'Shipped', icon: Truck, color: 'text-green-600' },
-  completed: { label: 'Completed', icon: CheckCircle, color: 'text-green-700' },
-  cancelled: { label: 'Cancelled', icon: XCircle, color: 'text-red-500' }
-};
+function AdminOrdersContent() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+
+  const { data: orders = [], isLoading } = useQuery({
+    queryKey: ['admin-orders'],
+    queryFn: () => base44.entities.Order.list('-created_date')
+  });
+
+  const filteredOrders = orders.filter(order => {
+    const matchesSearch = !searchTerm || 
+      order.order_number?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.customer_email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.customer_name?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
+
+  const getStatusBadge = (status) => {
+    const config = {
+      pending_payment: { label: 'Pending Payment', className: 'bg-yellow-100 text-yellow-800' },
+      paid: { label: 'Paid', className: 'bg-green-100 text-green-800' },
+      in_production: { label: 'In Production', className: 'bg-blue-100 text-blue-800' },
+      shipped: { label: 'Shipped', className: 'bg-purple-100 text-purple-800' },
+      cancelled: { label: 'Cancelled', className: 'bg-gray-100 text-gray-800' },
+      refunded: { label: 'Refunded', className: 'bg-red-100 text-red-800' }
+    };
+    const { label, className } = config[status] || { label: status, className: 'bg-gray-100' };
+    return <Badge className={className}>{label}</Badge>;
+  };
+
+  return (
+    <div className="min-h-screen py-12 px-6 bg-gray-50">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold">Orders</h1>
+          <Button variant="outline" onClick={() => queryClient.invalidateQueries(['admin-orders'])}>
+            Refresh
+          </Button>
+        </div>
+
+        {/* Filters */}
+        <Card className="mb-6">
+          <CardContent className="pt-6">
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <Input
+                  placeholder="Search by order #, email, or name..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="pending_payment">Pending Payment</SelectItem>
+                  <SelectItem value="paid">Paid</SelectItem>
+                  <SelectItem value="in_production">In Production</SelectItem>
+                  <SelectItem value="shipped">Shipped</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                  <SelectItem value="refunded">Refunded</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Orders List */}
+        {isLoading ? (
+          <div className="text-center py-12">Loading orders...</div>
+        ) : filteredOrders.length === 0 ? (
+          <Card>
+            <CardContent className="py-12 text-center">
+              <Package className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+              <p className="text-gray-600">No orders found</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-4">
+            {filteredOrders.map(order => (
+              <Card key={order.id} className="hover:shadow-lg transition-shadow cursor-pointer"
+                onClick={() => navigate(createPageUrl('AdminOrderDetail') + '?id=' + order.id)}>
+                <CardContent className="pt-6">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="font-bold text-lg">{order.order_number}</h3>
+                        {getStatusBadge(order.status)}
+                        {order.status === 'pending_payment' && (
+                          <Badge className="bg-orange-100 text-orange-800">⚠️ Awaiting Payment</Badge>
+                        )}
+                      </div>
+                      <div className="text-sm text-gray-600 space-y-1">
+                        <div>Customer: {order.customer_name || order.customer_email}</div>
+                        <div>Email: {order.customer_email}</div>
+                        <div>Items: {order.items?.length || 0}</div>
+                        <div>Total: ${(order.total_amount / 100).toFixed(2)}</div>
+                        {order.payment_timestamp && (
+                          <div className="text-green-600">
+                            Paid: {new Date(order.payment_timestamp).toLocaleDateString()}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <Button variant="ghost" size="sm">
+                      <ExternalLink className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function AdminOrders() {
   return (
     <AdminProtected>
       <AdminOrdersContent />
     </AdminProtected>
-  );
-}
-
-function AdminOrdersContent() {
-  const queryClient = useQueryClient();
-  const [editingOrder, setEditingOrder] = useState(null);
-  const [newStatus, setNewStatus] = useState('');
-  const [notes, setNotes] = useState('');
-  const [trackingNumber, setTrackingNumber] = useState('');
-  const [trackingUrl, setTrackingUrl] = useState('');
-
-  const { data: user } = useQuery({
-    queryKey: ['user'],
-    queryFn: () => base44.auth.me()
-  });
-
-  const { data: orders, isLoading, error } = useQuery({
-    queryKey: ['admin-orders'],
-    queryFn: async () => {
-      const response = await base44.functions.invoke('getAdminOrders');
-      return response.data.orders;
-    },
-    enabled: !!user && user?.role === 'admin'
-  });
-
-  const updateOrderMutation = useMutation({
-    mutationFn: ({ orderId, data }) => base44.entities.Order.update(orderId, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-orders'] });
-      setEditingOrder(null);
-      setNewStatus('');
-      setNotes('');
-    }
-  });
-
-  const sendStatusUpdateEmail = async (order, newStatus, tracking) => {
-    const statusLabel = STATUS_CONFIG[newStatus]?.label || newStatus;
-    await base44.functions.invoke('sendStatusUpdate', {
-      email: order.customer_email,
-      orderNumber: order.order_number,
-      status: statusLabel,
-      customerName: order.customer_name,
-      trackingNumber: tracking?.number,
-      trackingUrl: tracking?.url
-    });
-  };
-
-  const handleUpdateStatus = async (order) => {
-    if (!newStatus) return;
-    
-    const updateData = { 
-      status: newStatus,
-      status_history: [
-        ...(order.status_history || []),
-        {
-          status: newStatus,
-          timestamp: new Date().toISOString(),
-          note: notes
-        }
-      ]
-    };
-    
-    if (notes) {
-      updateData.notes = notes;
-    }
-    
-    if (trackingNumber) {
-      updateData.tracking_number = trackingNumber;
-    }
-    
-    if (trackingUrl) {
-      updateData.tracking_url = trackingUrl;
-    }
-
-    await updateOrderMutation.mutateAsync({ orderId: order.id, data: updateData });
-    
-    // Send email notification
-    try {
-      await sendStatusUpdateEmail(order, newStatus, {
-        number: trackingNumber,
-        url: trackingUrl
-      });
-    } catch (error) {
-      console.error('Failed to send email:', error);
-    }
-  };
-
-  return (
-    <div className="min-h-screen py-12 px-6 bg-gray-50">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Order Management</h1>
-          <p className="text-gray-600">Update order statuses and track production</p>
-        </div>
-
-        {isLoading ? (
-          <div className="text-center py-12">Loading orders...</div>
-        ) : error ? (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <p className="text-red-600 font-semibold mb-2">Error loading orders</p>
-              <p className="text-gray-600 text-sm">{error.message}</p>
-            </CardContent>
-          </Card>
-        ) : orders?.length === 0 ? (
-          <Card>
-            <CardContent className="py-12 text-center text-gray-500">
-              No orders yet
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="space-y-4">
-            {orders?.map((order) => {
-              const StatusIcon = STATUS_CONFIG[order.status]?.icon || Package;
-              const isEditing = editingOrder === order.id;
-
-              return (
-                <Card key={order.id}>
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <CardTitle className="text-xl">Order #{order.order_number}</CardTitle>
-                        <div className="flex items-center gap-2 mt-2">
-                          <StatusIcon className={`w-5 h-5 ${STATUS_CONFIG[order.status]?.color}`} />
-                          <span className={`font-semibold ${STATUS_CONFIG[order.status]?.color}`}>
-                            {STATUS_CONFIG[order.status]?.label}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm text-gray-600">
-                          {new Date(order.created_date).toLocaleDateString()}
-                        </div>
-                        <div className="text-2xl font-bold text-blue-600">
-                          ${order.total_amount}
-                        </div>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid md:grid-cols-2 gap-6">
-                      {/* Customer Info */}
-                      <div>
-                        <h3 className="font-semibold mb-2 flex items-center gap-2">
-                          <Mail className="w-4 h-4" />
-                          Customer Information
-                        </h3>
-                        <div className="text-sm space-y-1">
-                          <div><strong>Name:</strong> {order.customer_name}</div>
-                          <div><strong>Email:</strong> {order.customer_email}</div>
-                          {order.customer_phone && (
-                            <div><strong>Phone:</strong> {order.customer_phone}</div>
-                          )}
-                          {order.shipping_address && (
-                            <div className="mt-2">
-                              <strong>Shipping:</strong><br />
-                              {order.shipping_address.street}<br />
-                              {order.shipping_address.city}, {order.shipping_address.state} {order.shipping_address.zip}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Order Items */}
-                      <div>
-                        <h3 className="font-semibold mb-2">Order Items</h3>
-                        <div className="space-y-4">
-                          {order.items?.map((item, idx) => (
-                            <div key={idx} className="border rounded-lg p-3">
-                              <div className="flex gap-3 text-sm mb-3">
-                                {item.preview_url && (
-                                  <img src={item.preview_url} alt={item.name} className="w-16 h-16 object-cover rounded" />
-                                )}
-                                <div className="flex-1">
-                                  <div className="font-medium">{item.name}</div>
-                                  <div className="text-gray-600">Size: {item.size}</div>
-                                  {item.base_color && <div className="text-gray-600">Base: {item.base_color}</div>}
-                                  <div className="text-blue-600 font-semibold">${item.price}</div>
-                                </div>
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => window.location.href = `${createPageUrl('AdminOrderDetail')}?id=${order.id}`}
-                                >
-                                  View Details
-                                </Button>
-                              </div>
-                              
-                              {/* All Images */}
-                              {(item.image_url || item.original_upload_url || item.processed_image_url || item.ai_preview_url) && (
-                                <div className="border-t pt-3">
-                                  <div className="text-xs font-semibold text-gray-600 mb-2">Design Images:</div>
-                                  <div className="grid grid-cols-4 gap-2">
-                                    {item.original_upload_url && (
-                                      <div>
-                                        <div className="text-xs text-gray-500 mb-1">Original</div>
-                                        <a href={item.original_upload_url} target="_blank" rel="noopener noreferrer">
-                                          <img src={item.original_upload_url} alt="Original" className="w-full aspect-square object-cover rounded border hover:border-blue-500" />
-                                        </a>
-                                      </div>
-                                    )}
-                                    {item.image_url && item.image_url !== item.original_upload_url && (
-                                      <div>
-                                        <div className="text-xs text-gray-500 mb-1">Design</div>
-                                        <a href={item.image_url} target="_blank" rel="noopener noreferrer">
-                                          <img src={item.image_url} alt="Design" className="w-full aspect-square object-cover rounded border hover:border-blue-500" />
-                                        </a>
-                                      </div>
-                                    )}
-                                    {item.processed_image_url && (
-                                      <div>
-                                        <div className="text-xs text-gray-500 mb-1">Processed</div>
-                                        <a href={item.processed_image_url} target="_blank" rel="noopener noreferrer">
-                                          <img src={item.processed_image_url} alt="Processed" className="w-full aspect-square object-cover rounded border hover:border-blue-500" />
-                                        </a>
-                                      </div>
-                                    )}
-                                    {item.ai_preview_url && (
-                                      <div>
-                                        <div className="text-xs text-gray-500 mb-1">AI Preview</div>
-                                        <a href={item.ai_preview_url} target="_blank" rel="noopener noreferrer">
-                                          <img src={item.ai_preview_url} alt="AI Preview" className="w-full aspect-square object-cover rounded border hover:border-blue-500" />
-                                        </a>
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-
-                    {order.notes && (
-                      <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                        <strong className="text-sm">Notes:</strong>
-                        <p className="text-sm text-gray-700 mt-1">{order.notes}</p>
-                      </div>
-                    )}
-
-                    {/* Status Update Form */}
-                    <div className="mt-6 border-t pt-6">
-                      {isEditing ? (
-                        <div className="space-y-4">
-                          <div>
-                            <Label>Update Status</Label>
-                            <Select value={newStatus} onValueChange={setNewStatus}>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select new status" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="rug_ordered">Rug Ordered</SelectItem>
-                                <SelectItem value="in_production">In Production</SelectItem>
-                                <SelectItem value="painting">Painting</SelectItem>
-                                <SelectItem value="shipped">Shipped</SelectItem>
-                                <SelectItem value="completed">Completed</SelectItem>
-                                <SelectItem value="cancelled">Cancelled</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          {newStatus === 'shipped' && (
-                            <>
-                              <div>
-                                <Label>Tracking Number</Label>
-                                <input
-                                  type="text"
-                                  value={trackingNumber}
-                                  onChange={(e) => setTrackingNumber(e.target.value)}
-                                  placeholder="1Z999AA10123456784"
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                                />
-                              </div>
-                              <div>
-                                <Label>Tracking URL</Label>
-                                <input
-                                  type="url"
-                                  value={trackingUrl}
-                                  onChange={(e) => setTrackingUrl(e.target.value)}
-                                  placeholder="https://www.ups.com/track?..."
-                                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                                />
-                              </div>
-                            </>
-                          )}
-                          <div>
-                            <Label>Additional Notes (Optional)</Label>
-                            <Textarea
-                              value={notes}
-                              onChange={(e) => setNotes(e.target.value)}
-                              placeholder="Add any additional information..."
-                              rows={3}
-                            />
-                          </div>
-                          <div className="flex gap-2">
-                            <Button onClick={() => handleUpdateStatus(order)} disabled={!newStatus}>
-                              Save & Notify Customer
-                            </Button>
-                            <Button variant="outline" onClick={() => {
-                              setEditingOrder(null);
-                              setNewStatus('');
-                              setNotes('');
-                            }}>
-                              Cancel
-                            </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <Button onClick={() => {
-                          setEditingOrder(order.id);
-                          setNewStatus(order.status);
-                          setNotes(order.notes || '');
-                          setTrackingNumber(order.tracking_number || '');
-                          setTrackingUrl(order.tracking_url || '');
-                        }}>
-                          Update Status
-                        </Button>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </div>
   );
 }

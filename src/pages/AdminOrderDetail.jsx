@@ -1,329 +1,347 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Upload, Check, AlertCircle, Clock } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { base44 } from '@/api/base44Client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { ArrowLeft, Save, Package, Truck } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '../utils';
 import AdminProtected from '../components/AdminProtected';
 
-const IMAGE_STATUS_CONFIG = {
-  pending: { label: 'Awaiting Upload', icon: Clock, color: 'bg-gray-100 text-gray-700', dotColor: 'bg-gray-400' },
-  uploaded: { label: 'Uploaded', icon: Check, color: 'bg-blue-100 text-blue-700', dotColor: 'bg-blue-500' },
-  processing: { label: 'Processing', icon: Clock, color: 'bg-yellow-100 text-yellow-700', dotColor: 'bg-yellow-500' },
-  completed: { label: 'Completed', icon: Check, color: 'bg-green-100 text-green-700', dotColor: 'bg-green-500' },
-  failed: { label: 'Failed', icon: AlertCircle, color: 'bg-red-100 text-red-700', dotColor: 'bg-red-500' }
-};
+function AdminOrderDetailContent() {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const urlParams = new URLSearchParams(window.location.search);
+  const orderId = urlParams.get('id');
+
+  const { data: order, isLoading } = useQuery({
+    queryKey: ['order', orderId],
+    queryFn: async () => {
+      const orders = await base44.entities.Order.filter({ id: orderId });
+      return orders[0];
+    },
+    enabled: !!orderId
+  });
+
+  const [editing, setEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    status: '',
+    tracking_number: '',
+    tracking_url: '',
+    notes: ''
+  });
+
+  React.useEffect(() => {
+    if (order) {
+      setFormData({
+        status: order.status,
+        tracking_number: order.tracking_number || '',
+        tracking_url: order.tracking_url || '',
+        notes: order.notes || ''
+      });
+    }
+  }, [order]);
+
+  const updateMutation = useMutation({
+    mutationFn: async (data) => {
+      const statusHistory = [...(order.status_history || [])];
+      
+      // Add status change to history if status changed
+      if (data.status !== order.status) {
+        statusHistory.push({
+          status: data.status,
+          timestamp: new Date().toISOString(),
+          note: `Status updated to ${data.status}`
+        });
+      }
+
+      await base44.entities.Order.update(orderId, {
+        ...data,
+        status_history: statusHistory
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['order', orderId]);
+      setEditing(false);
+    }
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Validation: Cannot move to in_production unless paid
+    if (formData.status === 'in_production' && order.status === 'pending_payment') {
+      alert('Cannot move to production. Order must be paid first.');
+      return;
+    }
+
+    updateMutation.mutate(formData);
+  };
+
+  if (isLoading) {
+    return <div className="min-h-screen py-12 px-6 bg-gray-50">Loading...</div>;
+  }
+
+  if (!order) {
+    return (
+      <div className="min-h-screen py-12 px-6 bg-gray-50">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="text-gray-600">Order not found</p>
+          <Button className="mt-4" onClick={() => navigate(createPageUrl('AdminOrders'))}>
+            Back to Orders
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const getStatusBadge = (status) => {
+    const config = {
+      pending_payment: { label: 'Pending Payment', className: 'bg-yellow-100 text-yellow-800' },
+      paid: { label: 'Paid', className: 'bg-green-100 text-green-800' },
+      in_production: { label: 'In Production', className: 'bg-blue-100 text-blue-800' },
+      shipped: { label: 'Shipped', className: 'bg-purple-100 text-purple-800' },
+      cancelled: { label: 'Cancelled', className: 'bg-gray-100 text-gray-800' },
+      refunded: { label: 'Refunded', className: 'bg-red-100 text-red-800' }
+    };
+    const { label, className } = config[status] || { label: status, className: 'bg-gray-100' };
+    return <Badge className={className}>{label}</Badge>;
+  };
+
+  return (
+    <div className="min-h-screen py-12 px-6 bg-gray-50">
+      <div className="max-w-4xl mx-auto">
+        <Button variant="outline" size="sm" onClick={() => navigate(createPageUrl('AdminOrders'))} className="mb-6">
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Orders
+        </Button>
+
+        <div className="space-y-6">
+          {/* Order Header */}
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-start">
+                <div>
+                  <CardTitle className="text-2xl">{order.order_number}</CardTitle>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Created: {new Date(order.created_date).toLocaleString()}
+                  </p>
+                </div>
+                <div className="text-right">
+                  {getStatusBadge(order.status)}
+                  {order.status === 'pending_payment' && (
+                    <div className="text-sm text-orange-600 font-semibold mt-2">
+                      ⚠️ Awaiting Payment
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardHeader>
+          </Card>
+
+          {/* Customer Info */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Customer Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm">
+              <div><strong>Name:</strong> {order.customer_name || 'N/A'}</div>
+              <div><strong>Email:</strong> {order.customer_email}</div>
+              {order.customer_phone && <div><strong>Phone:</strong> {order.customer_phone}</div>}
+              {order.shipping_address && (
+                <div>
+                  <strong>Shipping Address:</strong>
+                  <div className="ml-4 text-gray-600">
+                    {order.shipping_address.street}<br/>
+                    {order.shipping_address.city}, {order.shipping_address.state} {order.shipping_address.zip}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Payment Info */}
+          {(order.payment_intent_id || order.checkout_session_id) && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Payment Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm">
+                {order.amount_paid && (
+                  <div><strong>Amount Paid:</strong> ${(order.amount_paid / 100).toFixed(2)} {order.currency?.toUpperCase()}</div>
+                )}
+                {order.payment_timestamp && (
+                  <div><strong>Payment Time:</strong> {new Date(order.payment_timestamp).toLocaleString()}</div>
+                )}
+                {order.payment_intent_id && (
+                  <div className="text-xs text-gray-500">Payment Intent: {order.payment_intent_id}</div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Order Items */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Order Items</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {order.items?.map((item, idx) => (
+                  <div key={idx} className="flex gap-4 p-4 border rounded-lg">
+                    {item.preview_url && (
+                      <img src={item.preview_url} alt={item.name} className="w-24 h-24 object-cover rounded" />
+                    )}
+                    <div className="flex-1">
+                      <div className="font-semibold">{item.name}</div>
+                      <div className="text-sm text-gray-600">
+                        {item.size && <div>Size: {item.size}</div>}
+                        {item.base_color && <div>Base: {item.base_color}</div>}
+                        {item.paint_color && <div>Paint: {item.paint_color}</div>}
+                        {item.design_instructions && (
+                          <div className="mt-2 text-xs bg-gray-50 p-2 rounded">
+                            <strong>Instructions:</strong> {item.design_instructions}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right font-semibold">
+                      ${(item.price / 100).toFixed(2)}
+                    </div>
+                  </div>
+                ))}
+                <div className="text-right text-xl font-bold pt-4 border-t">
+                  Total: ${(order.total_amount / 100).toFixed(2)}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Status Update Form */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Update Order Status</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <Label>Status</Label>
+                  <Select 
+                    value={formData.status} 
+                    onValueChange={(v) => setFormData({...formData, status: v})}
+                    disabled={!editing}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending_payment">Pending Payment</SelectItem>
+                      <SelectItem value="paid">Paid</SelectItem>
+                      <SelectItem value="in_production" disabled={order.status === 'pending_payment'}>
+                        In Production {order.status === 'pending_payment' && '(Requires payment first)'}
+                      </SelectItem>
+                      <SelectItem value="shipped">Shipped</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {order.status === 'pending_payment' && formData.status === 'in_production' && (
+                    <p className="text-xs text-red-600 mt-1">⚠️ Cannot move to production until payment is confirmed</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label>Tracking Number</Label>
+                  <Input
+                    value={formData.tracking_number}
+                    onChange={(e) => setFormData({...formData, tracking_number: e.target.value})}
+                    disabled={!editing}
+                    placeholder="UPS/USPS tracking #"
+                  />
+                </div>
+
+                <div>
+                  <Label>Tracking URL</Label>
+                  <Input
+                    value={formData.tracking_url}
+                    onChange={(e) => setFormData({...formData, tracking_url: e.target.value})}
+                    disabled={!editing}
+                    placeholder="https://..."
+                  />
+                </div>
+
+                <div>
+                  <Label>Notes</Label>
+                  <Textarea
+                    value={formData.notes}
+                    onChange={(e) => setFormData({...formData, notes: e.target.value})}
+                    disabled={!editing}
+                    rows={3}
+                  />
+                </div>
+
+                {!editing ? (
+                  <Button type="button" onClick={() => setEditing(true)}>Edit</Button>
+                ) : (
+                  <div className="flex gap-2">
+                    <Button type="submit">
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Changes
+                    </Button>
+                    <Button type="button" variant="outline" onClick={() => {
+                      setEditing(false);
+                      setFormData({
+                        status: order.status,
+                        tracking_number: order.tracking_number || '',
+                        tracking_url: order.tracking_url || '',
+                        notes: order.notes || ''
+                      });
+                    }}>
+                      Cancel
+                    </Button>
+                  </div>
+                )}
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Status History */}
+          {order.status_history && order.status_history.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Status History</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {order.status_history.map((entry, idx) => (
+                    <div key={idx} className="flex justify-between items-start p-3 bg-gray-50 rounded text-sm">
+                      <div>
+                        <div className="font-semibold">{entry.status}</div>
+                        {entry.note && <div className="text-gray-600 text-xs">{entry.note}</div>}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {new Date(entry.timestamp).toLocaleString()}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminOrderDetail() {
   return (
     <AdminProtected>
       <AdminOrderDetailContent />
     </AdminProtected>
-  );
-}
-
-function AdminOrderDetailContent() {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const [selectedItemIndex, setSelectedItemIndex] = useState(0);
-  const [newImageStatus, setNewImageStatus] = useState('');
-
-  const orderId = new URLSearchParams(window.location.search).get('id');
-
-  const { data: order, isLoading } = useQuery({
-    queryKey: ['order-detail', orderId],
-    queryFn: () => base44.entities.Order.list(),
-    select: (orders) => orders.find(o => o.id === orderId)
-  });
-
-  const updateImageStatusMutation = useMutation({
-    mutationFn: ({ itemIndex, status }) => {
-      const items = [...order.items];
-      items[itemIndex].image_processing_status = status;
-      return base44.entities.Order.update(orderId, { items });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['order-detail', orderId] });
-      setNewImageStatus('');
-    }
-  });
-
-  if (isLoading) return <div className="p-8">Loading...</div>;
-  if (!order) return <div className="p-8">Order not found</div>;
-
-  const currentItem = order.items[selectedItemIndex];
-  const StatusIcon = IMAGE_STATUS_CONFIG[currentItem?.image_processing_status]?.icon || Clock;
-
-  return (
-    <div className="min-h-screen py-12 px-6 bg-gray-50">
-      <div className="max-w-6xl mx-auto">
-        <Button variant="ghost" onClick={() => navigate(-1)} className="mb-6">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Orders
-        </Button>
-
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Order Summary & Item Selection */}
-          <div className="lg:col-span-1 space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Order #{order.order_number}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="text-sm">
-                  <p className="text-gray-600">Customer Number</p>
-                  <p className="font-mono font-bold text-blue-600">{order.customer_number || 'N/A'}</p>
-                </div>
-                <div className="text-sm">
-                  <p className="text-gray-600">Customer</p>
-                  <p className="font-semibold">{order.customer_name}</p>
-                </div>
-                <div className="text-sm">
-                  <p className="text-gray-600">Email</p>
-                  <p className="font-semibold">{order.customer_email}</p>
-                </div>
-                <div className="text-sm">
-                  <p className="text-gray-600">Phone</p>
-                  <p className="font-semibold">{order.customer_phone || 'Not provided'}</p>
-                </div>
-                <div className="text-sm">
-                  <p className="text-gray-600">Address</p>
-                  <p className="font-semibold">
-                    {order.shipping_address?.street}<br/>
-                    {order.shipping_address?.city}, {order.shipping_address?.state} {order.shipping_address?.zip}
-                  </p>
-                </div>
-                <div className="border-t pt-4">
-                  <p className="text-sm text-gray-600 mb-2">Items in Order</p>
-                  <div className="space-y-2">
-                    {order.items?.map((item, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => setSelectedItemIndex(idx)}
-                        className={`w-full text-left p-3 rounded-lg border-2 transition ${
-                          selectedItemIndex === idx
-                            ? 'border-blue-600 bg-blue-50'
-                            : 'border-gray-200 bg-white hover:border-gray-300'
-                        }`}
-                      >
-                        <div className="text-sm font-medium">{item.name}</div>
-                        <div className="text-xs text-gray-500">{item.size}</div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Analytics Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Customer Analytics</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 text-sm">
-                <div>
-                  <p className="text-gray-600">Time on Site</p>
-                  <p className="font-semibold">
-                    {order.time_on_site 
-                      ? `${Math.floor(order.time_on_site / 60)}m ${order.time_on_site % 60}s`
-                      : 'Not tracked'}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-gray-600">Source</p>
-                  <p className="font-semibold break-all">{order.referrer_source || 'Direct'}</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Image Details */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Item Details Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Item Details</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-4 pb-4 border-b">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-gray-600 text-sm">Serial Number</p>
-                      <p className="font-mono text-lg font-bold text-blue-600">{currentItem?.serial_number || 'N/A'}</p>
-                    </div>
-                    <div>
-                      <p className="text-gray-600 text-sm">UPC</p>
-                      <p className="font-mono font-semibold">{currentItem?.upc || 'N/A'}</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <p className="text-gray-600">Size</p>
-                    <p className="font-semibold">{currentItem?.size}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Base Color</p>
-                    <p className="font-semibold">{currentItem?.base_color || 'Not specified'}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Paint Color</p>
-                    <p className="font-semibold">{currentItem?.paint_color || 'Not specified'}</p>
-                  </div>
-                  {currentItem?.second_paint_color && (
-                    <div>
-                      <p className="text-gray-600">2nd Paint Color</p>
-                      <p className="font-semibold">{currentItem.second_paint_color}</p>
-                    </div>
-                  )}
-                  <div>
-                    <p className="text-gray-600">Number of Colors</p>
-                    <p className="font-semibold">{currentItem?.num_colors || 2}</p>
-                  </div>
-                  <div>
-                    <p className="text-gray-600">Price</p>
-                    <p className="font-semibold">${currentItem?.price}</p>
-                  </div>
-                </div>
-                {currentItem?.design_instructions && (
-                  <div className="mt-4 pt-4 border-t">
-                    <p className="text-gray-600 text-sm mb-1">Special Instructions</p>
-                    <p className="font-medium">{currentItem.design_instructions}</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Image Processing Status */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span>Image Processing</span>
-                  <Badge className={IMAGE_STATUS_CONFIG[currentItem?.image_processing_status]?.color}>
-                    {IMAGE_STATUS_CONFIG[currentItem?.image_processing_status]?.label}
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Status Update */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium block mb-2">Update Image Status</label>
-                    <Select value={newImageStatus} onValueChange={setNewImageStatus}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pending">Awaiting Upload</SelectItem>
-                        <SelectItem value="uploaded">Uploaded</SelectItem>
-                        <SelectItem value="processing">Processing</SelectItem>
-                        <SelectItem value="completed">Completed</SelectItem>
-                        <SelectItem value="failed">Failed</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex items-end">
-                    <Button
-                      onClick={() => updateImageStatusMutation.mutate({ 
-                        itemIndex: selectedItemIndex, 
-                        status: newImageStatus 
-                      })}
-                      disabled={!newImageStatus}
-                      className="w-full"
-                    >
-                      Update Status
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Image Gallery */}
-            <div className="grid grid-cols-1 gap-4">
-              {/* Original Upload */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-gray-400" />
-                    Original Upload
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {currentItem?.original_upload_url ? (
-                    <img 
-                      src={currentItem.original_upload_url} 
-                      alt="Original" 
-                      className="w-full h-64 object-cover rounded-lg border border-gray-300"
-                    />
-                  ) : (
-                    <div className="w-full h-64 bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center">
-                      <div className="text-center">
-                        <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                        <p className="text-sm text-gray-500">No upload yet</p>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Processed 2-Tone */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-blue-500" />
-                    Processed Version (2-Tone)
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {currentItem?.processed_image_url ? (
-                    <img 
-                      src={currentItem.processed_image_url} 
-                      alt="Processed" 
-                      className="w-full h-64 object-cover rounded-lg border border-gray-300"
-                    />
-                  ) : (
-                    <div className="w-full h-64 bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center">
-                      <div className="text-center">
-                        <Clock className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                        <p className="text-sm text-gray-500">Pending processing</p>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* AI Preview */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-green-500" />
-                    AI Preview (On Rug)
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {currentItem?.ai_preview_url ? (
-                    <img 
-                      src={currentItem.ai_preview_url} 
-                      alt="AI Preview" 
-                      className="w-full h-64 object-cover rounded-lg border border-gray-300"
-                    />
-                  ) : (
-                    <div className="w-full h-64 bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center">
-                      <div className="text-center">
-                        <Clock className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                        <p className="text-sm text-gray-500">Pending generation</p>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }

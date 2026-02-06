@@ -50,6 +50,14 @@ export default function AdminPortal() {
       description: 'Configure pricing rules and fees',
       page: 'AdminPricing',
       color: 'bg-emerald-500'
+    },
+    {
+      title: 'Orders',
+      icon: ShoppingBag,
+      description: 'Manage customer orders and fulfillment',
+      page: 'AdminOrders',
+      color: 'bg-blue-500',
+      badge: orderCount
     }
   ];
 
