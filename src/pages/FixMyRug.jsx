@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { base44 } from '@/api/base44Client';
 import { Upload, Loader2, CheckCircle2 } from 'lucide-react';
 import SEOHead from '../components/seo/SEOHead';
+import PaintApp from '../components/custom/PaintApp';
 
 export default function FixMyRug() {
   const [formData, setFormData] = useState({
@@ -29,6 +30,8 @@ export default function FixMyRug() {
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [showPaintApp, setShowPaintApp] = useState(false);
+  const [designPaintingUrl, setDesignPaintingUrl] = useState(null);
 
   const sizesPricing = {
     '2x3': 4900,
@@ -392,8 +395,48 @@ export default function FixMyRug() {
                   </div>
                 )}
               </div>
+
+              <div>
+                <Label>Or Paint Your Design Idea (Optional)</Label>
+                <p className="text-xs text-gray-600 mb-2">Use our paint app to show us exactly what you want your rug to look like</p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowPaintApp(!showPaintApp)}
+                  className="w-full"
+                >
+                  {showPaintApp ? 'Hide Paint App' : 'Open Paint App'}
+                </Button>
+              </div>
             </CardContent>
           </Card>
+
+          {/* Paint App Section */}
+          {showPaintApp && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Paint Your Design Idea</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PaintApp 
+                  onSaveImage={(url) => {
+                    setDesignPaintingUrl(url);
+                    setPhotos([...photos, url]);
+                  }}
+                  availableColors={[
+                    { name: 'Black', hex: '#000000' },
+                    { name: 'White', hex: '#FFFFFF' },
+                    { name: 'Red', hex: '#EF4444' },
+                    { name: 'Blue', hex: '#3B82F6' },
+                    { name: 'Green', hex: '#10B981' },
+                    { name: 'Yellow', hex: '#F59E0B' },
+                    { name: 'Purple', hex: '#8B5CF6' },
+                    { name: 'Pink', hex: '#EC4899' }
+                  ]}
+                />
+              </CardContent>
+            </Card>
+          )}
 
           {/* Services */}
           <Card>

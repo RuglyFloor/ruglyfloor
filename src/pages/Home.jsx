@@ -443,9 +443,9 @@ export default function Home() {
               </ul>
               <div className="text-center">
                 <div className="text-2xl font-bold text-gray-900 mb-4">Custom Quote</div>
-                <Link to={createPageUrl('Commission')}>
+                <Link to={createPageUrl('CustomBuilder')}>
                   <Button className="w-full border-2 border-amber-600 bg-amber-600 hover:bg-amber-700 text-white">
-                    Request Quote
+                    Start Designing
                   </Button>
                 </Link>
               </div>
