@@ -58,6 +58,13 @@ export default function AdminPortal() {
       page: 'AdminOrders',
       color: 'bg-blue-500',
       badge: orderCount
+    },
+    {
+      title: 'Fix My Rug',
+      icon: Package,
+      description: 'Manage rug repair and restoration orders',
+      page: 'AdminFixMyRugOrders',
+      color: 'bg-teal-500'
     }
   ];
 

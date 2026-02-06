@@ -49,6 +49,7 @@ export default function Layout({ children, currentPageName }) {
     { name: 'Build Your Rug', page: 'CustomBuilder' },
     { name: 'Shop Originals', page: 'Shop' },
     { name: 'Commission Rugley', page: 'Commission' },
+    { name: 'Fix My Rug', page: 'FixMyRug' },
     { name: 'About', page: 'About' },
     { name: 'Contact', page: 'Contact' },
     { name: 'My Orders', page: 'Orders' }

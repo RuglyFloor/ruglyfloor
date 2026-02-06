@@ -56,16 +56,18 @@ Deno.serve(async (req) => {
 async function handleCheckoutCompleted(base44, event) {
   const session = event.data.object;
   const orderNumber = session.metadata?.order_number;
+  const serviceType = session.metadata?.service_type;
   
   if (!orderNumber) {
     console.error('[Webhook] No order_number in metadata');
     return;
   }
 
-  console.log('[Webhook] Processing checkout.session.completed for order:', orderNumber);
+  console.log('[Webhook] Processing checkout.session.completed for order:', orderNumber, 'Service:', serviceType);
 
-  // Find order by order_number
-  const orders = await base44.asServiceRole.entities.Order.filter({ order_number: orderNumber });
+  // Determine entity based on service type
+  const entityName = serviceType === 'fix_my_rug' ? 'FixMyRugOrder' : 'Order';
+  const orders = await base44.asServiceRole.entities[entityName].filter({ order_number: orderNumber });
   
   if (orders.length === 0) {
     console.error('[Webhook] Order not found:', orderNumber);
@@ -81,13 +83,11 @@ async function handleCheckoutCompleted(base44, event) {
   }
 
   // Update order to PAID status
-  await base44.asServiceRole.entities.Order.update(order.id, {
+  await base44.asServiceRole.entities[entityName].update(order.id, {
     status: 'paid',
     payment_intent_id: session.payment_intent,
     checkout_session_id: session.id,
     stripe_event_id: event.id,
-    amount_paid: session.amount_total,
-    currency: session.currency,
     payment_timestamp: new Date().toISOString(),
     status_history: [
       ...(order.status_history || []),
