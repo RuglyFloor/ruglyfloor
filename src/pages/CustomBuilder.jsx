@@ -64,19 +64,7 @@ const SIZES = [
   { id: 'rd', label: '3.14', value: '4ft round', price: 250, step: 1, measurement: '4 foot round' }
 ];
 
-const getShadingFee = (size) => {
-  const sizeData = SIZES.find(s => s.value === size);
-  if (!sizeData) return 0;
-  const pricing = getPricingData();
-  return pricing.shade_base + (pricing.shade_step * sizeData.step);
-};
-
-const getSecondColorFee = (size) => {
-  const sizeData = SIZES.find(s => s.value === size);
-  if (!sizeData) return 0;
-  const pricing = getPricingData();
-  return pricing.shade_base + (pricing.shade_step * sizeData.step);
-};
+// Fee calculation functions moved inside component where getPricingData is available
 
 const BASE_COLORS = [
   { name: 'Yellow', hex: '#f4d03f', type: 'light' },
@@ -154,6 +142,20 @@ export default function CustomBuilder() {
         highend: qualityConfig?.pricing_data?.highend || 2.5
       }
     };
+  };
+
+  const getShadingFee = (size) => {
+    const sizeData = SIZES.find(s => s.value === size);
+    if (!sizeData) return 0;
+    const pricing = getPricingData();
+    return pricing.shade_base + (pricing.shade_step * sizeData.step);
+  };
+
+  const getSecondColorFee = (size) => {
+    const sizeData = SIZES.find(s => s.value === size);
+    if (!sizeData) return 0;
+    const pricing = getPricingData();
+    return pricing.shade_base + (pricing.shade_step * sizeData.step);
   };
 
   // Get available base colors from catalog
