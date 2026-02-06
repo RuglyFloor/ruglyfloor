@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import StencilCreator from '../components/custom/StencilCreator';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
 
 import DrawingCanvas from '../components/custom/DrawingCanvas';
 import DesignLibrary from '../components/custom/DesignLibrary';
@@ -119,6 +120,50 @@ const LIMITED_PAINT_COLORS = [
 export default function CustomBuilder() {
   const navigate = useNavigate();
   const seoData = useSEO('custom-builder');
+
+  // Fetch catalog data
+  const { data: catalogListings = [] } = useQuery({
+    queryKey: ['catalog'],
+    queryFn: () => base44.entities.Catalog.list()
+  });
+
+  const { data: catalogVariants = [] } = useQuery({
+    queryKey: ['catalog-variants'],
+    queryFn: () => base44.entities.CatalogVariant.list()
+  });
+
+  // Get available base colors from catalog
+  const getAvailableBaseColors = () => {
+    const activeVariants = catalogVariants.filter(v => {
+      const listing = catalogListings.find(l => l.id === v.catalog_id);
+      return listing?.active && v.in_stock;
+    });
+    
+    const uniqueColors = [...new Set(activeVariants.map(v => v.color))];
+    return uniqueColors.map(color => ({
+      name: color,
+      hex: getColorHex(color),
+      type: 'light'
+    }));
+  };
+
+  // Helper to convert color names to hex (basic mapping)
+  const getColorHex = (colorName) => {
+    const colorMap = {
+      'Ivory': '#fffff0',
+      'Gray': '#9ca3af',
+      'Grey': '#9ca3af',
+      'Beige': '#f5f5dc',
+      'Tan': '#d2b48c',
+      'White': '#ffffff',
+      'Black': '#000000',
+      'Brown': '#8b4513',
+      'Blue': '#4169e1',
+      'Navy': '#000080',
+      'Charcoal': '#36454f'
+    };
+    return colorMap[colorName] || '#d2b48c';
+  };
   
   // Debug: Log component mount
   useEffect(() => {
@@ -707,20 +752,26 @@ export default function CustomBuilder() {
                 {/* Base Color */}
                 <div>
                   <Label className="text-xl font-bold mb-4 block">1. Rug Base Color</Label>
-                  <div className="grid grid-cols-4 gap-3">
-                    {BASE_COLORS.map((color) => (
-                      <button
-                        key={color.name}
-                        onClick={() => setConfig(prev => ({ ...prev, baseColor: color.name }))}
-                        className={`p-3 rounded-lg border-2 transition-all ${
-                          config.baseColor === color.name ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-300' : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <div className="w-full aspect-square rounded-lg mb-2 border-2 border-white shadow-md" style={{ backgroundColor: color.hex }} />
-                        <div className="text-xs text-center font-medium">{color.name}</div>
-                      </button>
-                    ))}
-                  </div>
+                  {getAvailableBaseColors().length === 0 ? (
+                    <div className="text-sm text-gray-500 p-4 border border-gray-200 rounded-lg">
+                      No base rug colors available. Please check catalog inventory.
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-4 gap-3">
+                      {getAvailableBaseColors().map((color) => (
+                        <button
+                          key={color.name}
+                          onClick={() => setConfig(prev => ({ ...prev, baseColor: color.name }))}
+                          className={`p-3 rounded-lg border-2 transition-all ${
+                            config.baseColor === color.name ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-300' : 'border-gray-200 hover:border-gray-300'
+                          }`}
+                        >
+                          <div className="w-full aspect-square rounded-lg mb-2 border-2 border-white shadow-md" style={{ backgroundColor: color.hex }} />
+                          <div className="text-xs text-center font-medium">{color.name}</div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* First Paint Color */}
