@@ -8,7 +8,7 @@ import { Pencil, Eraser, Type, Square, Circle, Undo, Redo, Trash2, Save, AlertCi
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { base44 } from '@/api/base44Client';
 
-export default function PaintApp({ onSaveImage, availableColors = [], initialImage = null }) {
+export default function PaintApp({ onSaveImage, availableColors = [], initialImage = null, rugSize = '4x6' }) {
   const canvasRef = useRef(null);
   const textareaRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -26,6 +26,18 @@ export default function PaintApp({ onSaveImage, availableColors = [], initialIma
   const [maxWidth, setMaxWidth] = useState(600);
   const [uploading, setUploading] = useState(false);
   const [savedImageUrl, setSavedImageUrl] = useState(null);
+
+  // Calculate canvas dimensions based on rug size
+  const getCanvasDimensions = () => {
+    const [width, height] = rugSize.split('x').map(Number);
+    const maxWidth = 800;
+    const aspectRatio = height / width;
+    const canvasWidth = maxWidth;
+    const canvasHeight = maxWidth * aspectRatio;
+    return { width: canvasWidth, height: canvasHeight };
+  };
+
+  const canvasDims = getCanvasDimensions();
 
   const STENCIL_FONTS = [
     'Allerta Stencil',
@@ -465,8 +477,8 @@ export default function PaintApp({ onSaveImage, availableColors = [], initialIma
       }}>
         <canvas
           ref={canvasRef}
-          width={800}
-          height={600}
+          width={canvasDims.width}
+          height={canvasDims.height}
           className="w-full touch-none cursor-crosshair"
           onMouseDown={startDrawing}
           onMouseMove={draw}

@@ -419,6 +419,7 @@ export default function FixMyRug() {
               </CardHeader>
               <CardContent>
                 <PaintApp 
+                  rugSize={formData.rug_size}
                   onSaveImage={(url) => {
                     setDesignPaintingUrl(url);
                     setPhotos([...photos, url]);
