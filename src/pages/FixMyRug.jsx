@@ -396,18 +396,20 @@ export default function FixMyRug() {
                 )}
               </div>
 
-              <div>
-                <Label>Or Paint Your Design Idea (Optional)</Label>
-                <p className="text-xs text-gray-600 mb-2">Use our paint app to show us exactly what you want your rug to look like</p>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setShowPaintApp(!showPaintApp)}
-                  className="w-full"
-                >
-                  {showPaintApp ? 'Hide Paint App' : 'Open Paint App'}
-                </Button>
-              </div>
+              {photos.length > 0 && (
+                <div>
+                  <Label>Paint Your Design Idea (Optional)</Label>
+                  <p className="text-xs text-gray-600 mb-2">Paint directly on your rug photo to show us what you want</p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShowPaintApp(!showPaintApp)}
+                    className="w-full"
+                  >
+                    {showPaintApp ? 'Hide Paint App' : 'Open Paint App'}
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -418,11 +420,31 @@ export default function FixMyRug() {
                 <CardTitle>Paint Your Design Idea</CardTitle>
               </CardHeader>
               <CardContent>
+                <div className="mb-4">
+                  <Label>Select a rug photo to paint on:</Label>
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    {photos.filter(p => p !== designPaintingUrl).map((url, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setDesignPaintingUrl(null)}
+                        className={`border-2 rounded overflow-hidden hover:border-blue-500 transition-all ${
+                          designPaintingUrl === null ? 'border-blue-500' : 'border-gray-300'
+                        }`}
+                      >
+                        <img src={url} alt="Rug" className="w-full h-24 object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <PaintApp 
                   rugSize={formData.rug_size}
+                  initialImage={photos.filter(p => p !== designPaintingUrl)[0]}
                   onSaveImage={(url) => {
                     setDesignPaintingUrl(url);
-                    setPhotos([...photos, url]);
+                    if (!photos.includes(url)) {
+                      setPhotos([...photos, url]);
+                    }
                   }}
                   availableColors={[
                     { name: 'Black', hex: '#000000' },
