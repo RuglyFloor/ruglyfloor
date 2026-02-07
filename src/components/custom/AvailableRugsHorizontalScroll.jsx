@@ -2,74 +2,80 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 
 export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, isCheckingOut }) {
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const sectionRef = useRef(null);
-  const [hasEnteredSection, setHasEnteredSection] = useState(false);
+  const isLockedRef = useRef(false);
+  const accumulatedDeltaRef = useRef(0);
 
   useEffect(() => {
-    const handleScroll = () => {
+    const handleWheel = (e) => {
       if (!sectionRef.current || products.length === 0) return;
 
       const section = sectionRef.current;
-      const sectionTop = section.offsetTop;
-      const sectionHeight = section.offsetHeight;
-      const scrollY = window.scrollY;
-      const windowHeight = window.innerHeight;
+      const rect = section.getBoundingClientRect();
+      
+      // Check if section is in viewport
+      if (rect.top <= 0 && rect.bottom >= window.innerHeight) {
+        // We're in the section - hijack scroll
+        const deltaThreshold = 100;
+        accumulatedDeltaRef.current += e.deltaY;
 
-      // Check if user has entered the section
-      const sectionStart = sectionTop - windowHeight / 2;
-      const sectionEnd = sectionTop + sectionHeight - windowHeight / 2;
-
-      if (scrollY >= sectionStart && scrollY <= sectionEnd) {
-        setHasEnteredSection(true);
-        
-        // Calculate progress (0 to 1 across all products)
-        const relativeScroll = scrollY - sectionStart;
-        const scrollRange = sectionEnd - sectionStart;
-        const progress = Math.max(0, Math.min(1, relativeScroll / scrollRange));
-        
-        setScrollProgress(progress);
-      } else if (scrollY < sectionStart) {
-        setHasEnteredSection(false);
-        setScrollProgress(0);
-      } else {
-        setScrollProgress(1);
+        if (Math.abs(accumulatedDeltaRef.current) >= deltaThreshold) {
+          if (accumulatedDeltaRef.current > 0) {
+            // Scrolling down - move to next rug
+            if (currentIndex < products.length - 1) {
+              e.preventDefault();
+              setCurrentIndex(prev => prev + 1);
+              accumulatedDeltaRef.current = 0;
+            } else {
+              // Last rug - allow normal scroll
+              accumulatedDeltaRef.current = 0;
+            }
+          } else {
+            // Scrolling up - move to previous rug
+            if (currentIndex > 0) {
+              e.preventDefault();
+              setCurrentIndex(prev => prev - 1);
+              accumulatedDeltaRef.current = 0;
+            } else {
+              // First rug - allow normal scroll
+              accumulatedDeltaRef.current = 0;
+            }
+          }
+        } else {
+          // Still accumulating - prevent scroll
+          if ((e.deltaY > 0 && currentIndex < products.length - 1) || 
+              (e.deltaY < 0 && currentIndex > 0)) {
+            e.preventDefault();
+          }
+        }
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial check
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [products.length]);
-
-  // Calculate horizontal scroll
-  const itemWidth = typeof window !== 'undefined' ? window.innerWidth * 0.7 : 800;
-  const totalWidth = products.length * (itemWidth + 60);
-  const scrollLeft = scrollProgress * (totalWidth - itemWidth);
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    return () => window.removeEventListener('wheel', handleWheel);
+  }, [products.length, currentIndex]);
 
   return (
     <section 
       ref={sectionRef} 
-      className="relative bg-black overflow-hidden"
-      style={{ height: `${products.length * 120}vh` }}
+      className="relative bg-black overflow-hidden h-screen"
     >
-      <div className="sticky top-0 h-screen flex items-center justify-start overflow-hidden">
-        {/* Fullscreen horizontal container */}
+      <div className="h-screen flex items-center justify-center overflow-hidden px-16">
         <div 
-          className="flex items-center gap-16 transition-transform duration-200 ease-out"
+          className="flex items-center gap-12 transition-transform duration-700 ease-out"
           style={{ 
-            transform: `translateX(calc(15vw - ${scrollLeft}px))`,
-            willChange: 'transform'
+            transform: `translateX(calc(-${currentIndex * 100}vw))`,
+            width: `${products.length * 100}vw`
           }}
         >
-          {products.map((product, index) => (
+          {products.map((product) => (
             <div
               key={product.id}
-              className="flex-shrink-0 flex items-center gap-8"
-              style={{ width: `${itemWidth}px` }}
+              className="flex-shrink-0 w-screen flex items-center justify-center gap-12 px-16"
             >
-              {/* Image - borderless, contemporary */}
-              <div className="relative w-2/3 aspect-[4/3] overflow-hidden shadow-2xl">
+              {/* Image - borderless */}
+              <div className="relative w-[55%] aspect-[4/3] overflow-hidden shadow-2xl">
                 <img
                   src={product.image_url}
                   alt={product.name}
@@ -79,37 +85,37 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
                 />
                 {!product.in_stock && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                    <div className="bg-red-600 text-white font-bold text-3xl px-8 py-4 rounded">
+                    <div className="bg-red-600 text-white font-bold text-4xl px-12 py-6 rounded">
                       SOLD
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* White cutout section for details */}
-              <div className="w-1/3 bg-white rounded-2xl shadow-2xl p-8 flex flex-col justify-center min-h-[400px]">
-                <h3 className="text-2xl font-bold mb-4">{product.name}</h3>
-                <p className="text-gray-600 mb-6 text-sm leading-relaxed">
+              {/* White cutout for details */}
+              <div className="w-[30%] bg-white rounded-3xl shadow-2xl p-10 flex flex-col justify-center min-h-[500px]">
+                <h3 className="text-3xl font-bold mb-6">{product.name}</h3>
+                <p className="text-gray-600 mb-8 leading-relaxed">
                   {typeof product.description === 'string' ? product.description : product.description?.description || ''}
                 </p>
                 
                 <div className="mt-auto">
                   {product.in_stock ? (
                     <>
-                      <div className="text-4xl font-bold text-blue-600 mb-4">
+                      <div className="text-5xl font-bold text-blue-600 mb-6">
                         ${product.price}
                       </div>
                       <Button 
                         onClick={() => handleGrabIt(product)}
                         disabled={isCheckingOut}
-                        className="w-full text-lg py-6"
+                        className="w-full text-xl py-7"
                         size="lg"
                       >
                         {isCheckingOut ? 'Loading...' : 'GRAB IT'}
                       </Button>
                     </>
                   ) : (
-                    <div className="text-3xl font-bold text-red-600">SOLD OUT</div>
+                    <div className="text-4xl font-bold text-red-600">SOLD OUT</div>
                   )}
                 </div>
               </div>
@@ -117,20 +123,16 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
           ))}
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
-          <div className="flex gap-2">
-            {products.map((_, index) => (
-              <div
-                key={index}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  scrollProgress >= index / products.length && scrollProgress < (index + 1) / products.length
-                    ? 'w-8 bg-white'
-                    : 'w-2 bg-white/40'
-                }`}
-              />
-            ))}
-          </div>
+        {/* Indicators */}
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex gap-3">
+          {products.map((_, index) => (
+            <div
+              key={index}
+              className={`h-3 rounded-full transition-all duration-300 ${
+                currentIndex === index ? 'w-12 bg-white' : 'w-3 bg-white/30'
+              }`}
+            />
+          ))}
         </div>
       </div>
     </section>
