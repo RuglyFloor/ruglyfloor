@@ -10,19 +10,15 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
       if (!sectionRef.current || products.length === 0) return;
 
       const section = sectionRef.current;
-      const rect = section.getBoundingClientRect();
       const sectionTop = section.offsetTop;
       const sectionHeight = section.offsetHeight;
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
 
-      // Only calculate when section is in view
-      if (rect.top <= 0 && rect.bottom >= windowHeight) {
-        const scrolledIntoSection = scrollY - sectionTop;
-        const maxScroll = sectionHeight - windowHeight;
-        const progress = Math.max(0, Math.min(1, scrolledIntoSection / maxScroll));
-        setScrollProgress(progress);
-      }
+      const scrolledIntoSection = scrollY - sectionTop;
+      const maxScroll = sectionHeight - windowHeight;
+      const progress = Math.max(0, Math.min(1, scrolledIntoSection / maxScroll));
+      setScrollProgress(progress);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -31,6 +27,7 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
   }, [products.length]);
 
   const currentIndex = Math.floor(scrollProgress * products.length);
+  const translateY = `calc(100vh - ${scrollProgress * 100}vh)`;
 
   return (
     <section 
@@ -38,18 +35,17 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
       className="relative bg-black overflow-hidden"
       style={{ height: `${products.length * 100}vh` }}
     >
-      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden px-16">
+      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
         <div 
-          className="flex items-center gap-12 transition-transform duration-300 ease-out"
+          className="w-full flex flex-col gap-8 transition-transform duration-100 ease-out"
           style={{ 
-            transform: `translateX(calc(-${scrollProgress * products.length * 100}vw))`,
-            width: `${products.length * 100}vw`
+            transform: `translateY(${translateY})`
           }}
         >
           {products.map((product) => (
             <div
               key={product.id}
-              className="flex-shrink-0 w-screen flex items-center justify-center gap-12 px-16"
+              className="w-full h-screen flex items-center justify-center gap-12 px-16 flex-shrink-0"
             >
               <div className="relative w-[55%] aspect-[4/3] overflow-hidden shadow-2xl">
                 <img
