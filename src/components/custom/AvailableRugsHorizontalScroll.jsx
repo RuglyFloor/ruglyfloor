@@ -1,53 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 
 export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, isCheckingOut }) {
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const sectionRef = useRef(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!sectionRef.current || products.length === 0) return;
-
-      const section = sectionRef.current;
-      const sectionTop = section.offsetTop;
-      const sectionHeight = section.offsetHeight;
-      const scrollY = window.scrollY;
-      const windowHeight = window.innerHeight;
-
-      const scrolledIntoSection = scrollY - sectionTop;
-      const maxScroll = sectionHeight - windowHeight;
-      const progress = Math.max(0, Math.min(1, scrolledIntoSection / maxScroll));
-      setScrollProgress(progress);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [products.length]);
-
-  const currentIndex = Math.floor(scrollProgress * products.length);
-  const translateY = `calc(100vh - ${scrollProgress * 100}vh)`;
-
   return (
-    <section 
-      ref={sectionRef} 
-      className="relative bg-black overflow-hidden"
-      style={{ height: `${products.length * 100}vh` }}
-    >
-      <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
-        <div 
-          className="w-full flex flex-col gap-8 transition-transform duration-100 ease-out"
-          style={{ 
-            transform: `translateY(${translateY})`
-          }}
-        >
+    <section className="bg-black py-20 px-6">
+      <div className="max-w-[1600px] mx-auto">
+        <h2 className="text-5xl font-bold text-white mb-16 text-center">Available Rugs</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {products.map((product) => (
             <div
               key={product.id}
-              className="w-full h-screen flex items-center justify-center gap-12 px-16 flex-shrink-0"
+              className="group relative bg-white overflow-hidden aspect-[3/4] hover:scale-[1.02] transition-all duration-300"
             >
-              <div className="relative w-[55%] aspect-[4/3] overflow-hidden shadow-2xl">
+              <div className="absolute inset-0">
                 <img
                   src={product.image_url}
                   alt={product.name}
@@ -56,52 +22,39 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
                   }`}
                 />
                 {!product.in_stock && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                    <div className="bg-red-600 text-white font-bold text-4xl px-12 py-6 rounded">
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+                    <div className="bg-red-600 text-white font-bold text-3xl px-8 py-4">
                       SOLD
                     </div>
                   </div>
                 )}
               </div>
 
-              <div className="w-[30%] bg-white rounded-3xl shadow-2xl p-10 flex flex-col justify-center min-h-[500px]">
-                <h3 className="text-3xl font-bold mb-6">{product.name}</h3>
-                <p className="text-gray-600 mb-8 leading-relaxed">
+              <div className="absolute bottom-0 left-0 right-0 bg-white p-6 transform translate-y-[calc(100%-80px)] group-hover:translate-y-0 transition-transform duration-300">
+                <h3 className="text-2xl font-bold mb-2">{product.name}</h3>
+                <p className="text-gray-600 text-sm mb-4 line-clamp-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   {typeof product.description === 'string' ? product.description : product.description?.description || ''}
                 </p>
                 
-                <div className="mt-auto">
-                  {product.in_stock ? (
-                    <>
-                      <div className="text-5xl font-bold text-blue-600 mb-6">
-                        ${product.price}
-                      </div>
-                      <Button 
-                        onClick={() => handleGrabIt(product)}
-                        disabled={isCheckingOut}
-                        className="w-full text-xl py-7"
-                        size="lg"
-                      >
-                        {isCheckingOut ? 'Loading...' : 'GRAB IT'}
-                      </Button>
-                    </>
-                  ) : (
-                    <div className="text-4xl font-bold text-red-600">SOLD OUT</div>
-                  )}
-                </div>
+                {product.in_stock ? (
+                  <>
+                    <div className="text-3xl font-bold text-blue-600 mb-4">
+                      ${product.price}
+                    </div>
+                    <Button 
+                      onClick={() => handleGrabIt(product)}
+                      disabled={isCheckingOut}
+                      className="w-full"
+                      size="lg"
+                    >
+                      {isCheckingOut ? 'Loading...' : 'GRAB IT'}
+                    </Button>
+                  </>
+                ) : (
+                  <div className="text-2xl font-bold text-red-600">SOLD OUT</div>
+                )}
               </div>
             </div>
-          ))}
-        </div>
-
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex gap-3">
-          {products.map((_, index) => (
-            <div
-              key={index}
-              className={`h-3 rounded-full transition-all duration-300 ${
-                currentIndex === index ? 'w-12 bg-white' : 'w-3 bg-white/30'
-              }`}
-            />
           ))}
         </div>
       </div>
