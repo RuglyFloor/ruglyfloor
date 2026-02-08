@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Palette } from 'lucide-react';
+import RugVisualizerPro from './RugVisualizerPro';
 
 export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, isCheckingOut }) {
+  const [visualizerOpen, setVisualizerOpen] = useState(false);
+  const [selectedRug, setSelectedRug] = useState(null);
   return (
     <section className="bg-black py-20 px-6">
       <div className="max-w-[1600px] mx-auto">
@@ -41,14 +45,28 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
                     <div className="text-3xl font-bold text-blue-600 mb-4">
                       ${product.price}
                     </div>
-                    <Button 
-                      onClick={() => handleGrabIt(product)}
-                      disabled={isCheckingOut}
-                      className="w-full"
-                      size="lg"
-                    >
-                      {isCheckingOut ? 'Loading...' : 'GRAB IT'}
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button 
+                        onClick={() => {
+                          setSelectedRug(product);
+                          setVisualizerOpen(true);
+                        }}
+                        variant="outline"
+                        className="flex-1"
+                        size="lg"
+                      >
+                        <Palette className="w-4 h-4 mr-2" />
+                        Visualize
+                      </Button>
+                      <Button 
+                        onClick={() => handleGrabIt(product)}
+                        disabled={isCheckingOut}
+                        className="flex-1"
+                        size="lg"
+                      >
+                        {isCheckingOut ? 'Loading...' : 'GRAB IT'}
+                      </Button>
+                    </div>
                   </>
                 ) : (
                   <div className="text-2xl font-bold text-red-600">SOLD OUT</div>
@@ -58,6 +76,17 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
           ))}
         </div>
       </div>
+
+      {visualizerOpen && selectedRug && (
+        <RugVisualizerPro
+          rugImage={selectedRug.image_url}
+          rugName={selectedRug.name}
+          onClose={() => {
+            setVisualizerOpen(false);
+            setSelectedRug(null);
+          }}
+        />
+      )}
     </section>
   );
 }
