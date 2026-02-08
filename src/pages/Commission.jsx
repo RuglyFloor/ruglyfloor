@@ -351,22 +351,22 @@ export default function Commission() {
                   <div className="mt-4">
                     <div className="grid grid-cols-3 gap-4">
                       {formData.inspirationImages.map((url, idx) => (
-                        <div key={idx} className="relative group">
-                          <img src={url} alt={`Inspiration ${idx + 1}`} className="w-full h-32 object-cover rounded" />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={() => {
-                              setSelectedImage(url);
-                              setVisualizerOpen(true);
-                            }}
-                          >
-                            <Palette className="w-4 h-4 mr-1" />
-                            Draw
-                          </Button>
-                        </div>
+                       <div key={idx} className="relative">
+                         <img src={url} alt={`Inspiration ${idx + 1}`} className="w-full h-32 object-cover rounded" />
+                         <Button
+                           type="button"
+                           variant="outline"
+                           size="sm"
+                           className="absolute bottom-2 right-2 bg-white"
+                           onClick={() => {
+                             setSelectedImage(url);
+                             setVisualizerOpen(true);
+                           }}
+                         >
+                           <Palette className="w-4 h-4 mr-1" />
+                           Draw
+                         </Button>
+                       </div>
                       ))}
                     </div>
                   </div>
