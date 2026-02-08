@@ -6,9 +6,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { base44 } from '@/api/base44Client';
-import { Upload, Loader2, CheckCircle2 } from 'lucide-react';
+import { Upload, Loader2, CheckCircle2, Palette } from 'lucide-react';
 import SEOHead from '../components/seo/SEOHead';
-import PaintApp from '../components/custom/PaintApp';
+import RugVisualizerPro from '../components/custom/RugVisualizerPro';
 
 export default function FixMyRug() {
   const [formData, setFormData] = useState({
@@ -30,8 +30,8 @@ export default function FixMyRug() {
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [showPaintApp, setShowPaintApp] = useState(false);
-  const [designPaintingUrl, setDesignPaintingUrl] = useState(null);
+  const [visualizerOpen, setVisualizerOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const sizesPricing = {
     '2x3': 4900,
@@ -390,76 +390,32 @@ export default function FixMyRug() {
                 {photos.length > 0 && (
                   <div className="grid grid-cols-3 gap-2 mt-3">
                     {photos.map((url, idx) => (
-                      <img key={idx} src={url} alt="Rug" className="w-full h-24 object-cover rounded" />
+                      <div key={idx} className="relative group">
+                        <img src={url} alt="Rug" className="w-full h-24 object-cover rounded" />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="absolute inset-0 m-auto w-fit h-fit opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => {
+                            setSelectedImage(url);
+                            setVisualizerOpen(true);
+                          }}
+                        >
+                          <Palette className="w-4 h-4 mr-1" />
+                          Draw
+                        </Button>
+                      </div>
                     ))}
                   </div>
                 )}
               </div>
 
-              {photos.length > 0 && (
-                <div>
-                  <Label>Paint Your Design Idea (Optional)</Label>
-                  <p className="text-xs text-gray-600 mb-2">Paint directly on your rug photo to show us what you want</p>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setShowPaintApp(!showPaintApp)}
-                    className="w-full"
-                  >
-                    {showPaintApp ? 'Hide Paint App' : 'Open Paint App'}
-                  </Button>
-                </div>
-              )}
+
             </CardContent>
           </Card>
 
-          {/* Paint App Section */}
-          {showPaintApp && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Paint Your Design Idea</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-4">
-                  <Label>Select a rug photo to paint on:</Label>
-                  <div className="grid grid-cols-3 gap-2 mt-2">
-                    {photos.filter(p => p !== designPaintingUrl).map((url, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => setDesignPaintingUrl(null)}
-                        className={`border-2 rounded overflow-hidden hover:border-blue-500 transition-all ${
-                          designPaintingUrl === null ? 'border-blue-500' : 'border-gray-300'
-                        }`}
-                      >
-                        <img src={url} alt="Rug" className="w-full h-24 object-cover" />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <PaintApp 
-                  rugSize={formData.rug_size}
-                  initialImage={photos.filter(p => p !== designPaintingUrl)[0]}
-                  onSaveImage={(url) => {
-                    setDesignPaintingUrl(url);
-                    if (!photos.includes(url)) {
-                      setPhotos([...photos, url]);
-                    }
-                  }}
-                  availableColors={[
-                    { name: 'Black', hex: '#000000' },
-                    { name: 'White', hex: '#FFFFFF' },
-                    { name: 'Red', hex: '#EF4444' },
-                    { name: 'Blue', hex: '#3B82F6' },
-                    { name: 'Green', hex: '#10B981' },
-                    { name: 'Yellow', hex: '#F59E0B' },
-                    { name: 'Purple', hex: '#8B5CF6' },
-                    { name: 'Pink', hex: '#EC4899' }
-                  ]}
-                />
-              </CardContent>
-            </Card>
-          )}
+
 
           {/* Services */}
           <Card>
@@ -508,6 +464,17 @@ export default function FixMyRug() {
             </CardContent>
           </Card>
         </form>
+
+        {visualizerOpen && selectedImage && (
+          <RugVisualizerPro
+            rugImage={selectedImage}
+            rugName="My Rug"
+            onClose={() => {
+              setVisualizerOpen(false);
+              setSelectedImage(null);
+            }}
+          />
+        )}
       </div>
     </div>
   );

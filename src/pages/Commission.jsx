@@ -6,10 +6,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Upload, Loader2, CheckCircle, Clock, Zap } from 'lucide-react';
+import { Upload, Loader2, CheckCircle, Clock, Zap, Palette } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import SEOHead from '../components/seo/SEOHead';
+import RugVisualizerPro from '../components/custom/RugVisualizerPro';
 
 export default function Commission() {
   const navigate = useNavigate();
@@ -19,6 +20,8 @@ export default function Commission() {
   const [couponCode, setCouponCode] = useState('');
   const [couponValidation, setCouponValidation] = useState(null);
   const [validatingCoupon, setValidatingCoupon] = useState(false);
+  const [visualizerOpen, setVisualizerOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
   
   const [formData, setFormData] = useState({
     // Design details
@@ -345,10 +348,27 @@ export default function Commission() {
                   </label>
                 </div>
                 {formData.inspirationImages.length > 0 && (
-                  <div className="grid grid-cols-3 gap-4 mt-4">
-                    {formData.inspirationImages.map((url, idx) => (
-                      <img key={idx} src={url} alt={`Inspiration ${idx + 1}`} className="w-full h-32 object-cover rounded" />
-                    ))}
+                  <div className="mt-4">
+                    <div className="grid grid-cols-3 gap-4">
+                      {formData.inspirationImages.map((url, idx) => (
+                        <div key={idx} className="relative group">
+                          <img src={url} alt={`Inspiration ${idx + 1}`} className="w-full h-32 object-cover rounded" />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => {
+                              setSelectedImage(url);
+                              setVisualizerOpen(true);
+                            }}
+                          >
+                            <Palette className="w-4 h-4 mr-1" />
+                            Draw
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
@@ -502,6 +522,17 @@ export default function Commission() {
             You'll receive a detailed estimate within 48 hours
           </p>
         </form>
+
+        {visualizerOpen && selectedImage && (
+          <RugVisualizerPro
+            rugImage={selectedImage}
+            rugName="Design Concept"
+            onClose={() => {
+              setVisualizerOpen(false);
+              setSelectedImage(null);
+            }}
+          />
+        )}
       </div>
     </div>
   );
