@@ -547,6 +547,20 @@ function AdminMarketingContent() {
                     </div>
                     <ExternalLink className="w-4 h-4 text-gray-400" />
                   </a>
+
+                  <a
+                    href="https://www.yelp.com/biz/rugly-floor"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    <Award className="w-6 h-6 text-red-600" />
+                    <div className="flex-1">
+                      <div className="font-semibold">Yelp</div>
+                      <div className="text-sm text-gray-500">Rugly Floor</div>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-gray-400" />
+                  </a>
                 </div>
 
                 {socialMessages.length > 0 && (
