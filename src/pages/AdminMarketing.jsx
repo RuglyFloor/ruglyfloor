@@ -505,6 +505,48 @@ function AdminMarketingContent() {
                     </div>
                     <ExternalLink className="w-4 h-4 text-gray-400" />
                   </a>
+
+                  <a
+                    href="https://www.youtube.com/@ruglyfloor"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    <Youtube className="w-6 h-6 text-red-600" />
+                    <div className="flex-1">
+                      <div className="font-semibold">YouTube</div>
+                      <div className="text-sm text-gray-500">@ruglyfloor</div>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-gray-400" />
+                  </a>
+
+                  <a
+                    href="https://www.reddit.com/user/ruglyfloor"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    <MessageSquare className="w-6 h-6 text-orange-600" />
+                    <div className="flex-1">
+                      <div className="font-semibold">Reddit</div>
+                      <div className="text-sm text-gray-500">u/ruglyfloor</div>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-gray-400" />
+                  </a>
+
+                  <a
+                    href="https://business.google.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    <TrendingUp className="w-6 h-6 text-blue-600" />
+                    <div className="flex-1">
+                      <div className="font-semibold">Google Business</div>
+                      <div className="text-sm text-gray-500">Rugly Floor</div>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-gray-400" />
+                  </a>
                 </div>
 
                 {socialMessages.length > 0 && (
