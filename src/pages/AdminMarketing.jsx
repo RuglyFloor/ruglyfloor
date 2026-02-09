@@ -12,7 +12,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { 
   TrendingUp, Tag, Image, MessageSquare, BarChart3, 
   Facebook, Instagram, Twitter, Youtube, Sparkles, 
-  AlertTriangle, ExternalLink, Plus, Edit, Trash2, Copy
+  AlertTriangle, ExternalLink, Plus, Edit, Trash2, Copy,
+  Award, ShoppingBag, Package
 } from 'lucide-react';
 import AdminProtected from '../components/AdminProtected';
 
