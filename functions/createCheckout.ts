@@ -182,13 +182,12 @@ Deno.serve(async (req) => {
 
     // Create Stripe checkout session
     const origin = req.headers.get('origin') || 'https://ruglyfloors.com';
-    const session = await stripe.checkout.sessions.create({
+    const sessionConfig = {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
       success_url: `${origin}/Success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/Cart?canceled=true`,
-      customer_email: customerInfo.email,
       metadata: {
         base44_app_id: Deno.env.get('BASE44_APP_ID'),
         order_id: order.id,
@@ -197,7 +196,14 @@ Deno.serve(async (req) => {
       shipping_address_collection: {
         allowed_countries: ['US', 'CA'],
       }
-    });
+    };
+
+    // Only add customer_email if provided and valid
+    if (customerInfo.email && customerInfo.email.includes('@')) {
+      sessionConfig.customer_email = customerInfo.email;
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionConfig);
 
     return Response.json({ 
       sessionId: session.id,
