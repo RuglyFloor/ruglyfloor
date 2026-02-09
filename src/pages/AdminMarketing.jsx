@@ -561,6 +561,34 @@ function AdminMarketingContent() {
                     </div>
                     <ExternalLink className="w-4 h-4 text-gray-400" />
                   </a>
+
+                  <a
+                    href="https://www.etsy.com/shop/ruglyfloor"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    <ShoppingBag className="w-6 h-6 text-orange-500" />
+                    <div className="flex-1">
+                      <div className="font-semibold">Etsy</div>
+                      <div className="text-sm text-gray-500">Rugly Floor Shop</div>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-gray-400" />
+                  </a>
+
+                  <a
+                    href="https://ruglyfloor.myshopify.com/admin"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    <Package className="w-6 h-6 text-green-600" />
+                    <div className="flex-1">
+                      <div className="font-semibold">Shopify</div>
+                      <div className="text-sm text-gray-500">Store Admin</div>
+                    </div>
+                    <ExternalLink className="w-4 h-4 text-gray-400" />
+                  </a>
                 </div>
 
                 {socialMessages.length > 0 && (
