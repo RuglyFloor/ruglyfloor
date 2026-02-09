@@ -234,15 +234,35 @@ function AdminCatalogContent() {
     );
   };
 
+  const syncFromNotionMutation = useMutation({
+    mutationFn: () => base44.functions.invoke('syncCatalogFromNotion'),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['catalog']);
+      alert('Catalog synced from Notion successfully!');
+    },
+    onError: (error) => {
+      alert('Failed to sync: ' + error.message);
+    }
+  });
+
   return (
     <div className="min-h-screen py-12 px-6 bg-gray-50">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Base Rug Catalog</h1>
-          <Button onClick={() => setShowListingForm(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            Add Listing
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={() => syncFromNotionMutation.mutate()}
+              disabled={syncFromNotionMutation.isLoading}
+              variant="outline"
+            >
+              {syncFromNotionMutation.isLoading ? 'Syncing...' : 'Sync from Notion'}
+            </Button>
+            <Button onClick={() => setShowListingForm(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Listing
+            </Button>
+          </div>
         </div>
 
         {showListingForm && (
@@ -264,24 +284,46 @@ function AdminCatalogContent() {
               <Card key={listing.id}>
                 <CardHeader>
                   <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <Package className="w-5 h-5" />
-                        {listing.listing_name}
-                      </CardTitle>
-                      <p className="text-sm text-gray-500 mt-1">
-                        {listing.vendor} • {listing.active ? 'Active' : 'Inactive'}
-                      </p>
-                      {listing.listing_url && (
-                        <a
-                          href={listing.listing_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-xs text-blue-600 hover:underline"
-                        >
-                          View on {listing.vendor}
-                        </a>
-                      )}
+                    <div className="flex-1">
+                      <div className="flex items-start gap-4">
+                        {listing.main_image && (
+                          <img 
+                            src={listing.main_image} 
+                            alt={listing.option || listing.listing_name}
+                            className="w-24 h-24 object-cover rounded"
+                          />
+                        )}
+                        <div className="flex-1">
+                          <CardTitle className="flex items-center gap-2">
+                            <Package className="w-5 h-5" />
+                            {listing.option || listing.listing_name}
+                          </CardTitle>
+                          <p className="text-sm text-gray-500 mt-1">
+                            {listing.quality_tier || listing.vendor} • {listing.active ? '✅ Active' : '❌ Inactive'}
+                          </p>
+                          {listing.color && (
+                            <p className="text-xs text-gray-600 mt-1">Color: {listing.color}</p>
+                          )}
+                          {listing.sizes_available && (
+                            <p className="text-xs text-gray-600">Sizes: {listing.sizes_available}</p>
+                          )}
+                          {(listing.my_cost || listing.retail_price_150) && (
+                            <p className="text-xs text-gray-600 mt-1">
+                              Cost: ${listing.my_cost} • Retail: ${listing.retail_price_150}
+                            </p>
+                          )}
+                          {listing.amazon_url && (
+                            <a
+                              href={listing.amazon_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-blue-600 hover:underline"
+                            >
+                              View on Amazon
+                            </a>
+                          )}
+                        </div>
+                      </div>
                     </div>
                     <div className="flex gap-2">
                       <Button
