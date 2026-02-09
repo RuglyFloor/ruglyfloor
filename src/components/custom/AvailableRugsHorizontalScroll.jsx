@@ -2,6 +2,17 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 
 export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, isCheckingOut }) {
+  if (!products || products.length === 0) {
+    return (
+      <section className="bg-black py-20 px-6">
+        <div className="max-w-[1600px] mx-auto">
+          <h2 className="text-5xl font-bold text-white mb-16 text-center">Available Rugs</h2>
+          <div className="text-center text-white text-xl">Loading rugs...</div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="bg-black py-20 px-6">
       <div className="max-w-[1600px] mx-auto">
