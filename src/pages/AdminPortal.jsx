@@ -60,6 +60,13 @@ export default function AdminPortal() {
       badge: orderCount
     },
     {
+      title: 'Marketing',
+      icon: TrendingUp,
+      description: 'SEO, discounts, social media & analytics',
+      page: 'AdminMarketing',
+      color: 'bg-pink-500'
+    },
+    {
       title: 'Fix My Rug',
       icon: Package,
       description: 'Manage rug repair and restoration orders',

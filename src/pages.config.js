@@ -79,6 +79,7 @@ import SMSConsent from './pages/SMSConsent';
 import Shop from './pages/Shop';
 import Success from './pages/Success';
 import TrackOrder from './pages/TrackOrder';
+import AdminMarketing from './pages/AdminMarketing';
 import __Layout from './Layout.jsx';
 
 
@@ -115,6 +116,7 @@ export const PAGES = {
     "Shop": Shop,
     "Success": Success,
     "TrackOrder": TrackOrder,
+    "AdminMarketing": AdminMarketing,
 }
 
 export const pagesConfig = {
