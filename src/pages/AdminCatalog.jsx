@@ -16,6 +16,7 @@ function AdminCatalogContent() {
   const [showListingForm, setShowListingForm] = useState(false);
   const [editingVariant, setEditingVariant] = useState(null);
   const [showVariantForm, setShowVariantForm] = useState(null);
+  const [quickEdit, setQuickEdit] = useState(null);
 
   const { data: listings = [] } = useQuery({
     queryKey: ['catalog'],
@@ -69,6 +70,11 @@ function AdminCatalogContent() {
   const deleteVariantMutation = useMutation({
     mutationFn: (id) => base44.entities.CatalogVariant.delete(id),
     onSuccess: () => queryClient.invalidateQueries(['catalog-variants'])
+  });
+
+  const quickUpdateMutation = useMutation({
+    mutationFn: ({ id, field, value }) => base44.entities.Catalog.update(id, { [field]: value }),
+    onSuccess: () => queryClient.invalidateQueries(['catalog'])
   });
 
   const ListingForm = ({ listing, onClose }) => {
@@ -429,6 +435,17 @@ function AdminCatalogContent() {
                       </div>
                     </div>
                     <div className="flex gap-2">
+                      <Switch
+                        checked={listing.active}
+                        onCheckedChange={(v) => quickUpdateMutation.mutate({ id: listing.id, field: 'active', value: v })}
+                      />
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setQuickEdit(listing.id)}
+                      >
+                        Quick Edit
+                      </Button>
                       <Button
                         size="sm"
                         variant="outline"
@@ -451,6 +468,48 @@ function AdminCatalogContent() {
                   </div>
                 </CardHeader>
                 <CardContent>
+                  {quickEdit === listing.id && (
+                    <div className="mb-6 p-4 border rounded-lg bg-blue-50">
+                      <h4 className="font-semibold mb-3">Quick Edit</h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <Label className="text-xs">My Cost ($)</Label>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            defaultValue={listing.my_cost}
+                            onBlur={(e) => quickUpdateMutation.mutate({ id: listing.id, field: 'my_cost', value: parseFloat(e.target.value) || 0 })}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Retail Price ($)</Label>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            defaultValue={listing.retail_price_150}
+                            onBlur={(e) => quickUpdateMutation.mutate({ id: listing.id, field: 'retail_price_150', value: parseFloat(e.target.value) || 0 })}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Quality Tier</Label>
+                          <Input
+                            defaultValue={listing.quality_tier}
+                            onBlur={(e) => quickUpdateMutation.mutate({ id: listing.id, field: 'quality_tier', value: e.target.value })}
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs">Sizes Available</Label>
+                          <Input
+                            defaultValue={listing.sizes_available}
+                            onBlur={(e) => quickUpdateMutation.mutate({ id: listing.id, field: 'sizes_available', value: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                      <Button size="sm" variant="outline" className="mt-3" onClick={() => setQuickEdit(null)}>
+                        Done
+                      </Button>
+                    </div>
+                  )}
                   <div className="mb-4">
                     <Button
                       size="sm"
