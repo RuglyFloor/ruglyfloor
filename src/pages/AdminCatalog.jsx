@@ -73,12 +73,23 @@ function AdminCatalogContent() {
 
   const ListingForm = ({ listing, onClose }) => {
     const [formData, setFormData] = useState(listing || {
+      option: '',
       vendor: 'Amazon',
       listing_name: '',
       listing_url: '',
       active: true,
+      main_image: '',
+      color_material_swatch: '',
+      texture_color_closeup: '',
+      interior_lifestyle_image: '',
+      quality_tier: '',
+      sizes_available: '',
+      color: '',
+      my_cost: 0,
+      retail_price_150: 0,
       last_updated: new Date().toISOString()
     });
+    const [uploading, setUploading] = useState({});
 
     const handleSubmit = (e) => {
       e.preventDefault();
@@ -89,6 +100,18 @@ function AdminCatalogContent() {
       }
     };
 
+    const handleImageUpload = async (field, file) => {
+      setUploading({ ...uploading, [field]: true });
+      try {
+        const { data } = await base44.integrations.Core.UploadFile({ file });
+        setFormData({ ...formData, [field]: data.file_url });
+      } catch (error) {
+        alert('Upload failed: ' + error.message);
+      } finally {
+        setUploading({ ...uploading, [field]: false });
+      }
+    };
+
     return (
       <Card className="mb-6">
         <CardHeader>
@@ -96,42 +119,122 @@ function AdminCatalogContent() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label>Vendor</Label>
-              <Select value={formData.vendor} onValueChange={(v) => setFormData({...formData, vendor: v})}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Amazon">Amazon</SelectItem>
-                  <SelectItem value="Costco">Costco</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Option Name *</Label>
+                <Input
+                  required
+                  value={formData.option}
+                  onChange={(e) => setFormData({...formData, option: e.target.value})}
+                  placeholder="e.g., Ivory Shag 5x7"
+                />
+              </div>
+              <div>
+                <Label>Quality Tier</Label>
+                <Input
+                  value={formData.quality_tier}
+                  onChange={(e) => setFormData({...formData, quality_tier: e.target.value})}
+                  placeholder="e.g., Crugly, Rugly"
+                />
+              </div>
             </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Color</Label>
+                <Input
+                  value={formData.color}
+                  onChange={(e) => setFormData({...formData, color: e.target.value})}
+                  placeholder="e.g., Ivory, Gray"
+                />
+              </div>
+              <div>
+                <Label>Sizes Available</Label>
+                <Input
+                  value={formData.sizes_available}
+                  onChange={(e) => setFormData({...formData, sizes_available: e.target.value})}
+                  placeholder="e.g., 2x3, 3x5, 4x6"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>My Cost ($)</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={formData.my_cost}
+                  onChange={(e) => setFormData({...formData, my_cost: parseFloat(e.target.value) || 0})}
+                />
+              </div>
+              <div>
+                <Label>Retail Price ($)</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={formData.retail_price_150}
+                  onChange={(e) => setFormData({...formData, retail_price_150: parseFloat(e.target.value) || 0})}
+                />
+              </div>
+            </div>
+
             <div>
-              <Label>Listing Name</Label>
+              <Label>Amazon URL</Label>
               <Input
-                required
-                value={formData.listing_name}
-                onChange={(e) => setFormData({...formData, listing_name: e.target.value})}
-                placeholder="e.g., nuLOOM Moroccan Blythe Area Rug"
+                value={formData.amazon_url || ''}
+                onChange={(e) => setFormData({...formData, amazon_url: e.target.value})}
+                placeholder="https://amazon.com/..."
               />
             </div>
-            <div>
-              <Label>Listing URL</Label>
-              <Input
-                value={formData.listing_url}
-                onChange={(e) => setFormData({...formData, listing_url: e.target.value})}
-                placeholder="https://..."
-              />
+
+            <div className="border-t pt-4">
+              <h3 className="font-semibold mb-3">Images</h3>
+              <div className="space-y-3">
+                {[
+                  { field: 'main_image', label: 'Main Image' },
+                  { field: 'interior_lifestyle_image', label: 'Interior/Lifestyle Image' },
+                  { field: 'texture_color_closeup', label: 'Texture/Color Close-up' },
+                  { field: 'color_material_swatch', label: 'Color/Material Swatch' }
+                ].map(({ field, label }) => (
+                  <div key={field}>
+                    <Label>{label}</Label>
+                    <div className="flex gap-2 items-center mt-1">
+                      {formData[field] && (
+                        <img src={formData[field]} alt={label} className="w-16 h-16 object-cover rounded" />
+                      )}
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleImageUpload(field, file);
+                        }}
+                        disabled={uploading[field]}
+                      />
+                      {uploading[field] && <span className="text-sm text-gray-500">Uploading...</span>}
+                      {formData[field] && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setFormData({...formData, [field]: ''})}
+                        >
+                          Clear
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
+
             <div className="flex items-center gap-2">
               <Switch
                 checked={formData.active}
                 onCheckedChange={(v) => setFormData({...formData, active: v})}
               />
-              <Label>Active</Label>
+              <Label>Active (show on site)</Label>
             </div>
             <div className="flex gap-2">
               <Button type="submit">Save</Button>
