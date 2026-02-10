@@ -9,15 +9,17 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Notion not connected' }, { status: 401 });
     }
 
-    // Use the Buildable Options data source
-    const dataSourceId = "b2e5eb8c-fa0d-490b-b424-12157c2986d0";
-    const requestUrl = `https://api.notion.com/v1/databases/${dataSourceId}/query`;
+    // Query the parent database ID, then filter by data source
+    const databaseId = "15bd1a8a-6a57-4182-995f-890991a18df0"; // Parent database
+    const dataSourceId = "b2e5eb8c-fa0d-490b-b424-12157c2986d0"; // Buildable Options data source
+    const requestUrl = `https://api.notion.com/v1/databases/${databaseId}/query`;
 
-    console.log('Fetching catalog from Notion data source...');
+    console.log('Fetching catalog from Notion parent database...');
     console.log('Request URL:', requestUrl);
     console.log('API Version: 2025-09-03');
+    console.log('Will filter for data source:', dataSourceId);
 
-    // Fetch catalog data from Notion data source
+    // Fetch catalog data from Notion parent database
     const response = await fetch(requestUrl, {
       method: 'POST',
       headers: {
