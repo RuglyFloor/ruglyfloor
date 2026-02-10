@@ -245,6 +245,7 @@ export default function CustomBuilder() {
   }, [config.paintColor, config.secondPaintColor, config.hasSecondColor]);
   const [uploading, setUploading] = useState(false);
   const [isRush, setIsRush] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
