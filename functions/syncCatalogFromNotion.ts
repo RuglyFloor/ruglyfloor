@@ -54,7 +54,7 @@ Deno.serve(async (req) => {
     const placeholder = 'https://via.placeholder.com/400x300?text=No+Image';
 
     // Process each row from Notion
-    for (const page of data.results) {
+    for (const page of buildableOptionsRows) {
       const props = page.properties;
       
       // Get all fields
