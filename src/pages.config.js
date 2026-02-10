@@ -72,7 +72,6 @@ import CustomBuilderDrawer from './pages/CustomBuilderDrawer';
 import CustomBuilderSimple from './pages/CustomBuilderSimple';
 import CustomBuilderTabs from './pages/CustomBuilderTabs';
 import FixMyRug from './pages/FixMyRug';
-import Home from './pages/Home';
 import NotionSync from './pages/NotionSync';
 import Orders from './pages/Orders';
 import Policies from './pages/Policies';
@@ -81,6 +80,7 @@ import SMSConsent from './pages/SMSConsent';
 import Shop from './pages/Shop';
 import Success from './pages/Success';
 import TrackOrder from './pages/TrackOrder';
+import Home from './pages/Home';
 import __Layout from './Layout.jsx';
 
 
@@ -110,7 +110,6 @@ export const PAGES = {
     "CustomBuilderSimple": CustomBuilderSimple,
     "CustomBuilderTabs": CustomBuilderTabs,
     "FixMyRug": FixMyRug,
-    "Home": Home,
     "NotionSync": NotionSync,
     "Orders": Orders,
     "Policies": Policies,
@@ -119,6 +118,7 @@ export const PAGES = {
     "Shop": Shop,
     "Success": Success,
     "TrackOrder": TrackOrder,
+    "Home": Home,
 }
 
 export const pagesConfig = {

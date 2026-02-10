@@ -239,15 +239,24 @@ export default function Home() {
           <div className="relative h-96 bg-slate-100 rounded-lg overflow-hidden mb-6">
             {[
             {
-              image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/40e12a1d2_Screenshot2025-12-19at235301.png",
+              images: [
+                "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/e755c95fb_Screenshot2026-02-09at121804.png",
+                "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/5e6feb323_Screenshot2026-02-09at123503.png",
+                "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/06609f572_Screenshot2026-01-09at110936.png",
+                "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png"
+              ],
               caption: "Step One: Decide on what you want on your floor"
             },
             {
-              image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg",
+              images: [
+                "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg"
+              ],
               caption: "Step Two: We draft stencils or hand dye your design (depending on complexity and need for line) and we create your vision"
             },
             {
-              image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png",
+              images: [
+                "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png"
+              ],
               caption: "Step Three: Your Crugly is shipped from our studio to your home"
             }].
             map((step, index) =>
@@ -257,11 +266,15 @@ export default function Home() {
               currentStep === index ? 'opacity-100' : 'opacity-0'}`
               }
               style={{ willChange: 'opacity' }}>
-
-                <img
-                src={step.image}
-                alt={step.caption}
-                className="w-full h-full object-cover" />
+                <div className="w-full h-full flex items-center justify-center gap-3 p-4">
+                  {step.images.map((img, imgIndex) => (
+                    <img
+                      key={imgIndex}
+                      src={img}
+                      alt={`${step.caption} - image ${imgIndex + 1}`}
+                      className="h-full object-contain rounded-lg shadow-lg flex-1" />
+                  ))}
+                </div>
               </div>
             )}
           </div>
