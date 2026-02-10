@@ -1043,6 +1043,16 @@ export default function CustomBuilder() {
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
+                {/* Help Button */}
+                <div className="flex justify-end mb-4">
+                  <button
+                    onClick={() => setShowHelpModal(true)}
+                    className="text-blue-600 hover:text-blue-700 text-sm font-medium underline"
+                  >
+                    Getting stuck? Click here for help →
+                  </button>
+                </div>
+
                 {/* Mode Selection */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                   {(config.qualityTier === 'good' || config.qualityTier === 'highend') && (
