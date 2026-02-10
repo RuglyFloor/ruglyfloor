@@ -807,7 +807,8 @@ export default function CustomBuilder() {
               <CardContent className="space-y-8">
                 {/* Base Color */}
                 <div>
-                  <Label className="text-xl font-bold mb-4 block">1. Rug Base Color</Label>
+                  <Label className="text-xl font-bold mb-2 block">1. Rug Base Color</Label>
+                  <p className="text-sm text-gray-600 mb-4">This is the color of the actual rug. You'll choose your paint color next.</p>
                   {getAvailableBaseColors().length === 0 ? (
                     <div className="text-sm text-gray-500 p-4 border border-gray-200 rounded-lg">
                       No base rug colors available. Please check catalog inventory.
