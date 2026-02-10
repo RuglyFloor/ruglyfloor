@@ -99,18 +99,52 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
                       }`}
                     >
                       {/* Image */}
-                      <div className="relative w-[90%] h-[90%] rounded-xl overflow-hidden shadow-2xl">
-                        <img
-                          src={product.image_url}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
-                        />
+                      <div className="relative w-[90%] h-[90%] rounded-xl overflow-hidden shadow-2xl group">
+                        {isCenter && getActiveImages().length > 0 && (
+                          <img
+                            src={getActiveImages()[imageIndex].url}
+                            alt={product.name}
+                            className="w-full h-full object-cover transition-opacity duration-300"
+                          />
+                        )}
+                        {!isCenter && (
+                          <img
+                            src={product.image_url || (product.all_images?.[0]?.url)}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
                         {!product.in_stock && (
                           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                             <div className="bg-red-600 text-white font-bold text-3xl px-8 py-4 rounded-lg">
                               SOLD OUT
                             </div>
                           </div>
+                        )}
+                        {/* Image Navigation (Center Only) */}
+                        {isCenter && getActiveImages().length > 1 && (
+                          <>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handlePrevImage();
+                              }}
+                              className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-900 rounded-full p-2 shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                              aria-label="Previous image"
+                            >
+                              <ChevronLeft className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleNextImage();
+                              }}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-900 rounded-full p-2 shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                              aria-label="Next image"
+                            >
+                              <ChevronRight className="w-5 h-5" />
+                            </button>
+                          </>
                         )}
                       </div>
 
