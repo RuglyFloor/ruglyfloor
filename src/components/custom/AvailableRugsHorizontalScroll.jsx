@@ -8,6 +8,7 @@ import { createPageUrl } from '../../utils';
 export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, isCheckingOut }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(0);
+  const [imageIndex, setImageIndex] = useState(0);
   const navigate = useNavigate();
   const containerRef = useRef(null);
 
