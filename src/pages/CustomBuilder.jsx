@@ -505,7 +505,7 @@ export default function CustomBuilder() {
                             {tier.washable ? (
                               <CheckCircle className="w-5 h-5 text-green-600 mx-auto" />
                             ) : (
-                              <span className="text-gray-400">—</span>
+                              <span className="text-red-600 font-semibold">✕ Dry Clean Only</span>
                             )}
                           </td>
                         ))}
