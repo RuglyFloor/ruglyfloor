@@ -241,7 +241,7 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
             </div>
           </motion.div>
 
-          {/* Indicators */}
+          {/* Product Indicators */}
           <div className="flex justify-center gap-2 mt-8">
             {products.map((_, i) => (
               <button
@@ -249,6 +249,7 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
                 onClick={() => {
                   setDirection(i > activeIndex ? 1 : -1);
                   setActiveIndex(i);
+                  setImageIndex(0);
                 }}
                 className={`h-2 rounded-full transition-all duration-300 ${
                   i === activeIndex ? 'bg-blue-600 w-8' : 'bg-gray-300 w-2 hover:bg-gray-400'
@@ -257,6 +258,22 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
               />
             ))}
           </div>
+
+          {/* Image Indicators (for current product) */}
+          {getActiveImages().length > 1 && (
+            <div className="flex justify-center gap-1.5 mt-4">
+              {getActiveImages().map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setImageIndex(i)}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    i === imageIndex ? 'bg-blue-400 w-6' : 'bg-gray-300 w-1.5 hover:bg-gray-400'
+                  }`}
+                  aria-label={`View image ${i + 1}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>
