@@ -26,11 +26,33 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
   const handleNext = () => {
     setDirection(1);
     setActiveIndex((prev) => (prev + 1) % products.length);
+    setImageIndex(0);
   };
 
   const handlePrev = () => {
     setDirection(-1);
     setActiveIndex((prev) => (prev - 1 + products.length) % products.length);
+    setImageIndex(0);
+  };
+
+  const handleNextImage = () => {
+    const images = getActiveImages();
+    setImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const handlePrevImage = () => {
+    const images = getActiveImages();
+    setImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const getActiveImages = () => {
+    const product = products[activeIndex];
+    if (product.all_images && product.all_images.length > 0) {
+      return product.all_images.filter(img => img.selected).length > 0 
+        ? product.all_images.filter(img => img.selected)
+        : product.all_images;
+    }
+    return product.image_url ? [{ url: product.image_url }] : [];
   };
 
   const getItemIndex = (i) => {
