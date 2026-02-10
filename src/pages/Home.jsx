@@ -256,11 +256,12 @@ export default function Home() {
               caption: "Step Two: We draft stencils or hand dye your design (depending on complexity and need for line) and we create your vision"
             },
             {
-              images: [
-                "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png"
-              ],
-              caption: "Step Three: Your Crugly is shipped from our studio to your home"
-            }].
+               images: [
+                 "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png",
+                 "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/3c3b3497d_finishedproduct.png"
+               ],
+               caption: "Step Three: Your Crugly is shipped from our studio to your home"
+             }].
             map((step, index) =>
             <div
               key={index}
