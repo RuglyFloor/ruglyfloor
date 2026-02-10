@@ -567,6 +567,20 @@ export default function CustomBuilder() {
                         ))}
                       </tr>
                       <tr className="border-b border-gray-200">
+                        <td className="p-4 font-medium text-gray-700">Care Instructions</td>
+                        {QUALITY_TIERS.map((tier) => (
+                          <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
+                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
+                          }`}>
+                            {(tier.id === 'budget' || tier.id === 'good') ? (
+                              <span className="text-red-600 font-semibold">✕ Dry Clean Only</span>
+                            ) : (
+                              'Dry Clean/Professional Only'
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                      <tr className="border-b border-gray-200">
                         <td className="p-4 font-medium text-gray-700">Visual Details</td>
                         {QUALITY_TIERS.map((tier) => (
                           <td key={tier.id} className={`p-4 text-center ${
