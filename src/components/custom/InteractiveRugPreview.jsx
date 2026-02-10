@@ -1,15 +1,24 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 
 export default function InteractiveRugPreview({ 
   designUrl, 
   baseColor, 
   paintColor, 
   size,
+  qualityTier,
   opacity = 0.9,
   placeholder = false
 }) {
   const canvasRef = useRef(null);
+  
+  // Fetch catalog listings to get material swatch
+  const { data: catalogListings = [] } = useQuery({
+    queryKey: ['catalog'],
+    queryFn: () => base44.entities.Catalog.list()
+  });
 
   useEffect(() => {
     if (!canvasRef.current) return;
