@@ -387,7 +387,7 @@ export default function CustomBuilder() {
                     background: step > s.num ? '#1f2937' : '#e5e7eb'
                   }} />
                 )}
-              </div>
+              </button>
             ))}
           </div>
         </div>
