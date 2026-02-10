@@ -160,12 +160,8 @@ export default function CustomBuilder() {
 
   // Get available base colors from catalog
   const getAvailableBaseColors = () => {
-    const activeVariants = catalogVariants.filter(v => {
-      const listing = catalogListings.find(l => l.id === v.catalog_id);
-      return listing?.active && v.in_stock;
-    });
-    
-    const uniqueColors = [...new Set(activeVariants.map(v => v.color))];
+    const activeListings = catalogListings.filter(l => l.active);
+    const uniqueColors = [...new Set(activeListings.map(l => l.color).filter(Boolean))];
     return uniqueColors.map(color => ({
       name: color,
       hex: getColorHex(color),
