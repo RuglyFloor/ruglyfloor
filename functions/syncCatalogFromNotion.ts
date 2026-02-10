@@ -9,46 +9,35 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Notion not connected' }, { status: 401 });
     }
 
-    // Query the parent database ID, then filter by data source
-    const databaseId = "15bd1a8a-6a57-4182-995f-890991a18df0"; // Parent database
+    // Query the data source directly (Notion API 2025-09-03)
     const dataSourceId = "b2e5eb8c-fa0d-490b-b424-12157c2986d0"; // Buildable Options data source
-    const requestUrl = `https://api.notion.com/v1/databases/${databaseId}/query`;
+    const requestUrl = `https://api.notion.com/v1/data_sources/${dataSourceId}/query`;
 
-    console.log('Fetching catalog from Notion parent database...');
+    console.log('Fetching catalog from Notion data source...');
     console.log('Request URL:', requestUrl);
     console.log('API Version: 2025-09-03');
-    console.log('Will filter for data source:', dataSourceId);
+    console.log('Data Source ID:', dataSourceId);
 
-    // Fetch catalog data from Notion parent database
+    // Fetch catalog data from Notion data source
     const response = await fetch(requestUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${notionToken}`,
-        'Notion-Version': '2022-06-28',
+        'Notion-Version': '2025-09-03',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({})
+      body: JSON.stringify({ page_size: 100 })
     });
 
     if (!response.ok) {
       const error = await response.text();
       console.error('Notion API error:', error);
+      console.error('Final URL sent:', requestUrl);
       return Response.json({ error: 'Failed to fetch from Notion', details: error }, { status: 500 });
     }
 
     const data = await response.json();
-    console.log(`Fetched ${data.results.length} total rows from Notion`);
-
-    // Filter to only Buildable Options data source rows
-    const buildableOptionsRows = data.results.filter(page => {
-      // Check if this row belongs to the Buildable Options data source
-      // The API may return this in page.parent or a data_source field
-      return page.parent?.database_id === dataSourceId || 
-             page.data_source_id === dataSourceId ||
-             !page.data_source_id; // Fallback if no filtering needed
-    });
-
-    console.log(`Filtered to ${buildableOptionsRows.length} Buildable Options rows`);
+    console.log(`Fetched ${data.results.length} rows from Notion data source`);
 
     const catalogItems = [];
     const placeholder = 'https://via.placeholder.com/400x300?text=No+Image';
