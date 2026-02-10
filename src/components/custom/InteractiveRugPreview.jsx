@@ -88,44 +88,30 @@ export default function InteractiveRugPreview({
     
     if (!designUrl) return;
 
-    // Draw rug base
-    const rugWidth = canvas.width * 0.8;
-    const rugHeight = canvas.height * 0.8;
+    // Setup canvas dimensions
+    const rugWidth = canvas.width * 0.85;
+    const rugHeight = canvas.height * 0.85;
     const rugX = (canvas.width - rugWidth) / 2;
     const rugY = (canvas.height - rugHeight) / 2;
 
     // Background
-    ctx.fillStyle = '#f3f4f6';
+    ctx.fillStyle = '#f9fafb';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Rug shadow
-    ctx.fillStyle = 'rgba(0,0,0,0.15)';
-    ctx.fillRect(rugX + 10, rugY + 10, rugWidth, rugHeight);
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.fillRect(rugX + 8, rugY + 8, rugWidth, rugHeight);
 
-    // Rug base color
-    ctx.fillStyle = baseColor;
-    ctx.fillRect(rugX, rugY, rugWidth, rugHeight);
+    // Load actual rug photo from catalog
+    const baseRugPhotoUrl = getBaseRugPhoto();
     
-    // Load material texture
-    const materialSwatchUrl = getMaterialSwatchUrl();
-    if (materialSwatchUrl) {
-      const textureImg = new Image();
-      textureImg.crossOrigin = 'anonymous';
-      textureImg.onload = () => {
-        // Apply texture overlay with pattern
-        const pattern = ctx.createPattern(textureImg, 'repeat');
-        if (pattern) {
-          ctx.save();
-          ctx.globalAlpha = 0.15;
-          ctx.fillStyle = pattern;
-          ctx.fillRect(rugX, rugY, rugWidth, rugHeight);
-          ctx.restore();
-        }
-      };
-      textureImg.src = materialSwatchUrl;
+    if (!baseRugPhotoUrl) {
+      // Fallback if no catalog photo found
+      ctx.fillStyle = baseColor;
+      ctx.fillRect(rugX, rugY, rugWidth, rugHeight);
     }
 
-    // Load and draw design
+    // Load and composite everything
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.onload = () => {
