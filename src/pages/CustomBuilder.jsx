@@ -365,7 +365,11 @@ export default function CustomBuilder() {
               { num: 3, label: 'Colors' },
               { num: 4, label: 'Design & Confirm' }
             ].map((s, idx) => (
-              <div key={s.num} className="flex flex-col items-center flex-1">
+              <button 
+                key={s.num} 
+                onClick={() => setStep(s.num)}
+                className="flex flex-col items-center flex-1 cursor-pointer hover:opacity-80 transition-opacity"
+              >
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all ${
                   step >= s.num 
                     ? 'border-4 border-gray-900 bg-white text-gray-900 shadow-lg scale-110' 
