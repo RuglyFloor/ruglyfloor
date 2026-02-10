@@ -162,6 +162,12 @@ export default function CustomBuilder() {
   const getAvailableBaseColors = () => {
     const activeListings = catalogListings.filter(l => l.active);
     const uniqueColors = [...new Set(activeListings.map(l => l.color).filter(Boolean))];
+    
+    // If no colors from catalog, use default base colors
+    if (uniqueColors.length === 0) {
+      return BASE_COLORS;
+    }
+    
     return uniqueColors.map(color => ({
       name: color,
       hex: getColorHex(color),
