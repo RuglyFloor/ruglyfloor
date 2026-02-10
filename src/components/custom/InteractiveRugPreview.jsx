@@ -235,6 +235,9 @@ export default function InteractiveRugPreview({
         <p className="text-xs text-gray-500 text-center mt-3">
           Real-time preview • Colors and design update instantly
         </p>
+        <p className="text-xs text-orange-600 font-semibold text-center mt-2 bg-orange-50 p-2 rounded">
+          ⚠️ Hand-painted by humans - expect natural variations & artistic character
+        </p>
       </CardContent>
     </Card>
   );
