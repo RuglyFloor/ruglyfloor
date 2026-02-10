@@ -618,6 +618,28 @@ export default function CustomBuilder() {
                           </td>
                         ))}
                       </tr>
+                      <tr className="border-b border-gray-200">
+                        <td className="p-4 font-medium text-gray-700">Design Example</td>
+                        {QUALITY_TIERS.map((tier) => (
+                          <td key={tier.id} className={`p-4 text-center ${
+                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
+                          }`}>
+                            {tier.id === 'budget' && (
+                              <div className="flex justify-center gap-2">
+                                <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/c522472ab_Screenshot2026-02-09at121804.png" alt="Stencil transformation example" className="h-32 rounded" />
+                              </div>
+                            )}
+                            {tier.id === 'good' && (
+                              <div className="flex justify-center gap-2">
+                                <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/c522472ab_Screenshot2026-02-09at121804.png" alt="Stencil transformation example" className="h-32 rounded" />
+                              </div>
+                            )}
+                            {tier.id === 'highend' && (
+                              <div className="text-sm text-gray-600">Unlimited design complexity</div>
+                            )}
+                          </td>
+                        ))}
+                      </tr>
                       <tr className="border-b-2 border-gray-300 bg-gray-50">
                         <td className="p-4 font-medium text-gray-700">Starting Price</td>
                         {QUALITY_TIERS.map((tier) => (
