@@ -566,6 +566,36 @@ export default function CustomBuilder() {
                           </td>
                         ))}
                       </tr>
+                      <tr className="border-b border-gray-200">
+                        <td className="p-4 font-medium text-gray-700">Visual Details</td>
+                        {QUALITY_TIERS.map((tier) => (
+                          <td key={tier.id} className={`p-4 text-center ${
+                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
+                          }`}>
+                            {tier.id === 'budget' && (
+                              <img 
+                                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/fe7898922_image.png" 
+                                alt="Crugly material details"
+                                className="w-full h-auto rounded-lg"
+                              />
+                            )}
+                            {tier.id === 'good' && (
+                              <img 
+                                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/701415d98_image.png" 
+                                alt="Rugly material details"
+                                className="w-full h-auto rounded-lg"
+                              />
+                            )}
+                            {tier.id === 'highend' && (
+                              <img 
+                                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/4d348899c_image.png" 
+                                alt="Rugly Lux material details"
+                                className="w-full h-auto rounded-lg"
+                              />
+                            )}
+                          </td>
+                        ))}
+                      </tr>
                       <tr className="border-b border-gray-200 bg-gray-50">
                         <td className="p-4 font-medium text-gray-700">Time before it's on your floor</td>
                         {QUALITY_TIERS.map((tier) => (
