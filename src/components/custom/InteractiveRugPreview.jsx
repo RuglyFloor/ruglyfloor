@@ -181,9 +181,28 @@ export default function InteractiveRugPreview({
       ctx.globalAlpha = opacity;
       ctx.drawImage(tempCanvas, drawX, drawY, drawWidth, drawHeight);
       ctx.restore();
+      
+      // Apply material texture on top of design for realism
+      const materialSwatchUrl = getMaterialSwatchUrl();
+      if (materialSwatchUrl) {
+        const textureImg = new Image();
+        textureImg.crossOrigin = 'anonymous';
+        textureImg.onload = () => {
+          const pattern = ctx.createPattern(textureImg, 'repeat');
+          if (pattern) {
+            ctx.save();
+            ctx.globalAlpha = 0.12;
+            ctx.globalCompositeOperation = 'multiply';
+            ctx.fillStyle = pattern;
+            ctx.fillRect(rugX, rugY, rugWidth, rugHeight);
+            ctx.restore();
+          }
+        };
+        textureImg.src = materialSwatchUrl;
+      }
 
-      // Rug texture overlay
-      ctx.fillStyle = 'rgba(0,0,0,0.03)';
+      // Light texture overlay
+      ctx.fillStyle = 'rgba(0,0,0,0.02)';
       for (let i = 0; i < rugHeight; i += 3) {
         ctx.fillRect(rugX, rugY + i, rugWidth, 1);
       }
