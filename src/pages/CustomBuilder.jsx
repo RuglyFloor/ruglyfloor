@@ -16,6 +16,7 @@ import DesignLibrary from '../components/custom/DesignLibrary';
 import InteractiveRugPreview from '../components/custom/InteractiveRugPreview';
 import BuilderSidebar from '../components/custom/BuilderSidebar';
 import AIAssistant from '../components/custom/AIAssistant';
+import DesignHelpModal from '../components/custom/DesignHelpModal';
 import SEOHead from '../components/seo/SEOHead';
 import { useSEO } from '../components/seo/useSEO';
 
