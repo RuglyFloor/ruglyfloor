@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '../utils';
 
 export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, isCheckingOut }) {
+  const navigate = useNavigate();
   const [activeId, setActiveId] = useState(null);
   const [ripples, setRipples] = useState({});
 
