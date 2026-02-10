@@ -510,16 +510,7 @@ export default function CustomBuilder() {
                           </td>
                         ))}
                       </tr>
-                      <tr className="border-b border-gray-200">
-                        <td className="p-4 font-medium text-gray-700">First color included</td>
-                        {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className={`p-4 text-center ${
-                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
-                          }`}>
-                            <CheckCircle className="w-5 h-5 text-green-600 mx-auto" />
-                          </td>
-                        ))}
-                      </tr>
+
                       <tr className="border-b border-gray-200 bg-gray-50">
                         <td className="p-4 font-medium text-gray-700">Maximum Paint Colors</td>
                         {QUALITY_TIERS.map((tier) => (
