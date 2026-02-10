@@ -50,6 +50,7 @@ export default function BuilderSidebar({
           baseColor={baseColors.find(c => c.name === config.baseColor)?.hex}
           paintColor={paintColors.find(c => c.name === config.paintColor)?.hex}
           size={config.size}
+          qualityTier={qualityTier}
           placeholder={!config.imageUrl}
           opacity={1}
         />
