@@ -234,37 +234,32 @@ export default function Home() {
 
       {/* Our Process Section */}
       <section className="py-20 px-6 bg-white">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold mb-12 text-center">FROM CONCEPT TO CREATION</h2>
-          <div className="relative h-96 bg-slate-100 rounded-lg overflow-hidden mb-6">
-            {[
-            {
-              image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/40e12a1d2_Screenshot2025-12-19at235301.png",
-              caption: "Step One: Decide on what you want on your floor"
-            },
-            {
-              image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg",
-              caption: "Step Two: We draft stencils or hand dye your design (depending on complexity and need for line) and we create your vision"
-            },
-            {
-              image: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png",
-              caption: "Step Three: Your Crugly is shipped from our studio to your home"
-            }].
-            map((step, index) =>
-            <div
-              key={index}
-              className={`absolute inset-0 transition-opacity duration-1000 ${
-              currentStep === index ? 'opacity-100' : 'opacity-0'}`
-              }
-              style={{ willChange: 'opacity' }}>
-
-                <img
-                src={step.image}
-                alt={step.caption}
+          
+          {/* Grid of all images */}
+          <div className="grid grid-cols-3 gap-4 mb-12">
+            <div className="rounded-lg overflow-hidden shadow-md h-64">
+              <img
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/40e12a1d2_Screenshot2025-12-19at235301.png"
+                alt="Design concept"
                 className="w-full h-full object-cover" />
-              </div>
-            )}
+            </div>
+            <div className="rounded-lg overflow-hidden shadow-md h-64">
+              <img
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg"
+                alt="Studio work"
+                className="w-full h-full object-cover" />
+            </div>
+            <div className="rounded-lg overflow-hidden shadow-md h-64">
+              <img
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png"
+                alt="Final product"
+                className="w-full h-full object-cover" />
+            </div>
           </div>
+
+          {/* Rotating captions */}
           <div className="relative h-20">
             {[
             {
