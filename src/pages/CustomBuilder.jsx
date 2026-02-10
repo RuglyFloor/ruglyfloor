@@ -538,7 +538,7 @@ export default function CustomBuilder() {
                           <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
                             tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
                           }`}>
-                            {tier.id === 'budget' && 'Material is already non-slip'}
+                            {tier.id === 'budget' && 'None, rug folded and shipped one length'}
                             {tier.id === 'good' && 'Crugly-branded non-slip material bound to the floor-facing side'}
                             {tier.id === 'highend' && 'Rugly-branded non-slip material adhered to bottom, center, sides have branded non-slip material'}
                           </td>
