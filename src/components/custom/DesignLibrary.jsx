@@ -113,8 +113,44 @@ const DESIGN_LIBRARY = [
     name: 'CTA Transit Map',
     category: 'vintage',
     url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/0a7d4f94a_Screenshot2026-01-09at153024.png'
+  },
+  {
+    id: 'icon-betty',
+    name: 'Betty Boop',
+    category: 'portrait',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/716bb46e3_betty.jpg'
+  },
+  {
+    id: 'band-beatles',
+    name: 'The Beatles',
+    category: 'portrait',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/475bcc93d_Screenshot2026-01-31at003552.png'
+  },
+  {
+    id: 'band-grateful',
+    name: 'Grateful Dead Bears',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/697de5553_image.png'
+  },
+  {
+    id: 'band-beastie',
+    name: 'Beastie Boys',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/7a6877c54_image.png'
+  },
+  {
+    id: 'album-pistols',
+    name: 'Sex Pistols',
+    category: 'vintage',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/c0c065eea_image.png'
+  },
+  {
+    id: 'album-abbey-road',
+    name: 'Abbey Road',
+    category: 'portrait',
+    url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/571b3650e_Screenshot2026-01-31at003150.png'
   }
-];
+  ];
 
 const CATEGORIES = ['all', 'vintage', 'portrait'];
 
