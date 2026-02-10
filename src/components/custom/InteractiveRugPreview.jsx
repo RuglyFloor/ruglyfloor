@@ -102,6 +102,25 @@ export default function InteractiveRugPreview({
     // Rug base color
     ctx.fillStyle = baseColor;
     ctx.fillRect(rugX, rugY, rugWidth, rugHeight);
+    
+    // Load material texture
+    const materialSwatchUrl = getMaterialSwatchUrl();
+    if (materialSwatchUrl) {
+      const textureImg = new Image();
+      textureImg.crossOrigin = 'anonymous';
+      textureImg.onload = () => {
+        // Apply texture overlay with pattern
+        const pattern = ctx.createPattern(textureImg, 'repeat');
+        if (pattern) {
+          ctx.save();
+          ctx.globalAlpha = 0.15;
+          ctx.fillStyle = pattern;
+          ctx.fillRect(rugX, rugY, rugWidth, rugHeight);
+          ctx.restore();
+        }
+      };
+      textureImg.src = materialSwatchUrl;
+    }
 
     // Load and draw design
     const img = new Image();
