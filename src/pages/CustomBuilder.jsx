@@ -1222,6 +1222,7 @@ export default function CustomBuilder() {
               paintColors={PAINT_COLORS}
               isRush={isRush}
               onToggleRush={() => setIsRush(!isRush)}
+              qualityTier={config.qualityTier}
               key={`${config.baseColor}-${config.paintColor}-${config.imageUrl}`}
             />
           </div>
