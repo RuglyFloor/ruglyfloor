@@ -9,10 +9,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Notion not connected' }, { status: 401 });
     }
 
-    const databaseId = Deno.env.get('NOTION_DATABASE_ID');
-    if (!databaseId) {
-      return Response.json({ error: 'NOTION_DATABASE_ID not set' }, { status: 500 });
-    }
+    const databaseId = "15bd1a8a6a574182995f890991a18df0";
 
     console.log('Fetching catalog from Notion...');
     
