@@ -220,7 +220,7 @@ export default function InteractiveRugPreview({
     
     // Try loading without cache bust first
     img.src = designUrl;
-  }, [designUrl, baseColor, paintColor, opacity, size, placeholder]);
+  }, [designUrl, baseColor, paintColor, opacity, size, placeholder, qualityTier, catalogListings]);
 
   return (
     <Card className="sticky top-6">
