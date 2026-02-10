@@ -54,6 +54,7 @@ import AdminDocuments from './pages/AdminDocuments';
 import AdminFixMyRugOrders from './pages/AdminFixMyRugOrders';
 import AdminInbox from './pages/AdminInbox';
 import AdminLogin from './pages/AdminLogin';
+import AdminMarketing from './pages/AdminMarketing';
 import AdminOrderDetail from './pages/AdminOrderDetail';
 import AdminOrders from './pages/AdminOrders';
 import AdminPortal from './pages/AdminPortal';
@@ -79,7 +80,7 @@ import SMSConsent from './pages/SMSConsent';
 import Shop from './pages/Shop';
 import Success from './pages/Success';
 import TrackOrder from './pages/TrackOrder';
-import AdminMarketing from './pages/AdminMarketing';
+import AdminNotionSync from './pages/AdminNotionSync';
 import __Layout from './Layout.jsx';
 
 
@@ -91,6 +92,7 @@ export const PAGES = {
     "AdminFixMyRugOrders": AdminFixMyRugOrders,
     "AdminInbox": AdminInbox,
     "AdminLogin": AdminLogin,
+    "AdminMarketing": AdminMarketing,
     "AdminOrderDetail": AdminOrderDetail,
     "AdminOrders": AdminOrders,
     "AdminPortal": AdminPortal,
@@ -116,7 +118,7 @@ export const PAGES = {
     "Shop": Shop,
     "Success": Success,
     "TrackOrder": TrackOrder,
-    "AdminMarketing": AdminMarketing,
+    "AdminNotionSync": AdminNotionSync,
 }
 
 export const pagesConfig = {
