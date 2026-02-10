@@ -517,7 +517,7 @@ export default function CustomBuilder() {
                           <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
                             tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
                           }`}>
-                            {tier.id === 'budget' && '4'}
+                            {tier.id === 'budget' && '2'}
                             {tier.id === 'good' && '4'}
                             {tier.id === 'highend' && 'Unlimited'}
                           </td>
