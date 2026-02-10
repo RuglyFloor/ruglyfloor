@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Notion not connected' }, { status: 401 });
     }
 
-    const databaseId = "15bd1a8a6a574182995f890991a18df0";
+    const databaseId = "15bd1a8a-6a57-4182-995f-890991a18df0";
 
     console.log('Fetching catalog from Notion...');
     
