@@ -111,104 +111,93 @@ export default function InteractiveRugPreview({
       ctx.fillRect(rugX, rugY, rugWidth, rugHeight);
     }
 
-    // Load and composite everything
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => {
-      console.log('Image loaded successfully:', designUrl);
-      
-      // Create a temporary canvas to process the image
-      const tempCanvas = document.createElement('canvas');
-      const tempCtx = tempCanvas.getContext('2d');
-      tempCanvas.width = img.width;
-      tempCanvas.height = img.height;
-      
-      // Draw image to temp canvas
-      tempCtx.drawImage(img, 0, 0);
-      
-      // Check if image already has transparency
-      const imageData = tempCtx.getImageData(0, 0, img.width, img.height);
-      const data = imageData.data;
-      
-      let hasTransparency = false;
-      for (let i = 3; i < data.length; i += 4) {
-        if (data[i] < 255) {
-          hasTransparency = true;
-          break;
-        }
-      }
-      
-      // Only remove white if image doesn't already have transparency (PNG with alpha)
-      if (!hasTransparency) {
-        for (let i = 0; i < data.length; i += 4) {
-          const r = data[i];
-          const g = data[i + 1];
-          const b = data[i + 2];
-          
-          // If pixel is pure white, make it transparent
-          if (r > 250 && g > 250 && b > 250) {
-            data[i + 3] = 0;
-          }
-        }
-        tempCtx.putImageData(imageData, 0, 0);
-      }
-      
-      // Draw design directly on rug
-      const aspectRatio = img.width / img.height;
-      let drawWidth = rugWidth * 0.8;
-      let drawHeight = drawWidth / aspectRatio;
-      
-      if (drawHeight > rugHeight * 0.8) {
-        drawHeight = rugHeight * 0.8;
-        drawWidth = drawHeight * aspectRatio;
-      }
-      
-      const drawX = rugX + (rugWidth - drawWidth) / 2;
-      const drawY = rugY + (rugHeight - drawHeight) / 2;
-      
-      ctx.save();
-      ctx.globalAlpha = opacity;
-      ctx.drawImage(tempCanvas, drawX, drawY, drawWidth, drawHeight);
-      ctx.restore();
-      
-      // Apply material texture on top of design for realism
-      const materialSwatchUrl = getMaterialSwatchUrl();
-      if (materialSwatchUrl) {
-        const textureImg = new Image();
-        textureImg.crossOrigin = 'anonymous';
-        textureImg.onload = () => {
-          const pattern = ctx.createPattern(textureImg, 'repeat');
-          if (pattern) {
-            ctx.save();
-            ctx.globalAlpha = 0.12;
-            ctx.globalCompositeOperation = 'multiply';
-            ctx.fillStyle = pattern;
-            ctx.fillRect(rugX, rugY, rugWidth, rugHeight);
-            ctx.restore();
-          }
-        };
-        textureImg.src = materialSwatchUrl;
-      }
-
-      // Light texture overlay
-      ctx.fillStyle = 'rgba(0,0,0,0.02)';
-      for (let i = 0; i < rugHeight; i += 3) {
-        ctx.fillRect(rugX, rugY + i, rugWidth, 1);
-      }
-    };
-    img.onerror = (e) => {
-      console.error('Failed to load design image:', designUrl, e);
-      // Show error state on canvas
-      ctx.fillStyle = '#fee';
-      ctx.fillRect(rugX, rugY, rugWidth, rugHeight);
-      ctx.fillStyle = '#c00';
-      ctx.font = '16px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('Failed to load image', rugX + rugWidth/2, rugY + rugHeight/2);
-    };
+    // Load base rug photo first, then composite design on top
+    if (baseRugPhotoUrl) {
+      const baseRugImg = new Image();
+      baseRugImg.crossOrigin = 'anonymous';
+      baseRugImg.onload = () => {
+        // Draw the actual rug photo
+        ctx.drawImage(baseRugImg, rugX, rugY, rugWidth, rugHeight);
+        
+        // Now load and composite the design on top
+        loadAndDrawDesign();
+      };
+      baseRugImg.onerror = () => {
+        console.error('Failed to load base rug photo, using fallback');
+        ctx.fillStyle = baseColor;
+        ctx.fillRect(rugX, rugY, rugWidth, rugHeight);
+        loadAndDrawDesign();
+      };
+      baseRugImg.src = baseRugPhotoUrl;
+    } else {
+      // No catalog photo, just draw design
+      loadAndDrawDesign();
+    }
     
-    // Try loading without cache bust first
-    img.src = designUrl;
+    function loadAndDrawDesign() {
+      const designImg = new Image();
+      designImg.crossOrigin = 'anonymous';
+      designImg.onload = () => {
+        // Process design to make white transparent
+        const tempCanvas = document.createElement('canvas');
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCanvas.width = designImg.width;
+        tempCanvas.height = designImg.height;
+        
+        tempCtx.drawImage(designImg, 0, 0);
+        const imageData = tempCtx.getImageData(0, 0, designImg.width, designImg.height);
+        const data = imageData.data;
+        
+        // Check for transparency
+        let hasTransparency = false;
+        for (let i = 3; i < data.length; i += 4) {
+          if (data[i] < 255) {
+            hasTransparency = true;
+            break;
+          }
+        }
+        
+        // Remove white background
+        if (!hasTransparency) {
+          for (let i = 0; i < data.length; i += 4) {
+            const r = data[i], g = data[i + 1], b = data[i + 2];
+            if (r > 250 && g > 250 && b > 250) {
+              data[i + 3] = 0;
+            }
+          }
+          tempCtx.putImageData(imageData, 0, 0);
+        }
+        
+        // Calculate design size and position
+        const aspectRatio = designImg.width / designImg.height;
+        let drawWidth = rugWidth * 0.7;
+        let drawHeight = drawWidth / aspectRatio;
+        
+        if (drawHeight > rugHeight * 0.7) {
+          drawHeight = rugHeight * 0.7;
+          drawWidth = drawHeight * aspectRatio;
+        }
+        
+        const drawX = rugX + (rugWidth - drawWidth) / 2;
+        const drawY = rugY + (rugHeight - drawHeight) / 2;
+        
+        // Draw design with paint color tint
+        ctx.save();
+        ctx.globalAlpha = opacity;
+        ctx.drawImage(tempCanvas, drawX, drawY, drawWidth, drawHeight);
+        ctx.restore();
+      };
+      designImg.onerror = (e) => {
+        console.error('Failed to load design:', designUrl, e);
+        ctx.fillStyle = '#fee';
+        ctx.fillRect(rugX + rugWidth * 0.1, rugY + rugHeight * 0.4, rugWidth * 0.8, rugHeight * 0.2);
+        ctx.fillStyle = '#c00';
+        ctx.font = '14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Design failed to load', rugX + rugWidth/2, rugY + rugHeight/2);
+      };
+      designImg.src = designUrl;
+    }
   }, [designUrl, baseColor, paintColor, opacity, size, placeholder, qualityTier, catalogListings]);
 
   return (
