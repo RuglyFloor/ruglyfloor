@@ -833,7 +833,8 @@ export default function CustomBuilder() {
 
                 {/* First Paint Color */}
                 <div>
-                  <Label className="text-xl font-bold mb-4 block">2. First Paint Color</Label>
+                  <Label className="text-xl font-bold mb-2 block">2. First Paint Color</Label>
+                  <p className="text-sm text-gray-600 mb-4">The colors below are available for your FIRST color. Shades and secondary colors are below!</p>
                   <div className="space-y-4">
                     <div>
                       <p className="text-sm font-semibold text-gray-600 mb-2">Group 1</p>
