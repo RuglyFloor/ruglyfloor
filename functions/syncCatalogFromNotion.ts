@@ -11,11 +11,14 @@ Deno.serve(async (req) => {
 
     // Use the Buildable Options data source
     const dataSourceId = "b2e5eb8c-fa0d-490b-b424-12157c2986d0";
+    const requestUrl = `https://api.notion.com/v1/databases/${dataSourceId}/query`;
 
     console.log('Fetching catalog from Notion data source...');
+    console.log('Request URL:', requestUrl);
+    console.log('API Version: 2025-09-03');
 
     // Fetch catalog data from Notion data source
-    const response = await fetch(`https://api.notion.com/v1/databases/${dataSourceId}/query`, {
+    const response = await fetch(requestUrl, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${notionToken}`,
