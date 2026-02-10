@@ -13,8 +13,8 @@ Deno.serve(async (req) => {
 
     console.log('Fetching catalog from Notion...');
     
-    // Fetch catalog data from Notion
-    const response = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
+    // Fetch catalog data from Notion - use pages endpoint for multi-source databases
+    const response = await fetch(`https://api.notion.com/v1/pages/${databaseId}`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${notionToken}`,
