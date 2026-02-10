@@ -1,219 +1,205 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 
 export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, isCheckingOut }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
   const navigate = useNavigate();
-  const [activeId, setActiveId] = useState(null);
-  const [ripples, setRipples] = useState({});
+  const containerRef = useRef(null);
 
   if (!products || products.length === 0) {
     return (
-      <section className="bg-black py-20 px-6">
+      <section className="bg-white py-20 px-6">
         <div className="max-w-[1600px] mx-auto">
-          <h2 className="text-5xl font-bold text-white mb-16 text-center">Available Rugs</h2>
-          <div className="text-center text-white text-xl">Loading rugs...</div>
+          <h2 className="text-5xl font-bold text-gray-900 mb-16 text-center">Available Rugs</h2>
+          <div className="text-center text-gray-600 text-xl">Loading rugs...</div>
         </div>
       </section>
     );
   }
 
-  const handleMouseMove = (productId, e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    setRipples(prev => ({
-      ...prev,
-      [productId]: { x, y, id: Math.random() }
-    }));
-
-    setTimeout(() => {
-      setRipples(prev => {
-        const newRipples = { ...prev };
-        delete newRipples[productId];
-        return newRipples;
-      });
-    }, 600);
+  const handleNext = () => {
+    setDirection(1);
+    setActiveIndex((prev) => (prev + 1) % products.length);
   };
 
-  const getDominantColor = (product) => {
-    const colorMap = {
-      'Yellow': '#f4d03f',
-      'Pink': '#f8c9d4',
-      'White': '#ffffff',
-      'Burnt Orange': '#cc5500',
-      'Grey': '#9ca3af',
-      'Gray': '#9ca3af',
-      'Green': '#86cb92',
-      'Tan': '#d2b48c',
-      'Khaki': '#c3b091'
-    };
-    return colorMap[product.name?.split(' ')[0]] || '#d2b48c';
+  const handlePrev = () => {
+    setDirection(-1);
+    setActiveIndex((prev) => (prev - 1 + products.length) % products.length);
   };
+
+  const getItemIndex = (i) => {
+    return (i - activeIndex + products.length) % products.length;
+  };
+
+  const activeProduct = products[activeIndex];
 
   return (
-    <section className="bg-gradient-to-b from-black via-gray-950 to-black py-20 px-6 relative overflow-hidden">
+    <section className="bg-gradient-to-b from-white via-blue-50 to-white py-20 px-6">
       <div className="max-w-[1600px] mx-auto">
-        <h2 className="text-5xl font-bold text-white mb-4 text-center">Available Rugs</h2>
-        <p className="text-center text-gray-400 mb-16 text-lg">Hover to reveal. Each rug is a masterpiece.</p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {products.map((product, idx) => {
-            const isActive = activeId === product.id;
-            const color = getDominantColor(product);
+        <div className="text-center mb-16">
+          <h2 className="text-5xl font-bold text-gray-900 mb-4">Available Rugs</h2>
+          <p className="text-gray-600 text-lg">Handcrafted designs ready to transform your space</p>
+        </div>
 
-            return (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.05 }}
-                onMouseEnter={() => setActiveId(product.id)}
-                onMouseLeave={() => setActiveId(null)}
-                onMouseMove={(e) => handleMouseMove(product.id, e)}
-                className="relative aspect-[3/4] rounded-lg overflow-hidden cursor-pointer"
-              >
-                {/* Background blur/abstract representation */}
-                <motion.div
-                  className="absolute inset-0"
-                  animate={{
-                    scale: isActive ? 1.1 : 1,
-                    opacity: isActive ? 0 : 0.4
-                  }}
-                  transition={{ duration: 0.4 }}
-                  style={{
-                    background: `linear-gradient(135deg, ${color}20 0%, ${color}40 100%)`,
-                  }}
-                />
+        <div className="relative">
+          {/* Carousel Container */}
+          <div className="relative h-[600px] overflow-hidden rounded-2xl bg-gradient-to-b from-gray-100 to-white shadow-2xl">
+            {/* Gallery Track */}
+            <div className="flex items-center justify-center h-full relative">
+              {products.map((product, i) => {
+                const itemIndex = getItemIndex(i);
+                const isCenter = itemIndex === 0;
+                const distance = Math.abs(itemIndex - 0);
+                const offset = itemIndex > 0 ? itemIndex * 100 : itemIndex * 100;
 
-                {/* Mosaic tile base - color blocks */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900"
-                  animate={{
-                    opacity: isActive ? 0 : 1,
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div
-                      className="w-20 h-20 rounded-lg opacity-80 shadow-lg"
-                      style={{ backgroundColor: color }}
-                    />
-                  </div>
-                </motion.div>
-
-                {/* Actual rug image - revealed on hover */}
-                <motion.div
-                  className="absolute inset-0"
-                  animate={{
-                    opacity: isActive ? 1 : 0,
-                    scale: isActive ? 1 : 0.95
-                  }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <img
-                    src={product.image_url}
-                    alt={product.name}
-                    className={`w-full h-full object-cover ${
-                      !product.in_stock ? 'opacity-50' : ''
-                    }`}
-                  />
-                  {!product.in_stock && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/60">
-                      <div className="bg-red-600 text-white font-bold text-2xl px-6 py-3 rounded-lg">
-                        SOLD OUT
-                      </div>
-                    </div>
-                  )}
-                </motion.div>
-
-                {/* Ripple effect */}
-                {ripples[product.id] && (
+                return (
                   <motion.div
-                    className="absolute pointer-events-none"
-                    initial={{
-                      width: 0,
-                      height: 0,
-                      left: ripples[product.id].x,
-                      top: ripples[product.id].y,
-                      opacity: 0.6,
-                    }}
+                    key={product.id}
+                    initial={false}
                     animate={{
-                      width: 400,
-                      height: 400,
-                      left: ripples[product.id].x - 200,
-                      top: ripples[product.id].y - 200,
-                      opacity: 0,
+                      x: offset + (direction === 1 ? 200 : -200),
+                      scale: isCenter ? 1 : Math.max(0.6, 1 - distance * 0.15),
+                      opacity: isCenter ? 1 : Math.max(0.3, 1 - distance * 0.25),
+                      zIndex: isCenter ? 10 : 10 - distance,
                     }}
-                    transition={{ duration: 0.6 }}
-                    style={{
-                      borderRadius: '50%',
-                      border: '2px solid rgba(255,255,255,0.3)',
-                    }}
-                  />
-                )}
-
-                {/* Glow effect on active */}
-                {isActive && (
-                  <motion.div
-                    className="absolute inset-0 pointer-events-none rounded-lg"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    style={{
-                      boxShadow: `inset 0 0 40px ${color}80, 0 0 40px ${color}60`
-                    }}
-                  />
-                )}
-
-                {/* Info overlay - appears on hover */}
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent flex flex-col justify-end p-6 rounded-lg"
-                  animate={{
-                    opacity: isActive ? 1 : 0,
-                  }}
-                  transition={{ duration: 0.3 }}
-                  pointerEvents={isActive ? 'auto' : 'none'}
-                >
-                  <h3 className="text-2xl font-bold text-white mb-2">{product.name}</h3>
-                  <p className="text-gray-200 text-sm mb-4 line-clamp-2">
-                    {typeof product.description === 'string' ? product.description : product.description?.description || 'Handcrafted custom rug'}
-                  </p>
-                  
-                  {product.in_stock ? (
-                    <>
-                      <div className="text-3xl font-bold mb-4" style={{ color }}>
-                        ${product.price}
+                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    className="absolute w-full h-full flex items-center justify-center pointer-events-none"
+                  >
+                    <div
+                      className={`relative w-full h-full flex items-center justify-center transition-all duration-500 ${
+                        isCenter ? 'cursor-pointer pointer-events-auto' : ''
+                      }`}
+                    >
+                      {/* Image */}
+                      <div className="relative w-[90%] h-[90%] rounded-xl overflow-hidden shadow-2xl">
+                        <img
+                          src={product.image_url}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
+                        {!product.in_stock && (
+                          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                            <div className="bg-red-600 text-white font-bold text-3xl px-8 py-4 rounded-lg">
+                              SOLD OUT
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <motion.div
-                        initial={{ y: 10, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.1 }}
-                      >
-                        <Button 
-                          onClick={() => handleGrabIt(product)}
-                          disabled={isCheckingOut}
-                          className="w-full font-bold text-lg"
-                          size="lg"
-                          style={{ 
-                            backgroundColor: color,
-                            color: ['#f4d03f', '#c3b091', '#d2b48c', '#ffffff'].includes(color) ? '#000' : '#fff',
-                            borderColor: color,
-                            borderWidth: '2px'
+
+                      {/* Spotlight Glow */}
+                      {isCenter && (
+                        <motion.div
+                          className="absolute inset-0 rounded-xl pointer-events-none"
+                          animate={{
+                            boxShadow: [
+                              'inset 0 0 30px rgba(37, 99, 235, 0.3)',
+                              'inset 0 0 50px rgba(37, 99, 235, 0.5)',
+                              'inset 0 0 30px rgba(37, 99, 235, 0.3)',
+                            ],
                           }}
-                        >
-                          {isCheckingOut ? 'Loading...' : '✨ GRAB IT'}
-                        </Button>
-                      </motion.div>
-                    </>
-                  ) : null}
-                </motion.div>
-              </motion.div>
-            );
-          })}
+                          transition={{ duration: 3, repeat: Infinity }}
+                        />
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* Navigation Buttons */}
+            <button
+              onClick={handlePrev}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white hover:bg-blue-600 hover:text-white text-gray-900 rounded-full p-3 shadow-lg transition-all duration-300 group"
+              aria-label="Previous rug"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <button
+              onClick={handleNext}
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white hover:bg-blue-600 hover:text-white text-gray-900 rounded-full p-3 shadow-lg transition-all duration-300 group"
+              aria-label="Next rug"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Info Section Below */}
+          <motion.div
+            key={activeProduct.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4 }}
+            className="mt-8 grid md:grid-cols-2 gap-8 items-start max-w-4xl mx-auto"
+          >
+            {/* Details */}
+            <div>
+              <h3 className="text-4xl font-bold text-gray-900 mb-4">{activeProduct.name}</h3>
+              <p className="text-gray-700 text-lg leading-relaxed mb-6">
+                {typeof activeProduct.description === 'string'
+                  ? activeProduct.description
+                  : activeProduct.description?.description || 'Handcrafted custom rug design'}
+              </p>
+              <div className="flex items-baseline gap-2 mb-8">
+                <span className="text-5xl font-bold text-blue-600">${activeProduct.price}</span>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-col gap-4">
+              {activeProduct.in_stock ? (
+                <>
+                  <Button
+                    onClick={() => handleGrabIt(activeProduct)}
+                    disabled={isCheckingOut}
+                    size="lg"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg py-6 shadow-lg"
+                  >
+                    {isCheckingOut ? 'Processing...' : '✨ GRAB IT'}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => navigate(createPageUrl('CustomBuilder'))}
+                    className="w-full border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-bold text-lg py-6"
+                  >
+                    Customize Similar
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="lg"
+                  disabled
+                  className="w-full opacity-50"
+                >
+                  Out of Stock
+                </Button>
+              )}
+            </div>
+          </motion.div>
+
+          {/* Indicators */}
+          <div className="flex justify-center gap-2 mt-8">
+            {products.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => {
+                  setDirection(i > activeIndex ? 1 : -1);
+                  setActiveIndex(i);
+                }}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  i === activeIndex ? 'bg-blue-600 w-8' : 'bg-gray-300 w-2 hover:bg-gray-400'
+                }`}
+                aria-label={`Go to rug ${i + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
