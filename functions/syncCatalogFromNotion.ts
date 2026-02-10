@@ -37,8 +37,19 @@ Deno.serve(async (req) => {
     }
 
     const data = await response.json();
-    console.log(`Fetched ${data.results.length} rows from Notion`);
-    
+    console.log(`Fetched ${data.results.length} total rows from Notion`);
+
+    // Filter to only Buildable Options data source rows
+    const buildableOptionsRows = data.results.filter(page => {
+      // Check if this row belongs to the Buildable Options data source
+      // The API may return this in page.parent or a data_source field
+      return page.parent?.database_id === dataSourceId || 
+             page.data_source_id === dataSourceId ||
+             !page.data_source_id; // Fallback if no filtering needed
+    });
+
+    console.log(`Filtered to ${buildableOptionsRows.length} Buildable Options rows`);
+
     const catalogItems = [];
     const placeholder = 'https://via.placeholder.com/400x300?text=No+Image';
 
