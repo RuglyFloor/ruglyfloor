@@ -1133,15 +1133,27 @@ export default function CustomBuilder() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Size:</span>
-                        <span className="font-semibold">{SIZES.find(s => s.value === config.size)?.label}</span>
+                        <span className="font-semibold">{SIZES.find(s => s.value === config.size)?.label} ({SIZES.find(s => s.value === config.size)?.measurement})</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Base Color:</span>
-                        <span className="font-semibold">{config.baseColor}</span>
+                        <span className="text-gray-600">Base Rug Color:</span>
+                        <span className="font-semibold flex items-center gap-2">
+                          <span className="inline-block w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: getColorHex(config.baseColor) }}></span>
+                          {config.baseColor}
+                        </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Paint Colors:</span>
-                        <span className="font-semibold">{config.paintColor}{config.secondPaintColor ? `, ${config.secondPaintColor}` : ''}</span>
+                        <span className="text-gray-600">Paint Color{config.secondPaintColor ? 's' : ''}:</span>
+                        <span className="font-semibold flex items-center gap-2">
+                          <span className="inline-block w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: getAvailablePaintColors().find(c => c.name === config.paintColor)?.hex }}></span>
+                          {config.paintColor}
+                          {config.secondPaintColor && (
+                            <>
+                              <span className="inline-block w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: getAvailablePaintColors().find(c => c.name === config.secondPaintColor)?.hex }}></span>
+                              {config.secondPaintColor}
+                            </>
+                          )}
+                        </span>
                       </div>
                     </div>
 
