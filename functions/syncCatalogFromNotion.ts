@@ -9,12 +9,13 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Notion not connected' }, { status: 401 });
     }
 
-    const databaseId = "15bd1a8a-6a57-4182-995f-890991a18df0";
+    // Use the Buildable Options data source
+    const dataSourceId = "b2e5eb8c-fa0d-490b-b424-12157c2986d0";
 
-    console.log('Fetching catalog from Notion...');
-    
-    // Fetch catalog data from Notion
-    const response = await fetch(`https://api.notion.com/v1/databases/${databaseId}/query`, {
+    console.log('Fetching catalog from Notion data source...');
+
+    // Fetch catalog data from Notion data source
+    const response = await fetch(`https://api.notion.com/v1/databases/${dataSourceId}/query`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${notionToken}`,
