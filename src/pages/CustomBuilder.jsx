@@ -1044,12 +1044,12 @@ export default function CustomBuilder() {
             <CardContent>
               <div className="space-y-6">
                 {/* Help Button */}
-                <div className="mb-4 flex justify-end">
+                <div className="flex justify-end mb-4">
                   <button
                     onClick={() => setShowHelpModal(true)}
-                    className="text-sm text-gray-600 hover:text-gray-900 underline transition-colors"
+                    className="text-blue-600 hover:text-blue-700 text-sm font-medium underline"
                   >
-                    💡 Need design help?
+                    Getting stuck? Click here for help →
                   </button>
                 </div>
 
@@ -1263,6 +1263,11 @@ export default function CustomBuilder() {
         )}
         </div>
         </div>
+
+        <DesignHelpModal 
+          isOpen={showHelpModal} 
+          onClose={() => setShowHelpModal(false)}
+        />
         </div>
         );
         }
