@@ -34,7 +34,7 @@ export default function Home() {
   useEffect(() => {
     const stepInterval = setInterval(() => {
       setCurrentStep((prev) => (prev + 1) % 3);
-    }, 2000);
+    }, 5000);
     return () => clearInterval(stepInterval);
   }, []);
 
