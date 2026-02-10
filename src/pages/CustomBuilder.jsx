@@ -521,13 +521,13 @@ export default function CustomBuilder() {
                         ))}
                       </tr>
                       <tr className="border-b border-gray-200 bg-gray-50">
-                        <td className="p-4 font-medium text-gray-700">2nd color</td>
+                        <td className="p-4 font-medium text-gray-700">Maximum Paint Colors</td>
                         {QUALITY_TIERS.map((tier) => (
                           <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
                             tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
                           }`}>
-                            {tier.id === 'budget' && 'Optional'}
-                            {tier.id === 'good' && 'Optional'}
+                            {tier.id === 'budget' && '2'}
+                            {tier.id === 'good' && '2'}
                             {tier.id === 'highend' && 'Unlimited'}
                           </td>
                         ))}
