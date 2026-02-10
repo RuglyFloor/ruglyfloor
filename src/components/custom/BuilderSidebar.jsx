@@ -11,7 +11,8 @@ export default function BuilderSidebar({
   baseColors,
   paintColors,
   isRush = false,
-  onToggleRush
+  onToggleRush,
+  qualityTier
 }) {
   const calculateEstimatedDays = () => {
     let days = 7; // Base time
