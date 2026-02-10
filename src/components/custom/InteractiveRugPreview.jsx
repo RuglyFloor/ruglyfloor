@@ -20,6 +20,26 @@ export default function InteractiveRugPreview({
     queryFn: () => base44.entities.Catalog.list()
   });
 
+  // Get material swatch for texture
+  const getMaterialSwatchUrl = () => {
+    if (!qualityTier || catalogListings.length === 0) return null;
+    
+    const tierMap = {
+      'budget': 'Crugly',
+      'good': 'Rugly',
+      'highend': 'Rugly LX'
+    };
+    
+    const targetTier = tierMap[qualityTier];
+    const listing = catalogListings.find(l => 
+      l.active && 
+      l.quality_tier === targetTier &&
+      (l.color_material_swatch || l.texture_color_closeup)
+    );
+    
+    return listing?.color_material_swatch || listing?.texture_color_closeup || null;
+  };
+
   useEffect(() => {
     if (!canvasRef.current) return;
     
