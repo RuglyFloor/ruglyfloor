@@ -20,9 +20,9 @@ export default function InteractiveRugPreview({
     queryFn: () => base44.entities.Catalog.list()
   });
 
-  // Get material swatch for texture
-  const getMaterialSwatchUrl = () => {
-    if (!qualityTier || catalogListings.length === 0) return null;
+  // Get actual rug photo (main_image) from catalog
+  const getBaseRugPhoto = () => {
+    if (!qualityTier || !baseColor || catalogListings.length === 0) return null;
     
     const tierMap = {
       'budget': 'Crugly',
@@ -31,13 +31,16 @@ export default function InteractiveRugPreview({
     };
     
     const targetTier = tierMap[qualityTier];
+    
+    // Find matching catalog item with main_image
     const listing = catalogListings.find(l => 
       l.active && 
       l.quality_tier === targetTier &&
-      (l.color_material_swatch || l.texture_color_closeup)
+      l.color?.toLowerCase().includes(baseColor.toLowerCase()) &&
+      l.main_image
     );
     
-    return listing?.color_material_swatch || listing?.texture_color_closeup || null;
+    return listing?.main_image || null;
   };
 
   useEffect(() => {
