@@ -1003,7 +1003,7 @@ export default function CustomBuilder() {
                     disabled={!config.baseColor || !config.paintColor || (config.hasSecondColor && !config.secondPaintColor)}
                     className="flex-1 bg-gray-900 text-white hover:bg-gray-800 disabled:opacity-50"
                   >
-                    Continue to Design →
+                    Now for the fun part →
                   </Button>
                 </div>
               </CardContent>
