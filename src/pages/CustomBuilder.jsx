@@ -47,7 +47,7 @@ const QUALITY_TIERS = [
     id: 'highend', 
     label: 'Rugly Lux', 
     description: 'Rugly Lux is the cat\'s meow—you tell us what you\'re thinking and we make it happen with no limits',
-    priceMultiplier: 2.5,
+    priceMultiplier: 1.25,
     materialDetail: 'Premium materials, custom hand-painted',
     lifespan: 'Premium durability',
     washable: false,
