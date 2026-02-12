@@ -223,6 +223,10 @@ export default function Home() {
               <CheckCircle className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
               <p className="text-lg text-slate-700">Thin lines & gradients may be simplified for the stencil.</p>
             </div>
+            <div className="flex items-start gap-3">
+              <CheckCircle className="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" />
+              <p className="text-lg text-slate-700"><strong>If your design relies on tiny text, thin lines, or gradients</strong> → use Custom Quote for best results.</p>
+            </div>
           </div>
           <div className="bg-blue-50 border-l-4 border-blue-600 p-6 rounded">
             <p className="text-lg italic text-slate-700">
@@ -332,7 +336,7 @@ export default function Home() {
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-sm">FREE shipping</span>
+                  <span className="text-sm">FREE shipping (10-14 days production)</span>
                 </li>
               </ul>
               <div className="text-center">
@@ -368,7 +372,7 @@ export default function Home() {
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
-                  <span className="text-sm">Flat rate shipping</span>
+                  <span className="text-sm">Flat rate shipping (10-20 days production)</span>
                 </li>
               </ul>
               <div className="text-center">
