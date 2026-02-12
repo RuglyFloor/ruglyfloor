@@ -38,6 +38,13 @@ export default function AdminPortal() {
 
   const adminSections = [
     {
+      title: 'Products',
+      icon: Award,
+      description: 'Manage ready-to-order original Ruglys',
+      page: 'AdminProducts',
+      color: 'bg-orange-500'
+    },
+    {
       title: 'Catalog',
       icon: Package,
       description: 'Manage base rug inventory from suppliers',
