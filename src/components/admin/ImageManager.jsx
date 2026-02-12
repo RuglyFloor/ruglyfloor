@@ -64,9 +64,10 @@ export default function ImageManager({ images = [], onChange, onGenerateAI }) {
 
   const createCroppedImage = async (imageSrc, pixelCrop) => {
     const image = new Image();
+    image.crossOrigin = 'anonymous';
     image.src = imageSrc;
     
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       image.onload = () => {
         const canvas = document.createElement('canvas');
         canvas.width = pixelCrop.width;
@@ -88,6 +89,10 @@ export default function ImageManager({ images = [], onChange, onGenerateAI }) {
         canvas.toBlob((blob) => {
           resolve(blob);
         }, 'image/jpeg', 0.95);
+      };
+      
+      image.onerror = () => {
+        reject(new Error('Failed to load image'));
       };
     });
   };
