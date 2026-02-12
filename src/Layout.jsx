@@ -247,10 +247,10 @@ export default function Layout({ children, currentPageName }) {
             <div className="mt-6 pt-6 border-t border-gray-800">
               {/* Trust Badges */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="text-center">
+                <a href="https://www.yelp.com/biz/rugly-floor-lansing" target="_blank" rel="noopener noreferrer" className="text-center hover:opacity-80 transition-opacity">
                   <div className="text-2xl mb-1">⭐</div>
                   <div className="text-xs text-gray-400">5-Star Yelp Reviews</div>
-                </div>
+                </a>
                 <div className="text-center">
                   <div className="text-2xl mb-1">🔒</div>
                   <div className="text-xs text-gray-400">Secure Checkout</div>
