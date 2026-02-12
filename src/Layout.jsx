@@ -261,7 +261,7 @@ export default function Layout({ children, currentPageName }) {
                 </div>
                 <div className="text-center">
                   <div className="text-2xl mb-1">🚚</div>
-                  <div className="text-xs text-gray-400">Free Ship on 2+ Rugs</div>
+                  <div className="text-xs text-gray-400">Free shipping on all Crugly Purchases</div>
                 </div>
               </div>
 
