@@ -121,6 +121,7 @@ export default function Home() {
 
 
           </p>
+          <p className="text-md text-white/90 mb-12 max-w-2xl mx-auto">From $79 (smallest size, 2x3 Crugly) • Preview before paying • Typical production: 10-14 days + 3-5 day shipping</p>
           <div className="flex gap-4 justify-center flex-wrap items-center">
             <Link to={createPageUrl('CustomBuilder')}>
               <button className="bg-transparent border border-white text-white font-black px-12 py-6 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '1.575rem', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
