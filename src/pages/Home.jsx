@@ -117,7 +117,7 @@ export default function Home() {
           <h2 className="text-3xl md:text-5xl font-bold mb-12 text-white">Your Rug, Your Rules
 
           </h2>
-          <p className="text-lg md:text-xl text-white mb-12 max-w-3xl mx-auto">Design a rug that's as unique as you are. Choose from <strong>Crugly</strong> (budget), <strong className="rugly-text">Rugly</strong> (premium), or <strong className="rugly-text">Rugly LX</strong> (luxury). Pick your colors. Play with patterns. Watch it come to life in real-time.
+          <p className="text-lg md:text-xl text-white mb-8 max-w-3xl mx-auto">Design a rug that's as unique as you are. Choose from <strong>Crugly</strong> (budget), <strong className="rugly-text">Rugly</strong> (premium), or <strong className="rugly-text">Rugly LX</strong> (luxury). Pick your colors. Play with patterns. Watch it come to life in real-time.
 
 
           </p>
