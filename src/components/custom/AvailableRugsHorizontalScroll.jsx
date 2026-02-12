@@ -104,14 +104,16 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
                           <img
                             src={getActiveImages()[imageIndex].url}
                             alt={product.name}
-                            className="w-full h-full object-cover transition-opacity duration-300"
+                            className="w-full h-full object-cover object-center transition-opacity duration-300"
+                            style={{ objectPosition: 'center 60%' }}
                           />
                         )}
                         {!isCenter && (
                           <img
                             src={product.image_url || (product.all_images?.[0]?.url)}
                             alt={product.name}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover object-center"
+                            style={{ objectPosition: 'center 60%' }}
                           />
                         )}
                         {!product.in_stock && (
