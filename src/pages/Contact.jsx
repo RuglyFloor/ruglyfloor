@@ -24,6 +24,10 @@ export default function Contact() {
     setSubmitting(true);
 
     try {
+      const submitTimeout = setTimeout(() => {
+        throw new Error('Request timeout');
+      }, 10000);
+
       await base44.entities.InboxMessage.create(formData);
       
       // Send email notification to info@ruglyfloor.com
@@ -44,9 +48,11 @@ ${formData.message}
         `.trim()
       });
       
+      clearTimeout(submitTimeout);
       setSubmitted(true);
       setFormData({ from_name: '', from_email: '', from_phone: '', subject: '', message: '' });
     } catch (error) {
+      console.error('[Contact] Submission error:', error);
       alert('Failed to send message. Please try again.');
     } finally {
       setSubmitting(false);

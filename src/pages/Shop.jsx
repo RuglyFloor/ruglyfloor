@@ -14,8 +14,22 @@ export default function Shop() {
   
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['products'],
-    queryFn: () => base44.entities.Product.filter({ category: 'original' }),
-    initialData: []
+    queryFn: async () => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      try {
+        const result = await base44.entities.Product.filter({ category: 'original' });
+        clearTimeout(timeoutId);
+        return result;
+      } catch (error) {
+        clearTimeout(timeoutId);
+        console.error('[Shop] Product fetch error:', error);
+        return [];
+      }
+    },
+    initialData: [],
+    staleTime: 60000,
+    retry: 1
   });
 
   const addToCart = (product) => {
