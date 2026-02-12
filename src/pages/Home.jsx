@@ -133,6 +133,7 @@ export default function Home() {
               </button>
             </Link>
           </div>
+          <p className="text-md text-white/90 mt-6 max-w-2xl mx-auto">From $79! | See your rug before buying | Only 2 weeks before shipping</p>
         </div>
       </section>
 
