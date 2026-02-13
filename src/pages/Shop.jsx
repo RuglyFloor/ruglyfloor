@@ -32,22 +32,7 @@ export default function Shop() {
     retry: 1
   });
 
-  const addToCart = (product) => {
-    const cartItem = {
-      type: 'original',
-      product_id: product.id,
-      name: product.name,
-      size: product.size,
-      price: product.price,
-      imageUrl: product.image_url
-    };
 
-    const cart = JSON.parse(localStorage.getItem('rugly_cart') || '[]');
-    cart.push(cartItem);
-    localStorage.setItem('rugly_cart', JSON.stringify(cart));
-    
-    navigate(createPageUrl('Cart'));
-  };
 
   return (
     <div className="min-h-screen py-12 px-6">
@@ -153,10 +138,9 @@ export default function Shop() {
                     <CardFooter className="p-4 pt-0">
                       <Button 
                         className="w-full bg-blue-600 hover:bg-blue-700"
-                        onClick={() => addToCart(product)}
+                        onClick={() => navigate(createPageUrl('ProductDetail') + `?id=${product.id}`)}
                       >
-                        <ShoppingCart className="w-4 h-4 mr-2" />
-                        Add to Cart
+                        View Details
                       </Button>
                     </CardFooter>
                   </Card>
