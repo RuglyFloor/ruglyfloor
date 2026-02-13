@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -626,20 +625,74 @@ export default function CustomBuilder() {
 
                         {/* Visual Detail Image */}
                         <div className="mb-6 rounded-xl overflow-hidden" style={{ border: `2px solid ${tier.color}` }}>
-                          <img 
-                            src={tier.id === 'budget' ? 
-                              "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/fe7898922_image.png" :
-                              tier.id === 'good' ?
-                              "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/701415d98_image.png" :
-                              "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/4d348899c_image.png"
-                            }
-                            alt={`${tier.label} material`}
-                            className="w-full h-40 object-cover"
-                          />
+                          {tier.id === 'budget' ? (
+                            <img 
+                              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/fe7898922_image.png"
+                              alt="Crugly material"
+                              className="w-full h-40 object-cover"
+                            />
+                          ) : tier.id === 'good' ? (
+                            <div className="flex h-40">
+                              <img 
+                                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/701415d98_image.png"
+                                alt="Rugly material left"
+                                className="w-1/2 object-cover"
+                              />
+                              <div className="w-0.5 bg-white"></div>
+                              <img 
+                                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/701415d98_image.png"
+                                alt="Rugly material right"
+                                className="w-1/2 object-cover"
+                              />
+                            </div>
+                          ) : (
+                            <div className="flex h-40">
+                              <img 
+                                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/4d348899c_image.png"
+                                alt="Rugly Lux material left"
+                                className="w-1/2 object-cover"
+                              />
+                              <div className="w-0.5 bg-white"></div>
+                              <img 
+                                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/5074422ce_JPEGimage-4993-99AB-1A-0.jpg"
+                                alt="Rugly Lux material right"
+                                className="w-1/2 object-cover"
+                              />
+                            </div>
+                          )}
                         </div>
 
                         {/* Infographic Features */}
                         <div className="space-y-3 mb-6">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${tier.color}20` }}>
+                              {tier.id === 'budget' ? (
+                                <svg className="w-6 h-6" style={{ color: tier.color }} fill="currentColor" viewBox="0 0 24 24">
+                                  <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="2" fill="none"/>
+                                  <path d="M8 12 L12 8 L16 12 L12 16 Z" />
+                                </svg>
+                              ) : tier.id === 'good' ? (
+                                <svg className="w-6 h-6" style={{ color: tier.color }} fill="currentColor" viewBox="0 0 24 24">
+                                  <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" strokeWidth="2" fill="none"/>
+                                  <path d="M6 8 Q12 6 18 8 Q18 12 12 18 Q6 12 6 8 Z" />
+                                </svg>
+                              ) : (
+                                <svg className="w-6 h-6" style={{ color: tier.color }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                                  <rect x="4" y="4" width="16" height="16" rx="2"/>
+                                  <path d="M8 12 C8 10, 10 10, 10 12 C10 14, 8 14, 8 12 M14 12 C14 10, 16 10, 16 12 C16 14, 14 14, 14 12"/>
+                                </svg>
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-xs font-semibold text-gray-900">Customization</div>
+                              <div className="text-xs text-gray-600">
+                                {tier.id === 'budget' && 'Fixed Sizes, Limited Design'}
+                                {tier.id === 'good' && 'Custom Size & Hand Painted'}
+                                {tier.id === 'highend' && 'Unlimited'}
+                              </div>
+                            </div>
+                          </div>
+
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${tier.color}20` }}>
                               <Palette className="w-5 h-5" style={{ color: tier.color }} />
