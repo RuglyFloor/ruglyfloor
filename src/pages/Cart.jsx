@@ -138,42 +138,41 @@ export default function Cart() {
     const savedItems = JSON.parse(localStorage.getItem('rugly_saved') || '[]');
     
     return (
-      <div className="min-h-screen py-12 px-6">
+      <div className="min-h-screen py-12 px-6 bg-white">
         <SEOHead
           title="Rugly Floors - Cart"
           description="Review your custom rug order and checkout securely."
           url="/cart"
         />
         <div className="max-w-2xl mx-auto text-center">
-          <ShoppingBag className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-          <h2 className="text-2xl font-bold mb-2">Your cart is empty</h2>
-          <p className="text-gray-600 mb-6">Add some custom rugs to get started!</p>
-          <Button onClick={() => navigate(createPageUrl('CustomBuilder'))}>
+          <div className="w-24 h-24 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-6">
+            <ShoppingBag className="w-12 h-12 text-gray-400" />
+          </div>
+          <h2 className="text-3xl font-bold mb-3" style={{ color: '#343634' }}>Your cart is empty</h2>
+          <p className="text-gray-600 mb-8 text-lg">Start designing your custom rug!</p>
+          <Button 
+            onClick={() => navigate(createPageUrl('CustomBuilder'))}
+            className="bg-gray-900 text-white hover:bg-gray-800 font-bold py-6 px-8 text-lg rounded-xl"
+          >
             Design a Rug
           </Button>
 
           {savedItems.length > 0 && (
-            <div className="mt-12">
-              <h3 className="text-xl font-bold mb-4">Saved for Later ({savedItems.length})</h3>
-              <div className="space-y-3">
-                {savedItems.map((item, index) => (
-                  <Card key={index}>
-                    <CardContent className="p-4 flex gap-4 items-center">
+            <div className="mt-16">
+              <h3 className="text-2xl font-bold mb-6" style={{ color: '#343634' }}>Saved for Later ({savedItems.length})</h3>
+              <div className="space-y-4">
+                {savedItems.map((item, index) => {
+                  const tierColor = getTierColor(item.qualityTier);
+                  return (
+                    <div key={index} className="bg-white rounded-xl shadow-lg p-4 flex gap-4 items-center" style={{ border: `3px solid ${tierColor}` }}>
                       {item.previewUrl && (
-                        <div 
-                          className="w-16 h-16 rounded flex items-center justify-center"
-                          style={{ 
-                            background: 'linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%), linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%)', 
-                            backgroundSize: '8px 8px', 
-                            backgroundPosition: '0 0, 4px 4px' 
-                          }}
-                        >
-                          <img src={item.previewUrl} alt={item.name} className="max-w-full max-h-full object-contain" />
+                        <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0" style={{ border: `2px solid ${tierColor}` }}>
+                          <img src={item.previewUrl} alt={item.name} className="w-full h-full object-cover" />
                         </div>
                       )}
-                      <div className="flex-1 text-left">
-                        <h4 className="font-semibold">{item.name}</h4>
-                        <p className="text-sm text-gray-600">${item.price}</p>
+                      <div className="flex-1">
+                        <h4 className="font-bold text-lg" style={{ color: '#343634' }}>{item.name}</h4>
+                        <p className="text-sm font-semibold" style={{ color: tierColor }}>${item.price}</p>
                       </div>
                       <Button
                         size="sm"
@@ -185,12 +184,14 @@ export default function Cart() {
                           localStorage.setItem('rugly_cart', JSON.stringify(currentCart));
                           setCart(currentCart);
                         }}
+                        className="font-bold text-white rounded-lg"
+                        style={{ backgroundColor: tierColor }}
                       >
                         Add to Cart
                       </Button>
-                    </CardContent>
-                  </Card>
-                ))}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -199,8 +200,13 @@ export default function Cart() {
     );
   }
 
+  // Get tier color for styling
+  const getTierColor = (tier) => {
+    return tier === 'budget' ? '#24f0a0' : tier === 'good' ? '#4075ff' : '#f04624';
+  };
+
   return (
-    <div className="min-h-screen py-12 px-6">
+    <div className="min-h-screen py-12 px-6 bg-white">
       <SEOHead
         title="Rugly Floors - Cart"
         description="Review your custom rug order and checkout securely."
@@ -208,92 +214,134 @@ export default function Cart() {
       />
 
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8">Shopping Cart</h1>
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-3" style={{ color: '#343634' }}>Your Cart</h1>
+          <p className="text-gray-600 text-lg">Review your custom rugs and complete your order</p>
+        </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Cart Items */}
-          <div className="lg:col-span-2 space-y-4">
-            {cart.map((item, index) => (
-              <Card key={index}>
-                <CardContent className="p-4">
-                  <div className="flex gap-4">
+          <div className="lg:col-span-2 space-y-6">
+            {cart.map((item, index) => {
+              const tierColor = getTierColor(item.qualityTier);
+              return (
+                <div key={index} className="bg-white rounded-2xl shadow-xl p-6" style={{ border: `4px solid ${tierColor}` }}>
+                  <div className="flex gap-6">
                     {item.previewUrl && (
-                      <div 
-                        className="w-24 h-24 rounded flex items-center justify-center"
-                        style={{ 
-                          background: 'linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%), linear-gradient(45deg, #f0f0f0 25%, transparent 25%, transparent 75%, #f0f0f0 75%)', 
-                          backgroundSize: '10px 10px', 
-                          backgroundPosition: '0 0, 5px 5px' 
-                        }}
-                      >
-                        <img src={item.previewUrl} alt={item.name} className="max-w-full max-h-full object-contain" />
+                      <div className="w-32 h-32 rounded-xl overflow-hidden flex-shrink-0" style={{ border: `2px solid ${tierColor}` }}>
+                        <img src={item.previewUrl} alt={item.name} className="w-full h-full object-cover" />
                       </div>
                     )}
-                    <div className="flex-1">
-                      <h3 className="font-bold text-lg">{item.name}</h3>
-                      <p className="text-sm text-gray-600">Size: {item.size}</p>
-                      {item.baseColor && <p className="text-sm text-gray-600">Base: {item.baseColor}</p>}
-                      {item.paintColor && <p className="text-sm text-gray-600">Paint: {item.paintColor}</p>}
-                      {item.is3D && <p className="text-sm text-gray-600">Style: 3-D Effect</p>}
-                      <p className="text-xl font-bold text-blue-600 mt-2">${item.price}</p>
-                    </div>
-                    <div className="flex gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => saveForLater(index)}
-                        title="Save for later"
-                      >
-                        <BookmarkPlus className="w-5 h-5 text-blue-500" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => removeItem(index)}
-                      >
-                        <Trash2 className="w-5 h-5 text-red-500" />
-                      </Button>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-4 mb-3">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-bold text-xl mb-1 truncate" style={{ color: '#343634' }}>{item.name}</h3>
+                          <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: `${tierColor}20`, color: tierColor }}>
+                            {item.qualityLabel}
+                          </div>
+                        </div>
+                        <div className="flex gap-2 flex-shrink-0">
+                          <button
+                            onClick={() => saveForLater(index)}
+                            className="p-2 rounded-lg transition-all hover:bg-gray-100"
+                            title="Save for later"
+                          >
+                            <BookmarkPlus className="w-5 h-5" style={{ color: tierColor }} />
+                          </button>
+                          <button
+                            onClick={() => removeItem(index)}
+                            className="p-2 rounded-lg transition-all hover:bg-red-50"
+                            title="Remove"
+                          >
+                            <Trash2 className="w-5 h-5 text-red-500" />
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-3 text-sm mb-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-lg" style={{ backgroundColor: `${tierColor}20` }}>
+                            📏
+                          </div>
+                          <div>
+                            <div className="text-xs text-gray-500">Size</div>
+                            <div className="font-semibold">{item.size}</div>
+                          </div>
+                        </div>
+                        {item.baseColor && (
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${tierColor}20` }}>
+                              <div className="w-4 h-4 rounded-full border-2 border-white shadow-sm" style={{ backgroundColor: item.baseColor.toLowerCase() }}></div>
+                            </div>
+                            <div>
+                              <div className="text-xs text-gray-500">Base</div>
+                              <div className="font-semibold text-xs">{item.baseColor}</div>
+                            </div>
+                          </div>
+                        )}
+                        {item.paintColor && (
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${tierColor}20` }}>
+                              <div className="w-4 h-4 rounded-full border-2 border-white shadow-sm" style={{ backgroundColor: item.paintColor.toLowerCase() }}></div>
+                            </div>
+                            <div>
+                              <div className="text-xs text-gray-500">Paint</div>
+                              <div className="font-semibold text-xs">{item.paintColor}</div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="pt-3 border-t flex items-center justify-between" style={{ borderColor: `${tierColor}30` }}>
+                        <span className="text-sm text-gray-600">Price</span>
+                        <span className="text-2xl font-black" style={{ color: tierColor }}>${item.price}</span>
+                      </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+              );
+            })}
           </div>
 
           {/* Checkout Form */}
           <div>
-            <Card>
-              <CardHeader>
-                <CardTitle>Shipping Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+            <div className="bg-white rounded-2xl shadow-xl p-6 sticky top-6" style={{ border: '4px solid #343634' }}>
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold mb-2" style={{ color: '#343634' }}>Checkout</h2>
+                <p className="text-sm text-gray-600">Complete your order details</p>
+              </div>
+              
+              <div className="space-y-4">
                 <div>
-                  <Label>Name *</Label>
+                  <Label className="text-sm font-semibold mb-2 block">Full Name *</Label>
                   <Input 
                     value={customerInfo.name}
                     onChange={(e) => setCustomerInfo(prev => ({ ...prev, name: e.target.value }))}
+                    className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
                   />
                 </div>
                 <div>
-                  <Label>Email *</Label>
+                  <Label className="text-sm font-semibold mb-2 block">Email *</Label>
                   <Input 
                     type="email"
                     value={customerInfo.email}
                     onChange={(e) => setCustomerInfo(prev => ({ ...prev, email: e.target.value }))}
+                    className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
                   />
                 </div>
                 <div>
-                  <Label>Phone</Label>
+                  <Label className="text-sm font-semibold mb-2 block">Phone</Label>
                   <Input 
                     value={customerInfo.phone}
                     onChange={(e) => setCustomerInfo(prev => ({ ...prev, phone: e.target.value }))}
                     placeholder="(555) 123-4567"
+                    className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
                   />
                 </div>
                 
                 {/* SMS Consent */}
                 {customerInfo.phone && (
-                  <div className="flex items-start space-x-2 p-3 bg-blue-50 border border-blue-200 rounded">
+                  <div className="flex items-start space-x-2 p-4 bg-gray-50 border-2 border-gray-200 rounded-xl">
                     <Checkbox 
                       id="sms-consent" 
                       checked={smsConsent}
@@ -302,83 +350,89 @@ export default function Cart() {
                     <div className="flex-1">
                       <label
                         htmlFor="sms-consent"
-                        className="text-xs leading-tight cursor-pointer"
+                        className="text-xs leading-relaxed cursor-pointer text-gray-700"
                       >
-                        By checking this box, I consent to receive text messages from Rugly Floors at the number provided, including messages sent by autodialer. Consent is not a condition of purchase. Message frequency varies. Message and data rates may apply. Reply STOP to cancel or HELP for help.
+                        I consent to receive text messages from Rugly Floors. Message frequency varies. Message and data rates may apply. Reply STOP to cancel.
                       </label>
                     </div>
                   </div>
                 )}
                 <div>
-                  <Label>Street Address *</Label>
+                  <Label className="text-sm font-semibold mb-2 block">Street Address *</Label>
                   <Input 
                     value={customerInfo.street}
                     onChange={(e) => setCustomerInfo(prev => ({ ...prev, street: e.target.value }))}
+                    className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label>City *</Label>
+                    <Label className="text-sm font-semibold mb-2 block">City *</Label>
                     <Input 
                       value={customerInfo.city}
                       onChange={(e) => setCustomerInfo(prev => ({ ...prev, city: e.target.value }))}
+                      className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
                     />
                   </div>
                   <div>
-                    <Label>State</Label>
+                    <Label className="text-sm font-semibold mb-2 block">State</Label>
                     <Input 
                       value={customerInfo.state}
                       onChange={(e) => setCustomerInfo(prev => ({ ...prev, state: e.target.value }))}
+                      className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
                     />
                   </div>
                 </div>
                 <div>
-                  <Label>ZIP Code</Label>
+                  <Label className="text-sm font-semibold mb-2 block">ZIP Code</Label>
                   <Input 
                     value={customerInfo.zip}
                     onChange={(e) => setCustomerInfo(prev => ({ ...prev, zip: e.target.value }))}
+                    className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
                   />
                 </div>
 
                 {/* Master Design Instructions */}
-                <div className="border-t pt-4 mt-4">
-                  <Label className="text-sm mb-2 block font-semibold flex items-center gap-2">
-                    <MessageSquare className="w-4 h-4 text-blue-600" />
-                    Master Design Instructions (Optional)
+                <div className="border-t-2 pt-6 mt-6" style={{ borderColor: '#343634' }}>
+                  <Label className="text-sm mb-3 block font-bold flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gray-900">
+                      <MessageSquare className="w-4 h-4 text-white" />
+                    </div>
+                    Design Instructions (Optional)
                   </Label>
                   <Textarea
                     value={designInstructions}
                     onChange={(e) => setDesignInstructions(e.target.value)}
-                    placeholder="Example: Make the text bold and centered, add a vintage feel, use vibrant colors..."
-                    className="h-24 text-sm"
+                    placeholder="Share any special requests or design details..."
+                    className="h-24 text-sm border-2 border-gray-300 focus:border-gray-900 rounded-lg"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Share special requests or design details
-                  </p>
                   
-                  <div className="border-4 border-gray-900 p-3 rounded-lg bg-white mt-3">
-                    <p className="text-xs font-semibold text-gray-900 mb-2">Need to discuss your design?</p>
+                  <div className="border-2 border-gray-900 p-4 rounded-xl bg-gray-50 mt-4">
+                    <p className="text-xs font-bold text-gray-900 mb-3 flex items-center gap-2">
+                      <Phone className="w-4 h-4" />
+                      Need Help?
+                    </p>
                     <div className="flex gap-2">
                       <a href="tel:5177778474" className="flex-1">
-                        <Button variant="outline" size="sm" className="w-full gap-1 text-xs border-2 border-gray-900">
+                        <Button variant="outline" size="sm" className="w-full gap-2 text-xs border-2 border-gray-900 hover:bg-gray-900 hover:text-white transition-all">
                           <Phone className="w-3 h-3" />
-                          Call
+                          Call Us
                         </Button>
                       </a>
                       <a href="sms:5177778474" className="flex-1">
-                        <Button variant="outline" size="sm" className="w-full gap-1 text-xs border-2 border-gray-900">
+                        <Button variant="outline" size="sm" className="w-full gap-2 text-xs border-2 border-gray-900 hover:bg-gray-900 hover:text-white transition-all">
                           <MessageSquare className="w-3 h-3" />
-                          Text
+                          Text Us
                         </Button>
                       </a>
                     </div>
-                    <p className="text-xs text-center text-gray-600 mt-1">(517) 777-8474</p>
+                    <p className="text-xs text-center text-gray-600 mt-2 font-semibold">(517) 777-8474</p>
                   </div>
                 </div>
 
                 {/* Coupon Code Section */}
-                <div className="border-t pt-4 mt-4">
-                  <Label className="text-sm font-medium mb-2 block">Promo Code</Label>
+                <div className="border-t-2 pt-6 mt-6" style={{ borderColor: '#343634' }}>
+                  <Label className="text-sm font-bold mb-3 block">Have a Promo Code?</Label>
                   {!couponValidation?.valid ? (
                     <div className="flex gap-2">
                       <Input
@@ -387,65 +441,78 @@ export default function Cart() {
                         placeholder="Enter code"
                         disabled={validatingCoupon}
                         onKeyPress={(e) => e.key === 'Enter' && handleApplyCoupon()}
+                        className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
                       />
                       <Button
                         onClick={handleApplyCoupon}
-                        variant="outline"
                         disabled={!couponCode.trim() || validatingCoupon}
+                        className="bg-gray-900 text-white hover:bg-gray-800"
                       >
                         {validatingCoupon ? 'Checking...' : 'Apply'}
                       </Button>
                     </div>
                   ) : (
-                    <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-3">
+                    <div className="flex items-center justify-between bg-green-50 border-2 border-green-500 rounded-xl p-4">
                       <div>
-                        <div className="font-semibold text-green-800">{couponValidation.coupon.code}</div>
+                        <div className="font-bold text-green-800">{couponValidation.coupon.code}</div>
                         <div className="text-xs text-green-600">{couponValidation.coupon.description}</div>
                       </div>
-                      <Button
+                      <button
                         onClick={handleRemoveCoupon}
-                        variant="ghost"
-                        size="sm"
-                        className="text-red-600 hover:text-red-700"
+                        className="text-red-600 hover:text-red-700 font-semibold text-sm transition-colors"
                       >
                         Remove
-                      </Button>
+                      </button>
                     </div>
                   )}
                 </div>
 
-                <div className="border-t pt-4 mt-4">
-                  <div className="space-y-2 mb-4">
-                    <div className="flex justify-between">
-                      <span>{hasUpfrontPaymentItems ? 'Total Amount' : 'Deposit Required'}</span>
-                      <span className="font-semibold">${paymentAmount.toFixed(2)}</span>
+                <div className="border-t-2 pt-6 mt-6" style={{ borderColor: '#343634' }}>
+                  <div className="space-y-3 mb-6">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">{hasUpfrontPaymentItems ? 'Total Amount' : 'Deposit Required'}</span>
+                      <span className="font-bold text-gray-900">${paymentAmount.toFixed(2)}</span>
                     </div>
                     {couponValidation?.valid && (
-                      <div className="flex justify-between text-green-600">
+                      <div className="flex justify-between text-sm text-green-600">
                         <span>Discount ({couponValidation.coupon.code})</span>
-                        <span className="font-semibold">-${couponValidation.discount_amount.toFixed(2)}</span>
+                        <span className="font-bold">-${couponValidation.discount_amount.toFixed(2)}</span>
                       </div>
                     )}
-                    <div className="flex justify-between text-lg font-bold pt-2 border-t">
-                      <span>Total Due Now</span>
-                      <span className="text-2xl">${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : paymentAmount.toFixed(2)}</span>
+                    <div className="pt-3 border-t-2" style={{ borderColor: '#343634' }}>
+                      <div className="flex justify-between items-center">
+                        <span className="font-bold text-lg">Total Due Now</span>
+                        <span className="text-3xl font-black" style={{ color: '#343634' }}>
+                          ${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : paymentAmount.toFixed(2)}
+                        </span>
+                      </div>
                     </div>
                   </div>
+                  
                   <Button 
-                    className="w-full border-4 border-gray-900 bg-white hover:bg-gray-50 text-gray-900 font-bold"
+                    className="w-full text-white font-bold py-6 text-lg rounded-xl transition-all"
+                    style={{ backgroundColor: '#343634', border: 'none' }}
                     onClick={handleCheckout}
                     disabled={submitting}
                   >
                     {submitting ? 'Processing...' : hasUpfrontPaymentItems ? `Pay $${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : paymentAmount.toFixed(2)} (Full Payment)` : `Pay $${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : paymentAmount.toFixed(2)} Deposit`}
                   </Button>
+                  
                   {!hasUpfrontPaymentItems && (
-                    <p className="text-xs text-gray-500 text-center mt-2">
+                    <p className="text-xs text-gray-500 text-center mt-3">
                       Balance due before shipping
                     </p>
                   )}
+                  
+                  <div className="mt-4 flex items-center justify-center gap-2 text-xs text-gray-500">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                    </svg>
+                    Secure checkout powered by Stripe
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </div>
