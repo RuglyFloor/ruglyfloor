@@ -71,15 +71,17 @@ export default function AIAssistant({ currentImageUrl, rugSize, qualityTier, bas
     setGeneratingImage(true);
     setError(null);
     try {
-      const designPrompt = `Create a detailed, artistic rug design based on this description: ${prompt}. ${baseColor ? `Use ${baseColor} as the base color.` : ''} ${paintColor ? `Primary design color: ${paintColor}.` : ''} ${secondPaintColor ? `Secondary design color: ${secondPaintColor}.` : ''} The design should be suitable for hand-painting on a ${rugSize || 'medium'} rug. Make it visually striking and well-balanced. High quality, detailed, suitable for a luxury custom rug.`;
-      
-      const response = await base44.integrations.Core.GenerateImage({
-        prompt: designPrompt,
-        existing_image_urls: inspirationImage?.url ? [inspirationImage.url] : undefined
+      const response = await base44.functions.invoke('aiAssistant', {
+        prompt: prompt,
+        rugSize: rugSize,
+        imageUrl: inspirationImage?.url,
+        qualityTier: qualityTier,
+        generateVariations: true,
+        referenceImages: inspirationImage?.url ? [inspirationImage.url] : []
       });
       
-      if (response.url && onGenerateDesign) {
-        onGenerateDesign(response.url);
+      if (response.data.designImage && onGenerateDesign) {
+        onGenerateDesign(response.data.designImage);
         setActiveTab('preview');
         setError(null);
       } else {
@@ -87,7 +89,7 @@ export default function AIAssistant({ currentImageUrl, rugSize, qualityTier, bas
       }
     } catch (err) {
       console.error('Image generation error:', err);
-      setError(err.message || 'Failed to generate design image. Please try again.');
+      setError(err.response?.data?.error || err.message || 'Failed to generate design image. Please try again.');
     } finally {
       setGeneratingImage(false);
     }
