@@ -64,6 +64,7 @@ import AdminProducts from './pages/AdminProducts';
 import AdminSEO from './pages/AdminSEO';
 import Blog from './pages/Blog';
 import Cart from './pages/Cart';
+import Collections from './pages/Collections';
 import Commission from './pages/Commission';
 import Contact from './pages/Contact';
 import ContentManager from './pages/ContentManager';
@@ -76,15 +77,14 @@ import Home from './pages/Home';
 import NotionSync from './pages/NotionSync';
 import Orders from './pages/Orders';
 import Policies from './pages/Policies';
+import Products from './pages/Products';
+import Robots from './pages/Robots';
 import SMSComplianceSample from './pages/SMSComplianceSample';
 import SMSConsent from './pages/SMSConsent';
 import Shop from './pages/Shop';
+import Sitemap from './pages/Sitemap';
 import Success from './pages/Success';
 import TrackOrder from './pages/TrackOrder';
-import Robots from './pages/Robots';
-import Sitemap from './pages/Sitemap';
-import Products from './pages/Products';
-import Collections from './pages/Collections';
 import __Layout from './Layout.jsx';
 
 
@@ -106,6 +106,7 @@ export const PAGES = {
     "AdminSEO": AdminSEO,
     "Blog": Blog,
     "Cart": Cart,
+    "Collections": Collections,
     "Commission": Commission,
     "Contact": Contact,
     "ContentManager": ContentManager,
@@ -118,15 +119,14 @@ export const PAGES = {
     "NotionSync": NotionSync,
     "Orders": Orders,
     "Policies": Policies,
+    "Products": Products,
+    "Robots": Robots,
     "SMSComplianceSample": SMSComplianceSample,
     "SMSConsent": SMSConsent,
     "Shop": Shop,
+    "Sitemap": Sitemap,
     "Success": Success,
     "TrackOrder": TrackOrder,
-    "Robots": Robots,
-    "Sitemap": Sitemap,
-    "Products": Products,
-    "Collections": Collections,
 }
 
 export const pagesConfig = {

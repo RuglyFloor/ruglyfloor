@@ -35,7 +35,7 @@ const QUALITY_TIERS = [
   { 
     id: 'good', 
     label: 'Rugly', 
-    description: 'Expect the same life-span as any ordinary rug.',
+    description: 'Expect the same life-span as any ordinary rug, available in a variety of sizes.',
     priceMultiplier: 1.0,
     materialDetail: 'Standard rug construction',
     lifespan: 'Standard rug lifespan',
