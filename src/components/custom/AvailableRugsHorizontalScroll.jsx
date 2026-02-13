@@ -73,45 +73,46 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
           {/* Carousel Container */}
           <div className="relative h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden rounded-2xl bg-gradient-to-b from-gray-100 to-white shadow-2xl">
             {/* Gallery Track */}
-            <div className="flex items-center justify-center h-full relative">
+            <div className="flex items-center justify-center h-full relative px-4">
               {products.map((product, i) => {
                 const itemIndex = getItemIndex(i);
                 const isCenter = itemIndex === 0;
                 const distance = Math.abs(itemIndex - 0);
-                const offset = itemIndex > 0 ? itemIndex * 100 : itemIndex * 100;
+                const offsetMultiplier = window.innerWidth < 768 ? 110 : 100;
+                const offset = itemIndex * offsetMultiplier;
 
                 return (
                   <motion.div
                     key={product.id}
                     initial={false}
                     animate={{
-                      x: offset + (direction === 1 ? 200 : -200),
-                      scale: isCenter ? 1 : Math.max(0.6, 1 - distance * 0.15),
-                      opacity: isCenter ? 1 : Math.max(0.3, 1 - distance * 0.25),
+                      x: `${offset}%`,
+                      scale: isCenter ? 1 : Math.max(0.5, 1 - distance * 0.2),
+                      opacity: isCenter ? 1 : 0,
                       zIndex: isCenter ? 10 : 10 - distance,
                     }}
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                    className="absolute w-full h-full flex items-center justify-center pointer-events-none"
+                    className="absolute inset-0 flex items-center justify-center pointer-events-none"
                   >
                     <div
-                      className={`relative w-full h-full flex items-center justify-center transition-all duration-500 ${
+                      className={`relative w-full h-full flex items-center justify-center p-4 md:p-8 ${
                         isCenter ? 'cursor-pointer pointer-events-auto' : ''
                       }`}
                     >
                       {/* Image */}
-                      <div className="relative w-[85%] md:w-[90%] h-[85%] md:h-[90%] rounded-xl overflow-hidden shadow-2xl group">
+                      <div className="relative w-full h-full max-w-[600px] max-h-[500px] mx-auto rounded-xl overflow-hidden shadow-2xl group bg-white">
                         {isCenter && getActiveImages().length > 0 && (
                           <img
                             src={getActiveImages()[imageIndex].url}
                             alt={product.name}
-                            className="w-full h-full object-contain transition-opacity duration-300"
+                            className="w-full h-full object-contain transition-opacity duration-300 p-2"
                           />
                         )}
                         {!isCenter && (
                           <img
                             src={product.image_url || (product.all_images?.[0]?.url)}
                             alt={product.name}
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-contain p-2"
                           />
                         )}
                         {!product.in_stock && (
