@@ -317,102 +317,102 @@ export default function Home() {
           <p className="text-center text-slate-600 mb-12 text-lg">From budget-friendly to luxury — we have the perfect rug for every space and budget</p>
           
           <div className="grid md:grid-cols-3 gap-8 mb-12">
-            <div className="bg-white border-4 border-blue-500 rounded-2xl p-8 hover:shadow-2xl transition-all">
+            <div className="bg-white rounded-2xl p-8 hover:shadow-2xl transition-all" style={{border: '4px solid #4075ff'}}>
               <div className="text-center mb-4">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Crugly</h3>
-                <p className="text-blue-600 font-semibold">Budget-Friendly Entry Tier</p>
+                <h3 className="text-2xl font-bold mb-2" style={{color: '#343634'}}>Crugly</h3>
+                <p className="font-semibold" style={{color: '#4075ff'}}>Budget-Friendly Entry Tier</p>
               </div>
               <ul className="space-y-3 mb-6">
                 <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#4075ff'}} />
                   <span className="text-sm">Synthetic non-slip material</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#4075ff'}} />
                   <span className="text-sm">Machine washable</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#4075ff'}} />
                   <span className="text-sm">2-20+ year lifespan</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#4075ff'}} />
                   <span className="text-sm">FREE shipping (10-14 days production)</span>
                 </li>
               </ul>
               <div className="text-center">
-                <div className="text-3xl font-bold text-gray-900 mb-4">From $79</div>
+                <div className="text-3xl font-bold mb-4" style={{color: '#343634'}}>From $79</div>
                 <Link to={createPageUrl('CustomBuilder')}>
-                  <Button className="w-full border-2 border-blue-600 bg-blue-600 hover:bg-blue-700 text-white">
+                  <Button className="w-full text-white" style={{border: '2px solid #4075ff', backgroundColor: '#4075ff'}}>
                     Start Designing
                   </Button>
                 </Link>
               </div>
             </div>
             
-            <div className="bg-white border-4 border-purple-600 rounded-2xl p-8 hover:shadow-2xl transition-all relative">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-purple-600 text-white text-xs font-bold px-4 py-2 rounded-full">
+            <div className="bg-white rounded-2xl p-8 hover:shadow-2xl transition-all relative" style={{border: '4px solid #f04624'}}>
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 text-white text-xs font-bold px-4 py-2 rounded-full" style={{backgroundColor: '#f04624'}}>
                 MOST POPULAR
               </div>
               <div className="text-center mb-4 mt-2">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2 rugly-text">Rugly</h3>
-                <p className="text-purple-600 font-semibold">Premium Standard Tier</p>
+                <h3 className="text-2xl font-bold mb-2 rugly-text" style={{color: '#343634'}}>Rugly</h3>
+                <p className="font-semibold" style={{color: '#f04624'}}>Premium Standard Tier</p>
               </div>
               <ul className="space-y-3 mb-6">
                 <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#f04624'}} />
                   <span className="text-sm">Rabbit fur or premium material</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#f04624'}} />
                   <span className="text-sm">Standard rug lifespan</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#f04624'}} />
                   <span className="text-sm">Machine washable</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#f04624'}} />
                   <span className="text-sm">Flat rate shipping (10-20 days production)</span>
                 </li>
               </ul>
               <div className="text-center">
-                <div className="text-3xl font-bold text-gray-900 mb-4">From $200</div>
+                <div className="text-3xl font-bold mb-4" style={{color: '#343634'}}>From $200</div>
                 <Link to={createPageUrl('CustomBuilder')}>
-                  <Button className="w-full border-2 border-purple-600 bg-purple-600 hover:bg-purple-700 text-white">
+                  <Button className="w-full text-white" style={{border: '2px solid #f04624', backgroundColor: '#f04624'}}>
                     Start Designing
                   </Button>
                 </Link>
               </div>
             </div>
             
-            <div className="bg-gradient-to-br from-amber-50 to-yellow-50 border-4 border-amber-500 rounded-2xl p-8 hover:shadow-2xl transition-all">
+            <div className="rounded-2xl p-8 hover:shadow-2xl transition-all" style={{backgroundColor: '#F7F1DA', border: '4px solid #24f0a0'}}>
               <div className="text-center mb-4">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2 rugly-text">Rugly LX</h3>
-                <p className="text-amber-600 font-semibold">Luxury Premium Tier</p>
+                <h3 className="text-2xl font-bold mb-2 rugly-text" style={{color: '#343634'}}>Rugly LX</h3>
+                <p className="font-semibold" style={{color: '#f04624'}}>Luxury Premium Tier</p>
               </div>
               <ul className="space-y-3 mb-6">
                 <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#24f0a0'}} />
                   <span className="text-sm">Shag, jute, or luxury materials</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#24f0a0'}} />
                   <span className="text-sm">Unlimited customization</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#24f0a0'}} />
                   <span className="text-sm">Premium durability</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#24f0a0'}} />
                   <span className="text-sm">White glove service</span>
                 </li>
               </ul>
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900 mb-4">Custom Quote</div>
+                <div className="text-2xl font-bold mb-4" style={{color: '#343634'}}>Custom Quote</div>
                 <Link to={createPageUrl('CustomBuilder')}>
-                  <Button className="w-full border-2 border-amber-600 bg-amber-600 hover:bg-amber-700 text-white">
+                  <Button className="w-full text-white" style={{border: '2px solid #24f0a0', backgroundColor: '#24f0a0', color: '#343634'}}>
                     Start Designing
                   </Button>
                 </Link>
