@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Upload, CheckCircle, Pencil, FileText, Lightbulb } from 'lucide-react';
+import { Upload, CheckCircle, Pencil, FileText, Lightbulb, Clock, Palette, Sparkles, Package } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -24,35 +25,41 @@ const QUALITY_TIERS = [
   { 
     id: 'budget', 
     label: 'Crugly', 
-    description: 'Synthetic but effective in covering up floors, creating a cool effect, dorm rooms, kids love it.',
+    description: 'Perfect for dorms, kids rooms, and budget-conscious spaces',
     priceMultiplier: 0.7,
-    materialDetail: 'Synthetic, thinner non-slip floor covering that looks great',
-    lifespan: '2 years with high traffic, 20+ with low',
+    materialDetail: 'Synthetic non-slip floor covering',
+    lifespan: '2-20+ years',
     washable: true,
-    customization: 'standard',
-    priceRange: '$$'
+    customization: 'Standard',
+    priceRange: '$$',
+    color: '#24f0a0',
+    maxColors: 2
   },
   { 
     id: 'good', 
     label: 'Rugly', 
-    description: 'Expect the same life-span as any ordinary rug, available in a variety of sizes.',
+    description: 'Premium quality with standard rug lifespan',
     priceMultiplier: 1.0,
-    materialDetail: 'Standard rug construction',
+    materialDetail: 'Rabbit fur or premium material',
     lifespan: 'Standard rug lifespan',
     washable: true,
     customization: 'Standard',
-    priceRange: '$$$'
+    priceRange: '$$$',
+    color: '#4075ff',
+    maxColors: 4
   },
   { 
     id: 'highend', 
     label: 'Rugly Lux', 
-    description: 'Rugly Lux is the cat\'s meow—you tell us what you\'re thinking and we make it happen with no limits',
+    description: 'No limits—tell us your vision and we make it happen',
     priceMultiplier: 1.25,
-    materialDetail: 'Premium materials, custom hand-painted',
+    materialDetail: 'Shag, jute, or luxury materials',
     lifespan: 'Premium durability',
     washable: false,
-    customization: 'Limitless possibilities',
-    priceRange: '$$$$'
+    customization: 'Unlimited',
+    priceRange: '$$$$',
+    color: '#f04624',
+    maxColors: 999
   }
 ];
 
@@ -64,8 +71,6 @@ const SIZES = [
   { id: 'hg', label: 'Huge', value: 'huge', price: 500, step: 4, measurement: '9x11' },
   { id: 'rd', label: '3.14', value: '4ft round', price: 250, step: 1, measurement: '4 foot round' }
 ];
-
-// Fee calculation functions moved inside component where getPricingData is available
 
 const BASE_COLORS = [
   { name: 'Yellow', hex: '#f4d03f', type: 'light' },
@@ -99,14 +104,6 @@ const PAINT_COLORS_GROUP_2 = [
 ];
 
 const PAINT_COLORS = [...PAINT_COLORS_GROUP_1, ...PAINT_COLORS_GROUP_2];
-
-// Limited colors for mid-range and high-end tiers
-const LIMITED_PAINT_COLORS = [
-  { name: 'Tan', hex: '#d2b48c', type: 'both' },
-  { name: 'Black', hex: '#000000', type: 'both' },
-  { name: 'White', hex: '#ffffff', type: 'both' },
-  { name: 'Off-White', hex: '#f5f5dc', type: 'both' }
-];
 
 export default function CustomBuilder() {
   const navigate = useNavigate();
@@ -194,16 +191,10 @@ export default function CustomBuilder() {
     return colorMap[colorName] || '#d2b48c';
   };
   
-  // Debug: Log component mount
-  useEffect(() => {
-    console.log('CustomBuilder mounted successfully');
-  }, []);
-  
   const [step, setStep] = useState(1);
   const [transitioning, setTransitioning] = useState(false);
   const [designMode, setDesignMode] = useState('draw'); // 'library', 'upload', or 'draw'
   const [selectedItem, setSelectedItem] = useState(null);
-  const [floatingSelections, setFloatingSelections] = useState([]);
 
   const [config, setConfig] = useState({
     qualityTier: '',
@@ -235,14 +226,6 @@ export default function CustomBuilder() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [step]);
 
-  // Debug logger
-  useEffect(() => {
-    console.log('CONFIG STATE:', {
-      paintColor: config.paintColor,
-      secondPaintColor: config.secondPaintColor,
-      hasSecondColor: config.hasSecondColor
-    });
-  }, [config.paintColor, config.secondPaintColor, config.hasSecondColor]);
   const [uploading, setUploading] = useState(false);
   const [isRush, setIsRush] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
@@ -426,7 +409,6 @@ export default function CustomBuilder() {
   };
 
 
-
   const handleApplyAIColors = (colors) => {
     if (colors && colors.length > 0) {
       const firstColorHex = colors[0];
@@ -503,6 +485,11 @@ export default function CustomBuilder() {
     return PAINT_COLORS;
   };
 
+  const getTierColor = () => {
+    const selectedTier = QUALITY_TIERS.find(t => t.id === config.qualityTier);
+    return selectedTier ? selectedTier.color : '#d1d5db'; // Default color if no tier selected
+  };
+
   return (
     <div className="min-h-screen py-12 px-6 bg-white">
       <SEOHead
@@ -513,7 +500,7 @@ export default function CustomBuilder() {
       />
       <div className="max-w-7xl mx-auto">
         <h1 className="text-4xl font-bold text-center mb-2">Design Your Custom Rug</h1>
-        <p className="text-center text-gray-600 mb-8">Create a one-of-a-kind piece in three simple steps</p>
+        <p className="text-center text-gray-600 mb-8">Create a one-of-a-kind piece in four simple steps</p>
 
         {/* Progress Indicator */}
         <div className="relative mb-12">
@@ -522,716 +509,541 @@ export default function CustomBuilder() {
               { num: 1, label: 'Quality' },
               { num: 2, label: 'Size' },
               { num: 3, label: 'Colors' },
-              { num: 4, label: 'Design & Confirm' }
-            ].map((s, idx) => (
-              <button 
-                key={s.num} 
-                onClick={() => setStep(s.num)}
-                className="flex flex-col items-center flex-1 cursor-pointer hover:opacity-80 transition-opacity"
-              >
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all ${
-                  step >= s.num 
-                    ? 'border-4 border-gray-900 bg-white text-gray-900 shadow-lg scale-110' 
-                    : 'border-2 border-gray-300 bg-gray-100 text-gray-400'
-                }`}>
-                  {step > s.num ? <CheckCircle className="w-6 h-6" /> : s.num}
-                </div>
-                <span className={`text-xs mt-2 font-medium ${step >= s.num ? 'text-gray-900' : 'text-gray-400'}`}>
-                  {s.label}
-                </span>
-                {idx < 3 && (
-                  <div className="absolute top-6 left-0 right-0 h-0.5 -z-10" style={{ 
-                    left: `${(idx * 33.33) + 16.66}%`, 
-                    width: '33.33%',
-                    background: step > s.num ? '#1f2937' : '#e5e7eb'
-                  }} />
-                )}
-              </button>
-            ))}
+              { num: 4, label: 'Design' }
+            ].map((s, idx) => {
+              const tierColor = getTierColor();
+              return (
+                <button 
+                  key={s.num} 
+                  onClick={() => setStep(s.num)}
+                  className="flex flex-col items-center flex-1 cursor-pointer hover:opacity-80 transition-opacity"
+                >
+                  <div 
+                    className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all border-4"
+                    style={{
+                      borderColor: step >= s.num && config.qualityTier ? tierColor : '#d1d5db',
+                      backgroundColor: 'white',
+                      color: step >= s.num && config.qualityTier ? tierColor : '#9ca3af',
+                      transform: step >= s.num ? 'scale(1.1)' : 'scale(1)'
+                    }}
+                  >
+                    {step > s.num ? <CheckCircle className="w-6 h-6" /> : s.num}
+                  </div>
+                  <span 
+                    className="text-xs mt-2 font-medium"
+                    style={{ color: step >= s.num ? '#343634' : '#9ca3af' }}
+                  >
+                    {s.label}
+                  </span>
+                  {idx < 3 && (
+                    <div 
+                      className="absolute top-6 left-0 right-0 h-0.5 -z-10" 
+                      style={{ 
+                        left: `${(idx * 33.33) + 16.66}%`, 
+                        width: '33.33%',
+                        background: step > s.num && config.qualityTier ? tierColor : '#e5e7eb'
+                      }} 
+                    />
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {config.previewUrl && step === 4 && (
-        <div className="fixed bottom-6 right-6 z-50 lg:hidden">
-          <Button
-            onClick={handleAddToCart}
-            size="lg"
-            className="border-4 border-gray-900 bg-white hover:bg-gray-50 text-gray-900 font-bold shadow-2xl"
-          >
-            Add to Cart - ${currentPrice()}
-          </Button>
-        </div>
-      )}
+          <div className="fixed bottom-6 right-6 z-50 lg:hidden">
+            <Button
+              onClick={handleAddToCart}
+              size="lg"
+              className="font-bold shadow-2xl text-white"
+              style={{ backgroundColor: getTierColor(), border: 'none' }}
+            >
+              Add to Cart - ${currentPrice()}
+            </Button>
+          </div>
+        )}
 
-      <div className={step >= 4 ? "grid lg:grid-cols-3 gap-8 items-start" : "max-w-7xl mx-auto"}>
+        <div className={step >= 4 ? "grid lg:grid-cols-3 gap-8 items-start" : "max-w-7xl mx-auto"}>
           <div className={step >= 4 ? "lg:col-span-2 space-y-6" : "space-y-6"}>
-            {/* Step 1: Quality Tier Selection - Modern Cards */}
+            
+            {/* Step 1: Quality Tier Selection */}
             {step === 1 && (
-              <div className={`space-y-6 transition-opacity duration-300 ${transitioning ? 'opacity-50' : 'opacity-100'}`}>
+              <div className={`space-y-8 transition-opacity duration-300 ${transitioning ? 'opacity-50' : 'opacity-100'}`}>
                 <div className="text-center mb-12">
-                  <h2 className="text-4xl font-bold mb-4 text-gray-900">
+                  <h2 className="text-4xl font-bold mb-4" style={{ color: '#343634' }}>
                     Choose Your Quality Level
                   </h2>
                   <p className="text-gray-600 text-xl">Three tiers. One vision. Your perfect rug.</p>
                 </div>
 
-                {/* Comparison Table */}
-                <div className="max-w-6xl mx-auto overflow-x-auto pt-6">
-                  <table className="w-full border-collapse table-fixed">
-                    <colgroup>
-                      <col style={{ width: '25%' }} />
-                      <col style={{ width: '25%' }} />
-                      <col style={{ width: '25%' }} />
-                      <col style={{ width: '25%' }} />
-                    </colgroup>
-                    <thead>
-                      <tr className="border-b-2 border-gray-300">
-                        <th className="text-left p-4 font-semibold text-gray-700 bg-gray-50">Feature</th>
-                        {QUALITY_TIERS.map((tier) => (
-                          <th key={tier.id} className={`p-4 text-center relative ${
-                            tier.id === 'budget' || tier.id === 'good' 
-                              ? 'border-2' 
-                              : 'bg-gray-50'
-                          }`}
-                          style={{
-                            backgroundColor: tier.id === 'budget' || tier.id === 'good' ? '#F7F1DA' : undefined,
-                            borderColor: tier.id === 'budget' ? '#24f0a0' : tier.id === 'good' ? '#4075ff' : undefined
-                          }}>
-                            {(tier.id === 'budget' || tier.id === 'good') && (
-                              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap shadow-lg" style={{backgroundColor: '#4075ff'}}>
-                                Create Your Own & See It Now!
-                              </div>
-                            )}
-                            <button
-                              onClick={() => {
-                                setSelectedItem(tier.id);
-                                setTransitioning(true);
-                                setConfig(prev => ({ ...prev, qualityTier: tier.id }));
-                                setTimeout(() => {
-                                  setStep(2);
-                                  setTransitioning(false);
-                                  setSelectedItem(null);
-                                }, 700);
-                              }}
-                              disabled={transitioning}
-                              className="font-bold text-xl mt-2 transition-colors cursor-pointer"
-                              style={{color: '#343634'}}
-                              onMouseEnter={(e) => e.target.style.color = '#4075ff'}
-                              onMouseLeave={(e) => e.target.style.color = '#343634'}
-                            >
-                              {tier.label}
-                            </button>
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr className="border-b border-gray-200">
-                        <td className="p-4 font-medium text-gray-700">Description</td>
-                        {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
-                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
-                          }`}>
-                            {tier.description}
-                          </td>
-                        ))}
-                      </tr>
-                      <tr className="border-b border-gray-200 bg-gray-50">
-                        <td className="p-4 font-medium text-gray-700">Material</td>
-                        {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
-                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
-                          }`}>
-                            {tier.materialDetail}
-                          </td>
-                        ))}
-                      </tr>
-                      <tr className="border-b border-gray-200">
-                        <td className="p-4 font-medium text-gray-700">Expected Lifespan</td>
-                        {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
-                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
-                          }`}>
-                            {tier.lifespan}
-                          </td>
-                        ))}
-                      </tr>
-                      <tr className="border-b border-gray-200 bg-gray-50">
-                        <td className="p-4 font-medium text-gray-700">Machine Washable</td>
-                        {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className={`p-4 text-center ${
-                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
-                          }`}>
-                            {tier.washable ? (
-                              <CheckCircle className="w-5 h-5 text-green-600 mx-auto" />
-                            ) : (
-                              <span className="text-red-600 font-semibold">✕ Dry Clean Only</span>
-                            )}
-                          </td>
-                        ))}
-                      </tr>
+                <div className="grid md:grid-cols-3 gap-8">
+                  {QUALITY_TIERS.map((tier) => (
+                    <motion.div
+                      key={tier.id}
+                      initial={{ opacity: 1, scale: 1 }}
+                      animate={
+                        transitioning && selectedItem === tier.id
+                          ? { scale: 1.1, z: 50, opacity: 1 }
+                          : transitioning && selectedItem && selectedItem !== tier.id
+                          ? { 
+                              y: Math.random() > 0.5 ? -200 : 200,
+                              x: (Math.random() - 0.5) * 400,
+                              rotate: (Math.random() - 0.5) * 90,
+                              opacity: 0,
+                              scale: 0.5
+                            }
+                          : { opacity: 1, scale: 1, y: 0, x: 0, rotate: 0 }
+                      }
+                      transition={{ duration: 0.6, ease: "easeInOut" }}
+                      className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all cursor-pointer overflow-hidden"
+                      style={{ border: `4px solid ${tier.color}` }}
+                      onClick={() => {
+                        setSelectedItem(tier.id);
+                        setTransitioning(true);
+                        setConfig(prev => ({ ...prev, qualityTier: tier.id }));
+                        setTimeout(() => {
+                          setStep(2);
+                          setTransitioning(false);
+                          setSelectedItem(null);
+                        }, 700);
+                      }}
+                    >
+                      {/* Colored Header */}
+                      <div className="p-6 text-center text-white" style={{ backgroundColor: tier.color }}>
+                        <h3 className="text-3xl font-black mb-2">{tier.label}</h3>
+                        <p className="text-sm opacity-90">{tier.id === 'budget' ? 'Budget-Friendly' : tier.id === 'good' ? 'Most Popular' : 'Luxury Premium'}</p>
+                      </div>
 
-                      <tr className="border-b border-gray-200 bg-gray-50">
-                        <td className="p-4 font-medium text-gray-700">Maximum Paint Colors</td>
-                        {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
-                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
-                          }`}>
-                            {tier.id === 'budget' && '2'}
-                            {tier.id === 'good' && '4'}
-                            {tier.id === 'highend' && 'Unlimited'}
-                          </td>
-                        ))}
-                      </tr>
-                      <tr className="border-b border-gray-200">
-                        <td className="p-4 font-medium text-gray-700">Backing</td>
-                        {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
-                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
-                          }`}>
-                            {tier.id === 'budget' && 'None, rug folded and shipped one length'}
-                            {tier.id === 'good' && 'Crugly-branded non-slip material bound to the floor-facing side'}
-                            {tier.id === 'highend' && 'Rugly-branded non-slip material adhered to bottom, center, sides have branded non-slip material'}
-                          </td>
-                        ))}
-                      </tr>
-                      <tr className="border-b border-gray-200">
-                        <td className="p-4 font-medium text-gray-700">Customization</td>
-                        {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
-                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
-                          }`}>
-                            {tier.id === 'budget' ? 'Limited' : tier.customization}
-                          </td>
-                        ))}
-                      </tr>
-                      <tr className="border-b border-gray-200 bg-gray-50">
-                        <td className="p-4 font-medium text-gray-700">Texture/ 3D / Bevel</td>
-                        {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className={`p-4 text-center text-sm text-gray-600 ${
-                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
-                          }`}>
-                            {tier.id === 'budget' && 'None, rug folded and shipped one length'}
-                            {tier.id === 'good' && 'Standard'}
-                            {tier.id === 'highend' && 'Unlimited'}
-                          </td>
-                        ))}
-                      </tr>
-                      <tr className="border-b border-gray-200">
-                        <td className="p-4 font-medium text-gray-700">Visual Details</td>
-                        {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className={`p-4 text-center ${
-                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
-                          }`}>
-                            {tier.id === 'budget' && (
-                              <img 
-                                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/fe7898922_image.png" 
-                                alt="Crugly material details"
-                                className="w-full h-auto rounded-lg"
-                              />
-                            )}
-                            {tier.id === 'good' && (
-                              <img 
-                                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/701415d98_image.png" 
-                                alt="Rugly material details"
-                                className="w-full h-auto rounded-lg"
-                              />
-                            )}
-                            {tier.id === 'highend' && (
-                              <img 
-                                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/4d348899c_image.png" 
-                                alt="Rugly Lux material details"
-                                className="w-full h-auto rounded-lg"
-                              />
-                            )}
-                          </td>
-                        ))}
-                      </tr>
-                      <tr className="border-b border-gray-200 bg-gray-50">
-                        <td className="p-4 font-medium text-gray-700">Time before it's on your floor</td>
-                        {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className={`p-4 text-center text-sm ${
-                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
-                          }`}>
-                            {tier.id === 'budget' && (
-                              <div>
-                                <div className="font-semibold text-gray-900">10-14 days</div>
-                                <div className="text-green-600 font-bold mt-1">FREE SHIPPING!</div>
-                              </div>
-                            )}
-                            {tier.id === 'good' && (
-                              <div>
-                                <div className="font-semibold text-gray-900">10-20 days</div>
-                                <div className="text-gray-600 mt-1">Flat rate shipping</div>
-                              </div>
-                            )}
-                            {tier.id === 'highend' && '—'}
-                          </td>
-                        ))}
-                      </tr>
+                      <div className="p-6">
+                        {/* Price */}
+                        <div className="text-center mb-6 pb-6 border-b-2" style={{ borderColor: tier.color }}>
+                          <div className="text-5xl font-black mb-1" style={{ color: tier.color }}>
+                            ${Math.round(79 * tier.priceMultiplier)}
+                          </div>
+                          <div className="text-xs text-gray-500">Starting at (Tiny 2x3)</div>
+                        </div>
 
-                      <tr className="border-b-2 border-gray-300 bg-gray-50">
-                        <td className="p-4 font-medium text-gray-700">Starting Price</td>
-                        {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className={`p-4 text-center ${
-                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
-                          }`}>
-                            <div className="text-2xl font-bold text-gray-900">
-                              ${Math.round(79 * tier.priceMultiplier)}
+                        {/* Visual Detail Image */}
+                        <div className="mb-6 rounded-xl overflow-hidden" style={{ border: `2px solid ${tier.color}` }}>
+                          <img 
+                            src={tier.id === 'budget' ? 
+                              "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/fe7898922_image.png" :
+                              tier.id === 'good' ?
+                              "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/701415d98_image.png" :
+                              "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/4d348899c_image.png"
+                            }
+                            alt={`${tier.label} material`}
+                            className="w-full h-40 object-cover"
+                          />
+                        </div>
+
+                        {/* Infographic Features */}
+                        <div className="space-y-3 mb-6">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${tier.color}20` }}>
+                              <Palette className="w-5 h-5" style={{ color: tier.color }} />
                             </div>
-                            <div className="text-xs text-gray-500 mt-1">(Tiny size)</div>
-                          </td>
-                        ))}
-                      </tr>
-                      <tr>
-                        <td className="p-4"></td>
-                        {QUALITY_TIERS.map((tier) => (
-                          <td key={tier.id} className={`p-4 ${
-                            tier.id === 'budget' || tier.id === 'good' ? 'bg-blue-50' : ''
-                          }`}>
-                            <motion.div
-                              initial={{ opacity: 1, scale: 1 }}
-                              animate={
-                                transitioning && selectedItem === tier.id
-                                  ? { scale: 1.2, z: 50, opacity: 1 }
-                                  : transitioning && selectedItem && selectedItem !== tier.id
-                                  ? { 
-                                      y: Math.random() > 0.5 ? -200 : 200,
-                                      x: (Math.random() - 0.5) * 400,
-                                      rotate: (Math.random() - 0.5) * 90,
-                                      opacity: 0,
-                                      scale: 0.5
-                                    }
-                                  : { opacity: 1, scale: 1, y: 0, x: 0, rotate: 0 }
-                              }
-                              transition={{ duration: 0.6, ease: "easeInOut" }}
-                            >
-                              <Button
-                                onClick={() => {
-                                  setSelectedItem(tier.id);
-                                  setTransitioning(true);
-                                  setConfig(prev => ({ ...prev, qualityTier: tier.id }));
-                                  setTimeout(() => {
-                                    setStep(2);
-                                    setTransitioning(false);
-                                    setSelectedItem(null);
-                                  }, 700);
-                                }}
-                                disabled={transitioning}
-                                className="w-full text-white"
-                                style={{
-                                  border: config.qualityTier === tier.id ? '4px solid #343634' : '2px solid',
-                                  borderColor: config.qualityTier === tier.id ? '#343634' : tier.id === 'budget' ? '#24f0a0' : tier.id === 'good' ? '#4075ff' : '#f04624',
-                                  backgroundColor: config.qualityTier === tier.id ? '#343634' : tier.id === 'budget' ? '#24f0a0' : tier.id === 'good' ? '#4075ff' : '#f04624'
-                                }}
-                              >
-                                {config.qualityTier === tier.id ? (
-                                  <>
-                                    <CheckCircle className="w-4 h-4 mr-2" />
-                                    Selected
-                                  </>
-                                ) : (
-                                  tier.id === 'budget' ? 'Budget Friendly Option' :
-                                  tier.id === 'good' ? 'The OG Crugly' :
-                                  'Premium Lux with AI'
-                                )}
-                              </Button>
-                            </motion.div>
-                          </td>
-                        ))}
-                      </tr>
-                    </tbody>
-                  </table>
+                            <div className="flex-1">
+                              <div className="text-xs font-semibold text-gray-900">Colors</div>
+                              <div className="text-xs text-gray-600">{tier.maxColors === 999 ? 'Unlimited' : `Up to ${tier.maxColors}`}</div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${tier.color}20` }}>
+                              <Package className="w-5 h-5" style={{ color: tier.color }} />
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-xs font-semibold text-gray-900">Material</div>
+                              <div className="text-xs text-gray-600">{tier.materialDetail}</div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${tier.color}20` }}>
+                              <Clock className="w-5 h-5" style={{ color: tier.color }} />
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-xs font-semibold text-gray-900">Timeline</div>
+                              <div className="text-xs text-gray-600">
+                                {tier.id === 'budget' && '10-14 days + FREE ship'}
+                                {tier.id === 'good' && '10-20 days'}
+                                {tier.id === 'highend' && '2-4 weeks'}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${tier.color}20` }}>
+                              <Sparkles className="w-5 h-5" style={{ color: tier.color }} />
+                            </div>
+                            <div className="flex-1">
+                              <div className="text-xs font-semibold text-gray-900">Care</div>
+                              <div className="text-xs text-gray-600">{tier.washable ? 'Machine washable' : 'Dry clean'}</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* CTA Button */}
+                        <Button
+                          className="w-full text-white font-bold py-6 text-lg"
+                          style={{ backgroundColor: tier.color, border: 'none' }}
+                        >
+                          Select {tier.label}
+                        </Button>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
               </div>
             )}
 
             {/* Step 2: Size Selection */}
             {step === 2 && (
-           <div className={`space-y-6 transition-opacity duration-300 ${transitioning ? 'opacity-50' : 'opacity-100'}`}>
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold mb-3 text-gray-900">
-                Pick Your Perfect Size
-              </h2>
-              <p className="text-gray-600 text-lg">All sizes come with our signature hand-painted quality</p>
-            </div>
+              <div className={`space-y-6 transition-opacity duration-300 ${transitioning ? 'opacity-50' : 'opacity-100'}`}>
+                <div className="text-center mb-8">
+                  <h2 className="text-4xl font-bold mb-3" style={{ color: '#343634' }}>
+                    Pick Your Perfect Size
+                  </h2>
+                  <p className="text-gray-600 text-lg">All sizes come with our signature hand-painted quality</p>
+                </div>
 
-            {/* Custom Size Input for Rugly and Rugly Lux */}
-            {(config.qualityTier === 'good' || config.qualityTier === 'highend') && (
-              <Card className="bg-white" style={{border: `4px solid ${config.qualityTier === 'good' ? '#4075ff' : '#f04624'}`}}>
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    📏 Have a specific size in mind?
-                  </CardTitle>
-                  <div className="flex items-center justify-between mt-3">
-                    <p className="text-sm text-gray-600">
-                      Enter your ideal dimensions (minimum 2ft x 2ft / 0.61m x 0.61m)
-                    </p>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant={measurementSystem === 'imperial' ? 'default' : 'outline'}
-                        onClick={() => setMeasurementSystem('imperial')}
-                      >
-                        Feet/Inches
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant={measurementSystem === 'metric' ? 'default' : 'outline'}
-                        onClick={() => setMeasurementSystem('metric')}
-                      >
-                        Meters/CM
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {measurementSystem === 'imperial' ? (
-                      <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label className="text-sm font-semibold mb-2 block">Length</Label>
+                {/* Custom Size Input for Rugly and Rugly Lux */}
+                {(config.qualityTier === 'good' || config.qualityTier === 'highend') && (
+                  <Card className="bg-white" style={{ border: `4px solid ${getTierColor()}` }}>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <span className="text-2xl">📏</span> Custom Dimensions
+                      </CardTitle>
+                      <div className="flex items-center justify-between mt-3">
+                        <p className="text-sm text-gray-600">
+                          Enter your ideal dimensions (minimum 2ft x 2ft / 0.61m x 0.61m)
+                        </p>
                         <div className="flex gap-2">
-                          <div className="flex-1">
-                            <input
-                              type="number"
-                              value={customDimensions.lengthFeet}
-                              onChange={(e) => handleCustomDimensionsChange('lengthFeet', e.target.value)}
-                              placeholder="0"
-                              className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none"
-                              min="0"
-                              max="50"
-                            />
-                            <div className="text-xs text-gray-500 mt-1 text-center">feet</div>
-                          </div>
-                          <div className="flex-1">
-                            <input
-                              type="number"
-                              value={customDimensions.lengthInches}
-                              onChange={(e) => handleCustomDimensionsChange('lengthInches', e.target.value)}
-                              placeholder="0"
-                              className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none"
-                              min="0"
-                              max="11"
-                            />
-                            <div className="text-xs text-gray-500 mt-1 text-center">inches</div>
-                          </div>
+                          <Button
+                            size="sm"
+                            variant={measurementSystem === 'imperial' ? 'default' : 'outline'}
+                            onClick={() => setMeasurementSystem('imperial')}
+                            style={measurementSystem === 'imperial' ? { backgroundColor: getTierColor(), borderColor: getTierColor(), color: 'white' } : {}}
+                          >
+                            Feet/Inches
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant={measurementSystem === 'metric' ? 'default' : 'outline'}
+                            onClick={() => setMeasurementSystem('metric')}
+                            style={measurementSystem === 'metric' ? { backgroundColor: getTierColor(), borderColor: getTierColor(), color: 'white' } : {}}
+                          >
+                            Meters/CM
+                          </Button>
                         </div>
                       </div>
-
-                      <div>
-                        <Label className="text-sm font-semibold mb-2 block">Width</Label>
-                        <div className="flex gap-2">
-                          <div className="flex-1">
-                            <input
-                              type="number"
-                              value={customDimensions.widthFeet}
-                              onChange={(e) => handleCustomDimensionsChange('widthFeet', e.target.value)}
-                              placeholder="0"
-                              className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none"
-                              min="0"
-                              max="50"
-                            />
-                            <div className="text-xs text-gray-500 mt-1 text-center">feet</div>
-                          </div>
-                          <div className="flex-1">
-                            <input
-                              type="number"
-                              value={customDimensions.widthInches}
-                              onChange={(e) => handleCustomDimensionsChange('widthInches', e.target.value)}
-                              placeholder="0"
-                              className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none"
-                              min="0"
-                              max="11"
-                            />
-                            <div className="text-xs text-gray-500 mt-1 text-center">inches</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    ) : (
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label className="text-sm font-semibold mb-2 block">Length</Label>
-                          <div className="flex gap-2">
-                            <div className="flex-1">
-                              <input
-                                type="number"
-                                value={customDimensionsMetric.lengthMeters}
-                                onChange={(e) => handleCustomDimensionsChangeMetric('lengthMeters', e.target.value)}
-                                placeholder="0"
-                                className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none"
-                                min="0"
-                                max="15"
-                              />
-                              <div className="text-xs text-gray-500 mt-1 text-center">meters</div>
-                            </div>
-                            <div className="flex-1">
-                              <input
-                                type="number"
-                                value={customDimensionsMetric.lengthCm}
-                                onChange={(e) => handleCustomDimensionsChangeMetric('lengthCm', e.target.value)}
-                                placeholder="0"
-                                className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none"
-                                min="0"
-                                max="99"
-                              />
-                              <div className="text-xs text-gray-500 mt-1 text-center">cm</div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div>
-                          <Label className="text-sm font-semibold mb-2 block">Width</Label>
-                          <div className="flex gap-2">
-                            <div className="flex-1">
-                              <input
-                                type="number"
-                                value={customDimensionsMetric.widthMeters}
-                                onChange={(e) => handleCustomDimensionsChangeMetric('widthMeters', e.target.value)}
-                                placeholder="0"
-                                className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none"
-                                min="0"
-                                max="15"
-                              />
-                              <div className="text-xs text-gray-500 mt-1 text-center">meters</div>
-                            </div>
-                            <div className="flex-1">
-                              <input
-                                type="number"
-                                value={customDimensionsMetric.widthCm}
-                                onChange={(e) => handleCustomDimensionsChangeMetric('widthCm', e.target.value)}
-                                placeholder="0"
-                                className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none"
-                                min="0"
-                                max="99"
-                              />
-                              <div className="text-xs text-gray-500 mt-1 text-center">cm</div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {suggestedSize && (
-                      <div className="mt-4 p-4 bg-white rounded-lg border-2 border-green-500">
-                        <div className="text-sm font-semibold text-green-700 mb-3">✓ Recommended Size Match:</div>
-                        <div className="space-y-3">
-                          <div className="flex justify-between items-start">
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        {measurementSystem === 'imperial' ? (
+                          <div className="grid grid-cols-2 gap-4">
                             <div>
-                              <div className="font-bold text-lg">{suggestedSize.label}</div>
-                              <div className="text-sm text-gray-600">{suggestedSize.measurement} (≈{Math.round(suggestedSize.sqFt)} sq ft)</div>
+                              <Label className="text-sm font-semibold mb-2 block">Length</Label>
+                              <div className="flex gap-2">
+                                <div className="flex-1">
+                                  <input
+                                    type="number"
+                                    value={customDimensions.lengthFeet}
+                                    onChange={(e) => handleCustomDimensionsChange('lengthFeet', e.target.value)}
+                                    placeholder="0"
+                                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none"
+                                    style={{ focusBorderColor: getTierColor() }}
+                                    min="0"
+                                    max="50"
+                                  />
+                                  <div className="text-xs text-gray-500 mt-1 text-center">feet</div>
+                                </div>
+                                <div className="flex-1">
+                                  <input
+                                    type="number"
+                                    value={customDimensions.lengthInches}
+                                    onChange={(e) => handleCustomDimensionsChange('lengthInches', e.target.value)}
+                                    placeholder="0"
+                                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none"
+                                    min="0"
+                                    max="11"
+                                  />
+                                  <div className="text-xs text-gray-500 mt-1 text-center">inches</div>
+                                </div>
+                              </div>
                             </div>
-                            <Button
-                              onClick={() => {
-                                setSelectedItem(SIZES.find(s => s.value === suggestedSize.size).id);
-                                setTransitioning(true);
-                                setConfig(prev => ({ 
-                                  ...prev, 
-                                  size: suggestedSize.size,
-                                  customDimensions: suggestedSize.customDimensions
-                                }));
-                                setTimeout(() => {
-                                  setStep(3);
-                                  setTransitioning(false);
-                                  setSelectedItem(null);
-                                  setCustomDimensions({ lengthFeet: '', lengthInches: '', widthFeet: '', widthInches: '' });
-                                  setCustomDimensionsMetric({ lengthMeters: '', lengthCm: '', widthMeters: '', widthCm: '' });
-                                  setSuggestedSize(null);
-                                }, 800);
-                              }}
-                              className="bg-green-600 hover:bg-green-700 text-white"
-                            >
-                              Select This Size
-                            </Button>
-                          </div>
-                          <div className="text-xs bg-green-50 p-3 rounded">
-                            <div className="font-semibold text-green-800 mb-1">Your custom dimensions:</div>
-                            <div className="text-green-700">
-                              {suggestedSize.customDimensions.system === 'imperial' ? (
-                                <>
-                                  {suggestedSize.customDimensions.lengthFeet}ft {suggestedSize.customDimensions.lengthInches}in × {suggestedSize.customDimensions.widthFeet}ft {suggestedSize.customDimensions.widthInches}in 
-                                  <span className="ml-2">({suggestedSize.customDimensions.squareFootage} sq ft)</span>
-                                </>
-                              ) : (
-                                <>
-                                  {suggestedSize.customDimensions.lengthMeters}m {suggestedSize.customDimensions.lengthCm}cm × {suggestedSize.customDimensions.widthMeters}m {suggestedSize.customDimensions.widthCm}cm 
-                                  <span className="ml-2">({suggestedSize.customDimensions.squareFootage} sq ft)</span>
-                                </>
-                              )}
+
+                            <div>
+                              <Label className="text-sm font-semibold mb-2 block">Width</Label>
+                              <div className="flex gap-2">
+                                <div className="flex-1">
+                                  <input
+                                    type="number"
+                                    value={customDimensions.widthFeet}
+                                    onChange={(e) => handleCustomDimensionsChange('widthFeet', e.target.value)}
+                                    placeholder="0"
+                                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none"
+                                    min="0"
+                                    max="50"
+                                  />
+                                  <div className="text-xs text-gray-500 mt-1 text-center">feet</div>
+                                </div>
+                                <div className="flex-1">
+                                  <input
+                                    type="number"
+                                    value={customDimensions.widthInches}
+                                    onChange={(e) => handleCustomDimensionsChange('widthInches', e.target.value)}
+                                    placeholder="0"
+                                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none"
+                                    min="0"
+                                    max="11"
+                                  />
+                                  <div className="text-xs text-gray-500 mt-1 text-center">inches</div>
+                                </div>
+                              </div>
                             </div>
                           </div>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label className="text-sm font-semibold mb-2 block">Length</Label>
+                              <div className="flex gap-2">
+                                <div className="flex-1">
+                                  <input
+                                    type="number"
+                                    value={customDimensionsMetric.lengthMeters}
+                                    onChange={(e) => handleCustomDimensionsChangeMetric('lengthMeters', e.target.value)}
+                                    placeholder="0"
+                                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none"
+                                    min="0"
+                                    max="15"
+                                  />
+                                  <div className="text-xs text-gray-500 mt-1 text-center">meters</div>
+                                </div>
+                                <div className="flex-1">
+                                  <input
+                                    type="number"
+                                    value={customDimensionsMetric.lengthCm}
+                                    onChange={(e) => handleCustomDimensionsChangeMetric('lengthCm', e.target.value)}
+                                    placeholder="0"
+                                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none"
+                                    min="0"
+                                    max="99"
+                                  />
+                                  <div className="text-xs text-gray-500 mt-1 text-center">cm</div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div>
+                              <Label className="text-sm font-semibold mb-2 block">Width</Label>
+                              <div className="flex gap-2">
+                                <div className="flex-1">
+                                  <input
+                                    type="number"
+                                    value={customDimensionsMetric.widthMeters}
+                                    onChange={(e) => handleCustomDimensionsChangeMetric('widthMeters', e.target.value)}
+                                    placeholder="0"
+                                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none"
+                                    min="0"
+                                    max="15"
+                                  />
+                                  <div className="text-xs text-gray-500 mt-1 text-center">meters</div>
+                                </div>
+                                <div className="flex-1">
+                                  <input
+                                    type="number"
+                                    value={customDimensionsMetric.widthCm}
+                                    onChange={(e) => handleCustomDimensionsChangeMetric('widthCm', e.target.value)}
+                                    placeholder="0"
+                                    className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:outline-none"
+                                    min="0"
+                                    max="99"
+                                  />
+                                  <div className="text-xs text-gray-500 mt-1 text-center">cm</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {suggestedSize && (
+                          <div className="mt-4 p-4 bg-white rounded-lg border-2" style={{ borderColor: getTierColor() }}>
+                            <div className="text-sm font-semibold mb-3" style={{ color: getTierColor() }}>✓ Recommended Size Match:</div>
+                            <div className="space-y-3">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <div className="font-bold text-lg">{suggestedSize.label}</div>
+                                  <div className="text-sm text-gray-600">{suggestedSize.measurement} (≈{Math.round(suggestedSize.sqFt)} sq ft)</div>
+                                </div>
+                                <Button
+                                  onClick={() => {
+                                    setSelectedItem(SIZES.find(s => s.value === suggestedSize.size).id);
+                                    setTransitioning(true);
+                                    setConfig(prev => ({ 
+                                      ...prev, 
+                                      size: suggestedSize.size,
+                                      customDimensions: suggestedSize.customDimensions
+                                    }));
+                                    setTimeout(() => {
+                                      setStep(3);
+                                      setTransitioning(false);
+                                      setSelectedItem(null);
+                                      setCustomDimensions({ lengthFeet: '', lengthInches: '', widthFeet: '', widthInches: '' });
+                                      setCustomDimensionsMetric({ lengthMeters: '', lengthCm: '', widthMeters: '', widthCm: '' });
+                                      setSuggestedSize(null);
+                                    }, 800);
+                                  }}
+                                  className="text-white"
+                                  style={{ backgroundColor: getTierColor() }}
+                                >
+                                  Select This Size
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        <p className="text-xs text-gray-500 mt-3">
+                          We'll match your dimensions to the closest standard size category. Your exact dimensions will be saved for production.
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                <div className="text-center text-gray-500 text-sm my-6">
+                  {config.qualityTier === 'good' || config.qualityTier === 'highend' ? 'Or choose from standard sizes:' : 'Choose your standard size:'}
+                </div>
+
+                {/* Size Grid */}
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {SIZES.map((size) => (
+                    <motion.button
+                      key={size.id}
+                      initial={{ opacity: 1, scale: 1 }}
+                      animate={
+                        transitioning && selectedItem === size.id
+                          ? { scale: 1.2, z: 100, opacity: 1 }
+                          : transitioning && selectedItem && selectedItem !== size.id
+                          ? { 
+                              y: Math.random() > 0.5 ? -300 : 300,
+                              x: (Math.random() - 0.5) * 500,
+                              rotate: (Math.random() - 0.5) * 180,
+                              opacity: 0,
+                              scale: 0.3
+                            }
+                          : { opacity: 1, scale: 1, y: 0, x: 0, rotate: 0 }
+                      }
+                      transition={{ duration: 0.7, ease: "easeInOut" }}
+                      onClick={() => {
+                        setSelectedItem(size.id);
+                        setTransitioning(true);
+                        setConfig(prev => ({ ...prev, size: size.value }));
+                        setTimeout(() => {
+                          setStep(3);
+                          setTransitioning(false);
+                          setSelectedItem(null);
+                        }, 800);
+                      }}
+                      disabled={transitioning}
+                      className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all relative"
+                      style={{ 
+                        border: config.size === size.value ? `4px solid ${getTierColor()}` : '2px solid #e5e7eb'
+                      }}
+                    >
+                      {config.size === size.value && (
+                        <div className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: getTierColor() }}>
+                          <CheckCircle className="w-5 h-5 text-white" />
                         </div>
-                      </div>
-                    )}
+                      )}
 
-                    <p className="text-xs text-gray-500">
-                      We'll match your dimensions to the closest standard size category (±2 sq ft tolerance). Your exact dimensions will be saved for production.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-
-            <div className="text-center text-gray-500 text-sm my-4">
-              {config.qualityTier === 'good' || config.qualityTier === 'highend' ? 'Or choose from standard sizes below:' : 'Choose from our standard sizes:'}
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-              {SIZES.map((size) => (
-                <motion.button
-                  key={size.id}
-                  initial={{ opacity: 1, scale: 1 }}
-                  animate={
-                    transitioning && selectedItem === size.id
-                      ? { scale: 1.3, z: 100, opacity: 1, rotateY: 360 }
-                      : transitioning && selectedItem && selectedItem !== size.id
-                      ? { 
-                          y: Math.random() > 0.5 ? -300 : 300,
-                          x: (Math.random() - 0.5) * 500,
-                          rotate: (Math.random() - 0.5) * 180,
-                          opacity: 0,
-                          scale: 0.3
-                        }
-                      : { opacity: 1, scale: 1, y: 0, x: 0, rotate: 0, rotateY: 0 }
-                  }
-                  transition={{ duration: 0.7, ease: "easeInOut" }}
-                  onClick={() => {
-                    setSelectedItem(size.id);
-                    setTransitioning(true);
-                    setConfig(prev => ({ ...prev, size: size.value }));
-                    setTimeout(() => {
-                      setStep(3);
-                      setTransitioning(false);
-                      setSelectedItem(null);
-                    }, 800);
-                  }}
-                  disabled={transitioning}
-                  className={`group relative overflow-hidden rounded-2xl transition-all duration-300 ${
-                    config.size === size.value 
-                      ? 'border-4 border-gray-900 shadow-2xl scale-105' 
-                      : 'border-2 border-gray-300 hover:border-gray-400 hover:shadow-xl hover:scale-102 shadow-md'
-                  }`}
-                >
-                  <div className={`absolute inset-0 transition-opacity ${
-                    config.size === size.value 
-                      ? 'bg-white opacity-100' 
-                      : 'bg-gray-50 opacity-100 group-hover:bg-white'
-                  }`} />
-
-                  <div className="relative p-8 flex flex-col items-center">
-                    {config.size === size.value && (
-                      <div className="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center">
-                        <CheckCircle className="w-5 h-5 text-blue-600" />
-                      </div>
-                    )}
-
-                    <div className={`w-24 h-24 mb-4 rounded-xl flex items-center justify-center transition-all ${
-                      config.size === size.value 
-                        ? 'border-2 border-gray-900' 
-                        : 'border-2 border-gray-300'
-                    }`}>
-                      <div className={`text-5xl font-black ${
-                        config.size === size.value ? 'text-gray-900' : 'text-gray-700'
-                      }`}>
+                      <div className="text-6xl font-black mb-4" style={{ color: getTierColor() }}>
                         {size.id === 'rd' ? 'π' : size.label.charAt(0)}
                       </div>
-                    </div>
 
-                    <div className={`font-bold text-2xl mb-2 ${
-                      config.size === size.value ? 'text-gray-900' : 'text-gray-900'
-                    }`}>
-                      {size.label}
-                    </div>
+                      <div className="font-bold text-2xl mb-2 text-gray-900">
+                        {size.label}
+                      </div>
 
-                    <div className={`text-sm mb-4 ${
-                      config.size === size.value ? 'text-gray-600' : 'text-gray-600'
-                    }`}>
-                      {size.measurement}
-                    </div>
+                      <div className="text-sm text-gray-600 mb-4">
+                        {size.measurement}
+                      </div>
 
-                    <div className="flex items-baseline gap-2">
-                      <span className={`text-3xl font-black ${
-                        config.size === size.value ? 'text-gray-900' : 'text-gray-900'
-                      }`}>
+                      <div className="text-3xl font-black" style={{ color: getTierColor() }}>
                         ${config.qualityTier ? Math.round(size.price * QUALITY_TIERS.find(t => t.id === config.qualityTier).priceMultiplier) : size.price}
-                      </span>
-                    </div>
-                    </div>
+                      </div>
                     </motion.button>
-                    ))}
-                    </div>
+                  ))}
+                </div>
 
-
-                <div className="flex justify-center mt-6">
+                <div className="flex justify-center mt-8">
                   <Button variant="outline" onClick={() => setStep(1)}>
-                    ← Back to Quality Selection
+                    ← Back to Quality
                   </Button>
                 </div>
-            </div>
-          )}
+              </div>
+            )}
 
-
-
-          {/* Step 3: All Color Selections */}
-          {step === 3 && (
-            <Card className="bg-white" style={{border: `4px solid ${config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'}`}}>
-              <CardHeader>
-                <div className="text-center mb-6">
-                  <h2 className="text-3xl font-bold mb-3 text-gray-900">Choose Your Colors</h2>
-                  <p className="text-gray-600 text-lg">Select base rug color, paint colors, and optional add-ons</p>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-8">
-                {/* Base Color */}
-                <div>
-                  <Label className="text-xl font-bold mb-2 block">1. Rug Base Color</Label>
-                  <p className="text-sm text-gray-600 mb-4">This is the color of the actual rug. You'll choose your paint color next.</p>
-                  {getAvailableBaseColors().length === 0 ? (
-                    <div className="text-sm text-gray-500 p-4 border border-gray-200 rounded-lg">
-                      No base rug colors available. Please check catalog inventory.
-                    </div>
-                  ) : (
+            {/* Step 3: Color Selection */}
+            {step === 3 && (
+              <Card className="bg-white" style={{ border: `4px solid ${getTierColor()}` }}>
+                <CardHeader>
+                  <div className="text-center mb-6">
+                    <h2 className="text-4xl font-bold mb-3" style={{ color: '#343634' }}>Choose Your Colors</h2>
+                    <p className="text-gray-600 text-lg">Base rug + paint colors + optional add-ons</p>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-8">
+                  {/* Base Color */}
+                  <div className="p-6 rounded-xl bg-white" style={{ border: `2px solid ${getTierColor()}` }}>
+                    <Label className="text-2xl font-bold mb-3 flex items-center gap-2">
+                      <span className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${getTierColor()}20` }}>
+                        1
+                      </span>
+                      Rug Base Color
+                    </Label>
+                    <p className="text-sm text-gray-600 mb-4">The color of the actual rug material</p>
                     <div className="grid grid-cols-4 gap-3">
                       {getAvailableBaseColors().map((color) => (
                         <button
                           key={color.name}
                           onClick={() => setConfig(prev => ({ ...prev, baseColor: color.name }))}
-                          className={`p-3 rounded-lg border-2 transition-all ${
-                            config.baseColor === color.name ? 'bg-white ring-2' : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                          style={config.baseColor === color.name ? {
-                            borderColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624',
-                            ringColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'
-                          } : {}}
+                          className="p-3 rounded-lg border-2 transition-all bg-white"
+                          style={{
+                            borderColor: config.baseColor === color.name ? getTierColor() : '#e5e7eb',
+                            boxShadow: config.baseColor === color.name ? `0 0 0 3px ${getTierColor()}20` : 'none'
+                          }}
                         >
-                          <div className="w-full aspect-square rounded-lg mb-2 border-2 border-white shadow-md" style={{ backgroundColor: color.hex }} />
+                          <div className="w-full aspect-square rounded-lg mb-2 border-2 border-gray-200 shadow-sm" style={{ backgroundColor: color.hex }} />
                           <div className="text-xs text-center font-medium">{color.name}</div>
                         </button>
                       ))}
                     </div>
-                  )}
-                </div>
+                  </div>
 
-                {/* First Paint Color */}
-                <div>
-                  <Label className="text-xl font-bold mb-2 block">2. First Paint Color</Label>
-                  <p className="text-sm text-gray-600 mb-4">The colors below are available for your FIRST color. Shades and secondary colors are below!</p>
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-sm font-semibold text-gray-600 mb-2">Group 1</p>
+                  {/* First Paint Color */}
+                  <div className="p-6 rounded-xl bg-white" style={{ border: `2px solid ${getTierColor()}` }}>
+                    <Label className="text-2xl font-bold mb-3 flex items-center gap-2">
+                      <span className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${getTierColor()}20` }}>
+                        2
+                      </span>
+                      First Paint Color
+                    </Label>
+                    <p className="text-sm text-gray-600 mb-4">Main design color</p>
+                    <div className="space-y-4">
                       <div className="grid grid-cols-4 gap-3">
                         {PAINT_COLORS_GROUP_1.map((color) => (
                           <button
                             key={color.name}
                             onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
-                            className={`p-3 rounded-lg border-2 transition-all flex flex-col items-center ${
-                              config.paintColor === color.name ? 'bg-white ring-2' : 'border-gray-200 hover:border-gray-300'
-                            }`}
-                            style={config.paintColor === color.name ? {
-                              borderColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624',
-                              ringColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'
-                            } : {}}
+                            className="p-3 rounded-lg border-2 transition-all flex flex-col items-center bg-white"
+                            style={{
+                              borderColor: config.paintColor === color.name ? getTierColor() : '#e5e7eb',
+                              boxShadow: config.paintColor === color.name ? `0 0 0 3px ${getTierColor()}20` : 'none'
+                            }}
                           >
                             <div 
                               className="w-12 h-16 mb-2 border-2 border-white shadow-md relative"
@@ -1250,21 +1062,16 @@ export default function CustomBuilder() {
                           </button>
                         ))}
                       </div>
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-gray-600 mb-2">Group 2</p>
                       <div className="grid grid-cols-4 gap-3">
                         {PAINT_COLORS_GROUP_2.map((color) => (
                           <button
                             key={color.name}
                             onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
-                            className={`p-3 rounded-lg border-2 transition-all flex flex-col items-center ${
-                              config.paintColor === color.name ? 'bg-white ring-2' : 'border-gray-200 hover:border-gray-300'
-                            }`}
-                            style={config.paintColor === color.name ? {
-                              borderColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624',
-                              ringColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'
-                            } : {}}
+                            className="p-3 rounded-lg border-2 transition-all flex flex-col items-center bg-white"
+                            style={{
+                              borderColor: config.paintColor === color.name ? getTierColor() : '#e5e7eb',
+                              boxShadow: config.paintColor === color.name ? `0 0 0 3px ${getTierColor()}20` : 'none'
+                            }}
                           >
                             <div 
                               className="w-12 h-16 mb-2 border-2 border-white shadow-md relative"
@@ -1285,405 +1092,411 @@ export default function CustomBuilder() {
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Optional Add-ons */}
-                <div>
-                  <Label className="text-xl font-bold mb-4 block">3. Optional Add-ons</Label>
-                  <div className="space-y-3">
-                    {/* Shading */}
-                    <button
-                      onClick={() => setConfig(prev => ({ ...prev, hasShading: !prev.hasShading }))}
-                      className="w-full p-4 rounded-lg border-2 transition-all text-left bg-white"
-                      style={{
-                        borderColor: config.hasShading ? (config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624') : '#d1d5db'
-                      }}
-                    >
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <div className="font-semibold">Shading</div>
-                          <div className="text-xs text-gray-600">Adds depth and dimension</div>
-                        </div>
-                        <div className={`font-bold ${config.hasShading ? 'text-purple-600' : 'text-gray-900'}`}>
-                          {config.hasShading ? '✓' : '+'} ${config.size ? getShadingFee(config.size) : 30}
-                        </div>
-                      </div>
-                    </button>
-
-                    {/* Second Color */}
-                    <div className="border-2 rounded-lg transition-all bg-white"
-                      style={{
-                        borderColor: config.hasSecondColor ? (config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624') : '#d1d5db'
-                      }}>
+                  {/* Optional Add-ons */}
+                  <div className="p-6 rounded-xl bg-white" style={{ border: `2px solid ${getTierColor()}` }}>
+                    <Label className="text-2xl font-bold mb-4 flex items-center gap-2">
+                      <span className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${getTierColor()}20` }}>
+                        3
+                      </span>
+                      Optional Add-ons
+                    </Label>
+                    <div className="space-y-3">
+                      {/* Shading */}
                       <button
-                        onClick={() => setConfig(prev => ({ ...prev, hasSecondColor: !prev.hasSecondColor, secondPaintColor: !prev.hasSecondColor ? prev.secondPaintColor : '' }))}
-                        className="w-full p-4 text-left"
+                        onClick={() => setConfig(prev => ({ ...prev, hasShading: !prev.hasShading }))}
+                        className="w-full p-4 rounded-lg border-2 transition-all text-left bg-white"
+                        style={{
+                          borderColor: config.hasShading ? getTierColor() : '#d1d5db',
+                          boxShadow: config.hasShading ? `0 0 0 3px ${getTierColor()}20` : 'none'
+                        }}
                       >
                         <div className="flex justify-between items-center">
-                          <div>
-                            <div className="font-semibold">2nd Paint Color</div>
-                            <div className="text-xs text-gray-600">{config.hasSecondColor && config.secondPaintColor ? `Selected: ${config.secondPaintColor}` : 'Add another color to your design'}</div>
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: config.hasShading ? getTierColor() : '#f3f4f6' }}>
+                              <Sparkles className="w-5 h-5" style={{ color: config.hasShading ? 'white' : '#9ca3af' }} />
+                            </div>
+                            <div>
+                              <div className="font-semibold">Shading Effect</div>
+                              <div className="text-xs text-gray-600">Adds depth and dimension</div>
+                            </div>
                           </div>
-                          <div className={`font-bold ${config.hasSecondColor ? 'text-yellow-600' : 'text-gray-900'}`}>
-                            {config.hasSecondColor ? '✓' : '+'} ${config.size ? getSecondColorFee(config.size) : 30}
+                          <div className="font-bold text-lg" style={{ color: getTierColor() }}>
+                            {config.hasShading ? '✓' : '+'} ${config.size ? getShadingFee(config.size) : 30}
                           </div>
                         </div>
                       </button>
 
-                      {config.hasSecondColor && (
-                        <div className="px-4 pb-4 space-y-3">
-                          <div className="grid grid-cols-4 gap-2">
-                            {PAINT_COLORS_GROUP_1.map((color) => (
-                              <button
-                                key={color.name}
-                                onClick={() => setConfig(prev => ({ ...prev, secondPaintColor: color.name }))}
-                                className={`p-2 rounded-lg border-2 transition-all flex flex-col items-center ${
-                                  config.secondPaintColor === color.name ? 'bg-white ring-2' : 'border-gray-300'
-                                }`}
-                                style={config.secondPaintColor === color.name ? {
-                                  borderColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624',
-                                  ringColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'
-                                } : {}}
-                              >
-                                <div 
-                                  className="w-10 h-14 mb-1 border-2 border-white shadow-md relative"
-                                  style={{ 
-                                    backgroundColor: color.hex,
-                                    borderRadius: '50% 50% 50% 0',
-                                    transform: 'rotate(-45deg)'
+                      {/* Second Color */}
+                      <div className="border-2 rounded-lg transition-all bg-white"
+                        style={{
+                          borderColor: config.hasSecondColor ? getTierColor() : '#d1d5db',
+                          boxShadow: config.hasSecondColor ? `0 0 0 3px ${getTierColor()}20` : 'none'
+                        }}>
+                        <button
+                          onClick={() => setConfig(prev => ({ ...prev, hasSecondColor: !prev.hasSecondColor, secondPaintColor: !prev.hasSecondColor ? prev.secondPaintColor : '' }))}
+                          className="w-full p-4 text-left"
+                        >
+                          <div className="flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: config.hasSecondColor ? getTierColor() : '#f3f4f6' }}>
+                                <Palette className="w-5 h-5" style={{ color: config.hasSecondColor ? 'white' : '#9ca3af' }} />
+                              </div>
+                              <div>
+                                <div className="font-semibold">2nd Paint Color</div>
+                                <div className="text-xs text-gray-600">{config.hasSecondColor && config.secondPaintColor ? `Selected: ${config.secondPaintColor}` : 'Add another color'}</div>
+                              </div>
+                            </div>
+                            <div className="font-bold text-lg" style={{ color: getTierColor() }}>
+                              {config.hasSecondColor ? '✓' : '+'} ${config.size ? getSecondColorFee(config.size) : 30}
+                            </div>
+                          </div>
+                        </button>
+
+                        {config.hasSecondColor && (
+                          <div className="px-4 pb-4 space-y-3 border-t pt-4" style={{ borderColor: `${getTierColor()}20` }}>
+                            <div className="grid grid-cols-4 gap-2">
+                              {PAINT_COLORS_GROUP_1.map((color) => (
+                                <button
+                                  key={color.name}
+                                  onClick={() => setConfig(prev => ({ ...prev, secondPaintColor: color.name }))}
+                                  className="p-2 rounded-lg border-2 transition-all flex flex-col items-center bg-white"
+                                  style={{
+                                    borderColor: config.secondPaintColor === color.name ? getTierColor() : '#e5e7eb',
+                                    boxShadow: config.secondPaintColor === color.name ? `0 0 0 2px ${getTierColor()}20` : 'none'
                                   }}
                                 >
                                   <div 
-                                    className="absolute bg-white rounded-full opacity-30"
-                                    style={{ top: '20%', left: '20%', width: '30%', height: '30%' }}
-                                  />
-                                </div>
-                                <div className="text-xs text-center font-medium">{color.name}</div>
-                              </button>
-                            ))}
-                          </div>
-                          <div className="grid grid-cols-4 gap-2">
-                            {PAINT_COLORS_GROUP_2.map((color) => (
-                              <button
-                                key={color.name}
-                                onClick={() => setConfig(prev => ({ ...prev, secondPaintColor: color.name }))}
-                                className={`p-2 rounded-lg border-2 transition-all flex flex-col items-center ${
-                                  config.secondPaintColor === color.name ? 'bg-white ring-2' : 'border-gray-300'
-                                }`}
-                                style={config.secondPaintColor === color.name ? {
-                                  borderColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624',
-                                  ringColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'
-                                } : {}}
-                              >
-                                <div 
-                                  className="w-10 h-14 mb-1 border-2 border-white shadow-md relative"
-                                  style={{ 
-                                    backgroundColor: color.hex,
-                                    borderRadius: '50% 50% 50% 0',
-                                    transform: 'rotate(-45deg)'
+                                    className="w-10 h-14 mb-1 border-2 border-white shadow-md relative"
+                                    style={{ 
+                                      backgroundColor: color.hex,
+                                      borderRadius: '50% 50% 50% 0',
+                                      transform: 'rotate(-45deg)'
+                                    }}
+                                  >
+                                    <div 
+                                      className="absolute bg-white rounded-full opacity-30"
+                                      style={{ top: '20%', left: '20%', width: '30%', height: '30%' }}
+                                    />
+                                  </div>
+                                  <div className="text-xs text-center font-medium">{color.name}</div>
+                                </button>
+                              ))}
+                            </div>
+                            <div className="grid grid-cols-4 gap-2">
+                              {PAINT_COLORS_GROUP_2.map((color) => (
+                                <button
+                                  key={color.name}
+                                  onClick={() => setConfig(prev => ({ ...prev, secondPaintColor: color.name }))}
+                                  className="p-2 rounded-lg border-2 transition-all flex flex-col items-center bg-white"
+                                  style={{
+                                    borderColor: config.secondPaintColor === color.name ? getTierColor() : '#e5e7eb',
+                                    boxShadow: config.secondPaintColor === color.name ? `0 0 0 2px ${getTierColor()}20` : 'none'
                                   }}
                                 >
                                   <div 
-                                    className="absolute bg-white rounded-full opacity-30"
-                                    style={{ top: '20%', left: '20%', width: '30%', height: '30%' }}
-                                  />
-                                </div>
-                                <div className="text-xs text-center font-medium">{color.name}</div>
-                              </button>
-                            ))}
+                                    className="w-10 h-14 mb-1 border-2 border-white shadow-md relative"
+                                    style={{ 
+                                      backgroundColor: color.hex,
+                                      borderRadius: '50% 50% 50% 0',
+                                      transform: 'rotate(-45deg)'
+                                    }}
+                                  >
+                                    <div 
+                                      className="absolute bg-white rounded-full opacity-30"
+                                      style={{ top: '20%', left: '20%', width: '30%', height: '30%' }}
+                                    />
+                                  </div>
+                                  <div className="text-xs text-center font-medium">{color.name}</div>
+                                </button>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex gap-3 pt-4">
-                  <Button variant="outline" onClick={() => setStep(2)}>← Back</Button>
-                  <Button 
-                    onClick={() => setStep(4)} 
-                    disabled={!config.baseColor || !config.paintColor || (config.hasSecondColor && !config.secondPaintColor)}
-                    className="flex-1 bg-gray-900 text-white hover:bg-gray-800 disabled:opacity-50"
-                  >
-                    Now for the fun part →
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Step 4: Create Design & Confirm */}
-          {step === 4 && (
-            <Card className="bg-white" style={{border: `4px solid ${config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'}`}}>
-            <CardHeader>
-              <div className="flex items-center gap-3 mb-2">
-                <Button variant="outline" size="sm" onClick={() => setStep(3)}>
-                  ← Back
-                </Button>
-                <CardTitle className="flex-1">Step 4: Create Your Design & Confirm</CardTitle>
-              </div>
-              <p className="text-sm text-gray-600 mt-2">
-                Design your rug and preview before adding to cart
-              </p>
-              
-              {/* Production Timeline */}
-              <div className="mt-4 bg-white rounded-lg p-4" style={{border: `2px solid ${config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'}`}}>
-                <div className="font-semibold text-sm text-gray-900 mb-2">📅 Production Timeline</div>
-                <div className="grid grid-cols-3 gap-3 text-xs text-gray-700">
-                  <div>
-                    <div className="font-bold text-blue-600">Design</div>
-                    <div>1-2 hours</div>
-                  </div>
-                  <div>
-                    <div className="font-bold text-blue-600">Production</div>
-                    <div>{config.qualityTier === 'budget' ? '10-14 days' : config.qualityTier === 'good' ? '10-20 days' : '2-4 weeks'}</div>
-                  </div>
-                  <div>
-                    <div className="font-bold text-blue-600">Delivery</div>
-                    <div>3-5 days</div>
-                  </div>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                {/* Help Button */}
-                <div className="mb-4 flex justify-end">
-                  <button
-                    onClick={() => setShowHelpModal(true)}
-                    className="text-sm text-gray-600 hover:text-gray-900 underline transition-colors"
-                  >
-                    💡 Need design help?
-                  </button>
-                </div>
-
-                {/* Mode Selection */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                  {(config.qualityTier === 'good' || config.qualityTier === 'highend') && (
-                    <button
-                      onClick={() => setDesignMode('ai')}
-                      className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center min-h-[160px] relative ${
-                        designMode === 'ai' ? 'bg-white' : 'bg-white'
-                      }`}
-                      style={{
-                        borderColor: designMode === 'ai' ? (config.qualityTier === 'good' ? '#4075ff' : '#f04624') : '#d1d5db'
-                      }}
-                    >
-                      {config.qualityTier === 'highend' && (
-                        <div className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded-full">LUX PREMIUM</div>
-                      )}
-                      <Lightbulb className="w-8 h-8 mb-3 text-purple-600" />
-                      <div className="font-semibold text-lg mb-1">AI Design Studio</div>
-                      <div className="text-sm text-gray-600 text-center">{config.qualityTier === 'highend' ? 'Generate complete designs with AI' : 'Get AI design suggestions'}</div>
-                    </button>
-                  )}
-                  <button
-                    onClick={() => setDesignMode('library')}
-                    className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center min-h-[160px] ${
-                      designMode === 'library' ? 'bg-white' : 'bg-white hover:border-gray-300'
-                    }`}
-                    style={{
-                      borderColor: designMode === 'library' ? (config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624') : '#e5e7eb'
-                    }}
-                  >
-                    <FileText className="w-8 h-8 mb-3 text-blue-600" />
-                    <div className="font-semibold text-lg mb-1">Design Library</div>
-                    <div className="text-sm text-gray-600 text-center">Choose from our collection</div>
-                  </button>
-                  <button
-                    onClick={() => setDesignMode('draw')}
-                    className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center min-h-[160px] ${
-                      designMode === 'draw' ? 'bg-white' : 'bg-white hover:border-gray-300'
-                    }`}
-                    style={{
-                      borderColor: designMode === 'draw' ? (config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624') : '#e5e7eb'
-                    }}
-                  >
-                    <Pencil className="w-8 h-8 mb-3 text-blue-600" />
-                    <div className="font-semibold text-lg mb-1">Draw Your Own</div>
-                    <div className="text-sm text-gray-600 text-center">Create with our drawing tools</div>
-                  </button>
-                  <button
-                    onClick={() => setDesignMode('upload')}
-                    className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center min-h-[160px] ${
-                      designMode === 'upload' ? 'bg-white' : 'bg-white hover:border-gray-300'
-                    }`}
-                    style={{
-                      borderColor: designMode === 'upload' ? (config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624') : '#e5e7eb'
-                    }}
-                  >
-                    <Upload className="w-8 h-8 mb-3 text-blue-600" />
-                    <div className="font-semibold text-lg mb-1">Upload & Convert</div>
-                    <div className="text-sm text-gray-600 text-center">Upload an image and convert to stencil</div>
-                  </button>
-                </div>
-
-                {/* AI Assistant Mode */}
-                {designMode === 'ai' && (
-                  <AIAssistant
-                    currentImageUrl={config.imageUrl}
-                    rugSize={config.size}
-                    qualityTier={config.qualityTier}
-                    baseColor={config.baseColor}
-                    paintColor={config.paintColor}
-                    secondPaintColor={config.secondPaintColor}
-                    onApplyColors={handleApplyAIColors}
-                    onCopySuggestion={handleCopyAISuggestion}
-                    onGenerateDesign={(designUrl) => {
-                      setConfig(prev => ({ ...prev, imageUrl: designUrl, previewUrl: designUrl }));
-                    }}
-                  />
-                )}
-
-                {/* Design Library Mode */}
-                {designMode === 'library' && (
-                  <>
-                    <DesignLibrary
-                      onSelectDesign={(url) => {
-                        setConfig(prev => ({ ...prev, imageUrl: url, previewUrl: url }));
-                      }}
-                    />
-                  </>
-                )}
-
-
-
-                {/* Upload Mode */}
-                {designMode === 'upload' && (
-                  <StencilCreator
-                    paintColor={getAvailablePaintColors().find(c => c.name === config.paintColor)?.hex || '#000000'}
-                    baseColor={BASE_COLORS.find(c => c.name === config.baseColor)?.hex || '#86cb92'}
-                    onSaveStencil={(stencilUrl) => {
-                      setConfig(prev => ({ ...prev, imageUrl: stencilUrl, previewUrl: stencilUrl }));
-                    }}
-                    onConfigChange={({ colors }) => {
-                      setConfig(prev => ({ ...prev, numColors: colors }));
-                    }}
-                  />
-                )}
-
-                {/* Drawing Mode */}
-                {designMode === 'draw' && (
-                  <DrawingCanvas 
-                    onSaveDrawing={handleDrawingSave}
-                    onColorCountChange={(count) => {
-                      setConfig(prev => ({ ...prev, numColors: count }));
-                    }}
-                    availableColors={[
-                      { name: config.paintColor, hex: getAvailablePaintColors().find(c => c.name === config.paintColor)?.hex || '#000000' },
-                      ...(config.secondPaintColor ? [{ name: config.secondPaintColor, hex: getAvailablePaintColors().find(c => c.name === config.secondPaintColor)?.hex }] : [])
-                    ].filter(c => c.hex)}
-                    size={config.size}
-                  />
-                )}
-
-                {config.imageUrl && (
-                  <div className="bg-white rounded-lg p-6 mt-6" style={{border: `4px solid ${config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'}`}}>
-                    <Label className="block mb-4 font-bold text-xl text-center" style={{color: '#343634'}}>✨ Your Custom Rug Preview</Label>
-                    
-                    {/* Final Summary */}
-                    <div className="bg-white rounded-lg p-4 mb-4 space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Quality:</span>
-                        <span className="font-semibold">{QUALITY_TIERS.find(t => t.id === config.qualityTier)?.label}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Size:</span>
-                        <span className="font-semibold">{SIZES.find(s => s.value === config.size)?.label} ({SIZES.find(s => s.value === config.size)?.measurement})</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Base Rug Color:</span>
-                        <span className="font-semibold flex items-center gap-2">
-                          <span className="inline-block w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: getColorHex(config.baseColor) }}></span>
-                          {config.baseColor}
-                        </span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-600">Paint Color{config.secondPaintColor ? 's' : ''}:</span>
-                        <span className="font-semibold flex items-center gap-2">
-                          <span className="inline-block w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: getAvailablePaintColors().find(c => c.name === config.paintColor)?.hex }}></span>
-                          {config.paintColor}
-                          {config.secondPaintColor && (
-                            <>
-                              <span className="inline-block w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: getAvailablePaintColors().find(c => c.name === config.secondPaintColor)?.hex }}></span>
-                              {config.secondPaintColor}
-                            </>
-                          )}
-                        </span>
+                        )}
                       </div>
                     </div>
+                  </div>
 
-                    <Button
-                      onClick={handleAddToCart}
-                      className="w-full border-4 border-gray-900 bg-white hover:bg-gray-50 text-gray-900 font-bold text-xl py-8"
+                  <div className="flex gap-3 pt-4">
+                    <Button variant="outline" onClick={() => setStep(2)}>← Back</Button>
+                    <Button 
+                      onClick={() => setStep(4)} 
+                      disabled={!config.baseColor || !config.paintColor || (config.hasSecondColor && !config.secondPaintColor)}
+                      className="flex-1 text-white font-bold"
+                      style={{ backgroundColor: getTierColor() }}
                     >
-                      Add to Cart - ${currentPrice()}
+                      Create Design →
                     </Button>
                   </div>
-                )}
+                </CardContent>
+              </Card>
+            )}
 
-                <div className="bg-white rounded-lg p-4" style={{border: `2px solid ${config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'}`}}>
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="font-semibold">Total Price:</span>
-                    <span className="text-3xl font-bold" style={{color: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'}}>${currentPrice()}</span>
+            {/* Step 4: Design & Confirm */}
+            {step === 4 && (
+              <Card className="bg-white" style={{ border: `4px solid ${getTierColor()}` }}>
+                <CardHeader>
+                  <div className="flex items-center gap-3 mb-2">
+                    <Button variant="outline" size="sm" onClick={() => setStep(3)}>
+                      ← Back
+                    </Button>
+                    <CardTitle className="flex-1">Create Your Design</CardTitle>
                   </div>
-                  <div className="text-xs text-gray-700 space-y-1">
-                    <div className="flex justify-between">
-                      <span>{SIZES.find(s => s.value === config.size)?.label} ({QUALITY_TIERS.find(t => t.id === config.qualityTier)?.label}):</span>
-                      <span className="font-semibold">${config.qualityTier && config.size ? Math.round(SIZES.find(s => s.value === config.size)?.price * QUALITY_TIERS.find(t => t.id === config.qualityTier)?.priceMultiplier) : SIZES.find(s => s.value === config.size)?.price}</span>
+                  
+                  {/* Production Timeline Infographic */}
+                  <div className="mt-6 bg-white rounded-xl p-6" style={{ border: `2px solid ${getTierColor()}` }}>
+                    <div className="font-bold text-lg mb-4 flex items-center gap-2">
+                      <Clock className="w-5 h-5" style={{ color: getTierColor() }} />
+                      Production Timeline
                     </div>
-                    {config.hasShading && (
-                      <div className="flex justify-between">
-                        <span>Shading:</span>
-                        <span className="font-semibold">+${getShadingFee(config.size)}</span>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div className="text-center">
+                        <div className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center text-2xl" style={{ backgroundColor: `${getTierColor()}20`, color: getTierColor() }}>
+                          ✏️
+                        </div>
+                        <div className="font-bold text-sm mb-1">Design</div>
+                        <div className="text-xs text-gray-600">1-2 hours</div>
                       </div>
-                    )}
-                    {config.hasSecondColor && (
-                      <div className="flex justify-between">
-                        <span>Second Color:</span>
-                        <span className="font-semibold">+${getSecondColorFee(config.size)}</span>
+                      <div className="text-center">
+                        <div className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center text-2xl" style={{ backgroundColor: `${getTierColor()}20`, color: getTierColor() }}>
+                          🎨
+                        </div>
+                        <div className="font-bold text-sm mb-1">Production</div>
+                        <div className="text-xs text-gray-600">{config.qualityTier === 'budget' ? '10-14 days' : config.qualityTier === 'good' ? '10-20 days' : '2-4 weeks'}</div>
                       </div>
-                    )}
-                    {isRush && (
-                      <div className="flex justify-between">
-                        <span>Rush Processing:</span>
-                        <span className="font-semibold">+$100</span>
+                      <div className="text-center">
+                        <div className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center text-2xl" style={{ backgroundColor: `${getTierColor()}20`, color: getTierColor() }}>
+                          📦
+                        </div>
+                        <div className="font-bold text-sm mb-1">Delivery</div>
+                        <div className="text-xs text-gray-600">3-5 days</div>
                       </div>
-                    )}
+                    </div>
                   </div>
-                </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    {/* Help Button */}
+                    <div className="flex justify-end">
+                      <button
+                        onClick={() => setShowHelpModal(true)}
+                        className="text-sm hover:opacity-80 underline transition-opacity"
+                        style={{ color: getTierColor() }}
+                      >
+                        💡 Need design help?
+                      </button>
+                    </div>
 
+                    {/* Mode Selection */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                      {(config.qualityTier === 'good' || config.qualityTier === 'highend') && (
+                        <button
+                          onClick={() => setDesignMode('ai')}
+                          className="p-6 rounded-xl transition-all flex flex-col items-center justify-center min-h-[140px] relative bg-white"
+                          style={{
+                            border: designMode === 'ai' ? `3px solid ${getTierColor()}` : '2px solid #e5e7eb',
+                            boxShadow: designMode === 'ai' ? `0 0 0 3px ${getTierColor()}20` : 'none'
+                          }}
+                        >
+                          <Lightbulb className="w-10 h-10 mb-3" style={{ color: getTierColor() }} />
+                          <div className="font-semibold text-base mb-1">AI Studio</div>
+                          <div className="text-xs text-gray-600 text-center">{config.qualityTier === 'highend' ? 'Full AI design' : 'AI suggestions'}</div>
+                        </button>
+                      )}
+                      <button
+                        onClick={() => setDesignMode('library')}
+                        className="p-6 rounded-xl transition-all flex flex-col items-center justify-center min-h-[140px] bg-white"
+                        style={{
+                          border: designMode === 'library' ? `3px solid ${getTierColor()}` : '2px solid #e5e7eb',
+                          boxShadow: designMode === 'library' ? `0 0 0 3px ${getTierColor()}20` : 'none'
+                        }}
+                      >
+                        <FileText className="w-10 h-10 mb-3" style={{ color: getTierColor() }} />
+                        <div className="font-semibold text-base mb-1">Library</div>
+                        <div className="text-xs text-gray-600 text-center">Browse designs</div>
+                      </button>
+                      <button
+                        onClick={() => setDesignMode('draw')}
+                        className="p-6 rounded-xl transition-all flex flex-col items-center justify-center min-h-[140px] bg-white"
+                        style={{
+                          border: designMode === 'draw' ? `3px solid ${getTierColor()}` : '2px solid #e5e7eb',
+                          boxShadow: designMode === 'draw' ? `0 0 0 3px ${getTierColor()}20` : 'none'
+                        }}
+                      >
+                        <Pencil className="w-10 h-10 mb-3" style={{ color: getTierColor() }} />
+                        <div className="font-semibold text-base mb-1">Draw</div>
+                        <div className="text-xs text-gray-600 text-center">Free-hand</div>
+                      </button>
+                      <button
+                        onClick={() => setDesignMode('upload')}
+                        className="p-6 rounded-xl transition-all flex flex-col items-center justify-center min-h-[140px] bg-white"
+                        style={{
+                          border: designMode === 'upload' ? `3px solid ${getTierColor()}` : '2px solid #e5e7eb',
+                          boxShadow: designMode === 'upload' ? `0 0 0 3px ${getTierColor()}20` : 'none'
+                        }}
+                      >
+                        <Upload className="w-10 h-10 mb-3" style={{ color: getTierColor() }} />
+                        <div className="font-semibold text-base mb-1">Upload</div>
+                        <div className="text-xs text-gray-600 text-center">Convert image</div>
+                      </button>
+                    </div>
 
-              </div>
-            </CardContent>
-          </Card>
+                    {/* Design Tools */}
+                    {designMode === 'ai' && (
+                      <AIAssistant
+                        currentImageUrl={config.imageUrl}
+                        rugSize={config.size}
+                        qualityTier={config.qualityTier}
+                        baseColor={config.baseColor}
+                        paintColor={config.paintColor}
+                        secondPaintColor={config.secondPaintColor}
+                        onApplyColors={handleApplyAIColors}
+                        onCopySuggestion={handleCopyAISuggestion}
+                        onGenerateDesign={(designUrl) => {
+                          setConfig(prev => ({ ...prev, imageUrl: designUrl, previewUrl: designUrl }));
+                        }}
+                      />
+                    )}
+
+                    {designMode === 'library' && (
+                      <DesignLibrary
+                        onSelectDesign={(url) => {
+                          setConfig(prev => ({ ...prev, imageUrl: url, previewUrl: url }));
+                        }}
+                      />
+                    )}
+
+                    {designMode === 'upload' && (
+                      <StencilCreator
+                        paintColor={getAvailablePaintColors().find(c => c.name === config.paintColor)?.hex || '#000000'}
+                        baseColor={BASE_COLORS.find(c => c.name === config.baseColor)?.hex || '#86cb92'}
+                        onSaveStencil={(stencilUrl) => {
+                          setConfig(prev => ({ ...prev, imageUrl: stencilUrl, previewUrl: stencilUrl }));
+                        }}
+                        onConfigChange={({ colors }) => {
+                          setConfig(prev => ({ ...prev, numColors: colors }));
+                        }}
+                      />
+                    )}
+
+                    {designMode === 'draw' && (
+                      <DrawingCanvas 
+                        onSaveDrawing={handleDrawingSave}
+                        onColorCountChange={(count) => {
+                          setConfig(prev => ({ ...prev, numColors: count }));
+                        }}
+                        availableColors={[
+                          { name: config.paintColor, hex: getAvailablePaintColors().find(c => c.name === config.paintColor)?.hex || '#000000' },
+                          ...(config.secondPaintColor ? [{ name: config.secondPaintColor, hex: getAvailablePaintColors().find(c => c.name === config.secondPaintColor)?.hex }] : [])
+                        ].filter(c => c.hex)}
+                        size={config.size}
+                      />
+                    )}
+
+                    {/* Preview & Checkout */}
+                    {config.imageUrl && (
+                      <div className="bg-white rounded-xl p-6 mt-6" style={{ border: `4px solid ${getTierColor()}` }}>
+                        <Label className="block mb-4 font-bold text-2xl text-center" style={{ color: getTierColor() }}>
+                          ✨ Your Custom Rug
+                        </Label>
+                        
+                        {/* Summary Grid */}
+                        <div className="grid grid-cols-2 gap-4 mb-6 p-4 bg-white rounded-lg" style={{ border: `2px solid ${getTierColor()}20` }}>
+                          <div className="text-center p-3 rounded-lg" style={{ backgroundColor: `${getTierColor()}10` }}>
+                            <div className="text-xs text-gray-600 mb-1">Quality</div>
+                            <div className="font-bold" style={{ color: getTierColor() }}>{QUALITY_TIERS.find(t => t.id === config.qualityTier)?.label}</div>
+                          </div>
+                          <div className="text-center p-3 rounded-lg" style={{ backgroundColor: `${getTierColor()}10` }}>
+                            <div className="text-xs text-gray-600 mb-1">Size</div>
+                            <div className="font-bold" style={{ color: getTierColor() }}>{SIZES.find(s => s.value === config.size)?.label}</div>
+                          </div>
+                          <div className="text-center p-3 rounded-lg" style={{ backgroundColor: `${getTierColor()}10` }}>
+                            <div className="text-xs text-gray-600 mb-1">Base</div>
+                            <div className="font-bold flex items-center justify-center gap-2">
+                              <span className="w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: getColorHex(config.baseColor) }}></span>
+                              <span className="text-xs">{config.baseColor}</span>
+                            </div>
+                          </div>
+                          <div className="text-center p-3 rounded-lg" style={{ backgroundColor: `${getTierColor()}10` }}>
+                            <div className="text-xs text-gray-600 mb-1">Paint</div>
+                            <div className="font-bold flex items-center justify-center gap-1">
+                              <span className="w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: getAvailablePaintColors().find(c => c.name === config.paintColor)?.hex }}></span>
+                              {config.secondPaintColor && (
+                                <span className="w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: getAvailablePaintColors().find(c => c.name === config.secondPaintColor)?.hex }}></span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <Button
+                          onClick={handleAddToCart}
+                          className="w-full text-white font-black text-xl py-8"
+                          style={{ backgroundColor: getTierColor(), border: 'none' }}
+                        >
+                          Add to Cart - ${currentPrice()}
+                        </Button>
+                      </div>
+                    )}
+
+                    {/* Price Breakdown */}
+                    <div className="bg-white rounded-xl p-6" style={{ border: `2px solid ${getTierColor()}` }}>
+                      <div className="flex justify-between items-center mb-4 pb-4" style={{ borderBottom: `2px solid ${getTierColor()}20` }}>
+                        <span className="font-bold text-lg">Total Price</span>
+                        <span className="text-4xl font-black" style={{ color: getTierColor() }}>${currentPrice()}</span>
+                      </div>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Base ({QUALITY_TIERS.find(t => t.id === config.qualityTier)?.label}):</span>
+                          <span className="font-semibold">${config.qualityTier && config.size ? Math.round(SIZES.find(s => s.value === config.size)?.price * QUALITY_TIERS.find(t => t.id === config.qualityTier)?.priceMultiplier) : 0}</span>
+                        </div>
+                        {config.hasShading && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">+ Shading:</span>
+                            <span className="font-semibold">${getShadingFee(config.size)}</span>
+                          </div>
+                        )}
+                        {config.hasSecondColor && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">+ 2nd Color:</span>
+                            <span className="font-semibold">${getSecondColorFee(config.size)}</span>
+                          </div>
+                        )}
+                        {isRush && (
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">+ Rush:</span>
+                            <span className="font-semibold">$100</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          {step >= 4 && config.imageUrl && (
+            <div className="hidden lg:block sticky top-6 self-start">
+              <BuilderSidebar
+                step={step}
+                config={config}
+                currentPrice={currentPrice()}
+                baseColors={BASE_COLORS}
+                paintColors={PAINT_COLORS}
+                isRush={isRush}
+                onToggleRush={() => setIsRush(!isRush)}
+                qualityTier={config.qualityTier}
+                key={`${config.baseColor}-${config.paintColor}-${config.imageUrl}`}
+              />
+            </div>
           )}
-
-
         </div>
 
         <DesignHelpModal 
           isOpen={showHelpModal} 
           onClose={() => setShowHelpModal(false)} 
         />
-
-        {step >= 4 && config.imageUrl && (
-          <div className="hidden lg:block sticky top-6 self-start">
-            <BuilderSidebar
-              step={step}
-              config={config}
-              currentPrice={currentPrice()}
-              baseColors={BASE_COLORS}
-              paintColors={PAINT_COLORS}
-              isRush={isRush}
-              onToggleRush={() => setIsRush(!isRush)}
-              qualityTier={config.qualityTier}
-              key={`${config.baseColor}-${config.paintColor}-${config.imageUrl}`}
-            />
-          </div>
-        )}
-        </div>
-        </div>
-        </div>
-        );
-        }
+      </div>
+    </div>
+  );
+}
