@@ -1,16 +1,41 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
+    const startTime = Date.now();
+    console.log('[aiAssistant] Request received at', new Date().toISOString());
+    
     try {
         const base44 = createClientFromRequest(req);
-        const { prompt, imageUrl, rugSize, qualityTier, generateVariations } = await req.json();
+        
+        // Add request timeout
+        const timeoutMs = 55000; // 55 seconds (under Deno's 60s limit)
+        const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Request timeout')), timeoutMs)
+        );
 
-        if (!prompt) {
-            return Response.json({ error: 'Prompt is required' }, { status: 400 });
-        }
+        const processRequest = async () => {
+            let body;
+            try {
+                body = await req.json();
+            } catch (parseError) {
+                console.error('[aiAssistant] JSON parse error:', parseError);
+                return Response.json({ error: 'Invalid JSON in request body' }, { status: 400 });
+            }
 
-        const file_urls = imageUrl ? [imageUrl] : [];
-        const isLuxTier = qualityTier === 'highend';
+            const { prompt, imageUrl, rugSize, qualityTier, generateVariations } = body;
+            console.log('[aiAssistant] Params:', { 
+                hasPrompt: !!prompt, 
+                hasImage: !!imageUrl, 
+                rugSize, 
+                qualityTier 
+            });
+
+            if (!prompt) {
+                return Response.json({ error: 'Prompt is required' }, { status: 400 });
+            }
+
+            const file_urls = imageUrl ? [imageUrl] : [];
+            const isLuxTier = qualityTier === 'highend';
 
         let llmPrompt = `You are a professional interior designer specializing in custom rugs. The user wants design suggestions for a custom hand-painted rug.
 
@@ -58,35 +83,61 @@ ${isLuxTier ? 'Focus on premium, artistic designs with sophisticated color theor
             }
         };
         
-        const llmResponse = await base44.integrations.Core.InvokeLLM({
-            prompt: llmPrompt,
-            add_context_from_internet: file_urls.length > 0 ? true : false,
-            file_urls: file_urls.length > 0 ? file_urls : undefined,
-            response_json_schema: schema
-        });
-
-        // If we got a string response (from vision model), parse it
-        let parsedResponse;
-        if (typeof llmResponse === 'string') {
+            console.log('[aiAssistant] Calling LLM...');
+            let llmResponse;
             try {
-                // Remove markdown code blocks if present
-                let cleanedResponse = llmResponse.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
-                parsedResponse = JSON.parse(cleanedResponse);
-            } catch (parseError) {
-                console.error("Failed to parse LLM response:", parseError);
-                console.error("Raw response:", llmResponse);
-                return Response.json({ 
-                    error: 'The AI is having trouble generating suggestions. Please try again.' 
-                }, { status: 500 });
+                llmResponse = await base44.integrations.Core.InvokeLLM({
+                    prompt: llmPrompt,
+                    add_context_from_internet: file_urls.length > 0 ? true : false,
+                    file_urls: file_urls.length > 0 ? file_urls : undefined,
+                    response_json_schema: schema
+                });
+                console.log('[aiAssistant] LLM response received, type:', typeof llmResponse);
+            } catch (llmError) {
+                console.error('[aiAssistant] LLM invocation error:', llmError);
+                throw new Error('AI service unavailable. Please try again.');
             }
-        } else {
-            parsedResponse = llmResponse;
-        }
 
-        return Response.json(parsedResponse);
+            // If we got a string response (from vision model), parse it
+            let parsedResponse;
+            if (typeof llmResponse === 'string') {
+                try {
+                    // Remove markdown code blocks if present
+                    let cleanedResponse = llmResponse.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+                    parsedResponse = JSON.parse(cleanedResponse);
+                    console.log('[aiAssistant] Parsed string response successfully');
+                } catch (parseError) {
+                    console.error('[aiAssistant] Failed to parse LLM response:', parseError);
+                    console.error('[aiAssistant] Raw response:', llmResponse.substring(0, 500));
+                    return Response.json({ 
+                        error: 'The AI is having trouble generating suggestions. Please try again.' 
+                    }, { status: 500 });
+                }
+            } else {
+                parsedResponse = llmResponse;
+                console.log('[aiAssistant] Direct JSON response received');
+            }
+
+            const elapsed = Date.now() - startTime;
+            console.log(`[aiAssistant] Success in ${elapsed}ms`);
+            return Response.json(parsedResponse);
+        };
+
+        return await Promise.race([processRequest(), timeoutPromise]);
 
     } catch (error) {
-        console.error("AI Assistant Error:", error);
-        return Response.json({ error: error.message }, { status: 500 });
+        const elapsed = Date.now() - startTime;
+        console.error(`[aiAssistant] Error after ${elapsed}ms:`, error);
+        console.error('[aiAssistant] Error stack:', error.stack);
+        
+        if (error.message === 'Request timeout') {
+            return Response.json({ 
+                error: 'Request timed out. Please try a simpler prompt or without an image.' 
+            }, { status: 504 });
+        }
+        
+        return Response.json({ 
+            error: error.message || 'An unexpected error occurred. Please try again.' 
+        }, { status: 500 });
     }
 });
