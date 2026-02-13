@@ -504,7 +504,7 @@ export default function CustomBuilder() {
   };
 
   return (
-    <div className="min-h-screen py-12 px-6">
+    <div className="min-h-screen py-12 px-6 bg-white">
       <SEOHead
         title={seoData?.seo_title || "Custom Rug Builder | Perfect Mother's Day & Father's Day Gifts"}
         description={typeof seoData?.seo_description === 'string' ? seoData.seo_description : "Design custom hand-painted rugs online - unique mothers day gifts, fathers day gifts, and personalized gifts for anyone. Create personalized floor art rugs with our builder. Customizable stencil rug designs, washable custom painted rugs for any space. Perfect for interior designers and homeowners."}
@@ -858,7 +858,7 @@ export default function CustomBuilder() {
 
             {/* Custom Size Input for Rugly and Rugly Lux */}
             {(config.qualityTier === 'good' || config.qualityTier === 'highend') && (
-              <Card className="border-2 border-purple-500 bg-gradient-to-br from-purple-50 to-pink-50">
+              <Card className="bg-white" style={{border: `4px solid ${config.qualityTier === 'good' ? '#4075ff' : '#f04624'}`}}>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
                     📏 Have a specific size in mind?
@@ -1175,7 +1175,7 @@ export default function CustomBuilder() {
 
           {/* Step 3: All Color Selections */}
           {step === 3 && (
-            <Card>
+            <Card className="bg-white" style={{border: `4px solid ${config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'}`}}>
               <CardHeader>
                 <div className="text-center mb-6">
                   <h2 className="text-3xl font-bold mb-3 text-gray-900">Choose Your Colors</h2>
@@ -1198,8 +1198,12 @@ export default function CustomBuilder() {
                           key={color.name}
                           onClick={() => setConfig(prev => ({ ...prev, baseColor: color.name }))}
                           className={`p-3 rounded-lg border-2 transition-all ${
-                            config.baseColor === color.name ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-300' : 'border-gray-200 hover:border-gray-300'
+                            config.baseColor === color.name ? 'bg-white ring-2' : 'border-gray-200 hover:border-gray-300'
                           }`}
+                          style={config.baseColor === color.name ? {
+                            borderColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624',
+                            ringColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'
+                          } : {}}
                         >
                           <div className="w-full aspect-square rounded-lg mb-2 border-2 border-white shadow-md" style={{ backgroundColor: color.hex }} />
                           <div className="text-xs text-center font-medium">{color.name}</div>
@@ -1282,9 +1286,10 @@ export default function CustomBuilder() {
                     {/* Shading */}
                     <button
                       onClick={() => setConfig(prev => ({ ...prev, hasShading: !prev.hasShading }))}
-                      className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
-                        config.hasShading ? 'border-purple-600 bg-purple-50' : 'border-gray-300 hover:border-gray-400'
-                      }`}
+                      className="w-full p-4 rounded-lg border-2 transition-all text-left bg-white"
+                      style={{
+                        borderColor: config.hasShading ? (config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624') : '#d1d5db'
+                      }}
                     >
                       <div className="flex justify-between items-center">
                         <div>
@@ -1298,7 +1303,10 @@ export default function CustomBuilder() {
                     </button>
 
                     {/* Second Color */}
-                    <div className={`border-2 rounded-lg transition-all ${config.hasSecondColor ? 'border-yellow-600 bg-yellow-50' : 'border-gray-300'}`}>
+                    <div className="border-2 rounded-lg transition-all bg-white"
+                      style={{
+                        borderColor: config.hasSecondColor ? (config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624') : '#d1d5db'
+                      }}>
                       <button
                         onClick={() => setConfig(prev => ({ ...prev, hasSecondColor: !prev.hasSecondColor, secondPaintColor: !prev.hasSecondColor ? prev.secondPaintColor : '' }))}
                         className="w-full p-4 text-left"
@@ -1390,7 +1398,7 @@ export default function CustomBuilder() {
 
           {/* Step 4: Create Design & Confirm */}
           {step === 4 && (
-            <Card>
+            <Card className="bg-white" style={{border: `4px solid ${config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'}`}}>
             <CardHeader>
               <div className="flex items-center gap-3 mb-2">
                 <Button variant="outline" size="sm" onClick={() => setStep(3)}>
@@ -1403,7 +1411,7 @@ export default function CustomBuilder() {
               </p>
               
               {/* Production Timeline */}
-              <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="mt-4 bg-white rounded-lg p-4" style={{border: `2px solid ${config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'}`}}>
                 <div className="font-semibold text-sm text-gray-900 mb-2">📅 Production Timeline</div>
                 <div className="grid grid-cols-3 gap-3 text-xs text-gray-700">
                   <div>
@@ -1439,8 +1447,11 @@ export default function CustomBuilder() {
                     <button
                       onClick={() => setDesignMode('ai')}
                       className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center min-h-[160px] relative ${
-                        designMode === 'ai' ? 'border-purple-600 bg-gradient-to-br from-purple-50 to-pink-50' : 'border-purple-400 bg-purple-50 hover:border-purple-600'
+                        designMode === 'ai' ? 'bg-white' : 'bg-white'
                       }`}
+                      style={{
+                        borderColor: designMode === 'ai' ? (config.qualityTier === 'good' ? '#4075ff' : '#f04624') : '#d1d5db'
+                      }}
                     >
                       {config.qualityTier === 'highend' && (
                         <div className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded-full">LUX PREMIUM</div>
@@ -1453,8 +1464,11 @@ export default function CustomBuilder() {
                   <button
                     onClick={() => setDesignMode('library')}
                     className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center min-h-[160px] ${
-                      designMode === 'library' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      designMode === 'library' ? 'bg-white' : 'bg-white hover:border-gray-300'
                     }`}
+                    style={{
+                      borderColor: designMode === 'library' ? (config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624') : '#e5e7eb'
+                    }}
                   >
                     <FileText className="w-8 h-8 mb-3 text-blue-600" />
                     <div className="font-semibold text-lg mb-1">Design Library</div>
@@ -1463,8 +1477,11 @@ export default function CustomBuilder() {
                   <button
                     onClick={() => setDesignMode('draw')}
                     className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center min-h-[160px] ${
-                      designMode === 'draw' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      designMode === 'draw' ? 'bg-white' : 'bg-white hover:border-gray-300'
                     }`}
+                    style={{
+                      borderColor: designMode === 'draw' ? (config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624') : '#e5e7eb'
+                    }}
                   >
                     <Pencil className="w-8 h-8 mb-3 text-blue-600" />
                     <div className="font-semibold text-lg mb-1">Draw Your Own</div>
@@ -1473,8 +1490,11 @@ export default function CustomBuilder() {
                   <button
                     onClick={() => setDesignMode('upload')}
                     className={`p-6 rounded-lg border-2 transition-all flex flex-col items-center justify-center min-h-[160px] ${
-                      designMode === 'upload' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                      designMode === 'upload' ? 'bg-white' : 'bg-white hover:border-gray-300'
                     }`}
+                    style={{
+                      borderColor: designMode === 'upload' ? (config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624') : '#e5e7eb'
+                    }}
                   >
                     <Upload className="w-8 h-8 mb-3 text-blue-600" />
                     <div className="font-semibold text-lg mb-1">Upload & Convert</div>
@@ -1542,8 +1562,8 @@ export default function CustomBuilder() {
                 )}
 
                 {config.imageUrl && (
-                  <div className="bg-green-50 border-2 border-green-500 rounded-lg p-6 mt-6">
-                    <Label className="block mb-4 font-bold text-green-900 text-xl text-center">✨ Your Custom Rug Preview</Label>
+                  <div className="bg-white rounded-lg p-6 mt-6" style={{border: `4px solid ${config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'}`}}>
+                    <Label className="block mb-4 font-bold text-xl text-center" style={{color: '#343634'}}>✨ Your Custom Rug Preview</Label>
                     
                     {/* Final Summary */}
                     <div className="bg-white rounded-lg p-4 mb-4 space-y-2 text-sm">
@@ -1586,10 +1606,10 @@ export default function CustomBuilder() {
                   </div>
                 )}
 
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="bg-white rounded-lg p-4" style={{border: `2px solid ${config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'}`}}>
                   <div className="flex justify-between items-center mb-3">
                     <span className="font-semibold">Total Price:</span>
-                    <span className="text-3xl font-bold text-blue-600">${currentPrice()}</span>
+                    <span className="text-3xl font-bold" style={{color: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'}}>${currentPrice()}</span>
                   </div>
                   <div className="text-xs text-gray-700 space-y-1">
                     <div className="flex justify-between">
