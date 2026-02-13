@@ -49,25 +49,39 @@ Deno.serve(async (req) => {
 
     // Calculate shipping
     const calculateShipping = (cart) => {
-      if (cart.length >= 2) return 0; // Free shipping for 2+ items
+      let totalShipping = 0;
       
-      const item = cart[0];
-      const size = item.size.toLowerCase();
+      for (const item of cart) {
+        // Crugly ships free
+        if (item.qualityTier === 'budget') {
+          continue;
+        }
+        
+        // Rugly shipping based on size
+        if (item.qualityTier === 'good') {
+          const size = item.size.toLowerCase();
+          
+          if (size.includes('tiny') || size.includes('2x3')) {
+            totalShipping += 10;
+          } else if (size.includes('small') || size.includes('4x6')) {
+            totalShipping += 25;
+          } else if (size.includes('medium') || size.includes('large') || size.includes('5x7') || size.includes('8x10')) {
+            totalShipping += 45;
+          } else if (size.includes('huge') || size.includes('9x11')) {
+            totalShipping += 65;
+          } else {
+            totalShipping += 25; // Default to small
+          }
+        }
+        
+        // Rugly Lux - shipping charged with balance (not included in deposit)
+        if (item.qualityTier === 'highend') {
+          // No shipping charged upfront for Rugly Lux
+          continue;
+        }
+      }
       
-      // Small, Medium, and Round: $29
-      if (size.includes('small') || size.includes('medium') || size.includes('round') || size.includes('4x6') || size.includes('5x7')) {
-        return 29;
-      }
-      // Large: $59
-      if (size.includes('large') || size.includes('8x10')) {
-        return 59;
-      }
-      // Huge: $99
-      if (size.includes('huge') || size.includes('9x11')) {
-        return 99;
-      }
-      
-      return 29; // Default to small shipping
+      return totalShipping;
     };
 
     const shippingCost = calculateShipping(cart);
