@@ -71,7 +71,7 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
 
         <div className="relative">
           {/* Carousel Container */}
-          <div className="relative h-[600px] overflow-hidden rounded-2xl bg-gradient-to-b from-gray-100 to-white shadow-2xl">
+          <div className="relative h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden rounded-2xl bg-gradient-to-b from-gray-100 to-white shadow-2xl">
             {/* Gallery Track */}
             <div className="flex items-center justify-center h-full relative">
               {products.map((product, i) => {
@@ -99,21 +99,19 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
                       }`}
                     >
                       {/* Image */}
-                      <div className="relative w-[90%] h-[90%] rounded-xl overflow-hidden shadow-2xl group">
+                      <div className="relative w-[85%] md:w-[90%] h-[85%] md:h-[90%] rounded-xl overflow-hidden shadow-2xl group">
                         {isCenter && getActiveImages().length > 0 && (
                           <img
                             src={getActiveImages()[imageIndex].url}
                             alt={product.name}
-                            className="w-full h-full object-cover object-center transition-opacity duration-300"
-                            style={{ objectPosition: 'center 60%' }}
+                            className="w-full h-full object-contain transition-opacity duration-300"
                           />
                         )}
                         {!isCenter && (
                           <img
                             src={product.image_url || (product.all_images?.[0]?.url)}
                             alt={product.name}
-                            className="w-full h-full object-cover object-center"
-                            style={{ objectPosition: 'center 60%' }}
+                            className="w-full h-full object-contain"
                           />
                         )}
                         {!product.in_stock && (
@@ -131,20 +129,20 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
                                 e.stopPropagation();
                                 handlePrevImage();
                               }}
-                              className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-900 rounded-full p-2 shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                              className="absolute left-1 md:left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-900 rounded-full p-1.5 md:p-2 shadow-lg transition-all opacity-0 group-hover:opacity-100 md:opacity-100"
                               aria-label="Previous image"
                             >
-                              <ChevronLeft className="w-5 h-5" />
+                              <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
                             </button>
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleNextImage();
                               }}
-                              className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-900 rounded-full p-2 shadow-lg transition-all opacity-0 group-hover:opacity-100"
+                              className="absolute right-1 md:right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-900 rounded-full p-1.5 md:p-2 shadow-lg transition-all opacity-0 group-hover:opacity-100 md:opacity-100"
                               aria-label="Next image"
                             >
-                              <ChevronRight className="w-5 h-5" />
+                              <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
                             </button>
                           </>
                         )}
@@ -173,17 +171,17 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
             {/* Navigation Buttons */}
             <button
               onClick={handlePrev}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white hover:bg-blue-600 hover:text-white text-gray-900 rounded-full p-3 shadow-lg transition-all duration-300 group"
+              className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 bg-white hover:bg-blue-600 hover:text-white text-gray-900 rounded-full p-2 md:p-3 shadow-lg transition-all duration-300 group"
               aria-label="Previous rug"
             >
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
             </button>
             <button
               onClick={handleNext}
-              className="absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white hover:bg-blue-600 hover:text-white text-gray-900 rounded-full p-3 shadow-lg transition-all duration-300 group"
+              className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 bg-white hover:bg-blue-600 hover:text-white text-gray-900 rounded-full p-2 md:p-3 shadow-lg transition-all duration-300 group"
               aria-label="Next rug"
             >
-              <ChevronRight className="w-6 h-6" />
+              <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
             </button>
           </div>
 
