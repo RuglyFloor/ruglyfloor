@@ -65,15 +65,18 @@ export default function Layout({ children, currentPageName }) {
         @import url('https://fonts.googleapis.com/css2?family=Magistral&display=swap');
 
         :root {
-          /* Primary Brand Color - Change this to customize your accent color */
-          --primary: 37 99 235; /* Blue (rgb format for Tailwind) */
-          --primary-hover: 29 78 216;
+          /* Brand Color Palette */
+          --brand-red: #f04624;
+          --brand-cyan: #24f0a0;
+          --brand-blue: #4075ff;
+          --brand-light-gray: #F5F5F5;
+          --brand-cream: #F7F1DA;
+          --brand-dark: #343634;
 
-          /* You can change to other colors like:
-             --primary: 147 51 234; (Purple)
-             --primary: 34 197 94; (Green)
-             --primary: 239 68 68; (Red)
-          */
+          /* Primary Colors (RGB for Tailwind) */
+          --primary: 64 117 255; /* brand-blue */
+          --primary-hover: 240 70 36; /* brand-red */
+          --accent: 36 240 160; /* brand-cyan */
 
           /* Typography */
           --font-heading: 'Barlow Condensed', sans-serif;
@@ -84,14 +87,17 @@ export default function Layout({ children, currentPageName }) {
           --font-script: 'Qwitcher Grypen', cursive;
           --font-button: 'Big Shoulders Stencil Display', sans-serif;
           --font-rugly: 'Magistral', sans-serif;
-          }
-        
+        }
+
         body {
           font-family: var(--font-body);
+          background-color: var(--brand-light-gray);
+          color: var(--brand-dark);
         }
-        
+
         h1, h2, h3, h4, h5, h6 {
           font-family: var(--font-heading);
+          color: var(--brand-dark);
         }
 
         button, .btn, [role="button"] {
@@ -103,15 +109,46 @@ export default function Layout({ children, currentPageName }) {
         .rugly-text {
           font-family: var(--font-rugly);
         }
-        
-        /* Custom primary color classes */
-        .bg-primary { background-color: rgb(var(--primary)); }
-        .text-primary { color: rgb(var(--primary)); }
-        .border-primary { border-color: rgb(var(--primary)); }
-        .hover\\:bg-primary-hover:hover { background-color: rgb(var(--primary-hover)); }
+
+        /* Override Tailwind colors with brand palette */
+        .bg-blue-600, .bg-blue-700, .bg-primary { background-color: var(--brand-blue) !important; }
+        .hover\\:bg-blue-700:hover, .hover\\:bg-primary-hover:hover { background-color: var(--brand-red) !important; }
+        .bg-red-500, .bg-red-600 { background-color: var(--brand-red) !important; }
+        .bg-green-600, .bg-green-500 { background-color: var(--brand-cyan) !important; }
+        .bg-purple-600 { background-color: var(--brand-blue) !important; }
+        .bg-gray-50 { background-color: var(--brand-cream) !important; }
+        .bg-gray-100 { background-color: var(--brand-light-gray) !important; }
+        .bg-gray-900 { background-color: var(--brand-dark) !important; }
+        .bg-white { background-color: #ffffff !important; }
+
+        .text-blue-600, .text-blue-700, .text-primary { color: var(--brand-blue) !important; }
+        .text-red-500, .text-red-600 { color: var(--brand-red) !important; }
+        .text-green-600 { color: var(--brand-cyan) !important; }
+        .text-purple-600 { color: var(--brand-blue) !important; }
+        .text-gray-900, .text-gray-800 { color: var(--brand-dark) !important; }
+        .text-gray-700, .text-gray-600 { color: var(--brand-dark) !important; }
+        .text-gray-500 { color: #6b7280 !important; }
+        .text-gray-400 { color: #9ca3af !important; }
+        .text-gray-300 { color: #d1d5db !important; }
+
+        .border-blue-600, .border-blue-500 { border-color: var(--brand-blue) !important; }
+        .border-red-500 { border-color: var(--brand-red) !important; }
+        .border-green-600 { border-color: var(--brand-cyan) !important; }
+        .border-purple-600, .border-purple-300 { border-color: var(--brand-blue) !important; }
+        .border-gray-900 { border-color: var(--brand-dark) !important; }
+
+        .hover\\:bg-blue-50:hover, .hover\\:bg-purple-50:hover { background-color: rgba(64, 117, 255, 0.1) !important; }
+        .hover\\:bg-gray-50:hover { background-color: var(--brand-cream) !important; }
+        .hover\\:text-blue-600:hover { color: var(--brand-blue) !important; }
+
+        /* Gradient overrides */
+        .from-purple-600, .from-pink-600 { --tw-gradient-from: var(--brand-blue) !important; }
+        .to-blue-600, .to-purple-600 { --tw-gradient-to: var(--brand-red) !important; }
+        .from-blue-50, .from-purple-50 { --tw-gradient-from: var(--brand-cream) !important; }
+        .to-pink-50 { --tw-gradient-to: var(--brand-light-gray) !important; }
       `}</style>
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <header className="bg-white border-b sticky top-0 z-50" style={{borderColor: 'var(--brand-blue)'}}>
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <Link to={createPageUrl('Home')} className="flex items-center gap-2">
@@ -128,9 +165,12 @@ export default function Layout({ children, currentPageName }) {
                 <Link
                   key={link.page}
                   to={createPageUrl(link.page)}
-                  className={`text-gray-700 hover:text-blue-600 transition-colors ${
-                    currentPageName === link.page ? 'text-blue-600 font-semibold' : ''
+                  className={`transition-colors ${
+                    currentPageName === link.page ? 'font-semibold' : ''
                   }`}
+                  style={{color: currentPageName === link.page ? 'var(--brand-blue)' : 'var(--brand-dark)'}}
+                  onMouseEnter={(e) => e.target.style.color = 'var(--brand-blue)'}
+                  onMouseLeave={(e) => e.target.style.color = currentPageName === link.page ? 'var(--brand-blue)' : 'var(--brand-dark)'}
                 >
                   {link.name}
                 </Link>
@@ -159,9 +199,10 @@ export default function Layout({ children, currentPageName }) {
                 <Link
                   key={link.page}
                   to={createPageUrl(link.page)}
-                  className={`text-gray-700 hover:text-blue-600 transition-colors py-2 ${
-                    currentPageName === link.page ? 'text-blue-600 font-semibold' : ''
+                  className={`transition-colors py-2 ${
+                    currentPageName === link.page ? 'font-semibold' : ''
                   }`}
+                  style={{color: currentPageName === link.page ? 'var(--brand-blue)' : 'var(--brand-dark)'}}
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {link.name}
@@ -182,36 +223,42 @@ export default function Layout({ children, currentPageName }) {
       <main>{children}</main>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-300 py-16 px-6 mt-20">
+      <footer className="py-16 px-6 mt-20" style={{backgroundColor: 'var(--brand-dark)', color: '#d1d5db'}}>
         <div className="max-w-7xl mx-auto">
           {/* Contact Us Section - Cutout Style */}
-          <div className="border-4 border-gray-900 rounded-2xl p-12 mb-12 text-center bg-white">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Get In Touch</h2>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <div className="rounded-2xl p-12 mb-12 text-center bg-white" style={{border: '4px solid var(--brand-blue)'}}>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6" style={{color: 'var(--brand-dark)'}}>Get In Touch</h2>
+            <p className="text-xl mb-8 max-w-2xl mx-auto" style={{color: 'var(--brand-dark)'}}>
               Have a question about custom rugs or need help with your order? We're here to help.
             </p>
 
             <div className="grid md:grid-cols-3 gap-8 mb-8">
-              <div className="border-2 border-gray-900 rounded-xl p-6 hover:bg-gray-50 transition-colors">
-                <Mail className="w-8 h-8 mx-auto mb-3 text-gray-900" />
-                <h3 className="text-gray-900 font-bold text-lg mb-2">Email Us</h3>
-                <a href="mailto:info@ruglyfloor.com" className="text-gray-600 hover:text-gray-900 text-lg">
+              <div className="rounded-xl p-6 transition-colors" style={{border: '2px solid var(--brand-blue)'}} 
+                   onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--brand-cream)'}
+                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                <Mail className="w-8 h-8 mx-auto mb-3" style={{color: 'var(--brand-blue)'}} />
+                <h3 className="font-bold text-lg mb-2" style={{color: 'var(--brand-dark)'}}>Email Us</h3>
+                <a href="mailto:info@ruglyfloor.com" className="text-lg" style={{color: 'var(--brand-dark)'}}>
                   info@ruglyfloor.com
                 </a>
               </div>
 
-              <div className="border-2 border-gray-900 rounded-xl p-6 hover:bg-gray-50 transition-colors">
-                <div className="w-8 h-8 mx-auto mb-3 text-gray-900 flex items-center justify-center text-2xl">📞</div>
-                <h3 className="text-gray-900 font-bold text-lg mb-2">Call Us</h3>
-                <a href="tel:5177778474" className="text-gray-600 hover:text-gray-900 text-lg">
+              <div className="rounded-xl p-6 transition-colors" style={{border: '2px solid var(--brand-blue)'}}
+                   onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--brand-cream)'}
+                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                <div className="w-8 h-8 mx-auto mb-3 flex items-center justify-center text-2xl" style={{color: 'var(--brand-blue)'}}>📞</div>
+                <h3 className="font-bold text-lg mb-2" style={{color: 'var(--brand-dark)'}}>Call Us</h3>
+                <a href="tel:5177778474" className="text-lg" style={{color: 'var(--brand-dark)'}}>
                   (517) 777-8474
                 </a>
               </div>
 
-              <div className="border-2 border-gray-900 rounded-xl p-6 hover:bg-gray-50 transition-colors">
-                <div className="w-8 h-8 mx-auto mb-3 text-gray-900 flex items-center justify-center text-2xl">🌐</div>
-                <h3 className="text-gray-900 font-bold text-lg mb-2">Visit Us</h3>
-                <a href="https://ruglyfloors.com" className="text-gray-600 hover:text-gray-900 text-lg">
+              <div className="rounded-xl p-6 transition-colors" style={{border: '2px solid var(--brand-blue)'}}
+                   onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--brand-cream)'}
+                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                <div className="w-8 h-8 mx-auto mb-3 flex items-center justify-center text-2xl" style={{color: 'var(--brand-blue)'}}>🌐</div>
+                <h3 className="font-bold text-lg mb-2" style={{color: 'var(--brand-dark)'}}>Visit Us</h3>
+                <a href="https://ruglyfloors.com" className="text-lg" style={{color: 'var(--brand-dark)'}}>
                   www.ruglyfloors.com
                 </a>
               </div>
@@ -219,16 +266,24 @@ export default function Layout({ children, currentPageName }) {
 
             {/* Social Media Links */}
             <div className="flex justify-center gap-6">
-              <a href="https://www.facebook.com/profile.php?id=61585565308752" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 transition-colors">
+              <a href="https://www.facebook.com/profile.php?id=61585565308752" target="_blank" rel="noopener noreferrer" className="transition-colors" style={{color: 'var(--brand-dark)'}}
+                 onMouseEnter={(e) => e.currentTarget.style.color = 'var(--brand-blue)'}
+                 onMouseLeave={(e) => e.currentTarget.style.color = 'var(--brand-dark)'}>
                 <Facebook className="w-8 h-8" />
               </a>
-              <a href="https://instagram.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 transition-colors">
+              <a href="https://instagram.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="transition-colors" style={{color: 'var(--brand-dark)'}}
+                 onMouseEnter={(e) => e.currentTarget.style.color = 'var(--brand-blue)'}
+                 onMouseLeave={(e) => e.currentTarget.style.color = 'var(--brand-dark)'}>
                 <Instagram className="w-8 h-8" />
               </a>
-              <a href="https://twitter.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 transition-colors">
+              <a href="https://twitter.com/ruglyfloor" target="_blank" rel="noopener noreferrer" className="transition-colors" style={{color: 'var(--brand-dark)'}}
+                 onMouseEnter={(e) => e.currentTarget.style.color = 'var(--brand-blue)'}
+                 onMouseLeave={(e) => e.currentTarget.style.color = 'var(--brand-dark)'}>
                 <Twitter className="w-8 h-8" />
               </a>
-              <a href="https://tiktok.com/@ruglyfloor" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 transition-colors">
+              <a href="https://tiktok.com/@ruglyfloor" target="_blank" rel="noopener noreferrer" className="transition-colors" style={{color: 'var(--brand-dark)'}}
+                 onMouseEnter={(e) => e.currentTarget.style.color = 'var(--brand-blue)'}
+                 onMouseLeave={(e) => e.currentTarget.style.color = 'var(--brand-dark)'}>
                 <Video className="w-8 h-8" />
               </a>
             </div>
@@ -244,7 +299,7 @@ export default function Layout({ children, currentPageName }) {
             <p className="text-sm mb-2">Homesteads, LLC</p>
             <p className="text-sm text-gray-500">Custom-painted rugs for spaces that inspire</p>
 
-            <div className="mt-6 pt-6 border-t border-gray-800">
+            <div className="mt-6 pt-6" style={{borderTop: '1px solid rgba(255,255,255,0.1)'}}>
               {/* Trust Badges */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <a href="https://www.yelp.com/biz/rugly-floor-lansing" target="_blank" rel="noopener noreferrer" className="text-center hover:opacity-80 transition-opacity">
@@ -267,16 +322,24 @@ export default function Layout({ children, currentPageName }) {
 
               {/* Footer Links */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                <Link to={createPageUrl('Policies')} className="text-sm text-gray-400 hover:text-white transition-colors">
+                <Link to={createPageUrl('Policies')} className="text-sm transition-colors" style={{color: '#9ca3af'}}
+                      onMouseEnter={(e) => e.target.style.color = 'var(--brand-cyan)'}
+                      onMouseLeave={(e) => e.target.style.color = '#9ca3af'}>
                   Terms & Policies
                 </Link>
-                <a href="mailto:info@ruglyfloor.com" className="text-sm text-gray-400 hover:text-white transition-colors">
+                <a href="mailto:info@ruglyfloor.com" className="text-sm transition-colors" style={{color: '#9ca3af'}}
+                   onMouseEnter={(e) => e.target.style.color = 'var(--brand-cyan)'}
+                   onMouseLeave={(e) => e.target.style.color = '#9ca3af'}>
                   Shipping & Returns
                 </a>
-                <Link to={createPageUrl('Contact')} className="text-sm text-gray-400 hover:text-white transition-colors">
+                <Link to={createPageUrl('Contact')} className="text-sm transition-colors" style={{color: '#9ca3af'}}
+                      onMouseEnter={(e) => e.target.style.color = 'var(--brand-cyan)'}
+                      onMouseLeave={(e) => e.target.style.color = '#9ca3af'}>
                   Contact Support
                 </Link>
-                <Link to={createPageUrl('AdminLogin')} className="text-sm text-gray-400 hover:text-white transition-colors">
+                <Link to={createPageUrl('AdminLogin')} className="text-sm transition-colors" style={{color: '#9ca3af'}}
+                      onMouseEnter={(e) => e.target.style.color = 'var(--brand-cyan)'}
+                      onMouseLeave={(e) => e.target.style.color = '#9ca3af'}>
                   Admin
                 </Link>
               </div>

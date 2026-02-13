@@ -77,6 +77,7 @@ import Home from './pages/Home';
 import NotionSync from './pages/NotionSync';
 import Orders from './pages/Orders';
 import Policies from './pages/Policies';
+import ProductDetail from './pages/ProductDetail';
 import Products from './pages/Products';
 import Robots from './pages/Robots';
 import SMSComplianceSample from './pages/SMSComplianceSample';
@@ -85,7 +86,6 @@ import Shop from './pages/Shop';
 import Sitemap from './pages/Sitemap';
 import Success from './pages/Success';
 import TrackOrder from './pages/TrackOrder';
-import ProductDetail from './pages/ProductDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -120,6 +120,7 @@ export const PAGES = {
     "NotionSync": NotionSync,
     "Orders": Orders,
     "Policies": Policies,
+    "ProductDetail": ProductDetail,
     "Products": Products,
     "Robots": Robots,
     "SMSComplianceSample": SMSComplianceSample,
@@ -128,7 +129,6 @@ export const PAGES = {
     "Sitemap": Sitemap,
     "Success": Success,
     "TrackOrder": TrackOrder,
-    "ProductDetail": ProductDetail,
 }
 
 export const pagesConfig = {
