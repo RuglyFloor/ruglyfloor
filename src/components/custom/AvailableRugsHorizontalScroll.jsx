@@ -211,35 +211,21 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
 
             {/* Actions */}
             <div className="flex flex-col gap-4">
-              {activeProduct.in_stock ? (
-                <>
-                  <Button
-                    onClick={() => handleGrabIt(activeProduct)}
-                    disabled={isCheckingOut}
-                    size="lg"
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg py-6 shadow-lg"
-                  >
-                    {isCheckingOut ? 'Processing...' : '✨ GRAB IT'}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    onClick={() => navigate(createPageUrl('CustomBuilder'))}
-                    className="w-full border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-bold text-lg py-6"
-                  >
-                    Customize Similar
-                  </Button>
-                </>
-              ) : (
-                <Button
-                  variant="outline"
-                  size="lg"
-                  disabled
-                  className="w-full opacity-50"
-                >
-                  Out of Stock
-                </Button>
-              )}
+              <Button
+                onClick={() => navigate(createPageUrl('ProductDetail') + `?id=${activeProduct.id}`)}
+                size="lg"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg py-6 shadow-lg"
+              >
+                View Details
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={() => navigate(createPageUrl('CustomBuilder'))}
+                className="w-full border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-bold text-lg py-6"
+              >
+                Customize Similar
+              </Button>
             </div>
           </motion.div>
 
