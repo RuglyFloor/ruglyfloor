@@ -590,11 +590,15 @@ export default function CustomBuilder() {
                         {QUALITY_TIERS.map((tier) => (
                           <th key={tier.id} className={`p-4 text-center relative ${
                             tier.id === 'budget' || tier.id === 'good' 
-                              ? 'bg-blue-50 border-2 border-blue-500' 
+                              ? 'border-2' 
                               : 'bg-gray-50'
-                          }`}>
+                          }`}
+                          style={{
+                            backgroundColor: tier.id === 'budget' || tier.id === 'good' ? '#F7F1DA' : undefined,
+                            borderColor: tier.id === 'budget' ? '#4075ff' : tier.id === 'good' ? '#f04624' : undefined
+                          }}>
                             {(tier.id === 'budget' || tier.id === 'good') && (
-                              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap shadow-lg">
+                              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap shadow-lg" style={{backgroundColor: '#4075ff'}}>
                                 Create Your Own & See It Now!
                               </div>
                             )}
@@ -610,7 +614,10 @@ export default function CustomBuilder() {
                                 }, 700);
                               }}
                               disabled={transitioning}
-                              className="font-bold text-xl text-gray-900 mt-2 hover:text-purple-600 transition-colors cursor-pointer"
+                              className="font-bold text-xl mt-2 transition-colors cursor-pointer"
+                              style={{color: '#343634'}}
+                              onMouseEnter={(e) => e.target.style.color = '#4075ff'}
+                              onMouseLeave={(e) => e.target.style.color = '#343634'}
                             >
                               {tier.label}
                             </button>
@@ -811,13 +818,12 @@ export default function CustomBuilder() {
                                   }, 700);
                                 }}
                                 disabled={transitioning}
-                                className={`w-full ${
-                                  config.qualityTier === tier.id
-                                    ? 'border-4 border-gray-900 bg-gray-900 text-white'
-                                    : tier.id === 'budget' || tier.id === 'good'
-                                    ? 'border-2 border-blue-600 bg-blue-600 text-white hover:bg-blue-700'
-                                    : 'border-2 border-purple-600 bg-purple-600 text-white hover:bg-purple-700'
-                                }`}
+                                className="w-full text-white"
+                                style={{
+                                  border: config.qualityTier === tier.id ? '4px solid #343634' : '2px solid',
+                                  borderColor: config.qualityTier === tier.id ? '#343634' : tier.id === 'budget' ? '#4075ff' : tier.id === 'good' ? '#f04624' : '#24f0a0',
+                                  backgroundColor: config.qualityTier === tier.id ? '#343634' : tier.id === 'budget' ? '#4075ff' : tier.id === 'good' ? '#f04624' : '#24f0a0'
+                                }}
                               >
                                 {config.qualityTier === tier.id ? (
                                   <>
