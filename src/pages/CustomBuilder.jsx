@@ -246,11 +246,18 @@ export default function CustomBuilder() {
   const [uploading, setUploading] = useState(false);
   const [isRush, setIsRush] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [measurementSystem, setMeasurementSystem] = useState('imperial'); // 'imperial' or 'metric'
   const [customDimensions, setCustomDimensions] = useState({
     lengthFeet: '',
     lengthInches: '',
     widthFeet: '',
     widthInches: ''
+  });
+  const [customDimensionsMetric, setCustomDimensionsMetric] = useState({
+    lengthMeters: '',
+    lengthCm: '',
+    widthMeters: '',
+    widthCm: ''
   });
   const [suggestedSize, setSuggestedSize] = useState(null);
 
@@ -335,6 +342,15 @@ export default function CustomBuilder() {
     return totalLengthFeet * totalWidthFeet;
   };
 
+  // Calculate square footage from meters and cm
+  const calculateSquareFootageMetric = (lengthMeters, lengthCm, widthMeters, widthCm) => {
+    const totalLengthMeters = parseFloat(lengthMeters || 0) + (parseFloat(lengthCm || 0) / 100);
+    const totalWidthMeters = parseFloat(widthMeters || 0) + (parseFloat(widthCm || 0) / 100);
+    const totalLengthFeet = totalLengthMeters * 3.28084;
+    const totalWidthFeet = totalWidthMeters * 3.28084;
+    return totalLengthFeet * totalWidthFeet;
+  };
+
   const handleCustomDimensionsChange = (field, value) => {
     const newDimensions = { ...customDimensions, [field]: value };
     setCustomDimensions(newDimensions);
@@ -353,12 +369,51 @@ export default function CustomBuilder() {
         setSuggestedSize({
           ...suggested,
           customDimensions: {
+            system: 'imperial',
             lengthFeet: lengthFeet || '0',
             lengthInches: lengthInches || '0',
             widthFeet: widthFeet || '0',
             widthInches: widthInches || '0',
             totalLength: totalLengthFeet.toFixed(2),
             totalWidth: totalWidthFeet.toFixed(2),
+            squareFootage: sqFt.toFixed(2)
+          }
+        });
+      } else {
+        setSuggestedSize(null);
+      }
+    } else {
+      setSuggestedSize(null);
+    }
+  };
+
+  const handleCustomDimensionsChangeMetric = (field, value) => {
+    const newDimensions = { ...customDimensionsMetric, [field]: value };
+    setCustomDimensionsMetric(newDimensions);
+
+    const { lengthMeters, lengthCm, widthMeters, widthCm } = newDimensions;
+    
+    // Check if we have at least some valid input
+    if ((lengthMeters || lengthCm) && (widthMeters || widthCm)) {
+      const totalLengthMeters = parseFloat(lengthMeters || 0) + (parseFloat(lengthCm || 0) / 100);
+      const totalWidthMeters = parseFloat(widthMeters || 0) + (parseFloat(widthCm || 0) / 100);
+      const totalLengthFeet = totalLengthMeters * 3.28084;
+      const totalWidthFeet = totalWidthMeters * 3.28084;
+      
+      // Minimum 2x2 feet (0.61m x 0.61m)
+      if (totalLengthMeters >= 0.61 && totalWidthMeters >= 0.61) {
+        const sqFt = calculateSquareFootageMetric(lengthMeters, lengthCm, widthMeters, widthCm);
+        const suggested = matchSizeBySquareFeet(sqFt);
+        setSuggestedSize({
+          ...suggested,
+          customDimensions: {
+            system: 'metric',
+            lengthMeters: lengthMeters || '0',
+            lengthCm: lengthCm || '0',
+            widthMeters: widthMeters || '0',
+            widthCm: widthCm || '0',
+            totalLength: totalLengthMeters.toFixed(2),
+            totalWidth: totalWidthMeters.toFixed(2),
             squareFootage: sqFt.toFixed(2)
           }
         });
@@ -802,11 +857,32 @@ export default function CustomBuilder() {
                   <CardTitle className="text-lg flex items-center gap-2">
                     📏 Have a specific size in mind?
                   </CardTitle>
-                  <p className="text-sm text-gray-600 mt-2">Enter your ideal dimensions (minimum 2ft x 2ft)</p>
+                  <div className="flex items-center justify-between mt-3">
+                    <p className="text-sm text-gray-600">
+                      Enter your ideal dimensions (minimum 2ft x 2ft / 0.61m x 0.61m)
+                    </p>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant={measurementSystem === 'imperial' ? 'default' : 'outline'}
+                        onClick={() => setMeasurementSystem('imperial')}
+                      >
+                        Feet/Inches
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant={measurementSystem === 'metric' ? 'default' : 'outline'}
+                        onClick={() => setMeasurementSystem('metric')}
+                      >
+                        Meters/CM
+                      </Button>
+                    </div>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    {measurementSystem === 'imperial' ? (
+                      <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label className="text-sm font-semibold mb-2 block">Length</Label>
                         <div className="flex gap-2">
@@ -867,6 +943,69 @@ export default function CustomBuilder() {
                         </div>
                       </div>
                     </div>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label className="text-sm font-semibold mb-2 block">Length</Label>
+                          <div className="flex gap-2">
+                            <div className="flex-1">
+                              <input
+                                type="number"
+                                value={customDimensionsMetric.lengthMeters}
+                                onChange={(e) => handleCustomDimensionsChangeMetric('lengthMeters', e.target.value)}
+                                placeholder="0"
+                                className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none"
+                                min="0"
+                                max="15"
+                              />
+                              <div className="text-xs text-gray-500 mt-1 text-center">meters</div>
+                            </div>
+                            <div className="flex-1">
+                              <input
+                                type="number"
+                                value={customDimensionsMetric.lengthCm}
+                                onChange={(e) => handleCustomDimensionsChangeMetric('lengthCm', e.target.value)}
+                                placeholder="0"
+                                className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none"
+                                min="0"
+                                max="99"
+                              />
+                              <div className="text-xs text-gray-500 mt-1 text-center">cm</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <Label className="text-sm font-semibold mb-2 block">Width</Label>
+                          <div className="flex gap-2">
+                            <div className="flex-1">
+                              <input
+                                type="number"
+                                value={customDimensionsMetric.widthMeters}
+                                onChange={(e) => handleCustomDimensionsChangeMetric('widthMeters', e.target.value)}
+                                placeholder="0"
+                                className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none"
+                                min="0"
+                                max="15"
+                              />
+                              <div className="text-xs text-gray-500 mt-1 text-center">meters</div>
+                            </div>
+                            <div className="flex-1">
+                              <input
+                                type="number"
+                                value={customDimensionsMetric.widthCm}
+                                onChange={(e) => handleCustomDimensionsChangeMetric('widthCm', e.target.value)}
+                                placeholder="0"
+                                className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none"
+                                min="0"
+                                max="99"
+                              />
+                              <div className="text-xs text-gray-500 mt-1 text-center">cm</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                     
                     {suggestedSize && (
                       <div className="mt-4 p-4 bg-white rounded-lg border-2 border-green-500">
@@ -891,6 +1030,7 @@ export default function CustomBuilder() {
                                   setTransitioning(false);
                                   setSelectedItem(null);
                                   setCustomDimensions({ lengthFeet: '', lengthInches: '', widthFeet: '', widthInches: '' });
+                                  setCustomDimensionsMetric({ lengthMeters: '', lengthCm: '', widthMeters: '', widthCm: '' });
                                   setSuggestedSize(null);
                                 }, 800);
                               }}
@@ -902,8 +1042,17 @@ export default function CustomBuilder() {
                           <div className="text-xs bg-green-50 p-3 rounded">
                             <div className="font-semibold text-green-800 mb-1">Your custom dimensions:</div>
                             <div className="text-green-700">
-                              {suggestedSize.customDimensions.lengthFeet}ft {suggestedSize.customDimensions.lengthInches}in × {suggestedSize.customDimensions.widthFeet}ft {suggestedSize.customDimensions.widthInches}in 
-                              <span className="ml-2">({suggestedSize.customDimensions.squareFootage} sq ft)</span>
+                              {suggestedSize.customDimensions.system === 'imperial' ? (
+                                <>
+                                  {suggestedSize.customDimensions.lengthFeet}ft {suggestedSize.customDimensions.lengthInches}in × {suggestedSize.customDimensions.widthFeet}ft {suggestedSize.customDimensions.widthInches}in 
+                                  <span className="ml-2">({suggestedSize.customDimensions.squareFootage} sq ft)</span>
+                                </>
+                              ) : (
+                                <>
+                                  {suggestedSize.customDimensions.lengthMeters}m {suggestedSize.customDimensions.lengthCm}cm × {suggestedSize.customDimensions.widthMeters}m {suggestedSize.customDimensions.widthCm}cm 
+                                  <span className="ml-2">({suggestedSize.customDimensions.squareFootage} sq ft)</span>
+                                </>
+                              )}
                             </div>
                           </div>
                         </div>
