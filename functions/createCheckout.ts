@@ -72,21 +72,27 @@ Deno.serve(async (req) => {
 
     const shippingCost = calculateShipping(cart);
 
-    // Apply coupon if provided
-    let depositAmount = 100;
+    // Check if cart has Crugly or Rugly (requires upfront payment)
+    const hasUpfrontPaymentItems = cart.some(item => 
+      item.qualityTier === 'budget' || item.qualityTier === 'good'
+    );
+    
+    // Calculate payment amount: Full for Crugly/Rugly, deposit for Rugly Lux
+    const totalRugPrice = cart.reduce((sum, item) => sum + item.price, 0);
+    let paymentAmount = hasUpfrontPaymentItems ? totalRugPrice + shippingCost : 100;
     let couponDiscount = 0;
     let appliedCoupon = null;
 
     if (couponCode) {
       const couponValidation = await base44.asServiceRole.functions.invoke('validateCoupon', {
         code: couponCode,
-        orderAmount: depositAmount
+        orderAmount: paymentAmount
       });
 
       if (couponValidation.data.valid) {
         appliedCoupon = couponValidation.data.coupon;
         couponDiscount = couponValidation.data.discount_amount;
-        depositAmount = couponValidation.data.final_amount;
+        paymentAmount = couponValidation.data.final_amount;
 
         // Increment coupon usage
         await base44.asServiceRole.entities.Coupon.update(appliedCoupon.id, {
@@ -95,21 +101,25 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Create deposit line item
+    // Create payment line item
     const lineItems = [{
       price_data: {
         currency: 'usd',
         product_data: {
-          name: 'Custom Rug Deposit' + (appliedCoupon ? ` (${appliedCoupon.code} applied)` : ''),
-          description: `Deposit for ${cart.length} custom rug${cart.length > 1 ? 's' : ''} (Balance due before shipping)`,
+          name: hasUpfrontPaymentItems 
+            ? `Custom Rug${cart.length > 1 ? 's' : ''} (Full Payment)${appliedCoupon ? ` - ${appliedCoupon.code} applied` : ''}` 
+            : 'Custom Rug Deposit' + (appliedCoupon ? ` (${appliedCoupon.code} applied)` : ''),
+          description: hasUpfrontPaymentItems 
+            ? `Full payment for ${cart.length} custom rug${cart.length > 1 ? 's' : ''} (Crugly/Rugly)` 
+            : `Deposit for ${cart.length} custom rug${cart.length > 1 ? 's' : ''} (Balance due before shipping)`,
           images: cart[0]?.previewUrl ? [cart[0].previewUrl] : [],
         },
-        unit_amount: Math.round(depositAmount * 100), // in cents
+        unit_amount: Math.round(paymentAmount * 100), // in cents
       },
       quantity: 1,
     }];
 
-    // Note: Shipping will be charged with the balance due
+    // Note: For Rugly Lux, shipping will be charged with the balance due
 
     // Create order record first - map cart items to order item format
     const orderNumber = 'RUG-' + Date.now();
@@ -165,7 +175,7 @@ Deno.serve(async (req) => {
       items: orderItems,
       total_amount: cart.reduce((sum, item) => sum + item.price, 0) + shippingCost,
       status: 'pending',
-      payment_status: 'pending',
+      payment_status: hasUpfrontPaymentItems ? 'pending' : 'partial',
       notes: designInstructions || '',
       time_on_site: timeOnSite,
       referrer_source: referrerSource

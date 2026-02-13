@@ -51,15 +51,20 @@ export default function Cart() {
 
   const totalAmount = cart.reduce((sum, item) => sum + item.price, 0);
 
+  // Check if cart has Crugly or Rugly (requires upfront payment)
+  const hasUpfrontPaymentItems = cart.some(item => 
+    item.qualityTier === 'budget' || item.qualityTier === 'good'
+  );
+  const paymentAmount = hasUpfrontPaymentItems ? totalAmount : 100; // Full payment for Crugly/Rugly, deposit for Rugly Lux
+
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
 
     setValidatingCoupon(true);
     try {
-      const depositAmount = 100;
       const response = await base44.functions.invoke('validateCoupon', {
         code: couponCode.toUpperCase(),
-        orderAmount: depositAmount
+        orderAmount: paymentAmount
       });
 
       setCouponValidation(response.data);
@@ -412,8 +417,8 @@ export default function Cart() {
                 <div className="border-t pt-4 mt-4">
                   <div className="space-y-2 mb-4">
                     <div className="flex justify-between">
-                      <span>Deposit Required</span>
-                      <span className="font-semibold">$100.00</span>
+                      <span>{hasUpfrontPaymentItems ? 'Total Amount' : 'Deposit Required'}</span>
+                      <span className="font-semibold">${paymentAmount.toFixed(2)}</span>
                     </div>
                     {couponValidation?.valid && (
                       <div className="flex justify-between text-green-600">
@@ -423,7 +428,7 @@ export default function Cart() {
                     )}
                     <div className="flex justify-between text-lg font-bold pt-2 border-t">
                       <span>Total Due Now</span>
-                      <span className="text-2xl">${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : '100.00'}</span>
+                      <span className="text-2xl">${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : paymentAmount.toFixed(2)}</span>
                     </div>
                   </div>
                   <Button 
@@ -431,11 +436,13 @@ export default function Cart() {
                     onClick={handleCheckout}
                     disabled={submitting}
                   >
-                    {submitting ? 'Processing...' : `Pay $${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : '100'} Deposit`}
+                    {submitting ? 'Processing...' : hasUpfrontPaymentItems ? `Pay $${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : paymentAmount.toFixed(2)} (Full Payment)` : `Pay $${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : paymentAmount.toFixed(2)} Deposit`}
                   </Button>
-                  <p className="text-xs text-gray-500 text-center mt-2">
-                    Full payment due before shipping
-                  </p>
+                  {!hasUpfrontPaymentItems && (
+                    <p className="text-xs text-gray-500 text-center mt-2">
+                      Balance due before shipping
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>
