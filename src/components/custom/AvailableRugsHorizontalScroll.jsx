@@ -46,7 +46,7 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
 
         setTimeout(() => {
           isScrollingThrough.current = false;
-        }, 600);
+        }, 200);
       }
     };
 
