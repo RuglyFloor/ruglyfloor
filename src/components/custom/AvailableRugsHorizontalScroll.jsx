@@ -12,40 +12,46 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
   const navigate = useNavigate();
   const containerRef = useRef(null);
   const sectionRef = useRef(null);
-  const scrollTimeout = useRef(null);
+  const isScrollingThrough = useRef(false);
 
-  // Scroll-based navigation
+  // Scroll-jacking navigation
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
 
-    const handleScroll = () => {
-      if (scrollTimeout.current) return; // Debounce
-
+    const handleWheel = (e) => {
       const rect = section.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
+      const isInView = rect.top <= 0 && rect.bottom >= window.innerHeight;
       
-      // Check if section is in viewport
-      if (rect.top <= viewportHeight * 0.3 && rect.bottom >= viewportHeight * 0.7) {
-        const scrollProgress = (viewportHeight * 0.3 - rect.top) / (viewportHeight * 0.6);
-        const targetIndex = Math.floor(scrollProgress * products.length);
-        const clampedIndex = Math.max(0, Math.min(products.length - 1, targetIndex));
+      if (!isInView) return;
+
+      // If we're in the section, hijack the scroll
+      if (activeIndex < products.length - 1 || (e.deltaY < 0 && activeIndex > 0)) {
+        e.preventDefault();
         
-        if (clampedIndex !== activeIndex) {
-          setDirection(clampedIndex > activeIndex ? 1 : -1);
-          setActiveIndex(clampedIndex);
+        if (isScrollingThrough.current) return;
+        isScrollingThrough.current = true;
+
+        if (e.deltaY > 0 && activeIndex < products.length - 1) {
+          // Scroll down - next rug
+          setDirection(1);
+          setActiveIndex(prev => prev + 1);
           setImageIndex(0);
-          
-          // Debounce for smooth transitions
-          scrollTimeout.current = setTimeout(() => {
-            scrollTimeout.current = null;
-          }, 300);
+        } else if (e.deltaY < 0 && activeIndex > 0) {
+          // Scroll up - previous rug
+          setDirection(-1);
+          setActiveIndex(prev => prev - 1);
+          setImageIndex(0);
         }
+
+        setTimeout(() => {
+          isScrollingThrough.current = false;
+        }, 600);
       }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    section.addEventListener('wheel', handleWheel, { passive: false });
+    return () => section.removeEventListener('wheel', handleWheel);
   }, [activeIndex, products.length]);
 
   if (!products || products.length === 0) {
@@ -98,8 +104,8 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
   const activeProduct = products[activeIndex];
 
   return (
-    <section ref={sectionRef} className="bg-gradient-to-b from-white via-blue-50 to-white py-20 px-6" style={{ minHeight: `${products.length * 100}vh` }}>
-      <div className="max-w-[1600px] mx-auto sticky top-20">
+    <section ref={sectionRef} className="bg-gradient-to-b from-white via-blue-50 to-white py-20 px-6" style={{ minHeight: '100vh' }}>
+      <div className="max-w-[1600px] mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-5xl font-bold text-gray-900 mb-4">Available Rugs</h2>
           <p className="text-gray-600 text-lg">Scroll down to explore our collection</p>
