@@ -92,8 +92,9 @@ export default function ProductDetail() {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <SEOHead
-        title={`${product.name} - Hand-Painted Rug | Rugly Floors`}
-        description={product.description || `Shop ${product.name} - ${product.size} hand-painted rug. Premium quality custom floor art.`}
+        title={product.seo_title || `${product.name} - Hand-Painted Rug | Rugly Floors`}
+        description={product.seo_description || product.description || `Shop ${product.name} - ${product.size} hand-painted rug. Premium quality custom floor art.`}
+        keywords={product.seo_keywords || []}
         image={images[0] || product.image_url}
         url={`/ProductDetail?id=${product.id}`}
         type="product"
@@ -189,39 +190,102 @@ export default function ProductDetail() {
               <CardContent className="pt-6">
                 <h3 className="text-xl font-bold mb-3">About This Rug</h3>
                 <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                  {product.description || 'This stunning hand-painted rug is a one-of-a-kind piece of functional art. Each rug is carefully crafted using premium materials and painted by skilled artists to bring unique character to your space.'}
+                  {product.long_description || product.description || 'This stunning hand-painted rug is a one-of-a-kind piece of functional art. Each rug is carefully crafted using premium materials and painted by skilled artists to bring unique character to your space.'}
                 </p>
               </CardContent>
             </Card>
 
+            {/* Product Details */}
+            {(product.material || product.care_instructions || product.backing || product.warranty || product.shipping_info) && (
+              <Card>
+                <CardContent className="pt-6">
+                  <h3 className="text-xl font-bold mb-4">Product Details</h3>
+                  <div className="space-y-3 text-sm">
+                    {product.size && (
+                      <div className="flex items-start gap-3">
+                        <span className="font-semibold min-w-[100px]">Size:</span>
+                        <span className="text-gray-700">{product.size}</span>
+                      </div>
+                    )}
+                    {product.material && (
+                      <div className="flex items-start gap-3">
+                        <span className="font-semibold min-w-[100px]">Material:</span>
+                        <span className="text-gray-700">{product.material}</span>
+                      </div>
+                    )}
+                    {product.care_instructions && (
+                      <div className="flex items-start gap-3">
+                        <span className="font-semibold min-w-[100px]">Care:</span>
+                        <span className="text-gray-700">{product.care_instructions}</span>
+                      </div>
+                    )}
+                    {product.backing && (
+                      <div className="flex items-start gap-3">
+                        <span className="font-semibold min-w-[100px]">Backing:</span>
+                        <span className="text-gray-700">{product.backing}</span>
+                      </div>
+                    )}
+                    {product.warranty && (
+                      <div className="flex items-start gap-3">
+                        <span className="font-semibold min-w-[100px]">Warranty:</span>
+                        <span className="text-gray-700">{product.warranty}</span>
+                      </div>
+                    )}
+                    {product.shipping_info && (
+                      <div className="flex items-start gap-3">
+                        <span className="font-semibold min-w-[100px]">Shipping:</span>
+                        <span className="text-gray-700">{product.shipping_info}</span>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Features */}
-            <Card>
-              <CardContent className="pt-6">
-                <h3 className="text-xl font-bold mb-4">Features</h3>
-                <ul className="space-y-3">
-                  <li className="flex items-start gap-3">
-                    <span className="text-blue-600 font-bold">✓</span>
-                    <span>Hand-painted by professional artists</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-blue-600 font-bold">✓</span>
-                    <span>Premium quality materials</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-blue-600 font-bold">✓</span>
-                    <span>Durable and easy to clean</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-blue-600 font-bold">✓</span>
-                    <span>One-of-a-kind design</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-blue-600 font-bold">✓</span>
-                    <span>Free shipping on all orders</span>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
+            {product.features && product.features.length > 0 ? (
+              <Card>
+                <CardContent className="pt-6">
+                  <h3 className="text-xl font-bold mb-4">Features</h3>
+                  <ul className="space-y-3">
+                    {product.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-start gap-3">
+                        <span className="text-blue-600 font-bold">✓</span>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="pt-6">
+                  <h3 className="text-xl font-bold mb-4">Features</h3>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-3">
+                      <span className="text-blue-600 font-bold">✓</span>
+                      <span>Hand-painted by professional artists</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-blue-600 font-bold">✓</span>
+                      <span>Premium quality materials</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-blue-600 font-bold">✓</span>
+                      <span>Durable and easy to clean</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-blue-600 font-bold">✓</span>
+                      <span>One-of-a-kind design</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="text-blue-600 font-bold">✓</span>
+                      <span>Free shipping on all orders</span>
+                    </li>
+                  </ul>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Purchase Button */}
             <div className="space-y-4">

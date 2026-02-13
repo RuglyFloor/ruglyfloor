@@ -22,26 +22,77 @@ Deno.serve(async (req) => {
                 return Response.json({ error: 'Invalid JSON in request body' }, { status: 400 });
             }
 
-            const { prompt, imageUrl, rugSize, qualityTier, generateVariations } = body;
+            const { prompt, imageUrl, rugSize, qualityTier, generateVariations, referenceImages } = body;
             console.log('[aiAssistant] Params:', { 
                 hasPrompt: !!prompt, 
                 hasImage: !!imageUrl, 
+                hasReferenceImages: !!referenceImages,
                 rugSize, 
-                qualityTier 
+                qualityTier,
+                generateVariations
             });
 
+            // Collect all image URLs
+            const file_urls = [];
+            if (imageUrl) file_urls.push(imageUrl);
+            if (referenceImages && Array.isArray(referenceImages)) {
+                file_urls.push(...referenceImages);
+            }
+
+            const isLuxTier = qualityTier === 'highend';
+
+            // If generating variations (AI design mode for highend)
+            if (generateVariations && isLuxTier && file_urls.length > 0) {
+                console.log('[aiAssistant] Generating design image with realistic room context');
+                
+                const imagePrompt = `Create a photorealistic interior design rendering showing a custom hand-painted area rug in a beautifully designed room. 
+
+Design Request: "${prompt}"
+${rugSize ? `Rug Size: ${rugSize}` : ''}
+
+IMPORTANT INSTRUCTIONS FOR PHOTOREALISM:
+1. Create a professionally photographed interior space with natural lighting from windows or skylights
+2. The rug should be the focal point but integrated naturally into the room
+3. Include realistic furniture, textures, and materials (hardwood floors, plaster walls, natural fabrics)
+4. Add depth with proper shadows, reflections, and lighting variations
+5. Include realistic imperfections: subtle wear, natural texture variations, slight asymmetry
+6. Use warm, inviting color temperatures and professional photography composition
+7. Show the rug at a slight angle to display dimension and texture
+8. Include realistic environmental details: subtle dust particles in light, texture on walls, wood grain
+9. Make the room feel lived-in and authentic, not sterile or CGI
+10. Use high-end interior design aesthetic with cohesive color palette
+
+The rug design should match the user's request while looking like an actual hand-painted rug photographed in a real, high-end interior space.`;
+
+                try {
+                    const imageResponse = await base44.integrations.Core.GenerateImage({
+                        prompt: imagePrompt,
+                        existing_image_urls: file_urls.length > 0 ? file_urls : undefined
+                    });
+                    
+                    console.log('[aiAssistant] Image generated successfully');
+                    return Response.json({ 
+                        designImage: imageResponse.url,
+                        type: 'image'
+                    });
+                } catch (imageError) {
+                    console.error('[aiAssistant] Image generation error:', imageError);
+                    return Response.json({ 
+                        error: 'Failed to generate design image. Please try again.' 
+                    }, { status: 500 });
+                }
+            }
+
+            // Regular design suggestions mode
             if (!prompt) {
                 return Response.json({ error: 'Prompt is required' }, { status: 400 });
             }
-
-            const file_urls = imageUrl ? [imageUrl] : [];
-            const isLuxTier = qualityTier === 'highend';
 
         let llmPrompt = `You are a professional interior designer specializing in custom rugs. The user wants design suggestions for a custom hand-painted rug.
 
 User's request: "${prompt}"
 ${rugSize ? `Rug size: ${rugSize}` : ''}
-${imageUrl ? 'The user has uploaded a reference image for inspiration.' : ''}
+${file_urls.length > 0 ? `The user has uploaded ${file_urls.length} reference image(s) for inspiration. Analyze the images and incorporate their style, colors, patterns, or mood into your suggestions.` : ''}
 ${isLuxTier ? 'This is for a LUXURY PREMIUM rug - provide sophisticated, high-end design suggestions with exceptional attention to detail.' : ''}
 
 Please provide:
@@ -50,6 +101,7 @@ Please provide:
 3. ${isLuxTier ? 'Four' : 'Three'} layout suggestions (describe how to arrange the design elements on the rug, considering composition and visual balance).
 ${isLuxTier ? '4. Three texture and finishing technique suggestions (advanced techniques like shading, gradients, layering, or special effects that enhance the luxury feel).' : ''}
 
+${file_urls.length > 0 ? 'IMPORTANT: Base your suggestions on the visual elements, colors, and aesthetic of the reference images provided.' : ''}
 ${isLuxTier ? 'Focus on premium, artistic designs with sophisticated color theory and complex compositions suitable for a luxury hand-painted rug.' : 'Make your suggestions practical, creative, and suitable for a hand-painted custom rug.'}`;
 
         const schema = {
