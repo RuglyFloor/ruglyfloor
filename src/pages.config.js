@@ -85,6 +85,7 @@ import Shop from './pages/Shop';
 import Sitemap from './pages/Sitemap';
 import Success from './pages/Success';
 import TrackOrder from './pages/TrackOrder';
+import ProductDetail from './pages/ProductDetail';
 import __Layout from './Layout.jsx';
 
 
@@ -127,6 +128,7 @@ export const PAGES = {
     "Sitemap": Sitemap,
     "Success": Success,
     "TrackOrder": TrackOrder,
+    "ProductDetail": ProductDetail,
 }
 
 export const pagesConfig = {
