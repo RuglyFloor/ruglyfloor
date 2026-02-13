@@ -565,14 +565,14 @@ export default function CustomBuilder() {
 
       <div className={step >= 4 ? "grid lg:grid-cols-3 gap-8 items-start" : "max-w-7xl mx-auto"}>
           <div className={step >= 4 ? "lg:col-span-2 space-y-6" : "space-y-6"}>
-            {/* Step 1: Quality Tier Selection - Comparison Table */}
+            {/* Step 1: Quality Tier Selection - Modern Cards */}
             {step === 1 && (
               <div className={`space-y-6 transition-opacity duration-300 ${transitioning ? 'opacity-50' : 'opacity-100'}`}>
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl font-bold mb-3 text-gray-900">
+                <div className="text-center mb-12">
+                  <h2 className="text-4xl font-bold mb-4 text-gray-900">
                     Choose Your Quality Level
                   </h2>
-                  <p className="text-gray-600 text-lg">Compare our quality tiers side-by-side</p>
+                  <p className="text-gray-600 text-xl">Three tiers. One vision. Your perfect rug.</p>
                 </div>
 
                 {/* Comparison Table */}
