@@ -246,6 +246,8 @@ export default function CustomBuilder() {
   const [uploading, setUploading] = useState(false);
   const [isRush, setIsRush] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [customSqFt, setCustomSqFt] = useState('');
+  const [suggestedSize, setSuggestedSize] = useState(null);
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
@@ -272,6 +274,62 @@ export default function CustomBuilder() {
       alert('Failed to save drawing');
     } finally {
       setUploading(false);
+    }
+  };
+
+  // Calculate square footage for each size
+  const getSizeSquareFeet = (size) => {
+    const sizeData = SIZES.find(s => s.value === size);
+    if (!sizeData) return 0;
+    
+    if (size === '4ft round') {
+      return Math.PI * 2 * 2; // π * r²
+    }
+    
+    const [width, height] = sizeData.measurement.split('x').map(n => parseInt(n));
+    return width * height;
+  };
+
+  // Match square footage to size category
+  const matchSizeBySquareFeet = (sqFt) => {
+    const tolerance = 2; // ±2 sq ft
+    
+    const sizeRanges = SIZES.map(size => ({
+      size: size.value,
+      sqFt: getSizeSquareFeet(size.value),
+      label: size.label,
+      measurement: size.measurement
+    })).sort((a, b) => a.sqFt - b.sqFt);
+
+    // Find closest match within tolerance
+    for (let range of sizeRanges) {
+      if (sqFt >= range.sqFt - tolerance && sqFt <= range.sqFt + tolerance) {
+        return range;
+      }
+    }
+
+    // If no exact match, find closest size
+    let closest = sizeRanges[0];
+    let minDiff = Math.abs(sqFt - closest.sqFt);
+    
+    for (let range of sizeRanges) {
+      const diff = Math.abs(sqFt - range.sqFt);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closest = range;
+      }
+    }
+    
+    return closest;
+  };
+
+  const handleCustomSizeInput = (sqFt) => {
+    setCustomSqFt(sqFt);
+    if (sqFt && !isNaN(sqFt) && parseFloat(sqFt) > 0) {
+      const suggested = matchSizeBySquareFeet(parseFloat(sqFt));
+      setSuggestedSize(suggested);
+    } else {
+      setSuggestedSize(null);
     }
   };
 
@@ -697,6 +755,73 @@ export default function CustomBuilder() {
                 Pick Your Perfect Size
               </h2>
               <p className="text-gray-600 text-lg">All sizes come with our signature hand-painted quality</p>
+            </div>
+
+            {/* Custom Size Input for Rugly and Rugly Lux */}
+            {(config.qualityTier === 'good' || config.qualityTier === 'highend') && (
+              <Card className="border-2 border-purple-500 bg-gradient-to-br from-purple-50 to-pink-50">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    📏 Have a specific size in mind?
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <Label className="text-sm font-semibold">Enter your ideal square footage:</Label>
+                    <div className="flex gap-3 items-end">
+                      <div className="flex-1">
+                        <input
+                          type="number"
+                          value={customSqFt}
+                          onChange={(e) => handleCustomSizeInput(e.target.value)}
+                          placeholder="e.g., 35"
+                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none"
+                          min="0"
+                          step="0.1"
+                        />
+                      </div>
+                      <div className="text-gray-600 font-semibold">sq ft</div>
+                    </div>
+                    
+                    {suggestedSize && (
+                      <div className="mt-4 p-4 bg-white rounded-lg border-2 border-green-500">
+                        <div className="text-sm font-semibold text-green-700 mb-2">✓ Recommended Size Match:</div>
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <div className="font-bold text-lg">{suggestedSize.label}</div>
+                            <div className="text-sm text-gray-600">{suggestedSize.measurement} ({Math.round(suggestedSize.sqFt)} sq ft)</div>
+                          </div>
+                          <Button
+                            onClick={() => {
+                              setSelectedItem(SIZES.find(s => s.value === suggestedSize.size).id);
+                              setTransitioning(true);
+                              setConfig(prev => ({ ...prev, size: suggestedSize.size }));
+                              setTimeout(() => {
+                                setStep(3);
+                                setTransitioning(false);
+                                setSelectedItem(null);
+                                setCustomSqFt('');
+                                setSuggestedSize(null);
+                              }, 800);
+                            }}
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                          >
+                            Select This Size
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+
+                    <p className="text-xs text-gray-500 mt-2">
+                      We'll match your square footage to the closest standard size (±2 sq ft tolerance)
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            <div className="text-center text-gray-500 text-sm my-4">
+              {config.qualityTier === 'good' || config.qualityTier === 'highend' ? 'Or choose from standard sizes below:' : 'Choose from our standard sizes:'}
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
