@@ -246,7 +246,12 @@ export default function CustomBuilder() {
   const [uploading, setUploading] = useState(false);
   const [isRush, setIsRush] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
-  const [customSqFt, setCustomSqFt] = useState('');
+  const [customDimensions, setCustomDimensions] = useState({
+    lengthFeet: '',
+    lengthInches: '',
+    widthFeet: '',
+    widthInches: ''
+  });
   const [suggestedSize, setSuggestedSize] = useState(null);
 
   const handleImageUpload = async (e) => {
@@ -323,11 +328,43 @@ export default function CustomBuilder() {
     return closest;
   };
 
-  const handleCustomSizeInput = (sqFt) => {
-    setCustomSqFt(sqFt);
-    if (sqFt && !isNaN(sqFt) && parseFloat(sqFt) > 0) {
-      const suggested = matchSizeBySquareFeet(parseFloat(sqFt));
-      setSuggestedSize(suggested);
+  // Calculate square footage from feet and inches
+  const calculateSquareFootage = (lengthFeet, lengthInches, widthFeet, widthInches) => {
+    const totalLengthFeet = parseFloat(lengthFeet || 0) + (parseFloat(lengthInches || 0) / 12);
+    const totalWidthFeet = parseFloat(widthFeet || 0) + (parseFloat(widthInches || 0) / 12);
+    return totalLengthFeet * totalWidthFeet;
+  };
+
+  const handleCustomDimensionsChange = (field, value) => {
+    const newDimensions = { ...customDimensions, [field]: value };
+    setCustomDimensions(newDimensions);
+
+    const { lengthFeet, lengthInches, widthFeet, widthInches } = newDimensions;
+    
+    // Check if we have at least some valid input
+    if ((lengthFeet || lengthInches) && (widthFeet || widthInches)) {
+      const totalLengthFeet = parseFloat(lengthFeet || 0) + (parseFloat(lengthInches || 0) / 12);
+      const totalWidthFeet = parseFloat(widthFeet || 0) + (parseFloat(widthInches || 0) / 12);
+      
+      // Minimum 2x2 feet
+      if (totalLengthFeet >= 2 && totalWidthFeet >= 2) {
+        const sqFt = calculateSquareFootage(lengthFeet, lengthInches, widthFeet, widthInches);
+        const suggested = matchSizeBySquareFeet(sqFt);
+        setSuggestedSize({
+          ...suggested,
+          customDimensions: {
+            lengthFeet: lengthFeet || '0',
+            lengthInches: lengthInches || '0',
+            widthFeet: widthFeet || '0',
+            widthInches: widthInches || '0',
+            totalLength: totalLengthFeet.toFixed(2),
+            totalWidth: totalWidthFeet.toFixed(2),
+            squareFootage: sqFt.toFixed(2)
+          }
+        });
+      } else {
+        setSuggestedSize(null);
+      }
     } else {
       setSuggestedSize(null);
     }
@@ -384,7 +421,8 @@ export default function CustomBuilder() {
       designInstructions: config.designInstructions || '',
       price: price,
       name: `Custom ${selectedTier.label} Rug - ${selectedSize.label}${isRush ? ' (Rush)' : ''}`,
-      isRush: isRush
+      isRush: isRush,
+      customDimensions: config.customDimensions || null
     };
 
     const cart = JSON.parse(localStorage.getItem('rugly_cart') || '[]');
@@ -764,56 +802,116 @@ export default function CustomBuilder() {
                   <CardTitle className="text-lg flex items-center gap-2">
                     📏 Have a specific size in mind?
                   </CardTitle>
+                  <p className="text-sm text-gray-600 mt-2">Enter your ideal dimensions (minimum 2ft x 2ft)</p>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    <Label className="text-sm font-semibold">Enter your ideal square footage:</Label>
-                    <div className="flex gap-3 items-end">
-                      <div className="flex-1">
-                        <input
-                          type="number"
-                          value={customSqFt}
-                          onChange={(e) => handleCustomSizeInput(e.target.value)}
-                          placeholder="e.g., 35"
-                          className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none"
-                          min="0"
-                          step="0.1"
-                        />
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-sm font-semibold mb-2 block">Length</Label>
+                        <div className="flex gap-2">
+                          <div className="flex-1">
+                            <input
+                              type="number"
+                              value={customDimensions.lengthFeet}
+                              onChange={(e) => handleCustomDimensionsChange('lengthFeet', e.target.value)}
+                              placeholder="0"
+                              className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none"
+                              min="0"
+                              max="50"
+                            />
+                            <div className="text-xs text-gray-500 mt-1 text-center">feet</div>
+                          </div>
+                          <div className="flex-1">
+                            <input
+                              type="number"
+                              value={customDimensions.lengthInches}
+                              onChange={(e) => handleCustomDimensionsChange('lengthInches', e.target.value)}
+                              placeholder="0"
+                              className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none"
+                              min="0"
+                              max="11"
+                            />
+                            <div className="text-xs text-gray-500 mt-1 text-center">inches</div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-gray-600 font-semibold">sq ft</div>
+
+                      <div>
+                        <Label className="text-sm font-semibold mb-2 block">Width</Label>
+                        <div className="flex gap-2">
+                          <div className="flex-1">
+                            <input
+                              type="number"
+                              value={customDimensions.widthFeet}
+                              onChange={(e) => handleCustomDimensionsChange('widthFeet', e.target.value)}
+                              placeholder="0"
+                              className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none"
+                              min="0"
+                              max="50"
+                            />
+                            <div className="text-xs text-gray-500 mt-1 text-center">feet</div>
+                          </div>
+                          <div className="flex-1">
+                            <input
+                              type="number"
+                              value={customDimensions.widthInches}
+                              onChange={(e) => handleCustomDimensionsChange('widthInches', e.target.value)}
+                              placeholder="0"
+                              className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-purple-600 focus:outline-none"
+                              min="0"
+                              max="11"
+                            />
+                            <div className="text-xs text-gray-500 mt-1 text-center">inches</div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                     
                     {suggestedSize && (
                       <div className="mt-4 p-4 bg-white rounded-lg border-2 border-green-500">
-                        <div className="text-sm font-semibold text-green-700 mb-2">✓ Recommended Size Match:</div>
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <div className="font-bold text-lg">{suggestedSize.label}</div>
-                            <div className="text-sm text-gray-600">{suggestedSize.measurement} ({Math.round(suggestedSize.sqFt)} sq ft)</div>
+                        <div className="text-sm font-semibold text-green-700 mb-3">✓ Recommended Size Match:</div>
+                        <div className="space-y-3">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <div className="font-bold text-lg">{suggestedSize.label}</div>
+                              <div className="text-sm text-gray-600">{suggestedSize.measurement} (≈{Math.round(suggestedSize.sqFt)} sq ft)</div>
+                            </div>
+                            <Button
+                              onClick={() => {
+                                setSelectedItem(SIZES.find(s => s.value === suggestedSize.size).id);
+                                setTransitioning(true);
+                                setConfig(prev => ({ 
+                                  ...prev, 
+                                  size: suggestedSize.size,
+                                  customDimensions: suggestedSize.customDimensions
+                                }));
+                                setTimeout(() => {
+                                  setStep(3);
+                                  setTransitioning(false);
+                                  setSelectedItem(null);
+                                  setCustomDimensions({ lengthFeet: '', lengthInches: '', widthFeet: '', widthInches: '' });
+                                  setSuggestedSize(null);
+                                }, 800);
+                              }}
+                              className="bg-green-600 hover:bg-green-700 text-white"
+                            >
+                              Select This Size
+                            </Button>
                           </div>
-                          <Button
-                            onClick={() => {
-                              setSelectedItem(SIZES.find(s => s.value === suggestedSize.size).id);
-                              setTransitioning(true);
-                              setConfig(prev => ({ ...prev, size: suggestedSize.size }));
-                              setTimeout(() => {
-                                setStep(3);
-                                setTransitioning(false);
-                                setSelectedItem(null);
-                                setCustomSqFt('');
-                                setSuggestedSize(null);
-                              }, 800);
-                            }}
-                            className="bg-green-600 hover:bg-green-700 text-white"
-                          >
-                            Select This Size
-                          </Button>
+                          <div className="text-xs bg-green-50 p-3 rounded">
+                            <div className="font-semibold text-green-800 mb-1">Your custom dimensions:</div>
+                            <div className="text-green-700">
+                              {suggestedSize.customDimensions.lengthFeet}ft {suggestedSize.customDimensions.lengthInches}in × {suggestedSize.customDimensions.widthFeet}ft {suggestedSize.customDimensions.widthInches}in 
+                              <span className="ml-2">({suggestedSize.customDimensions.squareFootage} sq ft)</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     )}
 
-                    <p className="text-xs text-gray-500 mt-2">
-                      We'll match your square footage to the closest standard size (±2 sq ft tolerance)
+                    <p className="text-xs text-gray-500">
+                      We'll match your dimensions to the closest standard size category (±2 sq ft tolerance). Your exact dimensions will be saved for production.
                     </p>
                   </div>
                 </CardContent>
