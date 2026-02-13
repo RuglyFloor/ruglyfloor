@@ -9,6 +9,7 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [imageIndex, setImageIndex] = useState(0);
+  const [isHovering, setIsHovering] = useState(false);
   const navigate = useNavigate();
   const containerRef = useRef(null);
   const sectionRef = useRef(null);
@@ -23,7 +24,7 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
       const rect = section.getBoundingClientRect();
       const isInView = rect.top <= 0 && rect.bottom >= window.innerHeight;
       
-      if (!isInView) return;
+      if (!isInView || isHovering) return;
 
       // If we're in the section, hijack the scroll
       if (activeIndex < products.length - 1 || (e.deltaY < 0 && activeIndex > 0)) {
@@ -52,7 +53,7 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
 
     section.addEventListener('wheel', handleWheel, { passive: false });
     return () => section.removeEventListener('wheel', handleWheel);
-  }, [activeIndex, products.length]);
+  }, [activeIndex, products.length, isHovering]);
 
   if (!products || products.length === 0) {
     return (
@@ -116,7 +117,11 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
 
         <div className="relative">
           {/* Carousel Container */}
-          <div className="relative h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden rounded-2xl bg-gradient-to-b from-gray-100 to-white shadow-2xl">
+          <div 
+            className="relative h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden rounded-2xl bg-gradient-to-b from-gray-100 to-white shadow-2xl"
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
+          >
             {/* Gallery Track */}
             <div className="flex items-center justify-center h-full relative px-4">
               {products.map((product, i) => {
