@@ -595,7 +595,7 @@ export default function CustomBuilder() {
                           }`}
                           style={{
                             backgroundColor: tier.id === 'budget' || tier.id === 'good' ? '#F7F1DA' : undefined,
-                            borderColor: tier.id === 'budget' ? '#4075ff' : tier.id === 'good' ? '#f04624' : undefined
+                            borderColor: tier.id === 'budget' ? '#24f0a0' : tier.id === 'good' ? '#4075ff' : undefined
                           }}>
                             {(tier.id === 'budget' || tier.id === 'good') && (
                               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap shadow-lg" style={{backgroundColor: '#4075ff'}}>
@@ -821,8 +821,8 @@ export default function CustomBuilder() {
                                 className="w-full text-white"
                                 style={{
                                   border: config.qualityTier === tier.id ? '4px solid #343634' : '2px solid',
-                                  borderColor: config.qualityTier === tier.id ? '#343634' : tier.id === 'budget' ? '#4075ff' : tier.id === 'good' ? '#f04624' : '#24f0a0',
-                                  backgroundColor: config.qualityTier === tier.id ? '#343634' : tier.id === 'budget' ? '#4075ff' : tier.id === 'good' ? '#f04624' : '#24f0a0'
+                                  borderColor: config.qualityTier === tier.id ? '#343634' : tier.id === 'budget' ? '#24f0a0' : tier.id === 'good' ? '#4075ff' : '#f04624',
+                                  backgroundColor: config.qualityTier === tier.id ? '#343634' : tier.id === 'budget' ? '#24f0a0' : tier.id === 'good' ? '#4075ff' : '#f04624'
                                 }}
                               >
                                 {config.qualityTier === tier.id ? (
