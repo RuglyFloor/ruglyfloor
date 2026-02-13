@@ -1226,8 +1226,12 @@ export default function CustomBuilder() {
                             key={color.name}
                             onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
                             className={`p-3 rounded-lg border-2 transition-all flex flex-col items-center ${
-                              config.paintColor === color.name ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-300' : 'border-gray-200 hover:border-gray-300'
+                              config.paintColor === color.name ? 'bg-white ring-2' : 'border-gray-200 hover:border-gray-300'
                             }`}
+                            style={config.paintColor === color.name ? {
+                              borderColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624',
+                              ringColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'
+                            } : {}}
                           >
                             <div 
                               className="w-12 h-16 mb-2 border-2 border-white shadow-md relative"
@@ -1255,8 +1259,12 @@ export default function CustomBuilder() {
                             key={color.name}
                             onClick={() => setConfig(prev => ({ ...prev, paintColor: color.name }))}
                             className={`p-3 rounded-lg border-2 transition-all flex flex-col items-center ${
-                              config.paintColor === color.name ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-300' : 'border-gray-200 hover:border-gray-300'
+                              config.paintColor === color.name ? 'bg-white ring-2' : 'border-gray-200 hover:border-gray-300'
                             }`}
+                            style={config.paintColor === color.name ? {
+                              borderColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624',
+                              ringColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'
+                            } : {}}
                           >
                             <div 
                               className="w-12 h-16 mb-2 border-2 border-white shadow-md relative"
@@ -1330,8 +1338,12 @@ export default function CustomBuilder() {
                                 key={color.name}
                                 onClick={() => setConfig(prev => ({ ...prev, secondPaintColor: color.name }))}
                                 className={`p-2 rounded-lg border-2 transition-all flex flex-col items-center ${
-                                  config.secondPaintColor === color.name ? 'border-yellow-600 bg-yellow-100 ring-2 ring-yellow-400' : 'border-gray-300 hover:border-yellow-400'
+                                  config.secondPaintColor === color.name ? 'bg-white ring-2' : 'border-gray-300'
                                 }`}
+                                style={config.secondPaintColor === color.name ? {
+                                  borderColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624',
+                                  ringColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'
+                                } : {}}
                               >
                                 <div 
                                   className="w-10 h-14 mb-1 border-2 border-white shadow-md relative"
@@ -1356,8 +1368,12 @@ export default function CustomBuilder() {
                                 key={color.name}
                                 onClick={() => setConfig(prev => ({ ...prev, secondPaintColor: color.name }))}
                                 className={`p-2 rounded-lg border-2 transition-all flex flex-col items-center ${
-                                  config.secondPaintColor === color.name ? 'border-yellow-600 bg-yellow-100 ring-2 ring-yellow-400' : 'border-gray-300 hover:border-yellow-400'
+                                  config.secondPaintColor === color.name ? 'bg-white ring-2' : 'border-gray-300'
                                 }`}
+                                style={config.secondPaintColor === color.name ? {
+                                  borderColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624',
+                                  ringColor: config.qualityTier === 'budget' ? '#24f0a0' : config.qualityTier === 'good' ? '#4075ff' : '#f04624'
+                                } : {}}
                               >
                                 <div 
                                   className="w-10 h-14 mb-1 border-2 border-white shadow-md relative"
