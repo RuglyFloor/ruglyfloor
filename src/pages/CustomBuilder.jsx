@@ -39,7 +39,7 @@ const QUALITY_TIERS = [
     label: 'Rugly', 
     description: 'Premium quality with standard rug lifespan',
     priceMultiplier: 1.0,
-    materialDetail: 'Rabbit fur or premium material',
+    materialDetail: 'Durable Cotton, Synthetic Rabbit Fur',
     lifespan: 'Standard rug lifespan',
     washable: true,
     customization: 'Standard',
