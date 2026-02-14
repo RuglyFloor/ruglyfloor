@@ -618,7 +618,7 @@ export default function CustomBuilder() {
                         {/* Price */}
                         <div className="text-center mb-6 pb-6 border-b-2" style={{ borderColor: tier.color }}>
                           <div className="text-5xl font-black mb-1" style={{ color: tier.color }}>
-                            ${Math.round(79 * tier.priceMultiplier)}
+                            ${Math.round(79 * tier.priceMultiplier)}{tier.id === 'budget' ? '-200' : tier.id === 'good' ? '-500' : '+'}
                           </div>
                           <div className="text-xs text-gray-500">Starting at (Tiny 2x3)</div>
                         </div>
