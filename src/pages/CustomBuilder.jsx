@@ -640,7 +640,7 @@ export default function CustomBuilder() {
                               />
                               <div className="w-0.5 bg-white"></div>
                               <img 
-                                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/701415d98_image.png"
+                                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/5c6bbc6d6_Screenshot2026-02-14at113505.png"
                                 alt="Rugly material right"
                                 className="w-1/2 object-cover"
                               />
