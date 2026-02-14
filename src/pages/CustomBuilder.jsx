@@ -611,7 +611,7 @@ export default function CustomBuilder() {
                       {/* Colored Header */}
                       <div className="p-6 text-center text-white" style={{ backgroundColor: tier.color }}>
                         <h3 className="text-3xl font-black mb-2">{tier.label}</h3>
-                        <p className="text-sm opacity-90">{tier.id === 'budget' ? 'Budget-Friendly' : tier.id === 'good' ? 'Most Popular' : 'Luxury Premium'}</p>
+                        <p className="text-sm opacity-90">{tier.id === 'budget' ? 'Budget-Friendly' : tier.id === 'good' ? 'Most Popular' : 'Luxury and Commercial Use'}</p>
                       </div>
 
                       <div className="p-6">
