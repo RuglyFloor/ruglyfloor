@@ -686,7 +686,7 @@ export default function CustomBuilder() {
                             <div className="flex-1">
                               <div className="text-xs font-semibold text-gray-900">Customization</div>
                               <div className="text-xs text-gray-600">
-                                {tier.id === 'budget' && 'Fixed Sizes, Limited Design'}
+                                {tier.id === 'budget' && 'Limited to Stencil Design, Fixed Sizes, Most Rugs Under $200!'}
                                 {tier.id === 'good' && 'Custom Size & Hand Painted'}
                                 {tier.id === 'highend' && 'Unlimited'}
                               </div>
