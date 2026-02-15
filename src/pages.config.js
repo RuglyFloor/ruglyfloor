@@ -86,6 +86,7 @@ import Shop from './pages/Shop';
 import Sitemap from './pages/Sitemap';
 import Success from './pages/Success';
 import TrackOrder from './pages/TrackOrder';
+import AdminChannels from './pages/AdminChannels';
 import __Layout from './Layout.jsx';
 
 
@@ -129,6 +130,7 @@ export const PAGES = {
     "Sitemap": Sitemap,
     "Success": Success,
     "TrackOrder": TrackOrder,
+    "AdminChannels": AdminChannels,
 }
 
 export const pagesConfig = {
