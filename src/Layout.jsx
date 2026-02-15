@@ -258,8 +258,8 @@ export default function Layout({ children, currentPageName }) {
                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                 <div className="w-8 h-8 mx-auto mb-3 flex items-center justify-center text-2xl" style={{color: 'var(--brand-blue)'}}>🌐</div>
                 <h3 className="font-bold text-lg mb-2" style={{color: 'var(--brand-dark)'}}>Visit Us</h3>
-                <a href="https://ruglyfloors.com" className="text-lg" style={{color: 'var(--brand-dark)'}}>
-                  www.ruglyfloors.com
+                <a href="https://ruglyfloor.com" className="text-lg" style={{color: 'var(--brand-dark)'}}>
+                  www.ruglyfloor.com
                 </a>
               </div>
             </div>
@@ -296,7 +296,7 @@ export default function Layout({ children, currentPageName }) {
               alt="Rugly" 
               className="h-10 mx-auto mb-4 opacity-70"
             />
-            <p className="text-sm mb-2">Homesteads, LLC</p>
+            <p className="text-sm mb-2">Rugly</p>
             <p className="text-sm text-gray-500">Custom-painted rugs for spaces that inspire</p>
 
             <div className="mt-6 pt-6" style={{borderTop: '1px solid rgba(255,255,255,0.1)'}}>
