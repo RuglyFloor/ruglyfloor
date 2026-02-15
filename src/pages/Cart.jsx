@@ -267,29 +267,29 @@ export default function Cart() {
       />
 
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-3" style={{ color: '#343634' }}>Your Cart</h1>
-          <p className="text-gray-600 text-lg">Review your custom rugs and complete your order</p>
+        <div className="text-center mb-6 lg:mb-12">
+          <h1 className="text-3xl lg:text-4xl font-bold mb-2 lg:mb-3" style={{ color: '#343634' }}>Your Cart</h1>
+          <p className="text-gray-600 text-base lg:text-lg">Review and checkout</p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-4 lg:gap-8">
           {/* Cart Items */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 lg:space-y-6">
             {cart.map((item, index) => {
               const tierColor = getTierColor(item.qualityTier);
               return (
-                <div key={index} className="bg-white rounded-2xl shadow-xl p-6" style={{ border: `4px solid ${tierColor}` }}>
-                  <div className="flex gap-6">
+                <div key={index} className="bg-white rounded-xl lg:rounded-2xl shadow-xl p-4 lg:p-6" style={{ border: `3px lg:border-4 solid ${tierColor}` }}>
+                  <div className="flex gap-3 lg:gap-6">
                     {item.previewUrl && (
-                      <div className="w-32 h-32 rounded-xl overflow-hidden flex-shrink-0" style={{ border: `2px solid ${tierColor}` }}>
-                        <img src={item.previewUrl} alt={item.name} className="w-full h-full object-cover" />
+                      <div className="w-20 lg:w-32 h-20 lg:h-32 rounded-lg lg:rounded-xl overflow-hidden flex-shrink-0" style={{ border: `2px solid ${tierColor}` }}>
+                        <img src={item.previewUrl} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-4 mb-3">
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-xl mb-1 truncate" style={{ color: '#343634' }}>{item.name}</h3>
-                          <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: `${tierColor}20`, color: tierColor }}>
+                          <h3 className="font-bold text-base lg:text-xl mb-1 truncate" style={{ color: '#343634' }}>{item.name}</h3>
+                          <div className="inline-block px-2 lg:px-3 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: `${tierColor}20`, color: tierColor }}>
                             {item.qualityLabel}
                           </div>
                         </div>
@@ -358,10 +358,10 @@ export default function Cart() {
 
           {/* Checkout Form */}
           <div>
-            <div className="bg-white rounded-2xl shadow-xl p-6 sticky top-6" style={{ border: '4px solid #343634' }}>
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold mb-2" style={{ color: '#343634' }}>Checkout</h2>
-                <p className="text-sm text-gray-600">Fast & secure checkout</p>
+            <div className="bg-white rounded-xl lg:rounded-2xl shadow-xl p-4 lg:p-6 lg:sticky lg:top-6" style={{ border: '3px lg:border-4 solid #343634' }}>
+              <div className="mb-4 lg:mb-6">
+                <h2 className="text-xl lg:text-2xl font-bold mb-1 lg:mb-2" style={{ color: '#343634' }}>Checkout</h2>
+                <p className="text-xs lg:text-sm text-gray-600">Fast & secure</p>
               </div>
               
               <div className="space-y-4">
@@ -584,7 +584,7 @@ export default function Cart() {
                   </div>
                   
                   <Button 
-                    className="w-full text-white font-bold py-6 text-lg rounded-xl transition-all"
+                    className="w-full text-white font-bold py-5 lg:py-6 text-base lg:text-lg rounded-xl transition-all"
                     style={{ backgroundColor: '#343634', border: 'none' }}
                     onClick={handleCheckout}
                     disabled={submitting || !customerInfo.email}

@@ -490,7 +490,7 @@ export default function CustomBuilder() {
   };
 
   return (
-    <div className="min-h-screen py-12 px-6 bg-white">
+    <div className="min-h-screen py-6 lg:py-12 px-4 lg:px-6 bg-white">
       <SEOHead
         title={seoData?.seo_title || "Custom Rug Builder | Perfect Mother's Day & Father's Day Gifts"}
         description={typeof seoData?.seo_description === 'string' ? seoData.seo_description : "Design custom hand-painted rugs online - unique mothers day gifts, fathers day gifts, and personalized gifts for anyone. Create personalized floor art rugs with our builder. Customizable stencil rug designs, washable custom painted rugs for any space. Perfect for interior designers and homeowners."}

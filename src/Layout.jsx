@@ -184,38 +184,41 @@ export default function Layout({ children, currentPageName }) {
             </nav>
 
             {/* Mobile Menu Button */}
-            <button
-              className="md:hidden"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-
-          {/* Mobile Nav */}
-          {mobileMenuOpen && (
-            <nav className="md:hidden mt-4 pb-4 flex flex-col gap-3">
-              {navLinks.map(link => (
-                <Link
-                  key={link.page}
-                  to={createPageUrl(link.page)}
-                  className={`transition-colors py-2 ${
-                    currentPageName === link.page ? 'font-semibold' : ''
-                  }`}
-                  style={{color: currentPageName === link.page ? 'var(--brand-blue)' : 'var(--brand-dark)'}}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {link.name}
-                </Link>
-              ))}
-              <Link to={createPageUrl('Cart')} onClick={() => setMobileMenuOpen(false)}>
-                <Button variant="outline" size="sm" className="gap-2 w-full">
-                  <ShoppingCart className="w-4 h-4" />
-                  Cart
+            <div className="md:hidden flex items-center gap-3">
+              <Link to={createPageUrl('Cart')}>
+                <Button variant="ghost" size="sm" className="gap-1">
+                  <ShoppingCart className="w-5 h-5" />
                 </Button>
               </Link>
-            </nav>
-          )}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2"
+              >
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
+            </div>
+
+            {/* Mobile Nav - Full Screen Overlay */}
+            {mobileMenuOpen && (
+            <div className="md:hidden fixed inset-0 top-[72px] bg-white z-50 overflow-y-auto">
+              <nav className="p-6 flex flex-col gap-1">
+                {navLinks.map(link => (
+                  <Link
+                    key={link.page}
+                    to={createPageUrl(link.page)}
+                    className={`text-lg py-4 px-4 rounded-lg transition-colors ${
+                      currentPageName === link.page ? 'font-bold bg-blue-50' : 'hover:bg-gray-50'
+                    }`}
+                    style={{color: currentPageName === link.page ? 'var(--brand-blue)' : 'var(--brand-dark)'}}
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+            )}
         </div>
       </header>
 
