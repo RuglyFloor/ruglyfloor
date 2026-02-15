@@ -30,11 +30,38 @@ export default function Cart() {
   const [couponCode, setCouponCode] = useState('');
   const [couponValidation, setCouponValidation] = useState(null);
   const [validatingCoupon, setValidatingCoupon] = useState(false);
+  const [useGuestCheckout, setUseGuestCheckout] = useState(true);
+  const [taxRate, setTaxRate] = useState(0);
 
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem('rugly_cart') || '[]');
     setCart(savedCart);
+    
+    // Load saved customer info
+    const savedInfo = localStorage.getItem('rugly_customer_info');
+    if (savedInfo) {
+      try {
+        const parsed = JSON.parse(savedInfo);
+        setCustomerInfo(parsed);
+        setUseGuestCheckout(false);
+      } catch (e) {
+        console.error('Failed to load saved customer info');
+      }
+    }
   }, []);
+
+  // Auto-calculate tax based on state
+  useEffect(() => {
+    const stateTaxRates = {
+      'MI': 0.06,
+      'CA': 0.0725,
+      'NY': 0.04,
+      'TX': 0.0625,
+      'FL': 0.06
+    };
+    const rate = stateTaxRates[customerInfo.state?.toUpperCase()] || 0;
+    setTaxRate(rate);
+  }, [customerInfo.state]);
 
   const removeItem = (index) => {
     const newCart = cart.filter((_, i) => i !== index);
@@ -49,7 +76,20 @@ export default function Cart() {
     removeItem(index);
   };
 
-  const totalAmount = cart.reduce((sum, item) => sum + item.price, 0);
+  const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
+
+  // Shipping cost calculation
+  const getShippingCost = () => {
+    const hasCrugly = cart.some(item => item.qualityTier === 'budget');
+    if (hasCrugly && cart.every(item => item.qualityTier === 'budget')) {
+      return 0; // Free shipping for Crugly only orders
+    }
+    return subtotal > 0 ? 15 : 0;
+  };
+
+  const shippingCost = getShippingCost();
+  const taxAmount = (subtotal + shippingCost) * taxRate;
+  const totalAmount = subtotal + shippingCost + taxAmount;
 
   // Check if cart has Crugly or Rugly (requires upfront payment)
   const hasUpfrontPaymentItems = cart.some(item => 
@@ -90,14 +130,26 @@ export default function Cart() {
     const siteStartTime = parseInt(sessionStorage.getItem('rugly_site_start_time') || Date.now());
     const timeOnSite = Math.floor((Date.now() - siteStartTime) / 1000);
     const referrerSource = sessionStorage.getItem('rugly_referrer') || document.referrer || 'direct';
-    if (!customerInfo.name || !customerInfo.email || !customerInfo.street || !customerInfo.city) {
-      alert('Please fill in all required fields');
+    
+    // Minimal validation for guest checkout
+    if (!customerInfo.email) {
+      alert('Please provide your email address');
       return;
     }
 
-    if (customerInfo.phone && !smsConsent) {
+    if (!useGuestCheckout && (!customerInfo.name || !customerInfo.street || !customerInfo.city)) {
+      alert('Please complete all required fields');
+      return;
+    }
+
+    if (!useGuestCheckout && customerInfo.phone && !smsConsent) {
       alert('Please consent to receive text messages if you provide a phone number');
       return;
+    }
+
+    // Save customer info for future
+    if (!useGuestCheckout) {
+      localStorage.setItem('rugly_customer_info', JSON.stringify(customerInfo));
     }
 
     // Check if running in iframe (preview mode)
@@ -110,13 +162,14 @@ export default function Cart() {
     try {
       const response = await base44.functions.invoke('createCheckout', { 
         cart, 
-        customerInfo: {
+        customerInfo: useGuestCheckout ? { email: customerInfo.email, timeOnSite, referrerSource } : {
           ...customerInfo,
           timeOnSite,
           referrerSource
         },
         designInstructions,
-        couponCode: couponValidation?.valid ? couponCode : null
+        couponCode: couponValidation?.valid ? couponCode : null,
+        guestCheckout: useGuestCheckout
       });
 
       if (response.data.url) {
@@ -308,89 +361,111 @@ export default function Cart() {
             <div className="bg-white rounded-2xl shadow-xl p-6 sticky top-6" style={{ border: '4px solid #343634' }}>
               <div className="mb-6">
                 <h2 className="text-2xl font-bold mb-2" style={{ color: '#343634' }}>Checkout</h2>
-                <p className="text-sm text-gray-600">Complete your order details</p>
+                <p className="text-sm text-gray-600">Fast & secure checkout</p>
               </div>
               
               <div className="space-y-4">
-                <div>
-                  <Label className="text-sm font-semibold mb-2 block">Full Name *</Label>
-                  <Input 
-                    value={customerInfo.name}
-                    onChange={(e) => setCustomerInfo(prev => ({ ...prev, name: e.target.value }))}
-                    className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
+                {/* Guest Checkout Toggle */}
+                <div className="flex items-center gap-3 p-4 bg-blue-50 border-2 border-blue-200 rounded-xl">
+                  <input
+                    type="checkbox"
+                    id="guestCheckout"
+                    checked={useGuestCheckout}
+                    onChange={(e) => setUseGuestCheckout(e.target.checked)}
+                    className="w-5 h-5 rounded border-2 border-blue-400"
                   />
+                  <label htmlFor="guestCheckout" className="text-sm font-semibold cursor-pointer flex-1">
+                    ⚡ Express checkout (email only)
+                  </label>
                 </div>
+
                 <div>
-                  <Label className="text-sm font-semibold mb-2 block">Email *</Label>
+                  <Label className="text-sm font-semibold mb-2 block">Email * {useGuestCheckout && <span className="text-xs text-gray-500">(Updates sent here)</span>}</Label>
                   <Input 
                     type="email"
                     value={customerInfo.email}
                     onChange={(e) => setCustomerInfo(prev => ({ ...prev, email: e.target.value }))}
                     className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
+                    placeholder="your@email.com"
                   />
                 </div>
-                <div>
-                  <Label className="text-sm font-semibold mb-2 block">Phone</Label>
-                  <Input 
-                    value={customerInfo.phone}
-                    onChange={(e) => setCustomerInfo(prev => ({ ...prev, phone: e.target.value }))}
-                    placeholder="(555) 123-4567"
-                    className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
-                  />
-                </div>
-                
-                {/* SMS Consent */}
-                {customerInfo.phone && (
-                  <div className="flex items-start space-x-2 p-4 bg-gray-50 border-2 border-gray-200 rounded-xl">
-                    <Checkbox 
-                      id="sms-consent" 
-                      checked={smsConsent}
-                      onCheckedChange={setSmsConsent}
-                    />
-                    <div className="flex-1">
-                      <label
-                        htmlFor="sms-consent"
-                        className="text-xs leading-relaxed cursor-pointer text-gray-700"
-                      >
-                        I consent to receive text messages from Rugly Floors. Message frequency varies. Message and data rates may apply. Reply STOP to cancel.
-                      </label>
+
+                {!useGuestCheckout && (
+                  <>
+                    <div>
+                      <Label className="text-sm font-semibold mb-2 block">Full Name *</Label>
+                      <Input 
+                        value={customerInfo.name}
+                        onChange={(e) => setCustomerInfo(prev => ({ ...prev, name: e.target.value }))}
+                        className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
+                      />
                     </div>
-                  </div>
+                    <div>
+                      <Label className="text-sm font-semibold mb-2 block">Phone</Label>
+                      <Input 
+                        value={customerInfo.phone}
+                        onChange={(e) => setCustomerInfo(prev => ({ ...prev, phone: e.target.value }))}
+                        placeholder="(555) 123-4567"
+                        className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
+                      />
+                    </div>
+                    
+                    {/* SMS Consent */}
+                    {customerInfo.phone && (
+                      <div className="flex items-start space-x-2 p-4 bg-gray-50 border-2 border-gray-200 rounded-xl">
+                        <Checkbox 
+                          id="sms-consent" 
+                          checked={smsConsent}
+                          onCheckedChange={setSmsConsent}
+                        />
+                        <div className="flex-1">
+                          <label
+                            htmlFor="sms-consent"
+                            className="text-xs leading-relaxed cursor-pointer text-gray-700"
+                          >
+                            I consent to receive text messages from Rugly Floors. Message frequency varies. Message and data rates may apply. Reply STOP to cancel.
+                          </label>
+                        </div>
+                      </div>
+                    )}
+                    <div>
+                      <Label className="text-sm font-semibold mb-2 block">Street Address *</Label>
+                      <Input 
+                        value={customerInfo.street}
+                        onChange={(e) => setCustomerInfo(prev => ({ ...prev, street: e.target.value }))}
+                        className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-sm font-semibold mb-2 block">City *</Label>
+                        <Input 
+                          value={customerInfo.city}
+                          onChange={(e) => setCustomerInfo(prev => ({ ...prev, city: e.target.value }))}
+                          className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-sm font-semibold mb-2 block">State *</Label>
+                        <Input 
+                          value={customerInfo.state}
+                          onChange={(e) => setCustomerInfo(prev => ({ ...prev, state: e.target.value.toUpperCase() }))}
+                          placeholder="MI"
+                          maxLength={2}
+                          className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-semibold mb-2 block">ZIP Code</Label>
+                      <Input 
+                        value={customerInfo.zip}
+                        onChange={(e) => setCustomerInfo(prev => ({ ...prev, zip: e.target.value }))}
+                        className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
+                      />
+                    </div>
+                  </>
                 )}
-                <div>
-                  <Label className="text-sm font-semibold mb-2 block">Street Address *</Label>
-                  <Input 
-                    value={customerInfo.street}
-                    onChange={(e) => setCustomerInfo(prev => ({ ...prev, street: e.target.value }))}
-                    className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-sm font-semibold mb-2 block">City *</Label>
-                    <Input 
-                      value={customerInfo.city}
-                      onChange={(e) => setCustomerInfo(prev => ({ ...prev, city: e.target.value }))}
-                      className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-sm font-semibold mb-2 block">State</Label>
-                    <Input 
-                      value={customerInfo.state}
-                      onChange={(e) => setCustomerInfo(prev => ({ ...prev, state: e.target.value }))}
-                      className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-sm font-semibold mb-2 block">ZIP Code</Label>
-                  <Input 
-                    value={customerInfo.zip}
-                    onChange={(e) => setCustomerInfo(prev => ({ ...prev, zip: e.target.value }))}
-                    className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
-                  />
-                </div>
 
                 {/* Master Design Instructions */}
                 <div className="border-t-2 pt-6 mt-6" style={{ borderColor: '#343634' }}>
@@ -470,9 +545,25 @@ export default function Cart() {
                 <div className="border-t-2 pt-6 mt-6" style={{ borderColor: '#343634' }}>
                   <div className="space-y-3 mb-6">
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">{hasUpfrontPaymentItems ? 'Total Amount' : 'Deposit Required'}</span>
-                      <span className="font-bold text-gray-900">${paymentAmount.toFixed(2)}</span>
+                      <span className="text-gray-600">Subtotal</span>
+                      <span className="font-semibold">${subtotal.toFixed(2)}</span>
                     </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Shipping</span>
+                      <span className="font-semibold">
+                        {shippingCost === 0 ? (
+                          <span className="text-green-600 font-bold">FREE</span>
+                        ) : (
+                          `$${shippingCost.toFixed(2)}`
+                        )}
+                      </span>
+                    </div>
+                    {taxRate > 0 && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">Tax ({(taxRate * 100).toFixed(1)}%)</span>
+                        <span className="font-semibold">${taxAmount.toFixed(2)}</span>
+                      </div>
+                    )}
                     {couponValidation?.valid && (
                       <div className="flex justify-between text-sm text-green-600">
                         <span>Discount ({couponValidation.coupon.code})</span>
@@ -481,21 +572,24 @@ export default function Cart() {
                     )}
                     <div className="pt-3 border-t-2" style={{ borderColor: '#343634' }}>
                       <div className="flex justify-between items-center">
-                        <span className="font-bold text-lg">Total Due Now</span>
+                        <span className="font-bold text-lg">{hasUpfrontPaymentItems ? 'Total' : 'Deposit Due'}</span>
                         <span className="text-3xl font-black" style={{ color: '#343634' }}>
                           ${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : paymentAmount.toFixed(2)}
                         </span>
                       </div>
                     </div>
+                    {!useGuestCheckout && taxRate === 0 && customerInfo.state && (
+                      <p className="text-xs text-gray-500 text-center">Tax will be calculated at checkout</p>
+                    )}
                   </div>
                   
                   <Button 
                     className="w-full text-white font-bold py-6 text-lg rounded-xl transition-all"
                     style={{ backgroundColor: '#343634', border: 'none' }}
                     onClick={handleCheckout}
-                    disabled={submitting}
+                    disabled={submitting || !customerInfo.email}
                   >
-                    {submitting ? 'Processing...' : hasUpfrontPaymentItems ? `Pay $${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : paymentAmount.toFixed(2)} (Full Payment)` : `Pay $${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : paymentAmount.toFixed(2)} Deposit`}
+                    {submitting ? 'Processing...' : `Pay $${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : paymentAmount.toFixed(2)}`}
                   </Button>
                   
                   {!hasUpfrontPaymentItems && (
@@ -504,11 +598,21 @@ export default function Cart() {
                     </p>
                   )}
                   
-                  <div className="mt-4 flex items-center justify-center gap-2 text-xs text-gray-500">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                    </svg>
-                    Secure checkout powered by Stripe
+                  {/* Trust Signals */}
+                  <div className="mt-4 space-y-2">
+                    <div className="flex items-center justify-center gap-4 text-xs text-gray-500">
+                      <div className="flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                        </svg>
+                        <span>Secure Checkout</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span>✓</span>
+                        <span>Money-Back Guarantee</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-center text-gray-400">Powered by Stripe</p>
                   </div>
                 </div>
               </div>
