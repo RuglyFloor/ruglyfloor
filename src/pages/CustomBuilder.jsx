@@ -570,7 +570,7 @@ export default function CustomBuilder() {
           </div>
         </div>
 
-        {config.previewUrl && step === 4 && (
+        {step === 4 && config.imageUrl && (
           <div className="fixed bottom-6 right-6 z-50 lg:hidden">
             <Button
               onClick={handleAddToCart}
