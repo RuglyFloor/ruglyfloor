@@ -157,7 +157,7 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="mt-16 bg-gradient-to-br from-slate-50 to-blue-50 rounded-3xl p-8 md:p-12 border border-gray-200"
+            className="mt-16 bg-white rounded-3xl p-8 md:p-12 border-2" style={{borderColor:'var(--brand-blue)'}}
           >
             <div className="text-center mb-12">
               <div className="inline-block px-4 py-2 bg-white rounded-full mb-4 shadow-sm">
