@@ -118,7 +118,7 @@ export default function About() {
                 <p>
                   I put everything I had—literally my last cent—into this venture. <span className="rugly-text">Rugly</span> is my way of staying true to my calling while solving the challenges that held me back. By painting on rugs, I can create large-scale art that's affordable, shippable, and accessible. Every piece is hand-painted, one-of-a-kind, and designed to transform spaces in ways traditional art never could.
                 </p>
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-l-4 border-blue-600 p-6 rounded-lg">
+                <div className="border-l-4 p-6 rounded-lg" style={{borderColor:'var(--brand-blue)', backgroundColor:'rgba(64,117,255,0.06)'}}>
                   <p className="font-semibold text-gray-900 text-xl">
                     This is more than a business. It's my art, my passion, and my commitment to delivering large-scale creativity to the world—one floor at a time.
                   </p>
