@@ -356,145 +356,131 @@ export default function Home() {
             )}
           </div>
 
-          {/* Tier cards moved here from How It Works */}
-          <div className="mt-10 grid md:grid-cols-3 gap-6">
-            <div className="rounded-2xl p-6 border-2 bg-white" style={{borderColor:'#24f0a0'}}>
-              <div className="font-bold text-lg mb-1" style={{color:'#343634'}}>Crugly</div>
-              <div className="text-xs font-semibold mb-3" style={{color:'#24f0a0'}}>Budget-Friendly</div>
-              <p className="text-sm text-gray-700 mb-3">Bold logos, characters, stencil designs, dorms, kids rooms, gifting. Simple = sharp.</p>
-              <div className="text-xs text-gray-500">Tiny: $79 · Small: $140 · Medium: $210 · Large: $280 · Huge: $350</div>
-              <div className="text-xs font-semibold mt-1" style={{color:'#24f0a0'}}>FREE shipping • 10-14 day production</div>
+          {/* Flip Cards - Tier Selection */}
+          <div className="mt-10">
+            <h3 className="text-2xl font-bold text-center mb-2" style={{color:'#343634'}}>CHOOSE YOUR QUALITY LEVEL</h3>
+            <p className="text-center text-gray-500 mb-8 text-sm md:hidden">Tap a card to see details</p>
+            <p className="text-center text-gray-500 mb-8 text-sm hidden md:block">Hover a card to see details</p>
+            <style>{`
+              .flip-card { perspective: 1000px; }
+              .flip-card-inner {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
+                transform-style: preserve-3d;
+              }
+              .flip-card.flipped .flip-card-inner,
+              @media (hover: hover) { .flip-card:hover .flip-card-inner { transform: rotateY(180deg); } }
+              .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+              .flip-card-front, .flip-card-back {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                backface-visibility: hidden;
+                -webkit-backface-visibility: hidden;
+                border-radius: 1rem;
+              }
+              .flip-card-back { transform: rotateY(180deg); }
+            `}</style>
+            <div className="grid md:grid-cols-3 gap-6" style={{minHeight: '340px'}}>
+              {[
+                {
+                  id: 'crugly',
+                  color: '#24f0a0',
+                  name: 'Crugly',
+                  badge: 'Budget-Friendly',
+                  tagline: 'Bold logos, characters, stencil designs, dorms, kids rooms, gifting.',
+                  pricing: 'Tiny: $79 · Small: $140 · Med: $210 · Large: $280 · Huge: $350',
+                  shipping: 'FREE shipping • 10-14 day production',
+                  features: ['Synthetic non-slip material', 'Machine washable', '2-20+ year lifespan', 'FREE shipping'],
+                  price: 'From $79',
+                  popular: false,
+                },
+                {
+                  id: 'rugly',
+                  color: '#4075ff',
+                  name: 'Rugly',
+                  badge: 'Most Popular',
+                  tagline: 'Vibes, rooms, gifts, portraits, Airbnb statement pieces.',
+                  pricing: 'S/T: $10 ship · M/L: $30 ship · Huge: $90 ship',
+                  shipping: 'Most projects $200–$500 • 10-20 day production',
+                  features: ['Rabbit fur or premium material', 'Standard rug lifespan', 'Machine washable', 'Flat rate shipping'],
+                  price: 'From $200',
+                  popular: true,
+                },
+                {
+                  id: 'lux',
+                  color: '#f04624',
+                  name: 'Rugly Lux',
+                  badge: 'No-Limits Luxury',
+                  tagline: 'Shag, jute, or premium materials. Unlimited colors. Tell us your vision.',
+                  pricing: 'Custom pricing based on size & complexity',
+                  shipping: 'Commercial & luxury spaces • 2-4 week production',
+                  features: ['Shag, jute, or luxury materials', 'Unlimited colors & complexity', 'Premium durability — decades', 'Commercial & hospitality'],
+                  price: 'Custom Quote',
+                  popular: false,
+                }
+              ].map(tier => {
+                const [flipped, setFlipped] = React.useState(false);
+                return (
+                  <div
+                    key={tier.id}
+                    className={`flip-card${flipped ? ' flipped' : ''}`}
+                    style={{height: '340px'}}
+                    onClick={() => setFlipped(f => !f)}
+                    onMouseEnter={() => { if (window.matchMedia('(hover: hover)').matches) setFlipped(true); }}
+                    onMouseLeave={() => { if (window.matchMedia('(hover: hover)').matches) setFlipped(false); }}
+                  >
+                    <div className="flip-card-inner">
+                      {/* Front */}
+                      <div className="flip-card-front bg-white flex flex-col justify-between p-6" style={{border: `3px solid ${tier.color}`}}>
+                        {tier.popular && (
+                          <div className="absolute -top-4 left-1/2 -translate-x-1/2 text-white text-xs font-bold px-4 py-1 rounded-full z-10" style={{backgroundColor: tier.color}}>
+                            MOST POPULAR
+                          </div>
+                        )}
+                        <div>
+                          <div className="text-center mb-3">
+                            <div className="text-2xl font-black mb-1" style={{color:'#343634'}}>{tier.name}</div>
+                            <div className="text-xs font-bold px-3 py-1 rounded-full inline-block text-white" style={{backgroundColor: tier.color}}>{tier.badge}</div>
+                          </div>
+                          <p className="text-sm text-gray-600 text-center leading-relaxed mb-4">{tier.tagline}</p>
+                          <div className="text-xs text-gray-500 text-center mb-1">{tier.pricing}</div>
+                          <div className="text-xs font-semibold text-center" style={{color: tier.color}}>{tier.shipping}</div>
+                        </div>
+                        <div className="text-center mt-4">
+                          <div className="text-2xl font-black" style={{color: tier.color}}>{tier.price}</div>
+                          <div className="text-xs text-gray-400 mt-2">Hover / tap for details →</div>
+                        </div>
+                      </div>
+                      {/* Back */}
+                      <div className="flip-card-back flex flex-col justify-between p-6 text-white" style={{backgroundColor: tier.color}}>
+                        <div>
+                          <div className="text-xl font-black mb-4 text-center">{tier.name}</div>
+                          <ul className="space-y-2 mb-4">
+                            {tier.features.map((f, i) => (
+                              <li key={i} className="flex items-center gap-2 text-sm">
+                                <CheckCircle className="w-4 h-4 flex-shrink-0 text-white opacity-90" />
+                                <span>{f}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <Link to={createPageUrl('CustomBuilder')} onClick={e => e.stopPropagation()}>
+                          <Button className="w-full font-bold bg-white" style={{color: tier.color, border: 'none'}}>
+                            Start Designing
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-            <div className="rounded-2xl p-6 border-2 bg-white" style={{borderColor:'#4075ff'}}>
-              <div className="font-bold text-lg mb-1" style={{color:'#343634'}}>Rugly</div>
-              <div className="text-xs font-semibold mb-3" style={{color:'#4075ff'}}>Premium Standard</div>
-              <p className="text-sm text-gray-700 mb-3">Vibes, rooms, gifts, portraits, Airbnb statement pieces. Tell us a feeling and we design it.</p>
-              <div className="text-xs text-gray-500">Small/Tiny: $10 ship · M/L: $30 ship · Huge: $90 ship</div>
-              <div className="text-xs font-semibold mt-1" style={{color:'#4075ff'}}>Most projects $200–$500 • 10-20 day production</div>
+            <div className="text-center mt-6">
+              <p className="text-slate-500 text-xs">All rugs hand-painted in our Michigan studio • Low-pile/flat weave for crisp lines • Matte finish • Non-slip backing</p>
             </div>
-            <div className="rounded-2xl p-6 border-2 bg-white" style={{borderColor:'#f04624'}}>
-              <div className="font-bold text-lg mb-1" style={{color:'#343634'}}>Rugly Lux</div>
-              <div className="text-xs font-semibold mb-3" style={{color:'#f04624'}}>No-Limits Luxury</div>
-              <p className="text-sm text-gray-700 mb-3">Shag, jute, or premium materials. Unlimited colors, unlimited complexity. Tell us your vision — we make it happen.</p>
-              <div className="text-xs text-gray-500">Custom pricing based on size & complexity</div>
-              <div className="text-xs font-semibold mt-1" style={{color:'#f04624'}}>Commercial & luxury spaces • 2-4 week production</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Quality Tiers - Choose Your Level */}
-      <section className="py-20 px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold mb-4 text-center">CHOOSE YOUR QUALITY LEVEL</h2>
-          <p className="text-center text-slate-600 mb-12 text-lg">From budget-friendly to luxury — we have the perfect rug for every space and budget</p>
-          
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            <div className="bg-white rounded-2xl p-8 hover:shadow-2xl transition-all" style={{border: '4px solid #24f0a0'}}>
-              <div className="text-center mb-4">
-                <h3 className="text-2xl font-bold mb-2" style={{color: '#343634'}}>Crugly</h3>
-                <p className="font-semibold" style={{color: '#24f0a0'}}>Budget-Friendly Entry Tier</p>
-              </div>
-              <ul className="space-y-3 mb-6">
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#24f0a0'}} />
-                  <span className="text-sm">Synthetic non-slip material</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#24f0a0'}} />
-                  <span className="text-sm">Machine washable</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#24f0a0'}} />
-                  <span className="text-sm">2-20+ year lifespan</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#24f0a0'}} />
-                  <span className="text-sm">FREE shipping (10-14 days production)</span>
-                </li>
-              </ul>
-              <div className="text-center">
-                <div className="text-3xl font-bold mb-4" style={{color: '#343634'}}>From $79</div>
-                <Link to={createPageUrl('CustomBuilder')}>
-                  <Button className="w-full text-white" style={{border: '2px solid #24f0a0', backgroundColor: '#24f0a0', color: '#343634'}}>
-                    Start Designing
-                  </Button>
-                </Link>
-              </div>
-            </div>
-            
-            <div className="bg-white rounded-2xl p-8 hover:shadow-2xl transition-all relative" style={{border: '4px solid #4075ff'}}>
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 text-white text-xs font-bold px-4 py-2 rounded-full" style={{backgroundColor: '#4075ff'}}>
-                MOST POPULAR
-              </div>
-              <div className="text-center mb-4 mt-2">
-                <h3 className="text-2xl font-bold mb-2 rugly-text" style={{color: '#343634'}}>Rugly</h3>
-                <p className="font-semibold" style={{color: '#4075ff'}}>Premium Standard Tier</p>
-              </div>
-              <ul className="space-y-3 mb-6">
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#4075ff'}} />
-                  <span className="text-sm">Rabbit fur or premium material</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#4075ff'}} />
-                  <span className="text-sm">Standard rug lifespan</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#4075ff'}} />
-                  <span className="text-sm">Machine washable</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#4075ff'}} />
-                  <span className="text-sm">Flat rate shipping (10-20 days production)</span>
-                </li>
-              </ul>
-              <div className="text-center">
-                <div className="text-3xl font-bold mb-4" style={{color: '#343634'}}>From $200</div>
-                <Link to={createPageUrl('CustomBuilder')}>
-                  <Button className="w-full text-white" style={{border: '2px solid #4075ff', backgroundColor: '#4075ff'}}>
-                    Start Designing
-                  </Button>
-                </Link>
-              </div>
-            </div>
-            
-            <div className="bg-white rounded-2xl p-8 hover:shadow-2xl transition-all" style={{border: '4px solid #f04624'}}>
-              <div className="text-center mb-4">
-                <h3 className="text-2xl font-bold mb-2 rugly-text" style={{color: '#343634'}}>Rugly Lux</h3>
-                <p className="font-semibold" style={{color: '#f04624'}}>No-Limits Luxury Tier</p>
-              </div>
-              <ul className="space-y-3 mb-6">
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#f04624'}} />
-                  <span className="text-sm">Shag, jute, or luxury materials of your choice</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#f04624'}} />
-                  <span className="text-sm">Unlimited colors & complexity</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#f04624'}} />
-                  <span className="text-sm">Premium durability — built to last decades</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#f04624'}} />
-                  <span className="text-sm">Commercial, hospitality & luxury residential</span>
-                </li>
-              </ul>
-              <div className="text-center">
-                <div className="text-2xl font-bold mb-4" style={{color: '#343634'}}>Custom Quote</div>
-                <Link to={createPageUrl('CustomBuilder')}>
-                  <Button className="w-full text-white" style={{border: '2px solid #f04624', backgroundColor: '#f04624'}}>
-                    Start Designing
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-          
-          <div className="text-center">
-            <p className="text-slate-600 text-sm">All rugs are hand-painted in our Michigan studio • Low-pile/flat weave for crisp lines • Matte finish • Non-slip backing</p>
           </div>
         </div>
       </section>
