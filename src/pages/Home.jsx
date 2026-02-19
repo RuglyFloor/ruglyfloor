@@ -119,15 +119,15 @@ export default function Home() {
           </h2>
           <p className="text-lg md:text-xl text-white mb-12 max-w-3xl mx-auto">Choose <strong>Crugly</strong>, <strong className="rugly-text">Rugly</strong>, or <strong className="rugly-text">Rugly LX</strong>. Pick colors, play with patterns, watch it live.
           </p>
-          <div className="flex gap-4 justify-center flex-wrap items-center">
+          <div className="flex flex-col items-center gap-3">
             <Link to={createPageUrl('CustomBuilder')}>
               <button className="bg-transparent border border-white text-white font-black px-12 py-6 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '1.575rem', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
                 Create It Now
               </button>
             </Link>
             <Link to={createPageUrl('Commission')}>
-              <button className="bg-transparent border border-white text-white font-black px-12 py-6 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '1.575rem', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
-                Custom Quote
+              <button className="bg-transparent border border-white/60 text-white/70 font-black px-7 py-2 hover:bg-white/10 hover:text-white/90 transition-all tracking-wide" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '0.95rem' }}>
+                Custom Quote / Commercial
               </button>
             </Link>
           </div>
