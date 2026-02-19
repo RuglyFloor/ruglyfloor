@@ -583,8 +583,8 @@ export default function CustomBuilder() {
           </div>
         )}
 
-        <div className={step >= 4 ? "grid lg:grid-cols-3 gap-8 items-start" : "max-w-7xl mx-auto"}>
-          <div className={step >= 4 ? "lg:col-span-2 space-y-6" : "space-y-6"}>
+        <div className={step === 4 ? "grid lg:grid-cols-3 gap-8 items-start" : "max-w-7xl mx-auto"}>
+          <div className={step === 4 ? "lg:col-span-2 space-y-6" : "space-y-6"}>
             
             {/* Step 1: Quality Tier Selection */}
             {step === 1 && (
