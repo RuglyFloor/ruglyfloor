@@ -105,13 +105,27 @@ export default function Home() {
       <section className="relative py-32 px-6 overflow-hidden">
         {/* Background Video */}
         <div className="absolute inset-0 z-0">
-          <iframe
-            className="absolute inset-0 w-full h-full object-cover"
-            src="https://www.youtube.com/embed/oGBsu7bQMAE?autoplay=1&mute=1&loop=1&playlist=oGBsu7bQMAE&controls=0&showinfo=0&rel=0&modestbranding=1"
-            allow="autoplay; encrypted-media"
-            style={{ pointerEvents: 'none' }} />
-
+          {HERO_VIDEOS.map((videoId, i) => (
+            <iframe
+              key={videoId}
+              className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
+              src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&modestbranding=1`}
+              allow="autoplay; encrypted-media"
+              style={{ pointerEvents: 'none', opacity: currentHeroVideo === i ? 1 : 0 }}
+            />
+          ))}
           <div className="absolute inset-0 bg-black/50" />
+          {/* Video dots */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+            {HERO_VIDEOS.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentHeroVideo(i)}
+                className="w-2 h-2 rounded-full transition-all"
+                style={{ backgroundColor: currentHeroVideo === i ? 'white' : 'rgba(255,255,255,0.4)' }}
+              />
+            ))}
+          </div>
         </div>
 
         <div className="max-w-6xl mx-auto text-center relative z-10">
