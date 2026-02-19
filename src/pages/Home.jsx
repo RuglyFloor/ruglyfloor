@@ -209,7 +209,7 @@ export default function Home() {
       </section>
 
       {/* Yelp Reviews Section */}
-      <section className="relative py-32 px-6 bg-gradient-to-br from-yellow-50 to-orange-50">
+      <section className="relative py-32 px-6 bg-white">
         {/* Background Images */}
         <div className="absolute inset-0 z-0 opacity-70">
           <img 
