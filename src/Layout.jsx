@@ -114,7 +114,7 @@ export default function Layout({ children, currentPageName }) {
         .bg-red-500, .bg-red-600 { background-color: var(--brand-red) !important; }
         .bg-green-600, .bg-green-500 { background-color: var(--brand-cyan) !important; }
         .bg-purple-600 { background-color: var(--brand-blue) !important; }
-        .bg-gray-50 { background-color: var(--brand-cream) !important; }
+        .bg-gray-50 { background-color: var(--brand-light-gray) !important; }
         .bg-gray-100 { background-color: var(--brand-light-gray) !important; }
         .bg-gray-900 { background-color: var(--brand-dark) !important; }
         .bg-white { background-color: #ffffff !important; }
