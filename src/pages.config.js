@@ -49,6 +49,7 @@
  */
 import About from './pages/About';
 import AdminCatalog from './pages/AdminCatalog';
+import AdminChannels from './pages/AdminChannels';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminDocuments from './pages/AdminDocuments';
 import AdminFixMyRugOrders from './pages/AdminFixMyRugOrders';
@@ -86,13 +87,13 @@ import Shop from './pages/Shop';
 import Sitemap from './pages/Sitemap';
 import Success from './pages/Success';
 import TrackOrder from './pages/TrackOrder';
-import AdminChannels from './pages/AdminChannels';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "About": About,
     "AdminCatalog": AdminCatalog,
+    "AdminChannels": AdminChannels,
     "AdminDashboard": AdminDashboard,
     "AdminDocuments": AdminDocuments,
     "AdminFixMyRugOrders": AdminFixMyRugOrders,
@@ -130,7 +131,6 @@ export const PAGES = {
     "Sitemap": Sitemap,
     "Success": Success,
     "TrackOrder": TrackOrder,
-    "AdminChannels": AdminChannels,
 }
 
 export const pagesConfig = {
