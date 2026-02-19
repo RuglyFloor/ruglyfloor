@@ -10,12 +10,18 @@ import { generateOrganizationSchema } from '../components/seo/SchemaGenerator';
 import { useSEO } from '../components/seo/useSEO';
 import AvailableRugsHorizontalScroll from '../components/custom/AvailableRugsHorizontalScroll';
 
+const HERO_VIDEOS = [
+  'IT7Zkp4UwEA',
+  'oGBsu7bQMAE',
+];
+
 export default function Home() {
   const seoData = useSEO('');
   const navigate = useNavigate();
   const [currentProduct, setCurrentProduct] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [currentHeroVideo, setCurrentHeroVideo] = useState(0);
 
   const { data: products = [] } = useQuery({
     queryKey: ['featured-products'],
