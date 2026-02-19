@@ -160,8 +160,8 @@ export default function About() {
             className="mt-16 bg-white rounded-3xl p-8 md:p-12 border-2" style={{borderColor:'var(--brand-blue)'}}
           >
             <div className="text-center mb-12">
-              <div className="inline-block px-4 py-2 bg-white rounded-full mb-4 shadow-sm">
-                <span className="text-gray-900 font-semibold text-sm">Essential Info</span>
+              <div className="inline-block px-4 py-2 rounded-full mb-4" style={{backgroundColor:'rgba(64,117,255,0.1)'}}>
+                <span className="font-semibold text-sm" style={{color:'var(--brand-blue)'}}>Essential Info</span>
               </div>
               <h3 className="text-4xl text-gray-900" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>Foundation Guide</h3>
               <p className="text-gray-600 text-lg mt-2">Read before ordering</p>
