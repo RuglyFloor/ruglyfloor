@@ -142,24 +142,95 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works */}
+      {/* How It Works - Flip Cards */}
       <section className="py-16 px-6 bg-white">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-3" style={{color:'#343634'}}>How It Works</h2>
-          <p className="text-center text-gray-500 mb-12">Three steps. No guessing. No surprises.</p>
-          <div className="grid md:grid-cols-3 gap-8">
+          <p className="text-center text-gray-500 mb-2">Three steps. No guessing. No surprises.</p>
+          <p className="text-center text-xs text-gray-400 mb-10 md:hidden">Tap a card to see it in action</p>
+          <p className="text-center text-xs text-gray-400 mb-10 hidden md:block">Hover a card to see it in action</p>
+          <style>{`
+            .hiw-flip-card { perspective: 1000px; }
+            .hiw-flip-inner {
+              position: relative; width: 100%; height: 100%;
+              transition: transform 0.65s cubic-bezier(0.4,0,0.2,1);
+              transform-style: preserve-3d;
+            }
+            .hiw-flip-card.hiw-flipped .hiw-flip-inner { transform: rotateY(180deg); }
+            @media (hover: hover) {
+              .hiw-flip-card:hover .hiw-flip-inner { transform: rotateY(180deg); }
+            }
+            .hiw-front, .hiw-back {
+              position: absolute; width: 100%; height: 100%;
+              backface-visibility: hidden; -webkit-backface-visibility: hidden;
+              border-radius: 1rem; overflow: hidden;
+            }
+            .hiw-back { transform: rotateY(180deg); }
+          `}</style>
+          <div className="grid md:grid-cols-3 gap-6" style={{minHeight:'300px'}}>
             {[
-              { num:'01', title:'Design It', body:'Use our builder to pick your size, colors, and upload your design — or describe your vision and we\'ll handle it.', icon:'🎨' },
-              { num:'02', title:'Approve the Preview', body:'We send you a digital preview before anything is painted. You approve it. Zero risk, zero surprises.', icon:'✅' },
-              { num:'03', title:'We Paint & Ship', body:'Hand-painted in our Michigan studio. Ready in 6 days. Free shipping on Crugly. Flat rate on Rugly. Or pick it up locally.', icon:'📦' }
-            ].map(s => (
-              <div key={s.num} className="text-center p-6 rounded-2xl bg-white" style={{border:'2px solid var(--brand-blue)'}}>
-                <div className="text-5xl mb-4">{s.icon}</div>
-                <div className="text-xs font-bold tracking-widest mb-2" style={{color:'var(--brand-blue)'}}>{s.num}</div>
-                <h3 className="text-xl font-bold mb-3" style={{color:'#343634'}}>{s.title}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{s.body}</p>
-              </div>
-            ))}
+              {
+                num:'01', title:'Design It', icon:'🎨',
+                body:"Use our builder to pick your size, colors, and upload your design — or describe your vision and we'll handle it.",
+                color:'#4075ff',
+                images:[
+                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/e755c95fb_Screenshot2026-02-09at121804.png",
+                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/5e6feb323_Screenshot2026-02-09at123503.png",
+                ]
+              },
+              {
+                num:'02', title:'Approve the Preview', icon:'✅',
+                body:'We send you a digital preview before anything is painted. You approve it. Zero risk, zero surprises.',
+                color:'#24f0a0',
+                images:[
+                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/f59403e57_IMG_1559.jpg",
+                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/604e7c19a_IMG_1564.jpg",
+                ]
+              },
+              {
+                num:'03', title:'We Paint & Ship', icon:'📦',
+                body:'Hand-painted in our Michigan studio. Free shipping on Crugly. Flat rate on Rugly. Or pick it up locally.',
+                color:'#f04624',
+                images:[
+                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/3c3b3497d_finishedproduct.png",
+                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png",
+                ]
+              }
+            ].map(s => {
+              const [flipped, setFlipped] = React.useState(false);
+              return (
+                <div
+                  key={s.num}
+                  className={`hiw-flip-card${flipped ? ' hiw-flipped' : ''}`}
+                  style={{height:'300px'}}
+                  onClick={() => setFlipped(f => !f)}
+                  onMouseEnter={() => { if (window.matchMedia('(hover: hover)').matches) setFlipped(true); }}
+                  onMouseLeave={() => { if (window.matchMedia('(hover: hover)').matches) setFlipped(false); }}
+                >
+                  <div className="hiw-flip-inner">
+                    {/* Front */}
+                    <div className="hiw-front bg-white flex flex-col justify-center items-center p-6 text-center" style={{border:`3px solid ${s.color}`}}>
+                      <div className="text-5xl mb-3">{s.icon}</div>
+                      <div className="text-xs font-black tracking-widest mb-2" style={{color:s.color}}>{s.num}</div>
+                      <h3 className="text-xl font-bold mb-3" style={{color:'#343634'}}>{s.title}</h3>
+                      <p className="text-gray-600 text-sm leading-relaxed">{s.body}</p>
+                      <div className="mt-4 text-xs" style={{color:s.color}}>Hover / tap to see →</div>
+                    </div>
+                    {/* Back - images */}
+                    <div className="hiw-back" style={{backgroundColor: s.color}}>
+                      <div className="w-full h-full flex">
+                        {s.images.map((img, i) => (
+                          <img key={i} src={img} alt={s.title} className="flex-1 object-cover" style={{width:`${100/s.images.length}%`}} />
+                        ))}
+                      </div>
+                      <div className="absolute bottom-0 left-0 right-0 px-4 py-3 text-white font-bold text-sm text-center" style={{backgroundColor:`${s.color}cc`}}>
+                        {s.title}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
