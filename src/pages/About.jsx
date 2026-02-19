@@ -189,7 +189,7 @@ export default function About() {
                 transition={{ delay: 0.2, duration: 0.5 }}
                 className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow"
               >
-                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style={{backgroundColor:'rgba(36,240,160,0.15)'}}>
                   <span className="text-2xl">✨</span>
                 </div>
                 <h4 className="text-xl mb-3 text-gray-900" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>Bold Designs Work Best</h4>
