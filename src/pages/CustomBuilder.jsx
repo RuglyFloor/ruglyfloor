@@ -1548,7 +1548,7 @@ export default function CustomBuilder() {
             )}
           </div>
 
-          {step >= 4 && (
+          {step === 4 && (
             <div className="hidden lg:block sticky top-6 self-start">
               <BuilderSidebar
                 step={step}
