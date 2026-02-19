@@ -79,12 +79,12 @@ export default function Layout({ children, currentPageName }) {
           /* Typography */
           --font-heading: 'Barlow Condensed', sans-serif;
           --font-body: 'Roboto', sans-serif;
-          --font-accent: 'Baumans', sans-serif;
-          --font-display: 'Boldonse', sans-serif;
-          --font-serif: 'Kameron', serif;
-          --font-script: 'Qwitcher Grypen', cursive;
+          --font-accent: 'Barlow Condensed', sans-serif;
+          --font-display: 'Barlow Condensed', sans-serif;
+          --font-serif: 'Roboto', serif;
+          --font-script: 'Roboto', cursive;
           --font-button: 'Big Shoulders Stencil Display', sans-serif;
-          --font-rugly: 'Magistral', sans-serif;
+          --font-rugly: 'Barlow Condensed', sans-serif;
         }
 
         body {
