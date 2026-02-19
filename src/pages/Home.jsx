@@ -457,27 +457,27 @@ export default function Home() {
               </div>
             </div>
             
-            <div className="rounded-2xl p-8 hover:shadow-2xl transition-all" style={{backgroundColor: '#F7F1DA', border: '4px solid #f04624'}}>
+            <div className="bg-white rounded-2xl p-8 hover:shadow-2xl transition-all" style={{border: '4px solid #f04624'}}>
               <div className="text-center mb-4">
-                <h3 className="text-2xl font-bold mb-2 rugly-text" style={{color: '#343634'}}>Rugly LX</h3>
-                <p className="font-semibold" style={{color: '#f04624'}}>Luxury Premium Tier</p>
+                <h3 className="text-2xl font-bold mb-2 rugly-text" style={{color: '#343634'}}>Rugly Lux</h3>
+                <p className="font-semibold" style={{color: '#f04624'}}>No-Limits Luxury Tier</p>
               </div>
               <ul className="space-y-3 mb-6">
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#f04624'}} />
-                  <span className="text-sm">Shag, jute, or luxury materials</span>
+                  <span className="text-sm">Shag, jute, or luxury materials of your choice</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#f04624'}} />
-                  <span className="text-sm">Unlimited customization</span>
+                  <span className="text-sm">Unlimited colors & complexity</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#f04624'}} />
-                  <span className="text-sm">Premium durability</span>
+                  <span className="text-sm">Premium durability — built to last decades</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" style={{color: '#f04624'}} />
-                  <span className="text-sm">White glove service</span>
+                  <span className="text-sm">Commercial, hospitality & luxury residential</span>
                 </li>
               </ul>
               <div className="text-center">
