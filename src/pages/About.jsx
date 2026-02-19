@@ -101,8 +101,8 @@ export default function About() {
               viewport={{ once: true }}
               transition={{ delay: 0.3, duration: 0.6 }}
             >
-              <div className="inline-block px-4 py-2 bg-blue-50 rounded-full mb-6">
-                <span className="text-blue-600 font-semibold text-sm">Founder & Artist</span>
+              <div className="inline-block px-4 py-2 rounded-full mb-6" style={{backgroundColor:'rgba(64,117,255,0.1)'}}>
+                <span className="font-semibold text-sm" style={{color:'var(--brand-blue)'}}>Founder & Artist</span>
               </div>
               <h2 className="text-4xl lg:text-5xl mb-6 text-gray-900 leading-tight" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>Meet Ryan Hensley</h2>
               <div className="space-y-5 text-gray-600 leading-relaxed text-lg" style={{ fontFamily: 'var(--font-body)' }}>
