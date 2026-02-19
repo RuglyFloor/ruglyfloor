@@ -1548,18 +1548,16 @@ export default function CustomBuilder() {
             )}
           </div>
 
-          {step >= 4 && config.imageUrl && (
+          {step >= 4 && (
             <div className="hidden lg:block sticky top-6 self-start">
               <BuilderSidebar
                 step={step}
                 config={config}
                 currentPrice={currentPrice()}
-                baseColors={BASE_COLORS}
-                paintColors={PAINT_COLORS}
                 isRush={isRush}
                 onToggleRush={() => setIsRush(!isRush)}
                 qualityTier={config.qualityTier}
-                key={`${config.baseColor}-${config.paintColor}-${config.imageUrl}`}
+                onConfigChange={(changes) => setConfig(prev => ({ ...prev, ...changes }))}
               />
             </div>
           )}
