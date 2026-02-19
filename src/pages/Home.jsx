@@ -300,7 +300,7 @@ export default function Home() {
               <p className="text-lg text-slate-700"><strong>If your design relies on tiny text, thin lines, or gradients</strong> → use Custom Quote for best results.</p>
             </div>
           </div>
-          <div className="bg-blue-50 border-l-4 border-blue-600 p-6 rounded">
+          <div className="border-l-4 p-6 rounded" style={{borderColor:'var(--brand-blue)', backgroundColor:'rgba(64,117,255,0.06)'}}>
             <p className="text-lg italic text-slate-700">
               "The preview is accurate — but this is still hand work. Each rug has character. That's the point."
             </p>
