@@ -153,7 +153,7 @@ export default function Home() {
               { num:'02', title:'Approve the Preview', body:'We send you a digital preview before anything is painted. You approve it. Zero risk, zero surprises.', icon:'✅' },
               { num:'03', title:'We Paint & Ship', body:'Hand-painted in our Michigan studio. Ready in 6 days. Free shipping on Crugly. Flat rate on Rugly. Or pick it up locally.', icon:'📦' }
             ].map(s => (
-              <div key={s.num} className="text-center p-6 rounded-2xl bg-gray-50" style={{border:'2px solid #e5e7eb'}}>
+              <div key={s.num} className="text-center p-6 rounded-2xl" style={{border:'2px solid var(--brand-blue)', backgroundColor:'var(--brand-cream)'}}>
                 <div className="text-5xl mb-4">{s.icon}</div>
                 <div className="text-xs font-bold tracking-widest mb-2" style={{color:'var(--brand-blue)'}}>{s.num}</div>
                 <h3 className="text-xl font-bold mb-3" style={{color:'#343634'}}>{s.title}</h3>
