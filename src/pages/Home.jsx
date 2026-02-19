@@ -382,7 +382,7 @@ export default function Home() {
       </section>
 
       {/* Quality Tiers - Choose Your Level */}
-      <section className="py-20 px-6 bg-slate-50">
+      <section className="py-20 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold mb-4 text-center">CHOOSE YOUR QUALITY LEVEL</h2>
           <p className="text-center text-slate-600 mb-12 text-lg">From budget-friendly to luxury — we have the perfect rug for every space and budget</p>
