@@ -279,7 +279,7 @@ export default function Home() {
 
 
       {/* Before Ordering Section */}
-      <section className="py-20 px-6 bg-slate-50">
+      <section className="py-20 px-6 bg-white">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold mb-12 text-center">READ THIS BEFORE ORDERING</h2>
           <div className="space-y-4 mb-8">
