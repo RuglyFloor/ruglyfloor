@@ -216,7 +216,7 @@ export default function About() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.4, duration: 0.5 }}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-8 rounded-2xl max-w-3xl mx-auto shadow-xl"
+              className="text-white p-8 rounded-2xl max-w-3xl mx-auto shadow-xl" style={{backgroundColor:'var(--brand-dark)'}}
             >
               <p className="text-xl italic leading-relaxed text-center">
                 "The preview you see is accurate — but this is still hand work. Each rug has character and small variations. That's the point of custom, hand-painted art."
