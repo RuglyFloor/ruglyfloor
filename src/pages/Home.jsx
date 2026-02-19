@@ -147,28 +147,19 @@ export default function Home() {
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-3" style={{color:'#343634'}}>How It Works</h2>
           <p className="text-center text-gray-500 mb-12">Three steps. No guessing. No surprises.</p>
-          <div className="mt-10 grid md:grid-cols-3 gap-6">
-            <div className="rounded-2xl p-6 border-2 bg-white" style={{borderColor:'#24f0a0'}}>
-              <div className="font-bold text-lg mb-1" style={{color:'#343634'}}>Crugly</div>
-              <div className="text-xs font-semibold mb-3" style={{color:'#24f0a0'}}>Budget-Friendly</div>
-              <p className="text-sm text-gray-700 mb-3">Bold logos, characters, stencil designs, dorms, kids rooms, gifting. Simple = sharp.</p>
-              <div className="text-xs text-gray-500">Tiny: $79 · Small: $140 · Medium: $210 · Large: $280 · Huge: $350</div>
-              <div className="text-xs font-semibold mt-1" style={{color:'#24f0a0'}}>FREE shipping • 10-14 day production</div>
-            </div>
-            <div className="rounded-2xl p-6 border-2 bg-white" style={{borderColor:'#4075ff'}}>
-              <div className="font-bold text-lg mb-1" style={{color:'#343634'}}>Rugly</div>
-              <div className="text-xs font-semibold mb-3" style={{color:'#4075ff'}}>Premium Standard</div>
-              <p className="text-sm text-gray-700 mb-3">Vibes, rooms, gifts, portraits, Airbnb statement pieces. Tell us a feeling and we design it.</p>
-              <div className="text-xs text-gray-500">Small/Tiny: $10 ship · M/L: $30 ship · Huge: $90 ship</div>
-              <div className="text-xs font-semibold mt-1" style={{color:'#4075ff'}}>Most projects $200–$500 • 10-20 day production</div>
-            </div>
-            <div className="rounded-2xl p-6 border-2 bg-white" style={{borderColor:'#f04624'}}>
-              <div className="font-bold text-lg mb-1" style={{color:'#343634'}}>Rugly Lux</div>
-              <div className="text-xs font-semibold mb-3" style={{color:'#f04624'}}>No-Limits Luxury</div>
-              <p className="text-sm text-gray-700 mb-3">Shag, jute, or premium materials. Unlimited colors, unlimited complexity. Tell us your vision — we make it happen.</p>
-              <div className="text-xs text-gray-500">Custom pricing based on size & complexity</div>
-              <div className="text-xs font-semibold mt-1" style={{color:'#f04624'}}>Commercial & luxury spaces • 2-4 week production</div>
-            </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { num:'01', title:'Design It', body:'Use our builder to pick your size, colors, and upload your design — or describe your vision and we\'ll handle it.', icon:'🎨' },
+              { num:'02', title:'Approve the Preview', body:'We send you a digital preview before anything is painted. You approve it. Zero risk, zero surprises.', icon:'✅' },
+              { num:'03', title:'We Paint & Ship', body:'Hand-painted in our Michigan studio. Ready in 6 days. Free shipping on Crugly. Flat rate on Rugly. Or pick it up locally.', icon:'📦' }
+            ].map(s => (
+              <div key={s.num} className="text-center p-6 rounded-2xl bg-white" style={{border:'2px solid var(--brand-blue)'}}>
+                <div className="text-5xl mb-4">{s.icon}</div>
+                <div className="text-xs font-bold tracking-widest mb-2" style={{color:'var(--brand-blue)'}}>{s.num}</div>
+                <h3 className="text-xl font-bold mb-3" style={{color:'#343634'}}>{s.title}</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">{s.body}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
