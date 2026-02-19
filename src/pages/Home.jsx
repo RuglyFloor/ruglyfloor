@@ -170,7 +170,7 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-6" style={{minHeight:'300px'}}>
             {[
               {
-                num:'01', title:'Design It', icon:'🎨',
+                num:'01', title:'Upload / Design Your Rug', icon:'🎨',
                 body:"Use our builder to pick your size, colors, and upload your design — or describe your vision and we'll handle it.",
                 color:'#4075ff',
                 images:[
@@ -179,7 +179,7 @@ export default function Home() {
                 ]
               },
               {
-                num:'02', title:'Approve the Preview', icon:'✅',
+                num:'02', title:'Deploy Your Design', icon:'✅',
                 body:'We send you a digital preview before anything is painted. You approve it. Zero risk, zero surprises.',
                 color:'#24f0a0',
                 images:[
@@ -188,12 +188,12 @@ export default function Home() {
                 ]
               },
               {
-                num:'03', title:'We Paint & Ship', icon:'📦',
+                num:'03', title:'Stencil, Paint & Ship', icon:'📦',
                 body:'Hand-painted in our Michigan studio. Free shipping on Crugly. Flat rate on Rugly. Or pick it up locally.',
                 color:'#f04624',
                 images:[
+                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/6ea7a20dd_IMG_1766.jpg",
                   "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/3c3b3497d_finishedproduct.png",
-                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/8c2ad34fb_5.png",
                 ]
               }
             ].map(s => {
