@@ -44,6 +44,13 @@ export default function Home() {
     return () => clearInterval(stepInterval);
   }, []);
 
+  useEffect(() => {
+    const videoInterval = setInterval(() => {
+      setCurrentHeroVideo((prev) => (prev + 1) % HERO_VIDEOS.length);
+    }, 12000);
+    return () => clearInterval(videoInterval);
+  }, []);
+
   const handleGrabIt = async (product) => {
     // Check if we're in an iframe (Base44 preview)
     if (window.self !== window.top) {
