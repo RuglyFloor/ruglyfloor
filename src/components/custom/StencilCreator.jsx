@@ -30,6 +30,7 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
     img.onload = () => {
       setOriginalImage(img);
     };
+    // imageDataUrl can be a data URL or an object URL from the cropper
     img.src = imageDataUrl;
   };
 
