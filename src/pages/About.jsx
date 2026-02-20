@@ -20,9 +20,9 @@ export default function About() {
   return (
     <div className="min-h-screen">
       <SEOHead
-        title={seoData?.seo_title || "Rugly Floors - About"}
-        description={typeof seoData?.seo_description === 'string' ? seoData.seo_description : "Meet Ryan Hensley, founder of Rugly Floor. Learn about our passion for large-scale art and hand-painted custom rugs that transform spaces."}
-        keywords={Array.isArray(seoData?.seo_keywords) ? seoData.seo_keywords : ['about rugly', 'ryan hensley', 'custom rug artist', 'hand painted rug creator']}
+        title={seoData?.seo_title || "About Rugly Floor | Hand-Painted Rug Studio in Lansing, Michigan"}
+        description={typeof seoData?.seo_description === 'string' ? seoData.seo_description : "Meet Ryan Hensley, founder of Rugly Floor — a Lansing, Michigan studio creating custom hand-painted rugs. Each rug is a one-of-a-kind piece of floor art made locally in Michigan."}
+        keywords={Array.isArray(seoData?.seo_keywords) ? seoData.seo_keywords : ['about rugly floor', 'Ryan Hensley Lansing Michigan', 'custom rug artist Michigan', 'hand painted rug studio Lansing', 'local rug maker Michigan']}
         url="/about"
       />
       {/* Hero Section */}
