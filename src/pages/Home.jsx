@@ -309,7 +309,7 @@ export default function Home() {
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
               Real Customers, Real Reviews
             </h2>
-            <p className="text-xl text-gray-600 mb-8">
+            <p className="text-xl mb-8" style={{color: 'var(--brand-red)'}}>
               See what people are saying about their Rugly experience
             </p>
           </div>
