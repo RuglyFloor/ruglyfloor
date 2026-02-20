@@ -503,7 +503,7 @@ export default function CustomBuilder() {
         <p className="text-center text-gray-600 mb-8">Create a one-of-a-kind piece in four simple steps</p>
 
         {/* Email capture bar */}
-        {!localStorage.getItem('rugly_lead_email') && (
+        {showEmailCapture && (
           <div className="mb-8 rounded-xl p-4 flex flex-col sm:flex-row items-center gap-3" style={{backgroundColor:'#eff6ff', border:'2px solid #4075ff'}}>
             <div className="flex-1 text-sm font-medium" style={{color:'#343634'}}>
               💌 Get a preview before we paint — enter your email to save your design as you go.
@@ -511,7 +511,7 @@ export default function CustomBuilder() {
             <form className="flex gap-2 w-full sm:w-auto" onSubmit={e => {
               e.preventDefault();
               const val = e.target.email.value.trim();
-              if (val) { localStorage.setItem('rugly_lead_email', val); e.target.closest('div').remove(); }
+              if (val) { localStorage.setItem('rugly_lead_email', val); setShowEmailCapture(false); }
             }}>
               <input name="email" type="email" placeholder="your@email.com" required
                 className="border-2 border-gray-300 rounded-lg px-3 py-2 text-sm flex-1 sm:w-52 focus:outline-none focus:border-blue-500" />
