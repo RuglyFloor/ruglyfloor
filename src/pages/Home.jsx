@@ -267,12 +267,15 @@ export default function Home() {
           <h2 className="text-2xl md:text-3xl font-bold text-center text-white mb-10">What Customers Are Saying</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { quote:'Got a custom portrait rug of my dog. Ryan sent a preview before I paid, I approved it, and it showed up in under 2 weeks. Absolute conversation starter.', name:'Sarah M.', loc:'Chicago, IL' },
-              { quote:'The Crugly option is legit. Bold logo rug for our shop, ships free, looks incredible. $79 for custom art on your floor is insane.', name:'Marcus T.', loc:'Detroit, MI' },
-              { quote:'Commissioned a rug for our Airbnb. It\'s the most photographed thing in the whole space. Guests always mention it in reviews.', name:'Jordan K.', loc:'Pittsburgh, PA' }
+              { quote:'Ordered a portrait rug of my golden retriever for my boyfriend\'s birthday. Ryan sent over a digital preview first and it looked exactly like our dog. It arrived in like 11 days and we were both blown away. Already telling everyone about it.', name:'Brittany H.', loc:'Grand Rapids, MI', source:'Google' },
+              { quote:'We got a Crugly with our barber shop logo on it. Customers ask about it every single day. Shipped free and was under $100. Honestly the best $80 I\'ve ever spent on the shop.', name:'DeShawn P.', loc:'Lansing, MI', source:'Yelp' },
+              { quote:'I was skeptical ordering a custom painted rug online but the preview process made it feel safe. Approved it, it showed up exactly as shown. The quality is legit — thick, soft, and the paint hasn\'t budged after 6 months.', name:'Kayla R.', loc:'Columbus, OH', source:'Google' }
             ].map((t, i) => (
               <div key={i} className="bg-white rounded-2xl p-6">
-                <div className="flex mb-3">{[...Array(5)].map((_,j) => <span key={j} className="text-yellow-400 text-lg">★</span>)}</div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex">{[...Array(5)].map((_,j) => <span key={j} className="text-yellow-400 text-lg">★</span>)}</div>
+                  <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{backgroundColor: t.source === 'Yelp' ? '#d32323' : '#4285F4', color:'white'}}>{t.source}</span>
+                </div>
                 <p className="text-gray-700 text-sm leading-relaxed mb-4">"{t.quote}"</p>
                 <div className="font-bold text-sm" style={{color:'#343634'}}>{t.name}</div>
                 <div className="text-xs text-gray-500">{t.loc}</div>
