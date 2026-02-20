@@ -383,9 +383,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Our Process Section */}
       {/* Studio Story */}
-      <section className="py-20 px-6 bg-slate-900 text-white relative overflow-hidden">
       <section className="py-20 px-6 bg-slate-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <img
