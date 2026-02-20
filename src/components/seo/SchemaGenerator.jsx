@@ -28,13 +28,24 @@ export const generateOrganizationSchema = () => {
     name: 'Rugly Floor - Homesteads, LLC',
     url: 'https://ruglyfloor.com',
     logo: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/9a05f04b4_RUGLYMASTERLOGO-92.png',
-    description: 'Custom hand-painted rugs for spaces that inspire',
-    telephone: '(517) 777-8474',
+    description: 'Custom hand-painted rugs handcrafted in Lansing, Michigan. Shop Crugly, Rugly, and Rugly LX quality tiers.',
+    telephone: '+15177778474',
+    email: 'info@ruglyfloor.com',
     address: {
       '@type': 'PostalAddress',
+      streetAddress: 'Lansing',
+      addressLocality: 'Lansing',
+      addressRegion: 'MI',
+      postalCode: '48910',
       addressCountry: 'US'
     },
-    sameAs: []
+    sameAs: [
+      'https://www.facebook.com/profile.php?id=61585565308752',
+      'https://instagram.com/ruglyfloor',
+      'https://twitter.com/ruglyfloor',
+      'https://tiktok.com/@ruglyfloor',
+      'https://www.yelp.com/biz/rugly-floor-lansing'
+    ]
   };
 };
 
