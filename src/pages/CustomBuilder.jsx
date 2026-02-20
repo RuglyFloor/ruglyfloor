@@ -1444,6 +1444,7 @@ export default function CustomBuilder() {
                       <StencilCreator
                         paintColor={getAvailablePaintColors().find(c => c.name === config.paintColor)?.hex || '#000000'}
                         baseColor={BASE_COLORS.find(c => c.name === config.baseColor)?.hex || '#86cb92'}
+                        rugSize={config.size}
                         onSaveStencil={(stencilUrl) => {
                           setConfig(prev => ({ ...prev, imageUrl: stencilUrl, previewUrl: stencilUrl }));
                         }}
