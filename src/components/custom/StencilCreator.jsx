@@ -245,11 +245,13 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
             <Card>
               <CardContent className="p-4">
                 <div className="rounded-lg p-4 flex items-center justify-center" style={{ 
-                  backgroundColor: baseColor || '#86cb92'
+                  backgroundColor: baseColor || '#86cb92',
+                  borderRadius: rugSize === '4ft round' ? '50%' : '8px'
                 }}>
                   <canvas
                     ref={canvasRef}
-                    className="max-w-full rounded shadow-2xl"
+                    className="max-w-full shadow-2xl"
+                    style={{ borderRadius: rugSize === '4ft round' ? '50%' : '4px' }}
                   />
                 </div>
                 <p className="text-xs text-center text-gray-600 mt-2">
