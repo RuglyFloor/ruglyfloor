@@ -12,7 +12,6 @@ import AvailableRugsHorizontalScroll from '../components/custom/AvailableRugsHor
 
 const HERO_VIDEOS = [
   'IT7Zkp4UwEA',
-  'oGBsu7bQMAE',
 ];
 
 export default function Home() {
