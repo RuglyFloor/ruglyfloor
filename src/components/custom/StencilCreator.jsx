@@ -237,7 +237,7 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
   return (
     <div className="space-y-6">
       {!originalImage ? (
-        <ImageUploader onImageSelect={handleImageSelect} />
+        <ImageUploader onImageSelect={handleImageSelect} rugSize={rugSize} />
       ) : (
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Canvas Preview */}
