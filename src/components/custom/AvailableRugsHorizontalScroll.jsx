@@ -68,7 +68,7 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
       <div className="max-w-[1600px] mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-5xl font-bold text-gray-900 mb-4">Available Rugs</h2>
-          <p className="text-gray-600 text-lg">Scroll down to explore our collection</p>
+          <p className="text-gray-600 text-lg">Rug designs we have now ready to ship</p>
           <div className="mt-4 text-sm text-gray-500">
             Rug {activeIndex + 1} of {products.length}
           </div>
