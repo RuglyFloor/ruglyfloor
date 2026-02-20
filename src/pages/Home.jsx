@@ -267,9 +267,9 @@ export default function Home() {
           <h2 className="text-2xl md:text-3xl font-bold text-center text-white mb-10">What Customers Are Saying</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {[
+              { quote:'I purchased a rug from Rugly Floor and I absolutely adore how it turned out. With a child and four pets, I opted for the budget-friendly choice since rugs in my home experience a lot of spills. However, I still wanted to incorporate decor that adds a stylish and unique flair, and my rug certainly achieves that. I receive numerous compliments on it.', name:'Melissa L.', loc:'Denver, CO', source:'Yelp' },
+              { quote:'I received three rugs from Rugly Floor and I love all of them! I have them in my business and would highly recommend these rugs for home or commercial use!', name:'Laura B.', loc:'Lansing, MI', source:'Yelp' },
               { quote:'Ordered a portrait rug of my golden retriever for my boyfriend\'s birthday. Ryan sent over a digital preview first and it looked exactly like our dog. It arrived in like 11 days and we were both blown away. Already telling everyone about it.', name:'Brittany H.', loc:'Grand Rapids, MI', source:'Google' },
-              { quote:'We got a Crugly with our barber shop logo on it. Customers ask about it every single day. Shipped free and was under $100. Honestly the best $80 I\'ve ever spent on the shop.', name:'DeShawn P.', loc:'Lansing, MI', source:'Yelp' },
-              { quote:'I was skeptical ordering a custom painted rug online but the preview process made it feel safe. Approved it, it showed up exactly as shown. The quality is legit — thick, soft, and the paint hasn\'t budged after 6 months.', name:'Kayla R.', loc:'Columbus, OH', source:'Google' }
             ].map((t, i) => (
               <div key={i} className="bg-white rounded-2xl p-6">
                 <div className="flex items-center justify-between mb-3">
