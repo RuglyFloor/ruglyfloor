@@ -13,47 +13,6 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
   const navigate = useNavigate();
   const containerRef = useRef(null);
   const sectionRef = useRef(null);
-  const isScrollingThrough = useRef(false);
-
-  // Scroll-jacking navigation
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const handleWheel = (e) => {
-      const rect = section.getBoundingClientRect();
-      const isInView = rect.top <= 0 && rect.bottom >= window.innerHeight;
-      
-      if (!isInView || isHovering) return;
-
-      // If we're in the section, hijack the scroll
-      if (activeIndex < products.length - 1 || (e.deltaY < 0 && activeIndex > 0)) {
-        e.preventDefault();
-        
-        if (isScrollingThrough.current) return;
-        isScrollingThrough.current = true;
-
-        if (e.deltaY > 0 && activeIndex < products.length - 1) {
-          // Scroll down - next rug
-          setDirection(1);
-          setActiveIndex(prev => prev + 1);
-          setImageIndex(0);
-        } else if (e.deltaY < 0 && activeIndex > 0) {
-          // Scroll up - previous rug
-          setDirection(-1);
-          setActiveIndex(prev => prev - 1);
-          setImageIndex(0);
-        }
-
-        setTimeout(() => {
-          isScrollingThrough.current = false;
-        }, 200);
-      }
-    };
-
-    section.addEventListener('wheel', handleWheel, { passive: false });
-    return () => section.removeEventListener('wheel', handleWheel);
-  }, [activeIndex, products.length, isHovering]);
 
   if (!products || products.length === 0) {
     return (
