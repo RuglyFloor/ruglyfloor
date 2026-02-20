@@ -65,11 +65,18 @@ export default function ImageUploader({ onImageSelect, accept = 'image/*', rugSi
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
-  // Auto-select shape from rug size; fall back to rectangle
-  const autoShape = rugSize && SIZE_TO_SHAPE[rugSize]
-    ? { ...RUG_SHAPES.find(s => s.id === SIZE_TO_SHAPE[rugSize].id), ...SIZE_TO_SHAPE[rugSize] }
-    : RUG_SHAPES[0];
-  const [selectedShape, setSelectedShape] = useState(autoShape);
+  const getShapeFromSize = (size) => {
+    if (size && SIZE_TO_SHAPE[size]) {
+      return { ...RUG_SHAPES.find(s => s.id === SIZE_TO_SHAPE[size].id), ...SIZE_TO_SHAPE[size] };
+    }
+    return RUG_SHAPES[0];
+  };
+
+  const [selectedShape, setSelectedShape] = useState(() => getShapeFromSize(rugSize));
+
+  useEffect(() => {
+    setSelectedShape(getShapeFromSize(rugSize));
+  }, [rugSize]);
 
   const fileInputRef = useRef(null);
 
