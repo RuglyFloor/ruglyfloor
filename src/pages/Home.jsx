@@ -162,7 +162,7 @@ export default function Home() {
           <div className="mt-8 flex flex-wrap justify-center gap-4 md:gap-8 text-white/90 text-sm font-medium">
             <span>✦ From $79</span>
             <span>✦ Preview before you pay</span>
-            <span>✦ Ready in 6 days</span>
+            <span>✦ Upload your own design</span>
             <span>✦ Free shipping on Crugly</span>
             <span>✦ Local pickup available</span>
           </div>
