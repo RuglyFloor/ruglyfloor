@@ -11,6 +11,16 @@ const RUG_SHAPES = [
   { id: 'round', label: 'Round', aspect: 1, isRound: true },
 ];
 
+// Map rug size values to shape presets
+const SIZE_TO_SHAPE = {
+  tiny:      { id: 'rectangle', aspect: 3 / 2 },   // 2x3
+  small:     { id: 'rectangle', aspect: 6 / 4 },   // 4x6
+  medium:    { id: 'rectangle', aspect: 7 / 5 },   // 5x7
+  large:     { id: 'rectangle', aspect: 10 / 8 },  // 8x10
+  huge:      { id: 'rectangle', aspect: 11 / 9 },  // 9x11
+  '4ft round': { id: 'round', aspect: 1, isRound: true },
+};
+
 async function getCroppedImg(imageSrc, pixelCrop, isRound = false) {
   const image = await createImageBitmap(await (await fetch(imageSrc)).blob());
   const canvas = document.createElement('canvas');
