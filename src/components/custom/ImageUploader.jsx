@@ -1,12 +1,60 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Upload, X, Check } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Upload, Check, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import Cropper from 'react-easy-crop';
+
+const RUG_SHAPES = [
+  { id: 'rectangle', label: 'Rectangle', aspect: 4 / 3 },
+  { id: 'square', label: 'Square', aspect: 1 },
+  { id: 'runner', label: 'Runner', aspect: 3 },
+  { id: 'round', label: 'Round', aspect: 1, isRound: true },
+];
+
+async function getCroppedImg(imageSrc, pixelCrop, isRound = false) {
+  const image = await createImageBitmap(await (await fetch(imageSrc)).blob());
+  const canvas = document.createElement('canvas');
+  canvas.width = pixelCrop.width;
+  canvas.height = pixelCrop.height;
+  const ctx = canvas.getContext('2d');
+
+  if (isRound) {
+    ctx.beginPath();
+    ctx.ellipse(
+      pixelCrop.width / 2,
+      pixelCrop.height / 2,
+      pixelCrop.width / 2,
+      pixelCrop.height / 2,
+      0, 0, Math.PI * 2
+    );
+    ctx.clip();
+  }
+
+  ctx.drawImage(
+    image,
+    pixelCrop.x,
+    pixelCrop.y,
+    pixelCrop.width,
+    pixelCrop.height,
+    0,
+    0,
+    pixelCrop.width,
+    pixelCrop.height
+  );
+
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => resolve(blob), 'image/png');
+  });
+}
 
 export default function ImageUploader({ onImageSelect, accept = 'image/*' }) {
   const [isDragging, setIsDragging] = useState(false);
-  const [preview, setPreview] = useState(null);
-  const [showPreview, setShowPreview] = useState(false);
+  const [imageSrc, setImageSrc] = useState(null);
+  const [isCropping, setIsCropping] = useState(false);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [selectedShape, setSelectedShape] = useState(RUG_SHAPES[0]);
   const fileInputRef = useRef(null);
 
   const handleFile = (file) => {
@@ -14,22 +62,25 @@ export default function ImageUploader({ onImageSelect, accept = 'image/*' }) {
       alert('Please select an image file');
       return;
     }
-
     const reader = new FileReader();
     reader.onload = (e) => {
-      setPreview(e.target.result);
-      setShowPreview(true);
+      setImageSrc(e.target.result);
+      setIsCropping(true);
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
     };
     reader.readAsDataURL(file);
   };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
+  const onCropComplete = useCallback((_, pixels) => {
+    setCroppedAreaPixels(pixels);
+  }, []);
 
-  const handleDragLeave = () => {
-    setIsDragging(false);
+  const handleConfirm = async () => {
+    const blob = await getCroppedImg(imageSrc, croppedAreaPixels, selectedShape.isRound);
+    onImageSelect(URL.createObjectURL(blob), blob);
+    setIsCropping(false);
+    setImageSrc(null);
   };
 
   const handleDrop = (e) => {
@@ -39,41 +90,75 @@ export default function ImageUploader({ onImageSelect, accept = 'image/*' }) {
     if (file) handleFile(file);
   };
 
-  const handleFileInput = (e) => {
-    const file = e.target.files[0];
-    if (file) handleFile(file);
-  };
-
-  const handleConfirm = () => {
-    onImageSelect(preview);
-    setShowPreview(false);
-    setPreview(null);
-  };
-
-  if (showPreview) {
+  if (isCropping && imageSrc) {
     return (
       <Card>
-        <CardContent className="p-6 space-y-4">
-          <div className="rounded-lg overflow-hidden bg-gray-100">
-            <img src={preview} alt="Preview" className="w-full max-h-96 object-contain" />
+        <CardContent className="p-4 space-y-4">
+          <div className="text-sm font-semibold text-gray-700">Crop & Fit to Rug Shape</div>
+
+          {/* Shape selector */}
+          <div className="flex gap-2 flex-wrap">
+            {RUG_SHAPES.map((shape) => (
+              <button
+                key={shape.id}
+                onClick={() => { setSelectedShape(shape); setCrop({ x: 0, y: 0 }); setZoom(1); }}
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg border-2 transition-all"
+                style={{
+                  borderColor: selectedShape.id === shape.id ? '#4075ff' : '#e5e7eb',
+                  color: selectedShape.id === shape.id ? '#4075ff' : '#6b7280',
+                  backgroundColor: selectedShape.id === shape.id ? '#eff6ff' : 'white'
+                }}
+              >
+                {shape.label}
+              </button>
+            ))}
           </div>
-          <div className="text-sm text-gray-600">
-            Preview looks good? We'll transform this into a beautiful stencil design.
+
+          {/* Cropper */}
+          <div
+            className="relative bg-gray-900 rounded-xl overflow-hidden"
+            style={{ height: 320 }}
+          >
+            <Cropper
+              image={imageSrc}
+              crop={crop}
+              zoom={zoom}
+              aspect={selectedShape.aspect}
+              cropShape={selectedShape.isRound ? 'round' : 'rect'}
+              showGrid={true}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={onCropComplete}
+            />
           </div>
+
+          {/* Zoom slider */}
+          <div className="flex items-center gap-3">
+            <ZoomOut className="w-4 h-4 text-gray-500 flex-shrink-0" />
+            <input
+              type="range"
+              min={1}
+              max={3}
+              step={0.05}
+              value={zoom}
+              onChange={(e) => setZoom(Number(e.target.value))}
+              className="flex-1 accent-blue-500"
+            />
+            <ZoomIn className="w-4 h-4 text-gray-500 flex-shrink-0" />
+          </div>
+
           <div className="flex gap-3">
-            <Button
-              onClick={handleConfirm}
-              className="flex-1 bg-green-600 hover:bg-green-700 gap-2"
-            >
+            <Button onClick={handleConfirm} className="flex-1 gap-2 text-white" style={{ backgroundColor: '#4075ff' }}>
               <Check className="w-4 h-4" />
-              Use This Image
+              Apply Crop
             </Button>
             <Button
-              onClick={() => setShowPreview(false)}
               variant="outline"
-              className="flex-1"
+              onClick={() => { setIsCropping(false); setImageSrc(null); }}
+              className="gap-2"
             >
-              Try Another
+              <RotateCcw className="w-4 h-4" />
+              Cancel
             </Button>
           </div>
         </CardContent>
@@ -85,14 +170,12 @@ export default function ImageUploader({ onImageSelect, accept = 'image/*' }) {
     <Card>
       <CardContent className="p-12">
         <div
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
+          onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+          onDragLeave={() => setIsDragging(false)}
           onDrop={handleDrop}
-          onClick={() => fileInputRef.current && fileInputRef.current.click()}
+          onClick={() => fileInputRef.current?.click()}
           className={`border-2 border-dashed rounded-lg p-12 cursor-pointer text-center transition-all ${
-            isDragging
-              ? 'border-blue-500 bg-blue-50 scale-105'
-              : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
+            isDragging ? 'border-blue-500 bg-blue-50 scale-105' : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
           }`}
         >
           <div className="flex justify-center mb-4">
@@ -101,20 +184,16 @@ export default function ImageUploader({ onImageSelect, accept = 'image/*' }) {
             </div>
           </div>
           <h3 className="text-xl font-bold mb-2">Drop Your Image Here</h3>
-          <p className="text-gray-600 mb-4">
-            Or click to browse your files (PNG, JPG, GIF, etc.)
-          </p>
+          <p className="text-gray-600 mb-4">Or click to browse your files (PNG, JPG, GIF, etc.)</p>
           <Button type="button">Choose Image</Button>
-          <p className="text-xs text-gray-500 mt-4">
-            💡 Pro tip: Logos, photos, and artwork all work great!
-          </p>
+          <p className="text-xs text-gray-500 mt-4">💡 Pro tip: Logos, photos, and artwork all work great!</p>
         </div>
         <input
           ref={fileInputRef}
           type="file"
           className="hidden"
           accept={accept}
-          onChange={handleFileInput}
+          onChange={(e) => { const f = e.target.files[0]; if (f) handleFile(f); }}
         />
       </CardContent>
     </Card>
