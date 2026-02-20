@@ -15,7 +15,7 @@ const PAINT_COLORS = [
   { name: 'Dark Brown', hex: '#3e2723' }
 ];
 
-export default function StencilCreator({ onSaveStencil, onConfigChange, paintColor, baseColor }) {
+export default function StencilCreator({ onSaveStencil, onConfigChange, paintColor, baseColor, rugSize }) {
   const [originalImage, setOriginalImage] = useState(null);
   const [threshold, setThreshold] = useState(110);
   const [colors, setColors] = useState(3);
