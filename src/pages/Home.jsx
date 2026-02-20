@@ -10,10 +10,7 @@ import { generateOrganizationSchema } from '../components/seo/SchemaGenerator';
 import { useSEO } from '../components/seo/useSEO';
 import AvailableRugsHorizontalScroll from '../components/custom/AvailableRugsHorizontalScroll';
 
-const HERO_VIDEOS = [
-  'IT7Zkp4UwEA',
-  'oGBsu7bQMAE',
-];
+
 
 export default function Home() {
   const seoData = useSEO('');
