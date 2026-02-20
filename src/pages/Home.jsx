@@ -6,7 +6,7 @@ import { Palette, Sparkles, Package, CheckCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import SEOHead from '../components/seo/SEOHead';
-import { generateOrganizationSchema } from '../components/seo/SchemaGenerator';
+import { generateLocalBusinessSchema } from '../components/seo/SchemaGenerator';
 import { useSEO } from '../components/seo/useSEO';
 import AvailableRugsHorizontalScroll from '../components/custom/AvailableRugsHorizontalScroll';
 
