@@ -68,12 +68,43 @@ export const generateLocalBusinessSchema = () => {
     '@type': 'LocalBusiness',
     name: 'Rugly Floor',
     image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/9a05f04b4_RUGLYMASTERLOGO-92.png',
-    telephone: '(517) 777-8474',
+    telephone: '+15177778474',
+    email: 'info@ruglyfloor.com',
     url: 'https://ruglyfloor.com',
     priceRange: '$$',
+    description: 'Custom hand-painted rugs handcrafted in Lansing, Michigan. Crugly, Rugly, and Rugly LX quality tiers. Free shipping on Crugly orders.',
     address: {
       '@type': 'PostalAddress',
+      streetAddress: 'Lansing',
+      addressLocality: 'Lansing',
+      addressRegion: 'MI',
+      postalCode: '48910',
       addressCountry: 'US'
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: 42.7325,
+      longitude: -84.5555
+    },
+    openingHoursSpecification: {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: '09:00',
+      closes: '18:00'
+    },
+    sameAs: [
+      'https://www.facebook.com/profile.php?id=61585565308752',
+      'https://instagram.com/ruglyfloor',
+      'https://www.yelp.com/biz/rugly-floor-lansing'
+    ],
+    hasMap: 'https://maps.google.com/?q=Lansing,MI',
+    areaServed: {
+      '@type': 'City',
+      name: 'Lansing',
+      containedInPlace: {
+        '@type': 'State',
+        name: 'Michigan'
+      }
     }
   };
 };
