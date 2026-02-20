@@ -35,13 +35,20 @@ export default function SEOHead({
       setMetaTag('name', 'keywords', keywords.join(', '));
     }
 
+    // Geo / Local SEO tags
+    setMetaTag('name', 'geo.region', 'US-MI');
+    setMetaTag('name', 'geo.placename', 'Lansing, Michigan');
+    setMetaTag('name', 'geo.position', '42.7325;-84.5555');
+    setMetaTag('name', 'ICBM', '42.7325, -84.5555');
+
     // Open Graph
     setMetaTag('property', 'og:title', title);
     setMetaTag('property', 'og:description', description);
     setMetaTag('property', 'og:type', type);
     setMetaTag('property', 'og:url', fullUrl);
     setMetaTag('property', 'og:image', ogImage);
-    setMetaTag('property', 'og:site_name', 'Rugly Floors');
+    setMetaTag('property', 'og:site_name', 'Rugly Floor');
+    setMetaTag('property', 'og:locale', 'en_US');
 
     // Twitter Card
     setMetaTag('name', 'twitter:card', 'summary_large_image');
