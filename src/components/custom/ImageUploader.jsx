@@ -57,14 +57,20 @@ async function getCroppedImg(imageSrc, pixelCrop, isRound = false) {
   });
 }
 
-export default function ImageUploader({ onImageSelect, accept = 'image/*' }) {
+export default function ImageUploader({ onImageSelect, accept = 'image/*', rugSize }) {
   const [isDragging, setIsDragging] = useState(false);
   const [imageSrc, setImageSrc] = useState(null);
   const [isCropping, setIsCropping] = useState(false);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  const [selectedShape, setSelectedShape] = useState(RUG_SHAPES[0]);
+
+  // Auto-select shape from rug size; fall back to rectangle
+  const autoShape = rugSize && SIZE_TO_SHAPE[rugSize]
+    ? { ...RUG_SHAPES.find(s => s.id === SIZE_TO_SHAPE[rugSize].id), ...SIZE_TO_SHAPE[rugSize] }
+    : RUG_SHAPES[0];
+  const [selectedShape, setSelectedShape] = useState(autoShape);
+
   const fileInputRef = useRef(null);
 
   const handleFile = (file) => {
