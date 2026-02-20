@@ -100,12 +100,12 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <SEOHead
-        title={seoData?.seo_title || "Rugly Floor — Custom Painted Rugs"}
-        description={typeof seoData?.seo_description === 'string' ? seoData.seo_description : "Custom hand-painted rugs designed for your space. Choose from Crugly (budget), Rugly (premium), or Rugly LX (luxury) quality tiers. Hand-painted in our Michigan studio."}
-        keywords={Array.isArray(seoData?.seo_keywords) ? seoData.seo_keywords : ['custom painted rugs', 'hand painted rugs', 'crugly', 'rugly', 'custom floor art', 'painted area rugs', 'unique home decor', 'custom rug design', 'hand-painted rugs for sale', 'personalized floor art', 'luxury hand-painted rugs', 'custom painted washable rugs']}
+        title={seoData?.seo_title || "Rugly Floor — Custom Hand-Painted Rugs | Lansing, Michigan"}
+        description={typeof seoData?.seo_description === 'string' ? seoData.seo_description : "Rugly Floor creates custom hand-painted rugs in Lansing, Michigan. Order online or pick up locally. Choose Crugly (from $79), Rugly, or Rugly LX. Free shipping on Crugly orders."}
+        keywords={Array.isArray(seoData?.seo_keywords) ? seoData.seo_keywords : ['custom painted rugs Lansing Michigan', 'hand painted rugs Michigan', 'custom rugs Lansing MI', 'painted area rugs', 'custom floor art Michigan', 'rugly floor Lansing', 'crugly rugs', 'hand-painted rugs for sale', 'custom rug design Michigan', 'local rug studio Lansing', 'personalized floor art', 'unique rugs Michigan']}
         url="/"
         type="website"
-        schema={generateOrganizationSchema()} />
+        schema={generateLocalBusinessSchema()} />
 
       {/* Hero Section */}
       <section className="relative py-32 px-6 overflow-hidden">
