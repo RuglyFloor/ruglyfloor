@@ -384,9 +384,7 @@ export default function Home() {
       </section>
 
       {/* Our Process Section */}
-      <section className="py-20 px-6 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold mb-12 text-center">FROM CONCEPT TO CREATION</h2>
+      {/* Studio Story */}
           <div className="relative h-96 bg-gray-100 rounded-lg overflow-hidden mb-6">
             {[
             {
