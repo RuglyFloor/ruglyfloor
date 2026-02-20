@@ -228,6 +228,7 @@ export default function CustomBuilder() {
   const [uploading, setUploading] = useState(false);
   const [isRush, setIsRush] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [showEmailCapture, setShowEmailCapture] = useState(!localStorage.getItem('rugly_lead_email'));
   const [measurementSystem, setMeasurementSystem] = useState('imperial'); // 'imperial' or 'metric'
   const [customDimensions, setCustomDimensions] = useState({
     lengthFeet: '',
