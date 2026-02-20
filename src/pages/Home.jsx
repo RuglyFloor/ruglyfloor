@@ -201,7 +201,6 @@ export default function Home() {
                 body:"Use our builder to pick your size, colors, and upload your design — or describe your vision and we'll handle it.",
                 color:'#4075ff',
                 images:[
-                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/0988acef9_Screenshot2026-02-20at115404.png",
                   "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/db8fa3de2_Screenshot2026-02-20at115711.png",
                 ]
               },
