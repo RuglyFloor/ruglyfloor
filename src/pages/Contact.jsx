@@ -79,9 +79,10 @@ ${formData.message}
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-6">
       <SEOHead 
-        title="Contact Us - Rugly Floors"
-        description="Get in touch with Rugly Floors for custom rug inquiries, questions, or support."
-        keywords={['contact', 'custom rugs', 'inquiry', 'support']}
+        title="Contact Rugly Floor | Lansing, Michigan Custom Rug Studio"
+        description="Contact Rugly Floor in Lansing, Michigan. Call (517) 777-8474 or email info@ruglyfloor.com for custom hand-painted rug inquiries, quotes, or local pickup."
+        keywords={['contact Rugly Floor', 'custom rugs Lansing Michigan', 'rug studio phone number', 'hand painted rug inquiry Michigan', 'local pickup rugs Lansing']}
+        url="/contact"
       />
       
       <div className="max-w-6xl mx-auto">
