@@ -201,6 +201,11 @@ function AdminProductsContent() {
       alert('Please select at least one image to display');
       return;
     }
+
+    if (!formData.backing || !formData.warranty || !formData.shipping_info || !formData.care_instructions) {
+      alert('Please fill in all required fields: Backing, Warranty, Shipping Info, and Care Instructions');
+      return;
+    }
     
     // Set backward compatibility fields
     const mainImage = selectedImages[0];
