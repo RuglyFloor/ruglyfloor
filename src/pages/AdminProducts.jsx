@@ -34,7 +34,11 @@ function AdminProductsContent() {
     all_images: [],
     size: '5x7',
     category: 'original',
-    in_stock: true
+    in_stock: true,
+    backing: '',
+    warranty: '',
+    shipping_info: '',
+    care_instructions: ''
   });
 
   const { data: products, isLoading } = useQuery({
