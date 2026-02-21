@@ -27,7 +27,6 @@ export default function Shop() {
         return [];
       }
     },
-    initialData: [],
     staleTime: 60000,
     retry: 1
   });
