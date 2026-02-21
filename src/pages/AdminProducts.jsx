@@ -246,7 +246,7 @@ function AdminProductsContent() {
     setFormData({
       name: product.name,
       description: product.description || '',
-      price: product.price.toString(),
+      price: product.price != null ? product.price.toString() : '',
       all_images: allImages,
       size: product.size || '5x7',
       category: product.category || 'original',
