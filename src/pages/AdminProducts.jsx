@@ -254,7 +254,11 @@ function AdminProductsContent() {
       all_images: allImages,
       size: product.size || '5x7',
       category: product.category || 'original',
-      in_stock: product.in_stock !== undefined ? product.in_stock : true
+      in_stock: product.in_stock !== undefined ? product.in_stock : true,
+      backing: product.backing || '',
+      warranty: product.warranty || '',
+      shipping_info: product.shipping_info || '',
+      care_instructions: product.care_instructions || ''
     });
   };
 
