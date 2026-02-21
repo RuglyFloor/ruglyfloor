@@ -22,7 +22,7 @@ export default function Home() {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [currentHeroVideo, setCurrentHeroVideo] = useState(0);
 
-  const { data: products = [] } = useQuery({
+  const { data: products = [], isLoading: productsLoading } = useQuery({
     queryKey: ['featured-products'],
     queryFn: () => base44.entities.Product.filter({ category: 'original' })
   });
