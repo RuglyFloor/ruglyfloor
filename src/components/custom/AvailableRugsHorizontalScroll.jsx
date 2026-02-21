@@ -14,16 +14,7 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
   const containerRef = useRef(null);
   const sectionRef = useRef(null);
 
-  if (!products || products.length === 0) {
-    return (
-      <section className="bg-white py-20 px-6">
-        <div className="max-w-[1600px] mx-auto">
-          <h2 className="text-5xl font-bold text-gray-900 mb-16 text-center">Available Rugs</h2>
-          <div className="text-center text-gray-600 text-xl">Loading rugs...</div>
-        </div>
-      </section>
-    );
-  }
+  if (!products || products.length === 0) return null;
 
   const handleNext = () => {
     setDirection(1);
