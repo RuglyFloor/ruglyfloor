@@ -360,6 +360,44 @@ function AdminProductsContent() {
                   )}
                 </div>
 
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Backing</Label>
+                    <Input
+                      value={formData.backing}
+                      onChange={(e) => setFormData(prev => ({ ...prev, backing: e.target.value }))}
+                      placeholder="e.g., Non-slip rubber"
+                    />
+                  </div>
+                  <div>
+                    <Label>Warranty</Label>
+                    <Input
+                      value={formData.warranty}
+                      onChange={(e) => setFormData(prev => ({ ...prev, warranty: e.target.value }))}
+                      placeholder="e.g., 24-hour damage guarantee"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Shipping Info</Label>
+                    <Input
+                      value={formData.shipping_info}
+                      onChange={(e) => setFormData(prev => ({ ...prev, shipping_info: e.target.value }))}
+                      placeholder="e.g., $59 flat rate (3-5 days)"
+                    />
+                  </div>
+                  <div>
+                    <Label>Care Instructions</Label>
+                    <Input
+                      value={formData.care_instructions}
+                      onChange={(e) => setFormData(prev => ({ ...prev, care_instructions: e.target.value }))}
+                      placeholder="e.g., Machine washable, air dry"
+                    />
+                  </div>
+                </div>
+
                 <div>
                   <Label>In Stock</Label>
                   <Select value={formData.in_stock.toString()} onValueChange={(value) => setFormData(prev => ({ ...prev, in_stock: value === 'true' }))}>
