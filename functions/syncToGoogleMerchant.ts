@@ -199,7 +199,8 @@ Deno.serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('[GoogleMerchant] Error:', error.message, error.stack);
-    return Response.json({ error: error.message }, { status: 500 });
+    console.error('[GoogleMerchant] Error:', error.message);
+    console.error('[GoogleMerchant] Stack:', error.stack);
+    return Response.json({ error: error.message, stack: error.stack }, { status: 500 });
   }
 });
