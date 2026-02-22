@@ -305,8 +305,8 @@ export default function Policies() {
             <div>
               <h3 className="font-semibold text-lg mb-2">Cleaning</h3>
               <p>
-                Vacuum regularly using a low-pile setting. For spills, blot immediately with a clean cloth. 
-                Spot clean with mild soap and water as needed. Professional cleaning recommended for deep cleaning.
+                Most Cruglys are machine washable. Woven Ruglys are machine washable and most can be wet vacuumed. 
+                For spills, blot immediately with a clean cloth. Spot clean with mild soap and water as needed.
               </p>
             </div>
 
