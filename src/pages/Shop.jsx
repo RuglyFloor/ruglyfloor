@@ -123,6 +123,7 @@ export default function Shop() {
 
   return (
     <div className="min-h-screen py-12 px-6">
+      {products.length > 0 && <ProductStructuredData products={products} />}
       <SEOHead
         title="Hand-Painted Rugs for Sale | Original Custom Area Rugs & Floor Art"
         description="Buy custom hand-painted rugs online. Shop original bespoke area rugs, unique hand-painted home decor, and one-of-a-kind statement rugs. Best custom rug designers, ready to ship."
