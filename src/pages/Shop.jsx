@@ -159,10 +159,9 @@ export default function Shop() {
             {products.map((product) => {
               const ProductCard = () => {
                 const [selectedImage, setSelectedImage] = React.useState(0);
-                const allImages = [
-                  product.image_url,
-                  ...(product.images || [])
-                ].filter(Boolean);
+                const allImages = product.all_images && product.all_images.filter(img => img.selected).length > 0
+                  ? product.all_images.filter(img => img.selected).map(img => img.url)
+                  : [product.image_url, ...(product.images || [])].filter(Boolean);
                 
                 return (
                   <Card className="overflow-hidden hover:shadow-lg transition-shadow">
