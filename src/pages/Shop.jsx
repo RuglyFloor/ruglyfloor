@@ -9,6 +9,94 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import SEOHead from '../components/seo/SEOHead';
 
+function ProductStructuredData({ products }) {
+  React.useEffect(() => {
+    // Remove any existing product schema scripts
+    document.querySelectorAll('script[data-rugly-product-schema]').forEach(s => s.remove());
+
+    products.forEach((product) => {
+      const allImages = product.all_images
+        ? product.all_images.filter(img => img.selected).map(img => img.url)
+        : [product.image_url, ...(product.images || [])].filter(Boolean);
+
+      const schema = {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": product.name,
+        "description": typeof product.description === 'string' ? product.description : (product.description?.description || ''),
+        "image": allImages,
+        "sku": product.product_number || product.id,
+        "brand": {
+          "@type": "Brand",
+          "name": "Rugly"
+        },
+        "offers": {
+          "@type": "Offer",
+          "url": `https://ruglyfloor.com/ProductDetail?id=${product.id}`,
+          "priceCurrency": "USD",
+          "price": product.price,
+          "priceValidUntil": new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+          "availability": product.in_stock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+          "itemCondition": "https://schema.org/NewCondition",
+          "seller": {
+            "@type": "Organization",
+            "name": "Rugly Floor"
+          },
+          "shippingDetails": {
+            "@type": "OfferShippingDetails",
+            "shippingRate": {
+              "@type": "MonetaryAmount",
+              "value": "59.00",
+              "currency": "USD"
+            },
+            "deliveryTime": {
+              "@type": "ShippingDeliveryTime",
+              "handlingTime": {
+                "@type": "QuantitativeValue",
+                "minValue": 1,
+                "maxValue": 2,
+                "unitCode": "DAY"
+              },
+              "transitTime": {
+                "@type": "QuantitativeValue",
+                "minValue": 3,
+                "maxValue": 5,
+                "unitCode": "DAY"
+              }
+            },
+            "shippingDestination": {
+              "@type": "DefinedRegion",
+              "addressCountry": "US"
+            }
+          },
+          "hasMerchantReturnPolicy": {
+            "@type": "MerchantReturnPolicy",
+            "applicableCountry": "US",
+            "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+            "merchantReturnDays": 24,
+            "returnMethod": "https://schema.org/ReturnByMail",
+            "returnFees": "https://schema.org/FreeReturn"
+          }
+        },
+        ...(product.size ? { "size": product.size } : {}),
+        ...(product.material ? { "material": product.material } : {})
+      };
+
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.setAttribute('data-rugly-product-schema', product.id);
+      script.text = JSON.stringify(schema);
+      document.head.appendChild(script);
+    });
+
+    return () => {
+      document.querySelectorAll('script[data-rugly-product-schema]').forEach(s => s.remove());
+    };
+  }, [products]);
+
+  return null;
+}
+
 export default function Shop() {
   const navigate = useNavigate();
   
