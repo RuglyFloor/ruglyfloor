@@ -193,30 +193,42 @@ export default function Shop() {
                       <h3 className="text-xl font-bold mb-2">{product.name}</h3>
                       <p className="text-gray-600 text-sm mb-2">{typeof product.description === 'string' ? product.description : product.description?.description || ''}</p>
                       <div className="space-y-2 mb-3">
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <span className="font-semibold">Size:</span>
-                          <span>5x7 (60" × 84")</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <span className="font-semibold">Material:</span>
-                          <span>Low-pile synthetic, hand-painted</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <span className="font-semibold">Care:</span>
-                          <span>Machine washable, air dry</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <span className="font-semibold">Backing:</span>
-                          <span>Non-slip rubber</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <span className="font-semibold">Warranty:</span>
-                          <span>24-hour damage guarantee</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <span className="font-semibold">Shipping:</span>
-                          <span>$59 flat rate (3-5 days)</span>
-                        </div>
+                        {product.size && (
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <span className="font-semibold">Size:</span>
+                            <span>{product.size}</span>
+                          </div>
+                        )}
+                        {product.material && (
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <span className="font-semibold">Material:</span>
+                            <span>{product.material}</span>
+                          </div>
+                        )}
+                        {product.care_instructions && (
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <span className="font-semibold">Care:</span>
+                            <span>{product.care_instructions}</span>
+                          </div>
+                        )}
+                        {product.backing && (
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <span className="font-semibold">Backing:</span>
+                            <span>{product.backing}</span>
+                          </div>
+                        )}
+                        {product.warranty && (
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <span className="font-semibold">Warranty:</span>
+                            <span>{product.warranty}</span>
+                          </div>
+                        )}
+                        {product.shipping_info && (
+                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                            <span className="font-semibold">Shipping:</span>
+                            <span>{product.shipping_info}</span>
+                          </div>
+                        )}
                       </div>
                       <div className="flex justify-between items-center pt-2 border-t">
                         <span className="text-2xl font-bold text-blue-600">${product.price}</span>
