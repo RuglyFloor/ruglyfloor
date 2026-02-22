@@ -19,7 +19,7 @@ export default function Policies() {
               <h3 className="font-semibold text-lg mb-2">Damage or Quality Concerns</h3>
               <p>
                 If your rug arrives damaged or with legitimate quality concerns, you may return it within 24 hours of delivery for a full refund. 
-                The rug must be returned in its original condition. Please contact us immediately at orders@ruglyfloor.com with photos of the damage or quality issue.
+                The rug must be returned in its original condition. Please contact us immediately at info@ruglyfloor.com with photos of the damage or quality issue.
               </p>
             </div>
 
@@ -43,7 +43,7 @@ export default function Policies() {
             <div>
               <h3 className="font-semibold text-lg mb-2">Return Process</h3>
               <p>
-                To initiate a return, contact us at orders@ruglyfloor.com or call (517) 777-8474 within the applicable timeframe. 
+                To initiate a return, contact us at info@ruglyfloor.com or call (517) 777-8474 within the applicable timeframe. 
                 Include your order number and reason for return. We will provide return shipping instructions. 
                 Refunds will be processed within 5-7 business days after we receive and inspect the returned item.
               </p>
@@ -330,7 +330,7 @@ export default function Policies() {
               For questions about our policies or your order, please contact:
             </p>
             <div className="space-y-1">
-              <p><strong>Email:</strong> orders@ruglyfloor.com</p>
+              <p><strong>Email:</strong> info@ruglyfloor.com</p>
               <p><strong>Phone:</strong> (517) 777-8474</p>
               <p><strong>Website:</strong> www.ruglyfloor.com</p>
               <p><strong>Business:</strong> Homesteads, LLC</p>
