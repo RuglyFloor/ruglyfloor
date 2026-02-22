@@ -111,6 +111,26 @@ export default function AdminPortal() {
           </Button>
         </div>
 
+        {/* Google Merchant Sync */}
+        <div className="mb-6 p-4 bg-white rounded-xl border flex items-center gap-4">
+          <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+            <RefreshCw className="w-5 h-5 text-white" />
+          </div>
+          <div className="flex-1">
+            <p className="font-semibold text-gray-800">Google Merchant Center</p>
+            {merchantResult && !merchantResult.error && (
+              <p className="text-sm text-green-600">✓ Synced {merchantResult.synced} products{merchantResult.failed > 0 ? `, ${merchantResult.failed} failed` : ''}</p>
+            )}
+            {merchantResult?.error && (
+              <p className="text-sm text-red-500">Error: {merchantResult.error}</p>
+            )}
+            {!merchantResult && <p className="text-sm text-gray-500">Push all products to Google Merchant Center</p>}
+          </div>
+          <Button onClick={handleSyncGoogleMerchant} disabled={syncingMerchant} variant="outline" size="sm">
+            {syncingMerchant ? 'Syncing...' : 'Sync Now'}
+          </Button>
+        </div>
+
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {adminSections.map((section) => (
             <Link key={section.page} to={createPageUrl(section.page)}>
