@@ -56,9 +56,12 @@ async function getGoogleAccessToken() {
     body: `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${jwt}`
   });
 
-  const tokenData = await tokenRes.json();
+  const tokenText = await tokenRes.text();
+  let tokenData;
+  try { tokenData = JSON.parse(tokenText); } catch { tokenData = {}; }
+  console.log('[GoogleMerchant] Token response status:', tokenRes.status, tokenText.slice(0, 500));
   if (!tokenData.access_token) {
-    throw new Error(`Failed to get access token: ${JSON.stringify(tokenData)}`);
+    throw new Error(`Failed to get access token: ${tokenText.slice(0, 500)}`);
   }
   return tokenData.access_token;
 }
