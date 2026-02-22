@@ -70,9 +70,16 @@ export default function Policies() {
             </div>
 
             <div>
-              <h3 className="font-semibold text-lg mb-2">Shipping Costs</h3>
+              <h3 className="font-semibold text-lg mb-2">Crugly Shipping</h3>
               <p>
-                Shipping costs are based on rug size:
+                <strong>Shipping for Crugly is FREE!</strong> Crugly shipments come folded and sealed in a box.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-lg mb-2">Rugly Flat Rate Shipping</h3>
+              <p>
+                Shipping costs for Rugly originals are based on rug size:
               </p>
               <ul className="list-disc ml-6 mt-2 space-y-1">
                 <li>Small, Medium, and Round (4ft): $29</li>
@@ -80,7 +87,7 @@ export default function Policies() {
                 <li>Huge: $99</li>
               </ul>
               <p className="mt-2">
-                <strong>Free shipping on orders of 2 or more rugs!</strong> We ship via ground shipping within the continental United States. 
+                We ship via ground shipping within the continental United States. 
                 International shipping is available upon request with additional fees.
               </p>
             </div>
