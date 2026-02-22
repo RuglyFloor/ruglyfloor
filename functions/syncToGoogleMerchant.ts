@@ -22,11 +22,11 @@ async function getGoogleAccessToken() {
   const signingInput = `${header}.${payload}`;
 
   // Import the private key
-  const pemKey = sa.private_key.replace(/\\n/g, '\n');
+  const pemKey = (sa.private_key || '').replace(/\\n/g, '\n');
   const keyData = pemKey
-    .replace('-----BEGIN PRIVATE KEY-----', '')
-    .replace('-----END PRIVATE KEY-----', '')
-    .replace(/\s/g, '');
+    .replace(/-----BEGIN PRIVATE KEY-----/g, '')
+    .replace(/-----END PRIVATE KEY-----/g, '')
+    .replace(/\s+/g, '');
   const binaryKey = Uint8Array.from(atob(keyData), c => c.charCodeAt(0));
 
   const cryptoKey = await crypto.subtle.importKey(
