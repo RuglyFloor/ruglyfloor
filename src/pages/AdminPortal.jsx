@@ -23,6 +23,21 @@ export default function AdminPortal() {
   };
 
   const [orderCount, setOrderCount] = React.useState(0);
+  const [syncingMerchant, setSyncingMerchant] = React.useState(false);
+  const [merchantResult, setMerchantResult] = React.useState(null);
+
+  const handleSyncGoogleMerchant = async () => {
+    setSyncingMerchant(true);
+    setMerchantResult(null);
+    try {
+      const res = await base44.functions.invoke('syncToGoogleMerchant', {});
+      setMerchantResult(res.data);
+    } catch (error) {
+      setMerchantResult({ error: error.message });
+    } finally {
+      setSyncingMerchant(false);
+    }
+  };
 
   React.useEffect(() => {
     const fetchOrderCount = async () => {
