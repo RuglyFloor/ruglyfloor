@@ -7,7 +7,12 @@ async function getGoogleAccessToken() {
   const serviceAccountJson = Deno.env.get('GOOGLE_SERVICE_ACCOUNT_JSON');
   if (!serviceAccountJson) throw new Error('GOOGLE_SERVICE_ACCOUNT_JSON secret not set');
 
-  const sa = JSON.parse(serviceAccountJson);
+  let sa;
+  try {
+    sa = JSON.parse(serviceAccountJson);
+  } catch (e) {
+    throw new Error(`Invalid GOOGLE_SERVICE_ACCOUNT_JSON: ${e.message}`);
+  }
   const now = Math.floor(Date.now() / 1000);
 
   const header = btoa(JSON.stringify({ alg: 'RS256', typ: 'JWT' })).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
