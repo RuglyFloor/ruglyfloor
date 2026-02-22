@@ -144,7 +144,7 @@ export default function Policies() {
               <p>
                 You may opt-out of receiving text messages at any time by replying <strong>STOP</strong> to any message. 
                 After opting out, you will receive one final confirmation message. You may also contact us at (517) 777-8474 or 
-                contact@ruglyfloor.com to be removed from our text messaging list.
+                info@ruglyfloor.com to be removed from our text messaging list.
               </p>
             </div>
 
@@ -155,7 +155,7 @@ export default function Policies() {
               </p>
               <ul className="list-disc ml-6 mt-2 space-y-1">
                 <li>Phone: (517) 777-8474</li>
-                <li>Email: contact@ruglyfloor.com</li>
+                <li>Email: info@ruglyfloor.com</li>
               </ul>
             </div>
 
