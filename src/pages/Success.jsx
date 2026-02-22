@@ -4,18 +4,55 @@ import { createPageUrl } from '../utils';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, Package, Truck, Home } from 'lucide-react';
 import SEOHead from '../components/seo/SEOHead';
+import { base44 } from '@/api/base44Client';
 
 export default function Success() {
   const navigate = useNavigate();
   const [sessionId, setSessionId] = useState('');
+  const [orderInfo, setOrderInfo] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const sid = params.get('session_id');
     if (sid) {
       setSessionId(sid);
+      // Fetch order info to populate the Google Customer Reviews opt-in
+      base44.functions.invoke('getOrderInfoForReview', { session_id: sid })
+        .then(res => {
+          if (res.data) setOrderInfo(res.data);
+        })
+        .catch(() => {});
     }
   }, []);
+
+  // Inject Google Customer Reviews opt-in once order info is available
+  useEffect(() => {
+    if (!orderInfo) return;
+
+    // Load the Google platform script
+    const script1 = document.createElement('script');
+    script1.src = 'https://apis.google.com/js/platform.js?onload=renderOptIn';
+    script1.async = true;
+    script1.defer = true;
+    document.body.appendChild(script1);
+
+    window.renderOptIn = function() {
+      window.gapi.load('surveyoptin', function() {
+        window.gapi.surveyoptin.render({
+          merchant_id: 5730355041,
+          order_id: orderInfo.order_id,
+          email: orderInfo.email,
+          delivery_country: orderInfo.country || 'US',
+          estimated_delivery_date: orderInfo.estimated_delivery_date
+        });
+      });
+    };
+
+    return () => {
+      document.body.removeChild(script1);
+      delete window.renderOptIn;
+    };
+  }, [orderInfo]);
 
   return (
     <div className="min-h-screen py-12 px-6 bg-gradient-to-br from-green-50 to-blue-50">
