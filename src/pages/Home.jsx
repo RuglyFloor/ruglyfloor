@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import SEOHead from '../components/seo/SEOHead';
 import { generateLocalBusinessSchema } from '../components/seo/SchemaGenerator';
 import { useSEO } from '../components/seo/useSEO';
-import AvailableRugsHorizontalScroll from '../components/custom/AvailableRugsHorizontalScroll';
+import ScrollDrivenRugs from '../components/custom/ScrollDrivenRugs';
 
 const HERO_VIDEOS = [
   'IT7Zkp4UwEA',
