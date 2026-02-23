@@ -370,8 +370,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Shop for Original Ruglys Section - Horizontal Scroll */}
-      <AvailableRugsHorizontalScroll products={products} handleGrabIt={handleGrabIt} isCheckingOut={isCheckingOut} />
+      {/* Shop for Original Ruglys Section - Scroll Driven */}
+      <ScrollDrivenRugs products={products} handleGrabIt={handleGrabIt} isCheckingOut={isCheckingOut} />
 
 
 
