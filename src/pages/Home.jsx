@@ -113,10 +113,22 @@ export default function Home() {
         {/* Background Video */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <iframe
-            className="absolute w-[300%] h-[300%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-            src={`https://www.youtube.com/embed/${HERO_VIDEOS[currentHeroVideo]}?autoplay=1&mute=1&loop=1&playlist=${HERO_VIDEOS[currentHeroVideo]}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1`}
+            key={currentHeroVideo}
+            className="absolute"
+            src={`https://www.youtube.com/embed/${HERO_VIDEOS[currentHeroVideo]}?autoplay=1&mute=1&loop=1&playlist=${HERO_VIDEOS[currentHeroVideo]}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&vq=hd1080`}
             allow="autoplay; encrypted-media"
-            style={{ pointerEvents: 'none', border: 'none' }}
+            style={{
+              pointerEvents: 'none',
+              border: 'none',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              width: '177.78vh', /* 16:9 ratio */
+              height: '100vh',
+              minWidth: '100%',
+              minHeight: '56.25vw', /* 16:9 ratio */
+              transform: 'translate(-50%, -50%)',
+            }}
           />
           <div className="absolute inset-0 bg-black/50" />
         </div>
