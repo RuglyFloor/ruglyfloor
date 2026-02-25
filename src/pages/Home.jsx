@@ -11,6 +11,7 @@ import { useSEO } from '../components/seo/useSEO';
 import ScrollDrivenRugs from '../components/custom/ScrollDrivenRugs';
 
 const HERO_VIDEOS = [
+  'yqRmNKha3vU',
   'gRRxZX3WlLI',
 ];
 
