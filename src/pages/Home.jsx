@@ -113,7 +113,7 @@ export default function Home() {
         <div className="absolute inset-0 z-0 overflow-hidden">
           <iframe
             className="absolute w-[300%] h-[300%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-            src="https://www.youtube.com/embed/0ISnES1T7i0?autoplay=1&mute=1&loop=1&playlist=0ISnES1T7i0&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
+            src={`https://www.youtube.com/embed/${['0ISnES1T7i0','yqRmNKha3vU'][currentHeroVideo]}?autoplay=1&mute=1&loop=1&playlist=${['0ISnES1T7i0','yqRmNKha3vU'][currentHeroVideo]}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1`}
             allow="autoplay; encrypted-media"
             style={{ pointerEvents: 'none', border: 'none' }}
           />
