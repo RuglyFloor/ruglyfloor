@@ -13,7 +13,6 @@ import ScrollDrivenRugs from '../components/custom/ScrollDrivenRugs';
 const HERO_VIDEOS = [
   'gRRxZX3WlLI',
   'yqRmNKha3vU',
-  '0ISnES1T7i0',
 ];
 
 export default function Home() {
