@@ -109,8 +109,16 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative py-32 px-6 overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0 z-0" style={{background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 40%, #0f3460 70%, #343634 100%)'}} />
+        {/* Background Video */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          <iframe
+            className="absolute w-[300%] h-[300%] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+            src="https://www.youtube.com/embed/0ISnES1T7i0?autoplay=1&mute=1&loop=1&playlist=0ISnES1T7i0&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
+            allow="autoplay; encrypted-media"
+            style={{ pointerEvents: 'none', border: 'none' }}
+          />
+          <div className="absolute inset-0 bg-black/50" />
+        </div>
 
         <div className="max-w-6xl mx-auto text-center relative z-10">
           <img
