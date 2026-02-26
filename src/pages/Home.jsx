@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import { Palette, Sparkles, Package, CheckCircle } from 'lucide-react';
+import { Palette, Sparkles, Package, CheckCircle, Upload, Paintbrush, Truck } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import SEOHead from '../components/seo/SEOHead';
