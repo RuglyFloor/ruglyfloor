@@ -195,7 +195,7 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-6" style={{minHeight:'300px'}}>
             {[
               {
-                num:'01', title:'Upload / Design Your Rug', icon:'🎨',
+                num:'Step 1', title:'Upload / Design Your Rug', icon: <Upload className="w-10 h-10" />,
                 body:"Use our builder to pick your size, colors, and upload your design — or describe your vision and we'll handle it.",
                 color:'#4075ff',
                 images:[
@@ -203,7 +203,7 @@ export default function Home() {
                 ]
               },
               {
-                num:'02', title:'Deploy Your Design', icon:'✅',
+                num:'Step 2', title:'Deploy Your Design', icon: <Paintbrush className="w-10 h-10" />,
                 body:'We send you a digital preview before anything is painted. You approve it. Zero risk, zero surprises.',
                 color:'#24f0a0',
                 images:[
@@ -212,7 +212,7 @@ export default function Home() {
                 ]
               },
               {
-                num:'03', title:'Stencil, Paint & Ship', icon:'📦',
+                num:'Step 3', title:'Stencil, Paint & Ship', icon: <Truck className="w-10 h-10" />,
                 body:'Hand-painted in our Michigan studio. Free shipping on Crugly. Flat rate on Rugly. Or pick it up locally.',
                 color:'#f04624',
                 images:[
