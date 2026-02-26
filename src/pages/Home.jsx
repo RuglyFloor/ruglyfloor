@@ -234,7 +234,7 @@ export default function Home() {
                   <div className="hiw-flip-inner">
                     {/* Front */}
                     <div className="hiw-front bg-white flex flex-col justify-center items-center p-6 text-center" style={{border:`3px solid ${s.color}`}}>
-                      <div className="text-5xl mb-3">{s.icon}</div>
+                      <div className="mb-3" style={{color:s.color}}>{s.icon}</div>
                       <div className="text-xs font-black tracking-widest mb-2" style={{color:s.color}}>{s.num}</div>
                       <h3 className="text-xl font-bold mb-3" style={{color:'#343634'}}>{s.title}</h3>
                       <p className="text-gray-600 text-sm leading-relaxed">{s.body}</p>
