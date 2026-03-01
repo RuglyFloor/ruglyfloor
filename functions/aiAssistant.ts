@@ -97,21 +97,23 @@ COMPOSITION INSTRUCTIONS:
                 return Response.json({ error: 'Prompt is required' }, { status: 400 });
             }
 
-        let llmPrompt = `You are a professional interior designer specializing in custom rugs. The user wants design suggestions for a custom hand-painted rug.
+        let llmPrompt = `You are a professional stencil artist and rug designer specializing in hand-painted custom rugs. The user wants design suggestions for a custom hand-painted stencil rug.
 
 User's request: "${prompt}"
 ${rugSize ? `Rug size: ${rugSize}` : ''}
-${file_urls.length > 0 ? `The user has uploaded ${file_urls.length} reference image(s) for inspiration. Analyze the images and incorporate their style, colors, patterns, or mood into your suggestions.` : ''}
-${isLuxTier ? 'This is for a LUXURY PREMIUM rug - provide sophisticated, high-end design suggestions with exceptional attention to detail.' : ''}
+${file_urls.length > 0 ? `The user has uploaded ${file_urls.length} reference image(s). Analyze these images and suggest how to translate them into a stencil-based rug design using only the specified paint colors.` : ''}
+${isLuxTier ? 'This is for a LUXURY PREMIUM rug.' : ''}
+
+${colorConstraint}
 
 Please provide:
-1. ${isLuxTier ? 'Four' : 'Three'} distinct color palettes (each with a descriptive name and ${isLuxTier ? '5-7' : '3-5'} hex color codes that work well together for a rug design).
-2. ${isLuxTier ? 'Four' : 'Three'} unique pattern ideas (creative, specific descriptions that the user can actually paint or stencil onto their rug).
-3. ${isLuxTier ? 'Four' : 'Three'} layout suggestions (describe how to arrange the design elements on the rug, considering composition and visual balance).
-${isLuxTier ? '4. Three texture and finishing technique suggestions (advanced techniques like shading, gradients, layering, or special effects that enhance the luxury feel).' : ''}
+1. ${isLuxTier ? 'Four' : 'Three'} color palette suggestions — but ONLY using combinations of the base color (${baseColor || 'neutral'}) and the chosen paint color(s) (${paintColor || 'primary color'}${secondPaintColor ? `, ${secondPaintColor}` : ''}). Suggest how these specific colors can be layered or combined for visual impact.
+2. ${isLuxTier ? 'Four' : 'Three'} unique pattern ideas — all must be achievable with flat stencil painting using only the selected colors. Bold shapes, outlines, geometric or organic patterns that translate well to stencil work.
+3. ${isLuxTier ? 'Four' : 'Three'} layout suggestions — how to arrange stencil elements on the ${rugSize || 'rug'} for maximum visual impact using only the allowed colors.
+${isLuxTier ? '4. Three stencil technique suggestions (e.g., layering the same color for depth, using negative space, creating texture through stencil repetition, etc.).' : ''}
 
-${file_urls.length > 0 ? 'IMPORTANT: Base your suggestions on the visual elements, colors, and aesthetic of the reference images provided.' : ''}
-${isLuxTier ? 'Focus on premium, artistic designs with sophisticated color theory and complex compositions suitable for a luxury hand-painted rug.' : 'Make your suggestions practical, creative, and suitable for a hand-painted custom rug.'}`;
+${file_urls.length > 0 ? 'IMPORTANT: Translate the reference image(s) into stencil-safe designs — simplify complex imagery into bold flat shapes that can be painted with the specified colors only.' : ''}
+All suggestions MUST respect the color constraints: only ${baseColor || 'base color'} and ${paintColor || 'primary paint color'}${secondPaintColor ? ` and ${secondPaintColor}` : ''} are available.`;
 
         const schema = {
             type: "object",
