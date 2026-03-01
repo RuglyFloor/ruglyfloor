@@ -22,14 +22,17 @@ Deno.serve(async (req) => {
                 return Response.json({ error: 'Invalid JSON in request body' }, { status: 400 });
             }
 
-            const { prompt, imageUrl, rugSize, qualityTier, generateVariations, referenceImages } = body;
+            const { prompt, imageUrl, rugSize, qualityTier, generateVariations, referenceImages, baseColor, paintColor, secondPaintColor } = body;
             console.log('[aiAssistant] Params:', { 
                 hasPrompt: !!prompt, 
                 hasImage: !!imageUrl, 
                 hasReferenceImages: !!referenceImages,
                 rugSize, 
                 qualityTier,
-                generateVariations
+                generateVariations,
+                baseColor,
+                paintColor,
+                secondPaintColor
             });
 
             // Collect all image URLs
