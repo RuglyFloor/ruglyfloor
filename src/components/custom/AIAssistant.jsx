@@ -45,7 +45,10 @@ export default function AIAssistant({ currentImageUrl, rugSize, qualityTier, bas
         rugSize: rugSize,
         imageUrl: inspirationImage?.url,
         qualityTier: qualityTier,
-        generateVariations: qualityTier === 'highend'
+        generateVariations: qualityTier === 'highend',
+        baseColor: baseColor,
+        paintColor: paintColor,
+        secondPaintColor: secondPaintColor
       });
       
       if (response.data) {
