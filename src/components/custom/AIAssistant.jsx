@@ -80,7 +80,10 @@ export default function AIAssistant({ currentImageUrl, rugSize, qualityTier, bas
         imageUrl: inspirationImage?.url,
         qualityTier: qualityTier,
         generateVariations: true,
-        referenceImages: inspirationImage?.url ? [inspirationImage.url] : []
+        referenceImages: inspirationImage?.url ? [inspirationImage.url] : [],
+        baseColor: baseColor,
+        paintColor: paintColor,
+        secondPaintColor: secondPaintColor
       });
       
       if (response.data.designImage && onGenerateDesign) {
