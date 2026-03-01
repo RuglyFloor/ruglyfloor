@@ -76,18 +76,23 @@ COMPOSITION INSTRUCTIONS:
                 try {
                     const imageResponse = await base44.integrations.Core.GenerateImage({
                         prompt: imagePrompt,
-                        existing_image_urls: file_urls.length > 0 ? file_urls : undefined
+                        ...(file_urls.length > 0 ? { existing_image_urls: file_urls } : {})
                     });
                     
-                    console.log('[aiAssistant] Image generated successfully');
+                    if (!imageResponse?.url) {
+                        console.error('[aiAssistant] Image generation returned no URL:', imageResponse);
+                        return Response.json({ error: 'Image generation returned an empty result. Please try again.' }, { status: 500 });
+                    }
+
+                    console.log('[aiAssistant] Image generated successfully:', imageResponse.url);
                     return Response.json({ 
                         designImage: imageResponse.url,
                         type: 'image'
                     });
                 } catch (imageError) {
-                    console.error('[aiAssistant] Image generation error:', imageError);
+                    console.error('[aiAssistant] Image generation error:', imageError.message, imageError.stack);
                     return Response.json({ 
-                        error: 'Failed to generate design image. Please try again.' 
+                        error: 'Failed to generate design image: ' + (imageError.message || 'Unknown error. Please try again.')
                     }, { status: 500 });
                 }
             }
