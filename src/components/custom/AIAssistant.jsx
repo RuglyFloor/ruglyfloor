@@ -110,7 +110,15 @@ export default function AIAssistant({ currentImageUrl, rugSize, qualityTier, bas
     setGeneratingImage(true);
     setError(null);
     try {
-      const variationPrompt = `Create a variation of this rug design. Keep the same general style and theme, but alter the patterns, details, and composition to make it unique while maintaining visual coherence. ${baseColor ? `Use ${baseColor} as the base color.` : ''} ${paintColor ? `Primary design color: ${paintColor}.` : ''} Suitable for a ${rugSize || 'medium'} luxury custom rug.`;
+      const colorList = [paintColor, secondPaintColor].filter(Boolean).join(' and ');
+      const variationPrompt = `Create a variation of this hand-painted stencil rug design. Keep the same general style and theme but alter the patterns and composition.
+
+STRICT COLOR RULES: This is a stencil-painted rug. Use ONLY these exact colors:
+- Base rug (background): ${baseColor || 'neutral'}
+- Paint color(s): ${colorList || 'primary paint color'}
+NO other colors, NO gradients, NO photographic shading, NO full-color imagery.
+
+The result should look like a flat overhead photo of a real stencil-painted rug using only the above colors. Suitable for a ${rugSize || 'medium'} rug.`;
       
       const response = await base44.integrations.Core.GenerateImage({
         prompt: variationPrompt,
