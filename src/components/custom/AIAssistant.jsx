@@ -127,11 +127,11 @@ The result should look like a flat overhead photo of a real stencil-painted rug 
         existing_image_urls: [currentImageUrl]
       });
       
-      if (response.url && onGenerateDesign) {
+      if (response?.url && onGenerateDesign) {
         onGenerateDesign(response.url);
         setError(null);
       } else {
-        setError('Failed to generate variation');
+        setError('Variation returned no image. Please try again with a different prompt.');
       }
     } catch (err) {
       console.error('Variation generation error:', err);
