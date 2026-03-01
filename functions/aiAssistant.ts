@@ -55,8 +55,8 @@ ${secondPaintColor ? `- Secondary paint color: ${secondPaintColor}. This is the 
 - The design should look like flat paint stenciled or painted directly onto a ${baseColor || 'neutral'} rug — like a clean screen print or linocut.
 - Simplify the reference image/description into bold shapes and outlines that can be achieved with stencils and flat paint.`;
 
-            // If generating variations (AI design mode for highend)
-            if (generateVariations && isLuxTier && file_urls.length > 0) {
+            // If generating a design image (AI design mode)
+            if (generateVariations && isLuxTier) {
                 console.log('[aiAssistant] Generating stencil-style design image');
                 
                 const imagePrompt = `Create a photorealistic overhead flat-lay photo of a custom hand-painted stencil rug on a hardwood floor.
