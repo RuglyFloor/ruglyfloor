@@ -51,11 +51,13 @@ export default function AIAssistant({ currentImageUrl, rugSize, qualityTier, bas
         secondPaintColor: secondPaintColor
       });
       
-      if (response.data) {
+      if (response.data?.error) {
+        setError(response.data.error);
+      } else if (response.data && (response.data.palettes || response.data.patterns || response.data.layouts)) {
         setSuggestions(response.data);
         setError(null);
       } else {
-        setError('Failed to generate suggestions');
+        setError('The AI returned an unexpected response. Please try again with a different prompt.');
       }
     } catch (err) {
       console.error('AI Assistant error:', err);
