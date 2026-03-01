@@ -86,12 +86,14 @@ export default function AIAssistant({ currentImageUrl, rugSize, qualityTier, bas
         secondPaintColor: secondPaintColor
       });
       
-      if (response.data.designImage && onGenerateDesign) {
+      if (response.data?.designImage && onGenerateDesign) {
         onGenerateDesign(response.data.designImage);
         setActiveTab('preview');
         setError(null);
+      } else if (response.data?.error) {
+        setError(response.data.error);
       } else {
-        setError('Failed to generate design image');
+        setError('The AI returned an unexpected response. Please try again with a different prompt.');
       }
     } catch (err) {
       console.error('Image generation error:', err);
