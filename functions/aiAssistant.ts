@@ -44,28 +44,34 @@ Deno.serve(async (req) => {
 
             const isLuxTier = qualityTier === 'highend';
 
+            // Build color constraint string for all prompts
+            const colorConstraint = `
+CRITICAL STENCIL PAINTING CONSTRAINTS - MUST FOLLOW:
+- This is a HAND-PAINTED STENCIL rug, NOT a printed image. The design uses ONLY flat paint applied through stencils.
+- Base rug color: ${baseColor || 'neutral'}. This is the background color of the rug fabric itself — it shows through wherever paint is NOT applied.
+- Primary paint color: ${paintColor || 'black'}. This is the ONLY paint color used for the main design elements.
+${secondPaintColor ? `- Secondary paint color: ${secondPaintColor}. This is the ONLY second color allowed.` : '- No second paint color — use only the primary paint color.'}
+- The final rug must contain ONLY these colors: the base rug color AND the paint color(s) listed above. NO other colors, NO gradients, NO photographic shading, NO full-color imagery.
+- The design should look like flat paint stenciled or painted directly onto a ${baseColor || 'neutral'} rug — like a clean screen print or linocut.
+- Simplify the reference image/description into bold shapes and outlines that can be achieved with stencils and flat paint.`;
+
             // If generating variations (AI design mode for highend)
             if (generateVariations && isLuxTier && file_urls.length > 0) {
-                console.log('[aiAssistant] Generating design image with realistic room context');
+                console.log('[aiAssistant] Generating stencil-style design image');
                 
-                const imagePrompt = `Create a photorealistic interior design rendering showing a custom hand-painted area rug in a beautifully designed room. 
+                const imagePrompt = `Create a photorealistic overhead flat-lay photo of a custom hand-painted stencil rug on a hardwood floor.
 
 Design Request: "${prompt}"
 ${rugSize ? `Rug Size: ${rugSize}` : ''}
 
-IMPORTANT INSTRUCTIONS FOR PHOTOREALISM:
-1. Create a professionally photographed interior space with natural lighting from windows or skylights
-2. The rug should be the focal point but integrated naturally into the room
-3. Include realistic furniture, textures, and materials (hardwood floors, plaster walls, natural fabrics)
-4. Add depth with proper shadows, reflections, and lighting variations
-5. Include realistic imperfections: subtle wear, natural texture variations, slight asymmetry
-6. Use warm, inviting color temperatures and professional photography composition
-7. Show the rug at a slight angle to display dimension and texture
-8. Include realistic environmental details: subtle dust particles in light, texture on walls, wood grain
-9. Make the room feel lived-in and authentic, not sterile or CGI
-10. Use high-end interior design aesthetic with cohesive color palette
+${colorConstraint}
 
-The rug design should match the user's request while looking like an actual hand-painted rug photographed in a real, high-end interior space.`;
+COMPOSITION INSTRUCTIONS:
+1. Show the rug from directly overhead (bird's-eye view) as a flat lay so the design is clearly visible
+2. The rug shape should match the size (${rugSize || 'rectangular'})
+3. The design should be clean, bold, and look like it was stenciled/painted by hand — slight imperfections in paint edges are fine and authentic
+4. Lighting should be soft and even so all colors are clearly visible
+5. The overall result should look like a real hand-painted rug photo that could appear in an interior design catalog`;
 
                 try {
                     const imageResponse = await base44.integrations.Core.GenerateImage({
