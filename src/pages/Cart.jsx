@@ -628,7 +628,7 @@ export default function Cart() {
                       </div>
                       <div className="flex items-center gap-1">
                         <span>✓</span>
-                        <span>Money-Back Guarantee</span>
+                        <span>24hr Damage Guarantee</span>
                       </div>
                     </div>
                     <p className="text-xs text-center text-gray-400">Powered by Stripe</p>
