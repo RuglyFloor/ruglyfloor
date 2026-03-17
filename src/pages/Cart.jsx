@@ -148,6 +148,11 @@ export default function Cart() {
       return;
     }
 
+    if (!finalSaleAcknowledged) {
+      alert('Please acknowledge that custom rug orders are final sale before proceeding.');
+      return;
+    }
+
     // Save customer info for future
     if (!useGuestCheckout) {
       localStorage.setItem('rugly_customer_info', JSON.stringify(customerInfo));
