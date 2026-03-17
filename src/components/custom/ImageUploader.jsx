@@ -192,6 +192,39 @@ export default function ImageUploader({ onImageSelect, accept = 'image/*', rugSi
     );
   }
 
+  if (croppedPreview) {
+    return (
+      <Card>
+        <CardContent className="p-4 space-y-3">
+          <div className="text-sm font-semibold text-green-700 flex items-center gap-2">
+            <Check className="w-4 h-4" /> Image applied
+          </div>
+          <img
+            src={croppedPreview}
+            alt="Cropped preview"
+            className="w-full max-h-64 object-contain rounded-lg border border-gray-200 bg-gray-50"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="w-full gap-2"
+            onClick={() => { setCroppedPreview(null); fileInputRef.current?.click(); }}
+          >
+            <Upload className="w-4 h-4" /> Change Image
+          </Button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            className="hidden"
+            accept={accept}
+            onChange={(e) => { const f = e.target.files[0]; if (f) handleFile(f); }}
+          />
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardContent className="p-12">
