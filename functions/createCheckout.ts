@@ -219,6 +219,11 @@ Deno.serve(async (req) => {
       },
       shipping_address_collection: {
         allowed_countries: ['US', 'CA'],
+      },
+      custom_text: {
+        submit: {
+          message: '⚠️ All custom rug orders (Cruglys & Ruglys) are FINAL SALE. No refunds on custom orders. Replacements for non-defect reasons offered at 50% discount. Original shipping non-refundable. By completing this purchase you agree to these terms.'
+        }
       }
     };
 
