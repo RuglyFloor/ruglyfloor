@@ -102,7 +102,9 @@ export default function ImageUploader({ onImageSelect, accept = 'image/*', rugSi
 
   const handleConfirm = async () => {
     const blob = await getCroppedImg(imageSrc, croppedAreaPixels, selectedShape.isRound);
-    onImageSelect(URL.createObjectURL(blob), blob);
+    const objectUrl = URL.createObjectURL(blob);
+    setCroppedPreview(objectUrl);
+    onImageSelect(objectUrl, blob);
     setIsCropping(false);
     setImageSrc(null);
   };
