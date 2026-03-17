@@ -355,7 +355,7 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
                     </button>
                   ))}
                 </div>
-                <p className="text-xs text-gray-500">Paint + background layers</p>
+                <p className="text-xs text-gray-500">2 = solid paint only · 3-4 = adds shading layers</p>
               </CardContent>
             </Card>
           </div>
