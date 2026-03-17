@@ -109,7 +109,7 @@ export default function Home() {
         schema={generateLocalBusinessSchema()} />
 
       {/* Hero Section */}
-      <section className="relative py-32 px-6 overflow-hidden">
+      <section className="relative px-6 overflow-hidden">
         {/* Background Video */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <iframe
