@@ -48,14 +48,10 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import About from './pages/About';
-import AdminCatalog from './pages/AdminCatalog';
-import AdminChannels from './pages/AdminChannels';
 import AdminDashboard from './pages/AdminDashboard';
-import AdminDocuments from './pages/AdminDocuments';
 import AdminInbox from './pages/AdminInbox';
 import AdminLogin from './pages/AdminLogin';
 import AdminMarketing from './pages/AdminMarketing';
-import AdminNotionSync from './pages/AdminNotionSync';
 import AdminOrderDetail from './pages/AdminOrderDetail';
 import AdminOrders from './pages/AdminOrders';
 import AdminPortal from './pages/AdminPortal';
@@ -69,11 +65,7 @@ import Commission from './pages/Commission';
 import Contact from './pages/Contact';
 import ContentManager from './pages/ContentManager';
 import CustomBuilder from './pages/CustomBuilder';
-import CustomBuilderDrawer from './pages/CustomBuilderDrawer';
-import CustomBuilderSimple from './pages/CustomBuilderSimple';
-import CustomBuilderTabs from './pages/CustomBuilderTabs';
 import Home from './pages/Home';
-import NotionSync from './pages/NotionSync';
 import Orders from './pages/Orders';
 import Policies from './pages/Policies';
 import ProductDetail from './pages/ProductDetail';
