@@ -61,6 +61,7 @@ export default function ImageUploader({ onImageSelect, accept = 'image/*', rugSi
   const [isDragging, setIsDragging] = useState(false);
   const [imageSrc, setImageSrc] = useState(null);
   const [isCropping, setIsCropping] = useState(false);
+  const [croppedPreview, setCroppedPreview] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
