@@ -32,6 +32,7 @@ export default function Cart() {
   const [validatingCoupon, setValidatingCoupon] = useState(false);
   const [useGuestCheckout, setUseGuestCheckout] = useState(true);
   const [taxRate, setTaxRate] = useState(0);
+  const [finalSaleAcknowledged, setFinalSaleAcknowledged] = useState(false);
 
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem('rugly_cart') || '[]');
