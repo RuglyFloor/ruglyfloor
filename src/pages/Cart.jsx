@@ -589,16 +589,16 @@ export default function Cart() {
                     )}
                   </div>
                   
-                  {/* Final Sale Acknowledgment */}
-                  <div className="flex items-start space-x-2 p-4 bg-amber-50 border-2 border-amber-400 rounded-xl mb-4">
+                  {/* Quality Guarantee + Policy Acknowledgment */}
+                  <div className="flex items-start space-x-2 p-4 bg-green-50 border border-green-200 rounded-xl mb-4">
                     <Checkbox 
                       id="final-sale-ack" 
                       checked={finalSaleAcknowledged}
                       onCheckedChange={setFinalSaleAcknowledged}
                     />
-                    <label htmlFor="final-sale-ack" className="text-xs leading-relaxed cursor-pointer text-amber-900 font-medium">
-                      I understand that all custom rug orders (Cruglys and Ruglys) are <strong>final sale</strong>. No refunds on custom orders — replacements for non-defect reasons are offered at 50% discount. Original shipping is non-refundable.{' '}
-                      <a href="/Policies" className="underline" target="_blank">View full policy</a>
+                    <label htmlFor="final-sale-ack" className="text-xs leading-relaxed cursor-pointer text-gray-700">
+                      ✅ I've reviewed my design preview and I'm ready to order. I understand each rug is hand-painted to order — if it arrives damaged or with quality issues, I'm covered with a full replacement or refund.{' '}
+                      <a href="/Policies" className="underline text-gray-500" target="_blank">See our guarantee</a>
                     </label>
                   </div>
 
