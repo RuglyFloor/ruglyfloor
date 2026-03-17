@@ -133,7 +133,7 @@ export default function Home() {
           <div className="absolute inset-0 bg-black/50" />
         </div>
 
-        <div className="max-w-6xl mx-auto text-center relative z-10">
+        <div className="max-w-6xl mx-auto text-center relative z-10 py-32">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/7e922323a_RUGLYMASTERLOGO-61.png"
             alt="RUGLY"
