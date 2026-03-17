@@ -28,20 +28,7 @@ export default function Layout({ children, currentPageName }) {
       sessionStorage.setItem('rugly_referrer', document.referrer || 'direct');
     }
 
-    // Google Analytics
-    const script1 = document.createElement('script');
-    script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-6DSQKNVFMB';
-    script1.async = true;
-    document.head.appendChild(script1);
-
-    const script2 = document.createElement('script');
-    script2.text = `
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-6DSQKNVFMB');
-    `;
-    document.head.appendChild(script2);
+    // Google Analytics is loaded via index.html
   }, []);
 
   const navLinks = [
