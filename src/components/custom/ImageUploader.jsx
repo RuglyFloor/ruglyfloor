@@ -22,38 +22,42 @@ const SIZE_TO_SHAPE = {
 };
 
 async function getCroppedImg(imageSrc, pixelCrop, isRound = false) {
-  const image = await createImageBitmap(await (await fetch(imageSrc)).blob());
-  const canvas = document.createElement('canvas');
-  canvas.width = pixelCrop.width;
-  canvas.height = pixelCrop.height;
-  const ctx = canvas.getContext('2d');
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = pixelCrop.width;
+      canvas.height = pixelCrop.height;
+      const ctx = canvas.getContext('2d');
 
-  if (isRound) {
-    ctx.beginPath();
-    ctx.ellipse(
-      pixelCrop.width / 2,
-      pixelCrop.height / 2,
-      pixelCrop.width / 2,
-      pixelCrop.height / 2,
-      0, 0, Math.PI * 2
-    );
-    ctx.clip();
-  }
+      if (isRound) {
+        ctx.beginPath();
+        ctx.ellipse(
+          pixelCrop.width / 2,
+          pixelCrop.height / 2,
+          pixelCrop.width / 2,
+          pixelCrop.height / 2,
+          0, 0, Math.PI * 2
+        );
+        ctx.clip();
+      }
 
-  ctx.drawImage(
-    image,
-    pixelCrop.x,
-    pixelCrop.y,
-    pixelCrop.width,
-    pixelCrop.height,
-    0,
-    0,
-    pixelCrop.width,
-    pixelCrop.height
-  );
+      ctx.drawImage(
+        image,
+        pixelCrop.x,
+        pixelCrop.y,
+        pixelCrop.width,
+        pixelCrop.height,
+        0,
+        0,
+        pixelCrop.width,
+        pixelCrop.height
+      );
 
-  return new Promise((resolve) => {
-    canvas.toBlob((blob) => resolve(blob), 'image/png');
+      canvas.toBlob((blob) => resolve(blob), 'image/png');
+    };
+    image.onerror = reject;
+    image.src = imageSrc;
   });
 }
 
