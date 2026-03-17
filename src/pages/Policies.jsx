@@ -27,15 +27,15 @@ export default function Policies() {
               <h3 className="font-semibold text-lg mb-2">Other Returns & Replacements</h3>
               <p>
                 For reasons other than damage or quality defects (such as change of mind, incorrect size ordered, etc.), 
-                we offer replacements within 7 days of delivery. Original shipping costs are non-refundable. 
+                we offer replacements at a <strong>50% discount</strong>. Original shipping costs are non-refundable. 
                 The rug must be unused and in original condition.
               </p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-lg mb-2">Custom Orders</h3>
+              <h3 className="font-semibold text-lg mb-2">Custom Orders — Final Sale</h3>
               <p>
-                Due to the custom, hand-painted nature of our work, all custom rug orders (Cruglys) are final sale. 
+                Due to the custom, hand-painted nature of our work, <strong>all custom rug orders (Cruglys and Ruglys) are final sale</strong>. 
                 We provide realistic previews during the design process to ensure you're satisfied before production begins.
               </p>
             </div>
