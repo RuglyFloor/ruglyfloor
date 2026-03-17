@@ -589,11 +589,24 @@ export default function Cart() {
                     )}
                   </div>
                   
+                  {/* Final Sale Acknowledgment */}
+                  <div className="flex items-start space-x-2 p-4 bg-amber-50 border-2 border-amber-400 rounded-xl mb-4">
+                    <Checkbox 
+                      id="final-sale-ack" 
+                      checked={finalSaleAcknowledged}
+                      onCheckedChange={setFinalSaleAcknowledged}
+                    />
+                    <label htmlFor="final-sale-ack" className="text-xs leading-relaxed cursor-pointer text-amber-900 font-medium">
+                      I understand that all custom rug orders (Cruglys and Ruglys) are <strong>final sale</strong>. No refunds on custom orders — replacements for non-defect reasons are offered at 50% discount. Original shipping is non-refundable.{' '}
+                      <a href="/Policies" className="underline" target="_blank">View full policy</a>
+                    </label>
+                  </div>
+
                   <Button 
                     className="w-full text-white font-bold py-5 lg:py-6 text-base lg:text-lg rounded-xl transition-all"
                     style={{ backgroundColor: '#343634', border: 'none' }}
                     onClick={handleCheckout}
-                    disabled={submitting || !customerInfo.email}
+                    disabled={submitting || !customerInfo.email || !finalSaleAcknowledged}
                   >
                     {submitting ? 'Processing...' : `Pay $${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : paymentAmount.toFixed(2)}`}
                   </Button>
