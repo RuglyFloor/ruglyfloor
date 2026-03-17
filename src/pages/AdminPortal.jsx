@@ -88,13 +88,7 @@ export default function AdminPortal() {
       page: 'AdminMarketing',
       color: 'bg-pink-500'
     },
-    {
-      title: 'Fix My Rug',
-      icon: Package,
-      description: 'Manage rug repair and restoration orders',
-      page: 'AdminFixMyRugOrders',
-      color: 'bg-teal-500'
-    }
+
   ];
 
   return (
