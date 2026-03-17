@@ -263,22 +263,49 @@ export default function Home() {
       <section className="py-14 px-6" style={{backgroundColor:'#343634'}}>
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-center text-white mb-10">What Customers Are Saying</h2>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-6" style={{minHeight:'300px'}}>
             {[
-              { quote:'I purchased a rug from Rugly Floor and I absolutely adore how it turned out. With a child and four pets, I opted for the budget-friendly choice since rugs in my home experience a lot of spills. However, I still wanted to incorporate decor that adds a stylish and unique flair, and my rug certainly achieves that. I receive numerous compliments on it.', name:'Melissa L.', loc:'Denver, CO', source:'Yelp' },
-              { quote:'I received three rugs from Rugly Floor and I love all of them! I have them in my business and would highly recommend these rugs for home or commercial use!', name:'Laura B.', loc:'Lansing, MI', source:'Yelp' },
-              { quote:'Ordered a portrait rug of my golden retriever for my boyfriend\'s birthday. Ryan sent over a digital preview first and it looked exactly like our dog. It arrived in like 11 days and we were both blown away. Already telling everyone about it.', name:'Brittany H.', loc:'Grand Rapids, MI', source:'Google' },
-            ].map((t, i) => (
-              <div key={i} className="bg-white rounded-2xl p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex">{[...Array(5)].map((_,j) => <span key={j} className="text-yellow-400 text-lg">★</span>)}</div>
-                  <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{backgroundColor: t.source === 'Yelp' ? '#d32323' : '#4285F4', color:'white'}}>{t.source}</span>
+              { quote:'I purchased a rug from Rugly Floor and I absolutely adore how it turned out. With a child and four pets, I opted for the budget-friendly choice since rugs in my home experience a lot of spills. However, I still wanted to incorporate decor that adds a stylish and unique flair, and my rug certainly achieves that. I receive numerous compliments on it.', name:'Melissa L.', loc:'Denver, CO', source:'Yelp', color:'#f04624', image:'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/98d60c66e_Madonna.jpg' },
+              { quote:'I received three rugs from Rugly Floor and I love all of them! I have them in my business and would highly recommend these rugs for home or commercial use!', name:'Laura B.', loc:'Lansing, MI', source:'Yelp', color:'#24f0a0', image:'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/c64c9f4d1_IMG_1668.jpg' },
+              { quote:'Ordered a portrait rug of my golden retriever for my boyfriend\'s birthday. Ryan sent over a digital preview first and it looked exactly like our dog. It arrived in like 11 days and we were both blown away. Already telling everyone about it.', name:'Brittany H.', loc:'Grand Rapids, MI', source:'Google', color:'#4075ff', image:'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/98d60c66e_Madonna.jpg' },
+            ].map((t, i) => {
+              const [flipped, setFlipped] = React.useState(false);
+              return (
+                <div
+                  key={i}
+                  className={`hiw-flip-card${flipped ? ' hiw-flipped' : ''}`}
+                  style={{height:'300px'}}
+                  onClick={() => setFlipped(f => !f)}
+                  onMouseEnter={() => { if (window.matchMedia('(hover: hover)').matches) setFlipped(true); }}
+                  onMouseLeave={() => { if (window.matchMedia('(hover: hover)').matches) setFlipped(false); }}
+                >
+                  <div className="hiw-flip-inner">
+                    {/* Front */}
+                    <div className="hiw-front bg-white flex flex-col justify-between p-6" style={{borderRadius:'1rem'}}>
+                      <div>
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex">{[...Array(5)].map((_,j) => <span key={j} className="text-yellow-400 text-lg">★</span>)}</div>
+                          <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{backgroundColor: t.source === 'Yelp' ? '#d32323' : '#4285F4', color:'white'}}>{t.source}</span>
+                        </div>
+                        <p className="text-gray-700 text-sm leading-relaxed mb-4">"{t.quote}"</p>
+                      </div>
+                      <div>
+                        <div className="font-bold text-sm" style={{color:'#343634'}}>{t.name}</div>
+                        <div className="text-xs text-gray-500 mb-2">{t.loc}</div>
+                        <div className="text-xs" style={{color: t.color}}>Hover / tap to see their rug →</div>
+                      </div>
+                    </div>
+                    {/* Back - customer photo */}
+                    <div className="hiw-back" style={{borderRadius:'1rem', overflow:'hidden'}}>
+                      <img src={t.image} alt={`${t.name}'s rug`} className="w-full h-full object-cover" />
+                      <div className="absolute bottom-0 left-0 right-0 px-4 py-3 text-white font-bold text-sm text-center" style={{backgroundColor:`${t.color}cc`}}>
+                        {t.name}'s Rugly
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-gray-700 text-sm leading-relaxed mb-4">"{t.quote}"</p>
-                <div className="font-bold text-sm" style={{color:'#343634'}}>{t.name}</div>
-                <div className="text-xs text-gray-500">{t.loc}</div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
