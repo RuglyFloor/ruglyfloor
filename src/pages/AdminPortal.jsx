@@ -60,13 +60,6 @@ export default function AdminPortal() {
       color: 'bg-orange-500'
     },
     {
-      title: 'Catalog',
-      icon: Package,
-      description: 'Manage base rug inventory from suppliers',
-      page: 'AdminCatalog',
-      color: 'bg-purple-500'
-    },
-    {
       title: 'Pricing',
       icon: DollarSign,
       description: 'Configure pricing rules and fees',
