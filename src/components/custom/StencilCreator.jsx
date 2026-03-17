@@ -113,8 +113,14 @@ export default function StencilCreator({ onSaveStencil, onConfigChange, paintCol
         imageData.data[i + 1] = 0;
         imageData.data[i + 2] = 0;
         imageData.data[i + 3] = 0;
+      } else if (colors === 2) {
+        // Solid paint color only — no shading
+        imageData.data[i] = paintR;
+        imageData.data[i + 1] = paintG;
+        imageData.data[i + 2] = paintB;
+        imageData.data[i + 3] = 255;
       } else {
-        // Create color gradient from paint color to lighter shades
+        // Create color gradient from paint color to lighter shades (shading mode)
         imageData.data[i] = Math.round(paintR + (255 - paintR) * normalizedLevel);
         imageData.data[i + 1] = Math.round(paintG + (255 - paintG) * normalizedLevel);
         imageData.data[i + 2] = Math.round(paintB + (255 - paintB) * normalizedLevel);
