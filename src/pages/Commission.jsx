@@ -368,10 +368,10 @@ export default function Commission() {
 
               {/* STEP 2 — Space & Timeline */}
               {activeStep === 2 && (
-                <SectionCard step={2} title="Your Space & Timeline" subtitle="Help us understand where this rug is going and when you need it.">
-                  <div>
-                    <Label className="font-bold text-sm">Project Type</Label>
-                    <div className="grid grid-cols-2 gap-3 mt-2">
+                <SectionCard step={2} title="Your Space & Timeline" subtitle="Two quick questions — both required to proceed.">
+
+                  <FieldGroup label="Where is this rug going?" required>
+                    <div className="grid grid-cols-2 gap-3 mt-1">
                       {[
                         { val: 'residential', label: 'Residential', sub: 'Home, apartment, condo' },
                         { val: 'commercial', label: 'Commercial', sub: 'Hotel, office, retail' },
@@ -383,18 +383,16 @@ export default function Commission() {
                         </Tile>
                       ))}
                     </div>
-                  </div>
+                  </FieldGroup>
 
                   {formData.projectType === 'commercial' && (
-                    <div>
-                      <Label className="font-bold text-sm">Business Name</Label>
+                    <FieldGroup label="Business Name" hint="We'll include this on your estimate.">
                       <Input className="mt-1" value={formData.businessName} onChange={(e) => update('businessName', e.target.value)} placeholder="Your Company LLC" />
-                    </div>
+                    </FieldGroup>
                   )}
 
-                  <div>
-                    <Label className="font-bold text-sm">Production Timeline</Label>
-                    <div className="grid grid-cols-2 gap-3 mt-2">
+                  <FieldGroup label="How soon do you need it?" required>
+                    <div className="grid grid-cols-2 gap-3 mt-1">
                       <Tile selected={!formData.rushOrder} onClick={() => update('rushOrder', false)} className="p-4">
                         <div className="flex items-center gap-2 mb-1">
                           <Clock className="w-4 h-4 text-gray-400" />
@@ -412,15 +410,15 @@ export default function Commission() {
                         <div className="text-sm font-bold mt-2" style={{ color: 'var(--brand-red)' }}>+$99</div>
                       </Tile>
                     </div>
-                  </div>
+                  </FieldGroup>
 
-                  <div className="flex gap-3">
+                  <div className="flex gap-3 pt-2">
                     <Button type="button" variant="outline" onClick={() => setActiveStep(1)} className="flex-1 py-3 font-bold">
                       ← Back
                     </Button>
-                    <Button type="button" onClick={() => setActiveStep(3)} className="flex-1 py-3 font-bold"
+                    <Button type="button" onClick={() => setActiveStep(3)} className="flex-1 py-3 font-bold flex items-center justify-center gap-2"
                       style={{ backgroundColor: 'var(--brand-red)', color: 'white', border: 'none' }}>
-                      Next: AI Preview →
+                      Generate AI Preview <ChevronRight className="w-4 h-4" />
                     </Button>
                   </div>
                 </SectionCard>
