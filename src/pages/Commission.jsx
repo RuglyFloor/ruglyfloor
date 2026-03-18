@@ -4,9 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Upload, Loader2, CheckCircle, Clock, Zap, Palette, Sparkles, X } from 'lucide-react';
+import { Upload, Loader2, Clock, Zap, Sparkles, X, CheckCircle2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import SEOHead from '../components/seo/SEOHead';
@@ -15,7 +13,39 @@ import BusinessAccountPanel from '../components/commission/BusinessAccountPanel'
 import ColorPaletteBuilder from '../components/commission/ColorPaletteBuilder';
 
 const SIZES = ['2x3', '3x5', '4x6', '5x7', '6x9', '8x10', '9x12', 'Custom'];
+const STEPS = ['Design Vision', 'Your Space', 'AI Preview', 'Submit'];
 
+// Reusable tile button — selected = brand-blue border + light fill
+function Tile({ selected, onClick, children, className = '' }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`rounded-xl border-2 text-left transition-all duration-150 ${className}`}
+      style={
+        selected
+          ? { borderColor: 'var(--brand-blue)', backgroundColor: 'rgba(64,117,255,0.07)', color: 'var(--brand-dark)' }
+          : { borderColor: '#e5e7eb', backgroundColor: '#fff', color: 'var(--brand-dark)' }
+      }
+    >
+      {children}
+    </button>
+  );
+}
+
+function SectionCard({ step, title, subtitle, children }) {
+  const accent = ['var(--brand-blue)', 'var(--brand-red)', 'var(--brand-cyan)', 'var(--brand-dark)'][step] || 'var(--brand-blue)';
+  return (
+    <Card className="rounded-2xl shadow-sm overflow-hidden bg-white" style={{ border: '1.5px solid #e5e7eb' }}>
+      <div className="h-1" style={{ backgroundColor: accent }} />
+      <CardHeader className="pb-2">
+        <CardTitle className="text-xl font-black" style={{ color: 'var(--brand-dark)' }}>{title}</CardTitle>
+        {subtitle && <p className="text-sm text-gray-500 font-normal mt-0.5">{subtitle}</p>}
+      </CardHeader>
+      <CardContent className="space-y-5 pt-0">{children}</CardContent>
+    </Card>
+  );
+}
 
 export default function Commission() {
   const navigate = useNavigate();
@@ -24,7 +54,6 @@ export default function Commission() {
   const [uploading, setUploading] = useState(false);
   const [aiPreviewUrl, setAiPreviewUrl] = useState(null);
   const [markupNotes, setMarkupNotes] = useState([]);
-
   const [activeStep, setActiveStep] = useState(0);
 
   const [formData, setFormData] = useState({
@@ -40,7 +69,6 @@ export default function Commission() {
     email: '',
     phone: '',
     rushOrder: false,
-    agreedToDeposit: false
   });
 
   const update = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
@@ -100,21 +128,19 @@ export default function Commission() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen py-20 px-6">
-        <div className="max-w-2xl mx-auto text-center">
-          <div className="text-8xl mb-6">🎉</div>
-          <h1 className="text-5xl font-bold mb-4" style={{ color: 'var(--brand-blue)' }}>You're in the queue!</h1>
-          <p className="text-xl text-gray-600 mb-4">
-            We'll review your design and reach out within 48 hours with a detailed estimate.
-          </p>
-          <div className="rounded-2xl p-6 mb-8 text-left space-y-3" style={{ background: 'var(--brand-cream)', border: '2px solid var(--brand-blue)' }}>
-            <p className="font-bold text-gray-800">What happens next:</p>
-            <p className="text-sm text-gray-700">✅ We review your design concept and any AI preview you generated</p>
-            <p className="text-sm text-gray-700">✅ You receive a detailed estimate within 48 hours</p>
-            <p className="text-sm text-gray-700">✅ {formData.rushOrder ? '⚡ Rush: 2 weeks at your door' : '📅 Standard: 3–5 weeks production + shipping'}</p>
-            <p className="text-sm text-gray-700">✅ Payment only after you approve</p>
+      <div className="min-h-screen flex items-center justify-center py-20 px-6" style={{ background: 'var(--brand-light-gray)' }}>
+        <div className="max-w-lg w-full text-center bg-white rounded-2xl p-10 shadow-sm" style={{ border: '1.5px solid #e5e7eb' }}>
+          <CheckCircle2 className="w-16 h-16 mx-auto mb-4" style={{ color: 'var(--brand-blue)' }} />
+          <h1 className="text-4xl font-black mb-3" style={{ color: 'var(--brand-dark)' }}>Request Received</h1>
+          <p className="text-gray-500 mb-6">We'll review your design and send a detailed estimate within 48 hours. No payment needed yet.</p>
+          <div className="rounded-xl p-5 mb-6 text-left space-y-2 text-sm" style={{ background: 'var(--brand-cream)', border: '1.5px solid #e5e7eb' }}>
+            <p className="font-bold text-gray-700 mb-2">What happens next</p>
+            <p className="text-gray-600">— We review your concept &amp; AI preview</p>
+            <p className="text-gray-600">— Detailed estimate arrives within 48 hrs</p>
+            <p className="text-gray-600">— {formData.rushOrder ? 'Rush: shipped in ~2 weeks' : 'Standard: 3–5 weeks to your door'}</p>
+            <p className="text-gray-600">— Payment only after you approve</p>
           </div>
-          <Button onClick={() => navigate('/')} className="px-8 py-4 text-lg" style={{ backgroundColor: 'var(--brand-blue)', color: 'white' }}>
+          <Button onClick={() => navigate('/')} className="px-8 py-3 font-bold" style={{ backgroundColor: 'var(--brand-blue)', color: 'white', border: 'none' }}>
             Back to Home
           </Button>
         </div>
@@ -122,10 +148,8 @@ export default function Commission() {
     );
   }
 
-  const STEPS = ['Design Vision', 'Your Space', 'Preview & Markup', 'Details & Submit'];
-
   return (
-    <div className="min-h-screen py-8 px-4" style={{ background: 'var(--brand-light-gray)' }}>
+    <div className="min-h-screen py-10 px-4" style={{ background: 'var(--brand-light-gray)' }}>
       <SEOHead
         title="Commission a Custom Rugly Design | Bespoke Hand-Painted Rugs"
         description="Commission bespoke Rugly hand-painted area rug designs. AI-powered preview, designer markup tools, business accounts."
@@ -134,379 +158,300 @@ export default function Commission() {
       />
 
       <div className="max-w-5xl mx-auto">
-        {/* Hero Header */}
+        {/* Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold mb-4"
-            style={{ background: 'var(--brand-cream)', color: 'var(--brand-blue)', border: '2px solid var(--brand-blue)' }}>
-            <Sparkles className="w-4 h-4" /> DESIGNER COMMISSION STUDIO
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold mb-4"
+            style={{ background: 'var(--brand-cream)', color: 'var(--brand-blue)', border: '1.5px solid var(--brand-blue)' }}>
+            <Sparkles className="w-3.5 h-3.5" /> COMMISSION STUDIO
           </div>
           <h1 className="text-5xl md:text-6xl font-black mb-3" style={{ fontFamily: 'var(--font-heading)', color: 'var(--brand-dark)' }}>
             Commission Your <span style={{ color: 'var(--brand-red)' }}>Dream Rug</span>
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Describe your vision, generate an AI preview, mark it up, and submit — all in one place. Built for designers and dreamers.
+          <p className="text-base text-gray-500 max-w-xl mx-auto">
+            Describe your vision, generate an AI preview, and submit — all free. Payment only after you approve.
           </p>
         </div>
 
-        {/* Step Pills */}
-        <div className="flex gap-2 justify-center mb-8 flex-wrap">
+        {/* Step Indicator */}
+        <div className="flex items-center justify-center gap-0 mb-8">
           {STEPS.map((step, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => setActiveStep(i)}
-              className="px-4 py-2 rounded-full text-sm font-bold transition-all"
-              style={activeStep === i
-                ? { backgroundColor: 'var(--brand-blue)', color: 'white' }
-                : { backgroundColor: 'white', color: 'var(--brand-dark)', border: '2px solid #e5e7eb' }}
-            >
-              {i + 1}. {step}
-            </button>
+            <React.Fragment key={i}>
+              <button
+                type="button"
+                onClick={() => setActiveStep(i)}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all"
+                style={activeStep === i
+                  ? { backgroundColor: 'var(--brand-blue)', color: 'white' }
+                  : { backgroundColor: 'transparent', color: activeStep > i ? 'var(--brand-blue)' : '#9ca3af' }}
+              >
+                <span className="w-5 h-5 rounded-full flex items-center justify-center text-xs font-black shrink-0"
+                  style={activeStep > i
+                    ? { backgroundColor: 'var(--brand-blue)', color: 'white' }
+                    : activeStep === i
+                      ? { backgroundColor: 'white', color: 'var(--brand-blue)' }
+                      : { backgroundColor: '#e5e7eb', color: '#9ca3af' }}>
+                  {activeStep > i ? '✓' : i + 1}
+                </span>
+                <span className="hidden sm:inline">{step}</span>
+              </button>
+              {i < STEPS.length - 1 && (
+                <div className="w-6 h-0.5 mx-1" style={{ backgroundColor: activeStep > i ? 'var(--brand-blue)' : '#e5e7eb' }} />
+              )}
+            </React.Fragment>
           ))}
         </div>
 
         <form onSubmit={handleSubmit}>
           <div className="grid md:grid-cols-3 gap-6">
-            {/* LEFT COLUMN — Design Inputs */}
-            <div className="md:col-span-2 space-y-6">
+
+            {/* LEFT — Steps */}
+            <div className="md:col-span-2 space-y-5">
 
               {/* STEP 0 — Design Vision */}
-              {(activeStep === 0 || activeStep > 0) && (
-                <Card className="rounded-3xl shadow-sm overflow-hidden" style={{ border: '2px solid #e5e7eb' }}>
-                  <div className="h-2" style={{ background: 'linear-gradient(90deg, var(--brand-blue), var(--brand-red))' }} />
-                  <CardHeader>
-                    <CardTitle className="text-2xl flex items-center gap-2">
-                      <span className="text-3xl">✏️</span> Design Vision
-                    </CardTitle>
-                    <p className="text-sm text-gray-500">Tell us about your dream rug — the more detail, the better your AI preview</p>
-                  </CardHeader>
-                  <CardContent className="space-y-5">
-                    <div>
-                      <Label className="font-bold">Describe your design *</Label>
-                      <Textarea
-                        required
-                        className="mt-2 h-28 resize-none text-base"
-                        placeholder="e.g. A bold geometric pattern with navy and gold, abstract brushstrokes in the center, inspired by Moroccan tiles..."
-                        value={formData.description}
-                        onChange={(e) => update('description', e.target.value)}
-                      />
-                      <p className="text-xs text-gray-400 mt-1">{formData.description.length} chars — more detail = better AI preview</p>
-                    </div>
+              {activeStep === 0 && (
+                <SectionCard step={0} title="Design Vision" subtitle="Tell us about your rug — the more detail, the better your AI preview.">
+                  <div>
+                    <Label className="font-bold text-sm">Describe your design *</Label>
+                    <Textarea
+                      required
+                      className="mt-2 h-28 resize-none"
+                      placeholder="e.g. Bold geometric pattern with navy and gold, abstract brushstrokes, Moroccan tile inspiration..."
+                      value={formData.description}
+                      onChange={(e) => update('description', e.target.value)}
+                    />
+                    <p className="text-xs text-gray-400 mt-1">{formData.description.length} characters</p>
+                  </div>
 
-                    {/* Size Picker */}
-                    <div>
-                      <Label className="font-bold">Preferred Size</Label>
-                      <div className="grid grid-cols-4 gap-2 mt-2">
-                        {SIZES.map(s => (
-                          <button
-                            type="button"
-                            key={s}
-                            onClick={() => update('preferredSize', s)}
-                            className="py-2 px-3 rounded-xl text-sm font-bold border-2 transition-all"
-                            style={formData.preferredSize === s
-                              ? { borderColor: 'var(--brand-blue)', backgroundColor: 'var(--brand-blue)', color: 'white' }
-                              : { borderColor: '#e5e7eb', backgroundColor: 'white', color: 'var(--brand-dark)' }}
-                          >
-                            {s}
-                          </button>
-                        ))}
-                      </div>
+                  {/* Size */}
+                  <div>
+                    <Label className="font-bold text-sm">Preferred Size</Label>
+                    <div className="grid grid-cols-4 gap-2 mt-2">
+                      {SIZES.map(s => (
+                        <Tile key={s} selected={formData.preferredSize === s} onClick={() => update('preferredSize', s)}
+                          className="py-2 text-center text-sm font-bold">
+                          {s}
+                        </Tile>
+                      ))}
                     </div>
+                  </div>
 
-                    {/* Color Palette Picker */}
-                    <div>
-                     <Label className="font-bold">Color Palette</Label>
-                     <p className="text-xs text-gray-400 mb-2">Choose a preset or build your own — use the color wheel or paste a hex code</p>
-                     <ColorPaletteBuilder
-                       value={formData.preferredColors}
-                       onChange={(colors) => update('preferredColors', colors)}
-                     />
-                    </div>
+                  {/* Color Palette */}
+                  <div>
+                    <Label className="font-bold text-sm">Color Palette</Label>
+                    <p className="text-xs text-gray-400 mb-2">Pick a preset or build your own</p>
+                    <ColorPaletteBuilder
+                      value={formData.preferredColors}
+                      onChange={(colors) => update('preferredColors', colors)}
+                    />
+                  </div>
 
-                    {/* Complexity */}
-                    <div>
-                      <Label className="font-bold">Design Complexity</Label>
-                      <div className="grid grid-cols-3 gap-3 mt-2">
-                        {[
-                          { val: '1-2', label: 'Simple', emoji: null, sub: '1–2 colors', img: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/4247087cb_generated_image.png' },
-                          { val: '3-4', label: 'Moderate', emoji: null, sub: '3–4 colors', img: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/085b8e540_generated_image.png' },
-                          { val: '5+', label: 'Complex', emoji: null, sub: '5+ colors', img: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/b226d5b01_generated_image.png' },
-                        ].map(opt => (
-                          <button
-                            type="button"
-                            key={opt.val}
-                            onClick={() => update('numColors', opt.val)}
-                            className="py-3 px-2 rounded-xl border-2 text-center transition-all overflow-hidden"
-                            style={formData.numColors === opt.val
-                              ? { borderColor: 'var(--brand-red)', backgroundColor: '#fff5f3', color: 'var(--brand-dark)' }
-                              : { borderColor: '#e5e7eb', backgroundColor: 'white' }}
-                          >
-                            {opt.img ? (
-                              <img src={opt.img} alt={opt.label} className="w-full h-20 object-cover rounded-lg mb-2" />
-                            ) : (
-                              <div className="text-2xl mb-1">{opt.emoji}</div>
-                            )}
+                  {/* Complexity */}
+                  <div>
+                    <Label className="font-bold text-sm">Design Complexity</Label>
+                    <div className="grid grid-cols-3 gap-3 mt-2">
+                      {[
+                        { val: '1-2', label: 'Simple', sub: '1–2 colors', img: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/4247087cb_generated_image.png' },
+                        { val: '3-4', label: 'Moderate', sub: '3–4 colors', img: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/085b8e540_generated_image.png' },
+                        { val: '5+', label: 'Complex', sub: '5+ colors', img: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/b226d5b01_generated_image.png' },
+                      ].map(opt => (
+                        <Tile key={opt.val} selected={formData.numColors === opt.val} onClick={() => update('numColors', opt.val)}
+                          className="overflow-hidden p-0 text-center">
+                          <img src={opt.img} alt={opt.label} className="w-full h-24 object-cover" />
+                          <div className="p-2">
                             <div className="text-sm font-bold">{opt.label}</div>
-                            <div className="text-xs text-gray-500">{opt.sub}</div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Budget */}
-                    <div>
-                      <Label className="font-bold">Budget Range</Label>
-                      <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mt-2">
-                        {[
-                         { val: '350-500', label: '$350–$500' },
-                         { val: '500-1000', label: '$500–$1K' },
-                          { val: '1000-2000', label: '$1K–$2K' },
-                          { val: '2000+', label: '$2K+' },
-                          { val: 'flexible', label: 'Flexible' },
-                        ].map(b => (
-                          <button
-                            type="button"
-                            key={b.val}
-                            onClick={() => update('budgetRange', b.val)}
-                            className="py-2 px-3 rounded-xl text-sm font-bold border-2 transition-all"
-                            style={formData.budgetRange === b.val
-                              ? { borderColor: 'var(--brand-cyan)', backgroundColor: '#f0fdf4', color: 'var(--brand-dark)' }
-                              : { borderColor: '#e5e7eb', backgroundColor: 'white' }}
-                          >
-                            {b.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Inspiration Images */}
-                    <div>
-                      <Label className="font-bold">Upload Inspiration Images</Label>
-                      <div className="mt-2">
-                        <label htmlFor="inspiration-upload" className={`flex flex-col items-center justify-center w-full h-28 border-3 border-dashed rounded-2xl cursor-pointer transition-all ${uploading ? 'opacity-50' : 'hover:bg-gray-50'}`}
-                          style={{ borderColor: 'var(--brand-blue)', borderWidth: '2px', borderStyle: 'dashed' }}>
-                          <input
-                            type="file"
-                            id="inspiration-upload"
-                            className="hidden"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            disabled={uploading}
-                          />
-                          {uploading ? (
-                            <><Loader2 className="w-6 h-6 animate-spin mb-1" style={{ color: 'var(--brand-blue)' }} /><span className="text-sm text-gray-500">Uploading...</span></>
-                          ) : (
-                            <><Upload className="w-6 h-6 mb-1" style={{ color: 'var(--brand-blue)' }} /><span className="text-sm font-semibold" style={{ color: 'var(--brand-blue)' }}>Click to upload reference image</span><span className="text-xs text-gray-400">Logos, art, room photos, etc.</span></>
-                          )}
-                        </label>
-                        {formData.inspirationImages.length > 0 && (
-                          <div className="flex gap-2 mt-3 flex-wrap">
-                            {formData.inspirationImages.map((url, idx) => (
-                              <div key={idx} className="relative w-20 h-20">
-                                <img src={url} alt="" className="w-full h-full object-cover rounded-xl" />
-                                <button
-                                  type="button"
-                                  onClick={() => update('inspirationImages', formData.inspirationImages.filter((_, i) => i !== idx))}
-                                  className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                                >
-                                  <X className="w-3 h-3" />
-                                </button>
-                              </div>
-                            ))}
+                            <div className="text-xs text-gray-400">{opt.sub}</div>
                           </div>
-                        )}
-                      </div>
+                        </Tile>
+                      ))}
                     </div>
+                  </div>
 
-                    <Button
-                      type="button"
-                      onClick={() => setActiveStep(1)}
-                      className="w-full py-4 rounded-xl font-bold text-base"
-                      style={{ backgroundColor: 'var(--brand-blue)', color: 'white', border: 'none' }}
-                    >
-                      Next: Tell Us About Your Space →
-                    </Button>
-                  </CardContent>
-                </Card>
+                  {/* Budget */}
+                  <div>
+                    <Label className="font-bold text-sm">Budget Range</Label>
+                    <div className="grid grid-cols-3 md:grid-cols-5 gap-2 mt-2">
+                      {[
+                        { val: '350-500', label: '$350–$500' },
+                        { val: '500-1000', label: '$500–$1K' },
+                        { val: '1000-2000', label: '$1K–$2K' },
+                        { val: '2000+', label: '$2K+' },
+                        { val: 'flexible', label: 'Flexible' },
+                      ].map(b => (
+                        <Tile key={b.val} selected={formData.budgetRange === b.val} onClick={() => update('budgetRange', b.val)}
+                          className="py-2 text-center text-sm font-bold">
+                          {b.label}
+                        </Tile>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Inspiration Upload */}
+                  <div>
+                    <Label className="font-bold text-sm">Inspiration Images</Label>
+                    <p className="text-xs text-gray-400 mb-2">Logos, art, room photos — anything that inspires you</p>
+                    <label htmlFor="inspiration-upload"
+                      className={`flex flex-col items-center justify-center w-full h-24 rounded-xl cursor-pointer transition-all ${uploading ? 'opacity-50' : 'hover:bg-gray-50'}`}
+                      style={{ border: '2px dashed #e5e7eb' }}>
+                      <input type="file" id="inspiration-upload" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+                      {uploading
+                        ? <><Loader2 className="w-5 h-5 animate-spin mb-1 text-gray-400" /><span className="text-xs text-gray-400">Uploading...</span></>
+                        : <><Upload className="w-5 h-5 mb-1" style={{ color: 'var(--brand-blue)' }} /><span className="text-sm font-semibold" style={{ color: 'var(--brand-blue)' }}>Click to upload</span></>
+                      }
+                    </label>
+                    {formData.inspirationImages.length > 0 && (
+                      <div className="flex gap-2 mt-3 flex-wrap">
+                        {formData.inspirationImages.map((url, idx) => (
+                          <div key={idx} className="relative w-16 h-16">
+                            <img src={url} alt="" className="w-full h-full object-cover rounded-lg" />
+                            <button type="button" onClick={() => update('inspirationImages', formData.inspirationImages.filter((_, i) => i !== idx))}
+                              className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center"
+                              style={{ backgroundColor: 'var(--brand-red)', color: 'white' }}>
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <Button type="button" onClick={() => setActiveStep(1)} className="w-full py-3 font-bold"
+                    style={{ backgroundColor: 'var(--brand-blue)', color: 'white', border: 'none' }}>
+                    Next: Your Space &amp; Timeline →
+                  </Button>
+                </SectionCard>
               )}
 
               {/* STEP 1 — Space & Timeline */}
-              {(activeStep >= 1) && (
-                <Card className="rounded-3xl shadow-sm" style={{ border: '2px solid #e5e7eb' }}>
-                  <div className="h-2" style={{ background: 'linear-gradient(90deg, var(--brand-red), var(--brand-cyan))' }} />
-                  <CardHeader>
-                    <CardTitle className="text-2xl flex items-center gap-2">
-                      <span className="text-3xl">🏛️</span> Your Space & Timeline
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-5">
-                    {/* Project Type */}
-                    <div>
-                      <Label className="font-bold">Project Type</Label>
-                      <div className="grid grid-cols-2 gap-3 mt-2">
-                        {[
-                          { val: 'residential', label: 'Residential', emoji: '🏠', sub: 'Home, apartment' },
-                          { val: 'commercial', label: 'Commercial', emoji: '🏢', sub: 'Hotel, office, retail' },
-                        ].map(opt => (
-                          <button
-                            type="button"
-                            key={opt.val}
-                            onClick={() => update('projectType', opt.val)}
-                            className="py-4 rounded-2xl border-2 text-center transition-all"
-                            style={formData.projectType === opt.val
-                              ? { borderColor: 'var(--brand-blue)', backgroundColor: '#eff6ff' }
-                              : { borderColor: '#e5e7eb', backgroundColor: 'white' }}
-                          >
-                            <div className="text-3xl mb-1">{opt.emoji}</div>
-                            <div className="font-bold text-sm">{opt.label}</div>
-                            <div className="text-xs text-gray-500">{opt.sub}</div>
-                          </button>
-                        ))}
-                      </div>
+              {activeStep === 1 && (
+                <SectionCard step={1} title="Your Space & Timeline" subtitle="Help us understand where this rug is going and when you need it.">
+                  <div>
+                    <Label className="font-bold text-sm">Project Type</Label>
+                    <div className="grid grid-cols-2 gap-3 mt-2">
+                      {[
+                        { val: 'residential', label: 'Residential', sub: 'Home, apartment, condo' },
+                        { val: 'commercial', label: 'Commercial', sub: 'Hotel, office, retail' },
+                      ].map(opt => (
+                        <Tile key={opt.val} selected={formData.projectType === opt.val} onClick={() => update('projectType', opt.val)}
+                          className="p-4">
+                          <div className="font-bold text-sm">{opt.label}</div>
+                          <div className="text-xs text-gray-400 mt-0.5">{opt.sub}</div>
+                        </Tile>
+                      ))}
                     </div>
+                  </div>
 
-                    {formData.projectType === 'commercial' && (
-                      <div>
-                        <Label className="font-bold">Business Name</Label>
-                        <Input className="mt-1" value={formData.businessName} onChange={(e) => update('businessName', e.target.value)} placeholder="Your Company LLC" />
-                      </div>
-                    )}
-
-                    {/* Timeline */}
+                  {formData.projectType === 'commercial' && (
                     <div>
-                      <Label className="font-bold">Production Timeline</Label>
-                      <div className="grid grid-cols-2 gap-3 mt-2">
-                        <button
-                          type="button"
-                          onClick={() => update('rushOrder', false)}
-                          className="p-4 rounded-2xl border-2 text-left transition-all"
-                          style={!formData.rushOrder ? { borderColor: 'var(--brand-blue)', backgroundColor: '#eff6ff' } : { borderColor: '#e5e7eb', backgroundColor: 'white' }}
-                        >
-                          <div className="flex items-center gap-2 mb-1">
-                            <Clock className="w-5 h-5 text-gray-500" />
-                            <span className="font-bold text-sm">Standard</span>
-                          </div>
-                          <div className="text-xs text-gray-600">3–5 weeks to your door</div>
-                          <div className="text-base font-bold mt-1" style={{ color: 'var(--brand-blue)' }}>Included</div>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => update('rushOrder', true)}
-                          className="p-4 rounded-2xl border-2 text-left transition-all"
-                          style={formData.rushOrder ? { borderColor: 'var(--brand-red)', backgroundColor: '#fff5f3' } : { borderColor: '#e5e7eb', backgroundColor: 'white' }}
-                        >
-                          <div className="flex items-center gap-2 mb-1">
-                            <Zap className="w-5 h-5 text-orange-500" />
-                            <span className="font-bold text-sm">Rush Order ⚡</span>
-                          </div>
-                          <div className="text-xs text-gray-600">2 weeks total — at your door</div>
-                          <div className="text-base font-bold mt-1 text-orange-600">+$99</div>
-                        </button>
-                      </div>
+                      <Label className="font-bold text-sm">Business Name</Label>
+                      <Input className="mt-1" value={formData.businessName} onChange={(e) => update('businessName', e.target.value)} placeholder="Your Company LLC" />
                     </div>
+                  )}
 
-                    <Button
-                      type="button"
-                      onClick={() => setActiveStep(2)}
-                      className="w-full py-4 rounded-xl font-bold text-base"
-                      style={{ backgroundColor: 'var(--brand-red)', color: 'white', border: 'none' }}
-                    >
-                      Next: Generate AI Preview →
+                  <div>
+                    <Label className="font-bold text-sm">Production Timeline</Label>
+                    <div className="grid grid-cols-2 gap-3 mt-2">
+                      <Tile selected={!formData.rushOrder} onClick={() => update('rushOrder', false)} className="p-4">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Clock className="w-4 h-4 text-gray-400" />
+                          <span className="font-bold text-sm">Standard</span>
+                        </div>
+                        <div className="text-xs text-gray-400">3–5 weeks to your door</div>
+                        <div className="text-sm font-bold mt-2" style={{ color: 'var(--brand-blue)' }}>Included</div>
+                      </Tile>
+                      <Tile selected={formData.rushOrder} onClick={() => update('rushOrder', true)} className="p-4">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Zap className="w-4 h-4" style={{ color: 'var(--brand-red)' }} />
+                          <span className="font-bold text-sm">Rush Order</span>
+                        </div>
+                        <div className="text-xs text-gray-400">2 weeks total — at your door</div>
+                        <div className="text-sm font-bold mt-2" style={{ color: 'var(--brand-red)' }}>+$99</div>
+                      </Tile>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-3">
+                    <Button type="button" variant="outline" onClick={() => setActiveStep(0)} className="flex-1 py-3 font-bold">
+                      ← Back
                     </Button>
-                  </CardContent>
-                </Card>
+                    <Button type="button" onClick={() => setActiveStep(2)} className="flex-1 py-3 font-bold"
+                      style={{ backgroundColor: 'var(--brand-red)', color: 'white', border: 'none' }}>
+                      Next: AI Preview →
+                    </Button>
+                  </div>
+                </SectionCard>
               )}
 
               {/* STEP 2 — AI Preview */}
-              {(activeStep >= 2) && (
-                <Card className="rounded-3xl shadow-sm" style={{ border: '2px solid #e5e7eb' }}>
-                  <div className="h-2" style={{ background: 'linear-gradient(90deg, var(--brand-cyan), var(--brand-blue))' }} />
-                  <CardHeader>
-                    <CardTitle className="text-2xl flex items-center gap-2">
-                      <span className="text-3xl">🤖</span> AI Preview & Markup
-                    </CardTitle>
-                    <p className="text-sm text-gray-500">Generate a sample from your description, then draw notes directly on it</p>
-                  </CardHeader>
-                  <CardContent>
-                    <AIPreviewPanel formData={formData} onMarkupSave={handleMarkupSave} />
-                  </CardContent>
-                  <div className="px-6 pb-6">
-                    <Button
-                      type="button"
-                      onClick={() => setActiveStep(3)}
-                      className="w-full py-4 rounded-xl font-bold text-base"
-                      style={{ backgroundColor: 'var(--brand-cyan)', color: 'var(--brand-dark)', border: 'none' }}
-                    >
-                      Next: Contact & Submit →
+              {activeStep === 2 && (
+                <SectionCard step={2} title="AI Preview & Markup" subtitle="Generate a preview from your description, then annotate it directly.">
+                  <AIPreviewPanel formData={formData} onMarkupSave={handleMarkupSave} />
+                  <div className="flex gap-3 pt-2">
+                    <Button type="button" variant="outline" onClick={() => setActiveStep(1)} className="flex-1 py-3 font-bold">
+                      ← Back
+                    </Button>
+                    <Button type="button" onClick={() => setActiveStep(3)} className="flex-1 py-3 font-bold"
+                      style={{ backgroundColor: 'var(--brand-cyan)', color: 'var(--brand-dark)', border: 'none' }}>
+                      Next: Contact &amp; Submit →
                     </Button>
                   </div>
-                </Card>
+                </SectionCard>
               )}
 
-              {/* STEP 3 — Contact & Submit */}
-              {(activeStep >= 3) && (
-                <Card className="rounded-3xl shadow-sm" style={{ border: '2px solid #e5e7eb' }}>
-                  <div className="h-2" style={{ background: 'linear-gradient(90deg, var(--brand-blue), var(--brand-dark))' }} />
-                  <CardHeader>
-                    <CardTitle className="text-2xl flex items-center gap-2">
-                      <span className="text-3xl">📬</span> Contact Info & Submit
-                    </CardTitle>
-                    <p className="text-sm text-gray-500">Free submission — payment only after you approve the estimate</p>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid md:grid-cols-3 gap-3">
-                      <div>
-                        <Label className="font-bold">Name *</Label>
-                        <Input required className="mt-1" value={formData.name} onChange={(e) => update('name', e.target.value)} placeholder="Jane Smith" />
-                      </div>
-                      <div>
-                        <Label className="font-bold">Email *</Label>
-                        <Input required type="email" className="mt-1" value={formData.email} onChange={(e) => update('email', e.target.value)} placeholder="jane@studio.com" />
-                      </div>
-                      <div>
-                        <Label className="font-bold">Phone *</Label>
-                        <Input required className="mt-1" value={formData.phone} onChange={(e) => update('phone', e.target.value)} placeholder="(555) 123-4567" />
-                      </div>
+              {/* STEP 3 — Submit */}
+              {activeStep === 3 && (
+                <SectionCard step={3} title="Contact Info & Submit" subtitle="Free to submit — we'll send a detailed estimate within 48 hours.">
+                  <div className="grid md:grid-cols-3 gap-3">
+                    <div>
+                      <Label className="font-bold text-sm">Name *</Label>
+                      <Input required className="mt-1" value={formData.name} onChange={(e) => update('name', e.target.value)} placeholder="Jane Smith" />
                     </div>
-
-                    {/* Summary Box */}
-                    <div className="rounded-2xl p-4 space-y-2 text-sm" style={{ backgroundColor: 'var(--brand-cream)', border: '2px solid var(--brand-blue)' }}>
-                      <p className="font-bold text-gray-800">📋 Your Commission Summary</p>
-                      {formData.preferredSize && <p>📐 Size: {formData.preferredSize}</p>}
-                      {formData.preferredColors?.length > 0 && (
-                        <div className="flex items-center gap-2">
-                          <span>🎨 Colors:</span>
-                          {formData.preferredColors.map((c, i) => (
-                            <div key={i} className="w-5 h-5 rounded-full border border-white shadow-sm inline-block" style={{ backgroundColor: c }} title={c} />
-                          ))}
-                        </div>
-                      )}
-                      {formData.budgetRange && <p>💰 Budget: {formData.budgetRange}</p>}
-                      <p>⏱ Timeline: {formData.rushOrder ? '⚡ Rush — 2 weeks (+$99)' : 'Standard — 3–5 weeks'}</p>
-                      {aiPreviewUrl && <p>🖼 AI Preview: Included</p>}
-                      {markupNotes.length > 0 && <p>📝 Design notes: {markupNotes.length} added</p>}
+                    <div>
+                      <Label className="font-bold text-sm">Email *</Label>
+                      <Input required type="email" className="mt-1" value={formData.email} onChange={(e) => update('email', e.target.value)} placeholder="jane@studio.com" />
                     </div>
+                    <div>
+                      <Label className="font-bold text-sm">Phone *</Label>
+                      <Input required className="mt-1" value={formData.phone} onChange={(e) => update('phone', e.target.value)} placeholder="(555) 123-4567" />
+                    </div>
+                  </div>
 
-                    <Button
-                      type="submit"
-                      disabled={submitting || uploading}
-                      className="w-full py-6 rounded-2xl text-lg font-black"
-                      style={{ background: 'linear-gradient(135deg, var(--brand-blue), var(--brand-red))', color: 'white', border: 'none' }}
-                    >
-                      {submitting ? (
-                        <><Loader2 className="w-5 h-5 mr-2 animate-spin" />Submitting...</>
-                      ) : (
-                        '🚀 Submit Free Commission Request'
-                      )}
+                  {/* Summary */}
+                  <div className="rounded-xl p-4 space-y-2 text-sm" style={{ backgroundColor: 'var(--brand-cream)', border: '1.5px solid #e5e7eb' }}>
+                    <p className="font-bold text-gray-700 mb-1">Commission Summary</p>
+                    {formData.preferredSize && <p className="text-gray-600">Size: <strong>{formData.preferredSize}</strong></p>}
+                    {formData.numColors && <p className="text-gray-600">Complexity: <strong>{formData.numColors} colors</strong></p>}
+                    {formData.budgetRange && <p className="text-gray-600">Budget: <strong>{formData.budgetRange}</strong></p>}
+                    <p className="text-gray-600">Timeline: <strong>{formData.rushOrder ? 'Rush — 2 weeks (+$99)' : 'Standard — 3–5 weeks'}</strong></p>
+                    {formData.preferredColors?.length > 0 && (
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-gray-600">Colors:</span>
+                        {formData.preferredColors.map((c, i) => (
+                          <div key={i} className="w-5 h-5 rounded-full border border-white shadow-sm" style={{ backgroundColor: c }} title={c} />
+                        ))}
+                      </div>
+                    )}
+                    {aiPreviewUrl && <p className="text-gray-600">AI Preview: <strong>Included</strong></p>}
+                    {markupNotes.length > 0 && <p className="text-gray-600">Design notes: <strong>{markupNotes.length} added</strong></p>}
+                  </div>
+
+                  <div className="flex gap-3">
+                    <Button type="button" variant="outline" onClick={() => setActiveStep(2)} className="flex-1 py-3 font-bold">
+                      ← Back
                     </Button>
-                    <p className="text-center text-xs text-gray-500">No payment required. We'll send a detailed estimate within 48 hours.</p>
-                  </CardContent>
-                </Card>
+                    <Button type="submit" disabled={submitting || uploading} className="flex-1 py-3 font-black text-base"
+                      style={{ backgroundColor: 'var(--brand-blue)', color: 'white', border: 'none' }}>
+                      {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Submitting...</> : 'Submit Free Request'}
+                    </Button>
+                  </div>
+                  <p className="text-center text-xs text-gray-400">No payment required. Estimate arrives within 48 hours.</p>
+                </SectionCard>
               )}
             </div>
 
-            {/* RIGHT COLUMN — Business Account */}
-            <div className="space-y-6">
+            {/* RIGHT COLUMN */}
+            <div className="space-y-5">
+
+              {/* Business Account */}
               <BusinessAccountPanel
                 formData={formData}
                 aiPreviewUrl={aiPreviewUrl}
@@ -514,39 +459,49 @@ export default function Commission() {
                 onLoadDesign={handleLoadDesign}
               />
 
-              {/* Timeline Explainer */}
-              <Card className="rounded-3xl shadow-sm" style={{ border: '2px solid #e5e7eb' }}>
-                <CardContent className="pt-6 space-y-4">
-                  <p className="font-black text-lg">📅 How It Works</p>
+              {/* How It Works */}
+              <div className="bg-white rounded-2xl p-5" style={{ border: '1.5px solid #e5e7eb' }}>
+                <p className="font-black text-sm uppercase tracking-wide mb-4" style={{ color: 'var(--brand-dark)' }}>How It Works</p>
+                <div className="space-y-3">
                   {[
-                    { icon: '📝', step: 'Submit free request', time: 'Now' },
-                    { icon: '📬', step: 'Get detailed estimate', time: '48 hrs' },
-                    { icon: '💳', step: 'Approve & pay deposit', time: 'After review' },
-                    { icon: '🎨', step: 'We paint your rug', time: formData.rushOrder ? '~1 week' : '2–4 weeks' },
-                    { icon: '🚚', step: 'Shipped to your door', time: formData.rushOrder ? '2 wks total' : '3–5 wks total' },
+                    { num: '1', step: 'Submit free request', time: 'Today' },
+                    { num: '2', step: 'Receive detailed estimate', time: 'Within 48 hrs' },
+                    { num: '3', step: 'Approve & pay deposit', time: 'After review' },
+                    { num: '4', step: 'We hand-paint your rug', time: formData.rushOrder ? '~1 week' : '2–4 weeks' },
+                    { num: '5', step: 'Shipped to your door', time: formData.rushOrder ? '2 wks total' : '3–5 wks total' },
                   ].map((s, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <div className="text-2xl">{s.icon}</div>
-                      <div className="flex-1">
-                        <div className="text-sm font-semibold text-gray-800">{s.step}</div>
-                        <div className="text-xs text-gray-500">{s.time}</div>
+                    <div key={i} className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black shrink-0 mt-0.5"
+                        style={{ backgroundColor: 'var(--brand-blue)', color: 'white' }}>
+                        {s.num}
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold" style={{ color: 'var(--brand-dark)' }}>{s.step}</div>
+                        <div className="text-xs text-gray-400">{s.time}</div>
                       </div>
                     </div>
                   ))}
-                </CardContent>
-              </Card>
-
-              {/* Why Rugly */}
-              <div className="rounded-3xl p-5 space-y-3" style={{ background: 'var(--brand-dark)', color: 'white' }}>
-                <p className="font-black text-lg">⭐ Why Rugly?</p>
-                <p className="text-sm opacity-80">100% hand-painted, one-of-a-kind rugs used by interior designers, boutique hotels, and brands.</p>
-                <div className="space-y-2 text-sm">
-                  <p>✅ Real artists, no print-on-demand</p>
-                  <p>✅ Any size, any design</p>
-                  <p>✅ Free design estimate</p>
-                  <p>✅ 24hr damage guarantee</p>
                 </div>
               </div>
+
+              {/* Why Rugly */}
+              <div className="rounded-2xl p-5" style={{ backgroundColor: 'var(--brand-dark)', color: 'white' }}>
+                <p className="font-black text-sm uppercase tracking-wide mb-3 opacity-60">Why Rugly</p>
+                <div className="space-y-2">
+                  {[
+                    'Real artists — no print-on-demand',
+                    'Any size, any design',
+                    'Free estimate, no commitment',
+                    '24-hour damage guarantee',
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-center gap-2 text-sm">
+                      <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: 'var(--brand-cyan)' }} />
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
             </div>
           </div>
         </form>
