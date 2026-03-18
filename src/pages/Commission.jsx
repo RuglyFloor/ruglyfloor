@@ -215,36 +215,12 @@ export default function Commission() {
 
                     {/* Color Palette Picker */}
                     <div>
-                      <Label className="font-bold">Color Palette</Label>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
-                        {COLOR_PALETTES.map((p) => (
-                          <button
-                            type="button"
-                            key={p.label}
-                            onClick={() => {
-                              setSelectedPalette(p.label);
-                              update('preferredColors', p.label);
-                            }}
-                            className="p-3 rounded-xl border-2 text-left transition-all"
-                            style={selectedPalette === p.label
-                              ? { borderColor: 'var(--brand-blue)', backgroundColor: '#eff6ff' }
-                              : { borderColor: '#e5e7eb', backgroundColor: 'white' }}
-                          >
-                            <div className="flex gap-1 mb-1">
-                              {p.colors.map((c, i) => (
-                                <div key={i} className="w-5 h-5 rounded-full" style={{ backgroundColor: c }} />
-                              ))}
-                            </div>
-                            <div className="text-xs font-bold text-gray-700">{p.label}</div>
-                          </button>
-                        ))}
-                      </div>
-                      <Input
-                        className="mt-2"
-                        placeholder="Or describe your own: e.g. dusty rose with sage green"
-                        value={selectedPalette ? '' : formData.preferredColors}
-                        onChange={(e) => { setSelectedPalette(null); update('preferredColors', e.target.value); }}
-                      />
+                     <Label className="font-bold">Color Palette</Label>
+                     <p className="text-xs text-gray-400 mb-2">Choose a preset or build your own — use the color wheel or paste a hex code</p>
+                     <ColorPaletteBuilder
+                       value={formData.preferredColors}
+                       onChange={(colors) => update('preferredColors', colors)}
+                     />
                     </div>
 
                     {/* Complexity */}
