@@ -35,7 +35,7 @@ function Tile({ selected, onClick, children, className = '' }) {
 }
 
 function SectionCard({ step, title, subtitle, required: requiredFields = [], optional = false, children }) {
-  const accent = ['var(--brand-blue)', 'var(--brand-dark)', 'var(--brand-red)', 'var(--brand-cyan)', 'var(--brand-dark)'][step] || 'var(--brand-blue)';
+  const accent = 'var(--brand-red)';
   return (
     <Card className="rounded-2xl shadow-sm overflow-hidden bg-white" style={{ border: '1.5px solid #e5e7eb' }}>
       <div className="h-1.5" style={{ backgroundColor: accent }} />
