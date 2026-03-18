@@ -15,14 +15,7 @@ import BusinessAccountPanel from '../components/commission/BusinessAccountPanel'
 import ColorPaletteBuilder from '../components/commission/ColorPaletteBuilder';
 
 const SIZES = ['2x3', '3x5', '4x6', '5x7', '6x9', '8x10', '9x12', 'Custom'];
-const COLOR_PALETTES = [
-  { label: 'Earth Tones', colors: ['#c8a97e', '#8b6914', '#5c3d2e', '#e8d5b7'] },
-  { label: 'Ocean Blues', colors: ['#0077b6', '#00b4d8', '#90e0ef', '#caf0f8'] },
-  { label: 'Bold & Modern', colors: ['#f04624', '#4075ff', '#24f0a0', '#343634'] },
-  { label: 'Soft Pastels', colors: ['#ffb3c1', '#ffd6a5', '#caffbf', '#a0c4ff'] },
-  { label: 'Monochrome', colors: ['#212529', '#495057', '#adb5bd', '#f8f9fa'] },
-  { label: 'Desert Sunset', colors: ['#e63946', '#f4a261', '#e9c46a', '#264653'] },
-];
+
 
 export default function Commission() {
   const navigate = useNavigate();
