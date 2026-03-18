@@ -472,8 +472,8 @@ export default function Commission() {
                     <Zap className="w-5 h-5 text-orange-600" />
                     <span className="font-bold">Rush Order</span>
                   </div>
-                  <div className="text-sm text-gray-600 mb-2">1 week production + shipping</div>
-                  <div className="text-lg font-bold text-orange-600">+$159</div>
+                  <div className="text-sm text-gray-600 mb-2">2 weeks total — at your door</div>
+                  <div className="text-lg font-bold text-orange-600">+$99</div>
                 </button>
               </div>
             </CardContent>
