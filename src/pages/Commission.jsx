@@ -11,9 +11,10 @@ import SEOHead from '../components/seo/SEOHead';
 import AIPreviewPanel from '../components/commission/AIPreviewPanel';
 import BusinessAccountPanel from '../components/commission/BusinessAccountPanel';
 import ColorPaletteBuilder from '../components/commission/ColorPaletteBuilder';
+import FloorPlanBuilder from '../components/commission/FloorPlanBuilder';
 
 const SIZES = ['2x3', '3x5', '4x6', '5x7', '6x9', '8x10', '9x12', 'Custom'];
-const STEPS = ['Design Vision', 'Your Space', 'AI Preview', 'Submit'];
+const STEPS = ['Design Vision', 'Floor Plan', 'Your Space', 'AI Preview', 'Submit'];
 
 // Reusable tile button — selected = brand-blue border + light fill
 function Tile({ selected, onClick, children, className = '' }) {
