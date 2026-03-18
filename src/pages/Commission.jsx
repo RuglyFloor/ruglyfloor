@@ -258,20 +258,24 @@ export default function Commission() {
                       <Label className="font-bold">Design Complexity</Label>
                       <div className="grid grid-cols-3 gap-3 mt-2">
                         {[
-                          { val: '1-2', label: 'Simple', emoji: '⬜', sub: '1–2 colors' },
-                          { val: '3-4', label: 'Moderate', emoji: '🎨', sub: '3–4 colors' },
-                          { val: '5+', label: 'Complex', emoji: '🌈', sub: '5+ colors' },
+                          { val: '1-2', label: 'Simple', emoji: '⬜', sub: '1–2 colors', img: null },
+                          { val: '3-4', label: 'Moderate', emoji: null, sub: '3–4 colors', img: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/287aa7607_generated_image.png' },
+                          { val: '5+', label: 'Complex', emoji: null, sub: '5+ colors', img: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/b226d5b01_generated_image.png' },
                         ].map(opt => (
                           <button
                             type="button"
                             key={opt.val}
                             onClick={() => update('numColors', opt.val)}
-                            className="py-3 px-2 rounded-xl border-2 text-center transition-all"
+                            className="py-3 px-2 rounded-xl border-2 text-center transition-all overflow-hidden"
                             style={formData.numColors === opt.val
                               ? { borderColor: 'var(--brand-red)', backgroundColor: '#fff5f3', color: 'var(--brand-dark)' }
                               : { borderColor: '#e5e7eb', backgroundColor: 'white' }}
                           >
-                            <div className="text-2xl mb-1">{opt.emoji}</div>
+                            {opt.img ? (
+                              <img src={opt.img} alt={opt.label} className="w-full h-20 object-cover rounded-lg mb-2" />
+                            ) : (
+                              <div className="text-2xl mb-1">{opt.emoji}</div>
+                            )}
                             <div className="text-sm font-bold">{opt.label}</div>
                             <div className="text-xs text-gray-500">{opt.sub}</div>
                           </button>
