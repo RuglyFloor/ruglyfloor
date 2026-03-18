@@ -24,7 +24,7 @@ export default function Commission() {
   const [uploading, setUploading] = useState(false);
   const [aiPreviewUrl, setAiPreviewUrl] = useState(null);
   const [markupNotes, setMarkupNotes] = useState([]);
-  const [selectedPalette, setSelectedPalette] = useState(null);
+
   const [activeStep, setActiveStep] = useState(0);
 
   const [formData, setFormData] = useState({
