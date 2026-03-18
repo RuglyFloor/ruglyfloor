@@ -352,15 +352,15 @@ export default function Commission() {
 
               {/* STEP 1 — Floor Plan Builder */}
               {activeStep === 1 && (
-                <SectionCard step={1} title="Floor Plan Builder" subtitle="Set your room dimensions, place furniture, and resize the rug to see exactly how it fits. (Recommended)">
+                <SectionCard step={1} title="Floor Plan Builder" optional subtitle="Drag furniture, set room dimensions, and see how the rug fits your space. Skipping is fine — we'll follow up.">
                   <FloorPlanBuilder rugSize={formData.preferredSize} onChange={setFloorPlan} />
                   <div className="flex gap-3 pt-2">
                     <Button type="button" variant="outline" onClick={() => setActiveStep(0)} className="flex-1 py-3 font-bold">
                       ← Back
                     </Button>
-                    <Button type="button" onClick={() => setActiveStep(2)} className="flex-1 py-3 font-bold"
+                    <Button type="button" onClick={() => setActiveStep(2)} className="flex-1 py-3 font-bold flex items-center justify-center gap-2"
                       style={{ backgroundColor: 'var(--brand-dark)', color: 'white', border: 'none' }}>
-                      Next: Your Space &amp; Timeline →
+                      Continue to Your Space <ChevronRight className="w-4 h-4" />
                     </Button>
                   </div>
                 </SectionCard>
