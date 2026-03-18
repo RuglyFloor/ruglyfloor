@@ -520,7 +520,11 @@ export default function Commission() {
                     </Button>
                     <Button type="submit" disabled={submitting || uploading} className="flex-1 py-3 font-black text-base"
                       style={{ backgroundColor: 'var(--brand-blue)', color: 'white', border: 'none' }}>
-                      {submitting ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Submitting...</> : 'Submit Free Request'}
+                      {generatingProposal
+                        ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Creating Your Proposal...</>
+                        : submitting
+                          ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Submitting...</>
+                          : 'Submit & Get Design Proposal'}
                     </Button>
                   </div>
                   <p className="text-center text-xs text-gray-400">No payment required. Estimate arrives within 48 hours.</p>
