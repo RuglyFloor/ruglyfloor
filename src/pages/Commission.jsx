@@ -389,10 +389,10 @@ export default function Commission() {
                   </div>
 
                   <div className="flex gap-3">
-                    <Button type="button" variant="outline" onClick={() => setActiveStep(0)} className="flex-1 py-3 font-bold">
+                    <Button type="button" variant="outline" onClick={() => setActiveStep(1)} className="flex-1 py-3 font-bold">
                       ← Back
                     </Button>
-                    <Button type="button" onClick={() => setActiveStep(2)} className="flex-1 py-3 font-bold"
+                    <Button type="button" onClick={() => setActiveStep(3)} className="flex-1 py-3 font-bold"
                       style={{ backgroundColor: 'var(--brand-red)', color: 'white', border: 'none' }}>
                       Next: AI Preview →
                     </Button>
@@ -400,15 +400,15 @@ export default function Commission() {
                 </SectionCard>
               )}
 
-              {/* STEP 2 — AI Preview */}
-              {activeStep === 2 && (
-                <SectionCard step={2} title="AI Preview & Markup" subtitle="Generate a preview from your description, then annotate it directly.">
+              {/* STEP 3 — AI Preview */}
+              {activeStep === 3 && (
+                <SectionCard step={3} title="AI Preview & Markup" subtitle="Generate a preview from your description, then annotate it directly.">
                   <AIPreviewPanel formData={formData} onMarkupSave={handleMarkupSave} />
                   <div className="flex gap-3 pt-2">
-                    <Button type="button" variant="outline" onClick={() => setActiveStep(1)} className="flex-1 py-3 font-bold">
+                    <Button type="button" variant="outline" onClick={() => setActiveStep(2)} className="flex-1 py-3 font-bold">
                       ← Back
                     </Button>
-                    <Button type="button" onClick={() => setActiveStep(3)} className="flex-1 py-3 font-bold"
+                    <Button type="button" onClick={() => setActiveStep(4)} className="flex-1 py-3 font-bold"
                       style={{ backgroundColor: 'var(--brand-cyan)', color: 'var(--brand-dark)', border: 'none' }}>
                       Next: Contact &amp; Submit →
                     </Button>
@@ -416,9 +416,9 @@ export default function Commission() {
                 </SectionCard>
               )}
 
-              {/* STEP 3 — Submit */}
-              {activeStep === 3 && (
-                <SectionCard step={3} title="Contact Info & Submit" subtitle="Free to submit — we'll send a detailed estimate within 48 hours.">
+              {/* STEP 4 — Submit */}
+              {activeStep === 4 && (
+                <SectionCard step={4} title="Contact Info & Submit" subtitle="Free to submit — we'll send a detailed estimate within 48 hours.">
                   <div className="grid md:grid-cols-3 gap-3">
                     <div>
                       <Label className="font-bold text-sm">Name *</Label>
