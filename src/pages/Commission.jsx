@@ -229,7 +229,7 @@ export default function Commission() {
                       <div className="grid grid-cols-3 gap-3 mt-2">
                         {[
                           { val: '1-2', label: 'Simple', emoji: null, sub: '1–2 colors', img: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/4247087cb_generated_image.png' },
-                          { val: '3-4', label: 'Moderate', emoji: null, sub: '3–4 colors', img: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/287aa7607_generated_image.png' },
+                          { val: '3-4', label: 'Moderate', emoji: null, sub: '3–4 colors', img: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/085b8e540_generated_image.png' },
                           { val: '5+', label: 'Complex', emoji: null, sub: '5+ colors', img: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/b226d5b01_generated_image.png' },
                         ].map(opt => (
                           <button
