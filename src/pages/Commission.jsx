@@ -14,7 +14,7 @@ import ColorPaletteBuilder from '../components/commission/ColorPaletteBuilder';
 import FloorPlanBuilder from '../components/commission/FloorPlanBuilder';
 
 const SIZES = ['2x3', '3x5', '4x6', '5x7', '6x9', '8x10', '9x12', 'Custom'];
-const STEPS = ['Design Vision', 'Floor Plan', 'Your Space', 'AI Preview', 'Submit'];
+const STEPS = ['Design Vision', 'Perfect Fitted Rug', 'Your Perfect Match for the Space', 'Realtime Markup', 'Submit'];
 
 // Reusable tile button — selected = brand-blue border + light fill
 function Tile({ selected, onClick, children, className = '' }) {
