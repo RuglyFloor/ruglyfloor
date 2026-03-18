@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, Loader2, Clock, Zap, Sparkles, X, CheckCircle2 } from 'lucide-react';
+import { Upload, Loader2, Clock, Zap, Sparkles, X, CheckCircle2, ChevronRight } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import SEOHead from '../components/seo/SEOHead';
