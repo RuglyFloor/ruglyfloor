@@ -238,23 +238,20 @@ export default function Commission() {
 
               {/* STEP 0 — Design Vision */}
               {activeStep === 0 && (
-                <SectionCard step={0} title="Design Vision" subtitle="Tell us about your rug — the more detail, the better your AI preview.">
-                  <div>
-                    <Label className="font-bold text-sm">Describe your design *</Label>
+                <SectionCard step={0} title="Design Vision" subtitle="Tell us about your dream rug. The more detail you add, the better your AI preview will be.">
+
+                  <FieldGroup label="Describe your design" required hint="Colors, patterns, mood, inspiration — the more detail, the better.">
                     <Textarea
-                      required
-                      className="mt-2 h-28 resize-none"
+                      className="mt-1 h-32 resize-none"
                       placeholder="e.g. Bold geometric pattern with navy and gold, abstract brushstrokes, Moroccan tile inspiration..."
                       value={formData.description}
                       onChange={(e) => update('description', e.target.value)}
                     />
-                    <p className="text-xs text-gray-400 mt-1">{formData.description.length} characters</p>
-                  </div>
+                    <p className="text-xs text-gray-400 mt-1">{formData.description.length} / 20 characters minimum</p>
+                  </FieldGroup>
 
-                  {/* Size */}
-                  <div>
-                    <Label className="font-bold text-sm">Preferred Size</Label>
-                    <div className="grid grid-cols-4 gap-2 mt-2">
+                  <FieldGroup label="Preferred Size" required hint="Pick the size that fits your space — we'll confirm during the estimate.">
+                    <div className="grid grid-cols-4 gap-2 mt-1">
                       {SIZES.map(s => (
                         <Tile key={s} selected={formData.preferredSize === s} onClick={() => update('preferredSize', s)}
                           className="py-2 text-center text-sm font-bold">
@@ -262,90 +259,93 @@ export default function Commission() {
                         </Tile>
                       ))}
                     </div>
-                  </div>
+                  </FieldGroup>
 
-                  {/* Color Palette */}
-                  <div>
-                    <Label className="font-bold text-sm">Color Palette</Label>
-                    <p className="text-xs text-gray-400 mb-2">Pick a preset or build your own</p>
-                    <ColorPaletteBuilder
-                      value={formData.preferredColors}
-                      onChange={(colors) => update('preferredColors', colors)}
-                    />
-                  </div>
+                  <div className="border-t pt-5" style={{ borderColor: '#f0f0f0' }}>
+                    <p className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-4">Optional — but helps us get it right</p>
 
-                  {/* Complexity */}
-                  <div>
-                    <Label className="font-bold text-sm">Design Complexity</Label>
-                    <div className="grid grid-cols-3 gap-3 mt-2">
-                      {[
-                        { val: '1-2', label: 'Simple', sub: '1–2 colors', img: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/4247087cb_generated_image.png' },
-                        { val: '3-4', label: 'Moderate', sub: '3–4 colors', img: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/085b8e540_generated_image.png' },
-                        { val: '5+', label: 'Complex', sub: '5+ colors', img: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/b226d5b01_generated_image.png' },
-                      ].map(opt => (
-                        <Tile key={opt.val} selected={formData.numColors === opt.val} onClick={() => update('numColors', opt.val)}
-                          className="overflow-hidden p-0 text-center">
-                          <img src={opt.img} alt={opt.label} className="w-full h-24 object-cover" />
-                          <div className="p-2">
-                            <div className="text-sm font-bold">{opt.label}</div>
-                            <div className="text-xs text-gray-400">{opt.sub}</div>
+                    <div className="space-y-6">
+                      <FieldGroup label="Color Palette" hint="Pick a preset or build your own with specific hex colors.">
+                        <ColorPaletteBuilder
+                          value={formData.preferredColors}
+                          onChange={(colors) => update('preferredColors', colors)}
+                        />
+                      </FieldGroup>
+
+                      <FieldGroup label="Design Complexity" hint="How many paint colors should your rug use?">
+                        <div className="grid grid-cols-3 gap-3 mt-1">
+                          {[
+                            { val: '1-2', label: 'Simple', sub: '1–2 colors', img: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/4247087cb_generated_image.png' },
+                            { val: '3-4', label: 'Moderate', sub: '3–4 colors', img: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/085b8e540_generated_image.png' },
+                            { val: '5+', label: 'Complex', sub: '5+ colors', img: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/b226d5b01_generated_image.png' },
+                          ].map(opt => (
+                            <Tile key={opt.val} selected={formData.numColors === opt.val} onClick={() => update('numColors', opt.val)}
+                              className="overflow-hidden p-0 text-center">
+                              <img src={opt.img} alt={opt.label} className="w-full h-24 object-cover" />
+                              <div className="p-2">
+                                <div className="text-sm font-bold">{opt.label}</div>
+                                <div className="text-xs text-gray-400">{opt.sub}</div>
+                              </div>
+                            </Tile>
+                          ))}
+                        </div>
+                      </FieldGroup>
+
+                      <FieldGroup label="Budget Range" hint="Helps us tailor the estimate — no payment now.">
+                        <div className="grid grid-cols-3 md:grid-cols-5 gap-2 mt-1">
+                          {[
+                            { val: '350-500', label: '$350–$500' },
+                            { val: '500-1000', label: '$500–$1K' },
+                            { val: '1000-2000', label: '$1K–$2K' },
+                            { val: '2000+', label: '$2K+' },
+                            { val: 'flexible', label: 'Flexible' },
+                          ].map(b => (
+                            <Tile key={b.val} selected={formData.budgetRange === b.val} onClick={() => update('budgetRange', b.val)}
+                              className="py-2 text-center text-sm font-bold">
+                              {b.label}
+                            </Tile>
+                          ))}
+                        </div>
+                      </FieldGroup>
+
+                      <FieldGroup label="Inspiration Images" hint="Logos, art, room photos — anything that captures your vision.">
+                        <label htmlFor="inspiration-upload"
+                          className={`flex flex-col items-center justify-center w-full h-24 rounded-xl cursor-pointer transition-all mt-1 ${uploading ? 'opacity-50' : 'hover:bg-gray-50'}`}
+                          style={{ border: '2px dashed #e5e7eb' }}>
+                          <input type="file" id="inspiration-upload" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+                          {uploading
+                            ? <><Loader2 className="w-5 h-5 animate-spin mb-1 text-gray-400" /><span className="text-xs text-gray-400">Uploading...</span></>
+                            : <><Upload className="w-5 h-5 mb-1" style={{ color: 'var(--brand-blue)' }} /><span className="text-sm font-semibold" style={{ color: 'var(--brand-blue)' }}>Click to upload</span></>
+                          }
+                        </label>
+                        {formData.inspirationImages.length > 0 && (
+                          <div className="flex gap-2 mt-3 flex-wrap">
+                            {formData.inspirationImages.map((url, idx) => (
+                              <div key={idx} className="relative w-16 h-16">
+                                <img src={url} alt="" className="w-full h-full object-cover rounded-lg" />
+                                <button type="button" onClick={() => update('inspirationImages', formData.inspirationImages.filter((_, i) => i !== idx))}
+                                  className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center"
+                                  style={{ backgroundColor: 'var(--brand-red)', color: 'white' }}>
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </div>
+                            ))}
                           </div>
-                        </Tile>
-                      ))}
+                        )}
+                      </FieldGroup>
                     </div>
                   </div>
 
-                  {/* Budget */}
-                  <div>
-                    <Label className="font-bold text-sm">Budget Range</Label>
-                    <div className="grid grid-cols-3 md:grid-cols-5 gap-2 mt-2">
-                      {[
-                        { val: '350-500', label: '$350–$500' },
-                        { val: '500-1000', label: '$500–$1K' },
-                        { val: '1000-2000', label: '$1K–$2K' },
-                        { val: '2000+', label: '$2K+' },
-                        { val: 'flexible', label: 'Flexible' },
-                      ].map(b => (
-                        <Tile key={b.val} selected={formData.budgetRange === b.val} onClick={() => update('budgetRange', b.val)}
-                          className="py-2 text-center text-sm font-bold">
-                          {b.label}
-                        </Tile>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Inspiration Upload */}
-                  <div>
-                    <Label className="font-bold text-sm">Inspiration Images</Label>
-                    <p className="text-xs text-gray-400 mb-2">Logos, art, room photos — anything that inspires you</p>
-                    <label htmlFor="inspiration-upload"
-                      className={`flex flex-col items-center justify-center w-full h-24 rounded-xl cursor-pointer transition-all ${uploading ? 'opacity-50' : 'hover:bg-gray-50'}`}
-                      style={{ border: '2px dashed #e5e7eb' }}>
-                      <input type="file" id="inspiration-upload" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
-                      {uploading
-                        ? <><Loader2 className="w-5 h-5 animate-spin mb-1 text-gray-400" /><span className="text-xs text-gray-400">Uploading...</span></>
-                        : <><Upload className="w-5 h-5 mb-1" style={{ color: 'var(--brand-blue)' }} /><span className="text-sm font-semibold" style={{ color: 'var(--brand-blue)' }}>Click to upload</span></>
-                      }
-                    </label>
-                    {formData.inspirationImages.length > 0 && (
-                      <div className="flex gap-2 mt-3 flex-wrap">
-                        {formData.inspirationImages.map((url, idx) => (
-                          <div key={idx} className="relative w-16 h-16">
-                            <img src={url} alt="" className="w-full h-full object-cover rounded-lg" />
-                            <button type="button" onClick={() => update('inspirationImages', formData.inspirationImages.filter((_, i) => i !== idx))}
-                              className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center"
-                              style={{ backgroundColor: 'var(--brand-red)', color: 'white' }}>
-                              <X className="w-3 h-3" />
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <Button type="button" onClick={() => setActiveStep(1)} className="w-full py-3 font-bold"
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      if (!formData.description || formData.description.length < 20) return alert('Please describe your design (at least 20 characters).');
+                      if (!formData.preferredSize) return alert('Please select a preferred size.');
+                      setActiveStep(1);
+                    }}
+                    className="w-full py-3 font-bold flex items-center justify-center gap-2"
                     style={{ backgroundColor: 'var(--brand-blue)', color: 'white', border: 'none' }}>
-                    Next: Floor Plan Builder →
+                    Continue to Floor Plan <ChevronRight className="w-4 h-4" />
                   </Button>
                 </SectionCard>
               )}
