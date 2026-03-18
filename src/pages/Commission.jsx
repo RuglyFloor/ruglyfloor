@@ -57,6 +57,8 @@ export default function Commission() {
   const [markupNotes, setMarkupNotes] = useState([]);
   const [activeStep, setActiveStep] = useState(0);
 
+  const [floorPlan, setFloorPlan] = useState(null);
+
   const [formData, setFormData] = useState({
     inspirationImages: [],
     description: '',
