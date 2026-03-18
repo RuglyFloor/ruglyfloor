@@ -319,14 +319,30 @@ export default function Commission() {
 
                   <Button type="button" onClick={() => setActiveStep(1)} className="w-full py-3 font-bold"
                     style={{ backgroundColor: 'var(--brand-blue)', color: 'white', border: 'none' }}>
-                    Next: Your Space &amp; Timeline →
+                    Next: Floor Plan Builder →
                   </Button>
                 </SectionCard>
               )}
 
-              {/* STEP 1 — Space & Timeline */}
+              {/* STEP 1 — Floor Plan Builder */}
               {activeStep === 1 && (
-                <SectionCard step={1} title="Your Space & Timeline" subtitle="Help us understand where this rug is going and when you need it.">
+                <SectionCard step={1} title="Floor Plan Builder" subtitle="Set your room dimensions, place furniture, and resize the rug to see exactly how it fits. (Recommended)">
+                  <FloorPlanBuilder rugSize={formData.preferredSize} onChange={setFloorPlan} />
+                  <div className="flex gap-3 pt-2">
+                    <Button type="button" variant="outline" onClick={() => setActiveStep(0)} className="flex-1 py-3 font-bold">
+                      ← Back
+                    </Button>
+                    <Button type="button" onClick={() => setActiveStep(2)} className="flex-1 py-3 font-bold"
+                      style={{ backgroundColor: 'var(--brand-dark)', color: 'white', border: 'none' }}>
+                      Next: Your Space &amp; Timeline →
+                    </Button>
+                  </div>
+                </SectionCard>
+              )}
+
+              {/* STEP 2 — Space & Timeline */}
+              {activeStep === 2 && (
+                <SectionCard step={2} title="Your Space & Timeline" subtitle="Help us understand where this rug is going and when you need it.">
                   <div>
                     <Label className="font-bold text-sm">Project Type</Label>
                     <div className="grid grid-cols-2 gap-3 mt-2">
