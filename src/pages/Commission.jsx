@@ -6,129 +6,100 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Upload, Loader2, CheckCircle, Clock, Zap, Palette } from 'lucide-react';
+import { Upload, Loader2, CheckCircle, Clock, Zap, Palette, Sparkles, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import SEOHead from '../components/seo/SEOHead';
-import RugVisualizerPro from '../components/custom/RugVisualizerPro';
+import AIPreviewPanel from '../components/commission/AIPreviewPanel';
+import BusinessAccountPanel from '../components/commission/BusinessAccountPanel';
+
+const SIZES = ['2x3', '3x5', '4x6', '5x7', '6x9', '8x10', '9x12', 'Custom'];
+const COLOR_PALETTES = [
+  { label: 'Earth Tones', colors: ['#c8a97e', '#8b6914', '#5c3d2e', '#e8d5b7'] },
+  { label: 'Ocean Blues', colors: ['#0077b6', '#00b4d8', '#90e0ef', '#caf0f8'] },
+  { label: 'Bold & Modern', colors: ['#f04624', '#4075ff', '#24f0a0', '#343634'] },
+  { label: 'Soft Pastels', colors: ['#ffb3c1', '#ffd6a5', '#caffbf', '#a0c4ff'] },
+  { label: 'Monochrome', colors: ['#212529', '#495057', '#adb5bd', '#f8f9fa'] },
+  { label: 'Desert Sunset', colors: ['#e63946', '#f4a261', '#e9c46a', '#264653'] },
+];
 
 export default function Commission() {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [couponCode, setCouponCode] = useState('');
-  const [couponValidation, setCouponValidation] = useState(null);
-  const [validatingCoupon, setValidatingCoupon] = useState(false);
-  const [visualizerOpen, setVisualizerOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
-  
+  const [aiPreviewUrl, setAiPreviewUrl] = useState(null);
+  const [markupNotes, setMarkupNotes] = useState([]);
+  const [selectedPalette, setSelectedPalette] = useState(null);
+  const [activeStep, setActiveStep] = useState(0);
+
   const [formData, setFormData] = useState({
-    // Design details
     inspirationImages: [],
     description: '',
     preferredSize: '',
     preferredColors: '',
-    numColors: '1-2',
+    numColors: '3-4',
     budgetRange: '',
-    
-    // Project info
     projectType: 'residential',
     businessName: '',
-    
-    // Contact info
     name: '',
     email: '',
     phone: '',
-    
-    // Timeline
     rushOrder: false,
-    
-    // Terms
     agreedToDeposit: false
   });
 
-  const handleImageUpload = async (e, field) => {
+  const update = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
+
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     setUploading(true);
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      
-      if (field === 'inspirationImages') {
-        setFormData(prev => ({
-          ...prev,
-          inspirationImages: [...prev.inspirationImages, file_url]
-        }));
-      } else {
-        setFormData(prev => ({ ...prev, [field]: file_url }));
-      }
-    } catch (error) {
+      setFormData(prev => ({ ...prev, inspirationImages: [...prev.inspirationImages, file_url] }));
+    } catch {
       alert('Failed to upload image');
     } finally {
       setUploading(false);
     }
   };
 
-  const handleApplyCoupon = async () => {
-    if (!couponCode.trim()) return;
-
-    setValidatingCoupon(true);
-    try {
-      const depositAmount = 300;
-      const response = await base44.functions.invoke('validateCoupon', {
-        code: couponCode.toUpperCase(),
-        orderAmount: depositAmount
-      });
-
-      setCouponValidation(response.data);
-      if (!response.data.valid) {
-        alert(response.data.error || 'Invalid coupon code');
-      }
-    } catch (error) {
-      console.error('Coupon validation error:', error);
-      alert('Failed to validate coupon');
-      setCouponValidation(null);
-    } finally {
-      setValidatingCoupon(false);
-    }
+  const handleMarkupSave = (url, notes) => {
+    setAiPreviewUrl(url);
+    setMarkupNotes(notes);
   };
 
-  const handleRemoveCoupon = () => {
-    setCouponCode('');
-    setCouponValidation(null);
+  const handleLoadDesign = (savedDesign) => {
+    if (savedDesign.form_data) setFormData(savedDesign.form_data);
+    if (savedDesign.ai_preview_url) setAiPreviewUrl(savedDesign.ai_preview_url);
+    if (savedDesign.markup_notes) setMarkupNotes(savedDesign.markup_notes.split('\n').filter(Boolean));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     if (!formData.name || !formData.email || !formData.phone) {
       alert('Please provide your name, email, and phone number');
       return;
     }
-
     if (!formData.description) {
       alert('Please describe your design vision');
       return;
     }
-
     setSubmitting(true);
     try {
-      const response = await base44.functions.invoke('createCommissionCheckout', { 
-        formData: formData,
-        couponCode: couponValidation?.valid ? couponCode : null
+      const response = await base44.functions.invoke('createCommissionCheckout', {
+        formData: { ...formData, aiPreviewUrl, markupNotes },
+        couponCode: null
       });
-
       if (response.data.orderId) {
-        // Free submission - no payment required
         setSubmitted(true);
       } else {
         throw new Error('Failed to submit commission');
       }
     } catch (error) {
-      console.error('Commission submission error:', error);
-      alert('Failed to submit commission. Please try again. Error: ' + error.message);
+      alert('Failed to submit. Please try again. Error: ' + error.message);
       setSubmitting(false);
     }
   };
@@ -137,402 +108,467 @@ export default function Commission() {
     return (
       <div className="min-h-screen py-20 px-6">
         <div className="max-w-2xl mx-auto text-center">
-          <CheckCircle className="w-20 h-20 mx-auto text-green-600 mb-6" />
-          <h1 className="text-4xl font-bold mb-4">Commission Request Received!</h1>
+          <div className="text-8xl mb-6">🎉</div>
+          <h1 className="text-5xl font-bold mb-4" style={{ color: 'var(--brand-blue)' }}>You're in the queue!</h1>
           <p className="text-xl text-gray-600 mb-4">
-            Thank you for your submission. We'll create a detailed estimate and reach out within 48 hours.
+            We'll review your design and reach out within 48 hours with a detailed estimate.
           </p>
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
-            <p className="text-sm text-gray-700">
-              <strong>Next Steps:</strong>
-            </p>
-            <ul className="text-left text-sm text-gray-700 mt-3 space-y-2">
-              <li>• We'll review your design request and create a detailed estimate</li>
-              <li>• You'll receive the estimate within 48 hours</li>
-              <li>• {formData.rushOrder ? 'Rush production: 1 week + shipping' : 'Standard production: 3 weeks + shipping'}</li>
-            </ul>
+          <div className="rounded-2xl p-6 mb-8 text-left space-y-3" style={{ background: 'var(--brand-cream)', border: '2px solid var(--brand-blue)' }}>
+            <p className="font-bold text-gray-800">What happens next:</p>
+            <p className="text-sm text-gray-700">✅ We review your design concept and any AI preview you generated</p>
+            <p className="text-sm text-gray-700">✅ You receive a detailed estimate within 48 hours</p>
+            <p className="text-sm text-gray-700">✅ {formData.rushOrder ? '⚡ Rush: 2 weeks at your door' : '📅 Standard: 3–5 weeks production + shipping'}</p>
+            <p className="text-sm text-gray-700">✅ Payment only after you approve</p>
           </div>
-          <Button onClick={() => navigate('/')}>Return to Home</Button>
+          <Button onClick={() => navigate('/')} className="px-8 py-4 text-lg" style={{ backgroundColor: 'var(--brand-blue)', color: 'white' }}>
+            Back to Home
+          </Button>
         </div>
       </div>
     );
   }
 
-  const totalCost = () => {
-    let deposit = 300;
-    const rush = formData.rushOrder ? 99 : 0;
-    const discount = couponValidation?.valid ? couponValidation.discount_amount : 0;
-    return (deposit - discount) + rush;
-  };
+  const STEPS = ['Design Vision', 'Your Space', 'Preview & Markup', 'Details & Submit'];
 
   return (
-    <div className="min-h-screen py-12 px-6">
+    <div className="min-h-screen py-8 px-4" style={{ background: 'var(--brand-light-gray)' }}>
       <SEOHead
-        title="Commission Rugley Designs | Bespoke Hand-Painted Area Rugs for Commercial & Interior Design"
-        description="Commission bespoke Rugley hand-painted area rug designs from professional artists. Custom rug trade program for interior designers, commercial spaces, and businesses. Luxury hand-painted carpet designs and custom logo rugs hand-painted for hotels, restaurants, Airbnbs, and offices."
-        keywords={['rugley commission', 'commission custom rug design', 'bespoke hand-painted area rugs', 'custom rug trade program for designers', 'luxury hand-painted carpet designs', 'custom logo rugs hand-painted', 'best custom rug designers', 'custom hand-painted rugs for interior designers', 'commercial rug design', 'hotel lobby custom rugs']}
+        title="Commission a Custom Rugly Design | Bespoke Hand-Painted Rugs"
+        description="Commission bespoke Rugly hand-painted area rug designs. AI-powered preview, designer markup tools, business accounts."
+        keywords={['commission custom rug', 'bespoke hand-painted rug', 'custom rug design', 'interior designer rug']}
         url="/commission"
       />
-      <div className="max-w-4xl mx-auto">
-        {/* Production Timeline Banner */}
-        <div className="mb-8 bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 rounded-xl p-6">
-          <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">📅 Custom Commission Timeline</h3>
-          <div className="grid md:grid-cols-3 gap-6 text-center">
-            <div>
-              <div className="text-3xl font-bold text-blue-600 mb-1">1-2 hours</div>
-              <div className="text-sm text-gray-700 font-semibold">Design Review</div>
-              <div className="text-xs text-gray-600 mt-1">We'll review your request and respond</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-purple-600 mb-1">2-4 weeks</div>
-              <div className="text-sm text-gray-700 font-semibold">Production</div>
-              <div className="text-xs text-gray-600 mt-1">Hand-painting & quality control</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-green-600 mb-1">3-5 days</div>
-              <div className="text-sm text-gray-700 font-semibold">Delivery</div>
-              <div className="text-xs text-gray-600 mt-1">Shipping to your door</div>
-            </div>
+
+      <div className="max-w-5xl mx-auto">
+        {/* Hero Header */}
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold mb-4"
+            style={{ background: 'var(--brand-cream)', color: 'var(--brand-blue)', border: '2px solid var(--brand-blue)' }}>
+            <Sparkles className="w-4 h-4" /> DESIGNER COMMISSION STUDIO
           </div>
-        </div>
-
-        <h1 className="text-4xl font-bold mb-4 text-center">Commission a <span className="rugly-text">Rugly</span> Design</h1>
-        <p className="text-center text-gray-600 mb-4 text-lg">
-          <span className="rugly-text">Rugly</span> commissions are bespoke, hand-painted rugs created for interior designers, commercial spaces, hotels, restaurants, Airbnbs, and businesses. Get a detailed estimate from our studio.
-        </p>
-
-        {/* What is Rugly Section */}
-        <div className="bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg p-6 mb-8">
-          <h2 className="text-2xl font-bold mb-4 text-purple-900">What is <span className="rugly-text">Rugly</span>?</h2>
-          <div className="space-y-3 text-gray-700">
-            <p>
-              <strong className="rugly-text">Rugly</strong> is our premium commission line designed specifically for interior designers, architects, and commercial clients who need custom floor art that makes a statement.
-            </p>
-            <p>
-              Whether you're outfitting a boutique hotel lobby, creating a branded experience for a restaurant, or adding personality to an Airbnb rental, <span className="rugly-text">Rugly</span> commissions are fully custom, one-of-a-kind pieces that transform spaces.
-            </p>
-            <ul className="list-disc list-inside space-y-2 ml-4">
-              <li><strong>Interior Designers:</strong> Collaborate with us to create signature pieces that complement your vision</li>
-              <li><strong>Commercial Spaces:</strong> Hotels, restaurants, offices, retail stores</li>
-              <li><strong>Unique Branding:</strong> Custom logos, brand colors, and messaging on durable, washable rugs</li>
-              <li><strong>Any Size:</strong> From small accent rugs to massive commercial installations</li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Free Commission Info Banner */}
-        <div className="bg-green-50 border-2 border-green-600 rounded-lg p-6 mb-8">
-          <div className="flex items-start gap-4">
-            <div className="flex-1">
-              <h3 className="font-bold text-lg mb-2">Free Commission Request</h3>
-              <p className="text-sm text-gray-700 mb-2">
-                Submit your design vision and get a detailed estimate at no cost. No payment required until you approve the estimate.
-              </p>
-              <p className="text-xs text-gray-600">
-                Typical timeline: 3 weeks production + shipping
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Contact Information */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Contact Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label>Your Name *</Label>
-                <Input
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder="John Smith"
-                />
-              </div>
-              
-              <div>
-                <Label>Email *</Label>
-                <Input
-                  required
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  placeholder="john@example.com"
-                />
-              </div>
-              
-              <div>
-                <Label>Phone *</Label>
-                <Input
-                  required
-                  value={formData.phone}
-                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                  placeholder="(555) 123-4567"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Project Type */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Project Type</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label>Is this for residential or commercial use? *</Label>
-                <RadioGroup
-                  value={formData.projectType}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, projectType: value }))}
-                  className="mt-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="residential" id="residential" />
-                    <Label htmlFor="residential">Residential (Home, apartment, etc.)</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="commercial" id="commercial" />
-                    <Label htmlFor="commercial">Commercial (Business, office, store, etc.)</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-              
-              {formData.projectType === 'commercial' && (
-                <div>
-                  <Label>Business Name</Label>
-                  <Input
-                    value={formData.businessName}
-                    onChange={(e) => setFormData(prev => ({ ...prev, businessName: e.target.value }))}
-                    placeholder="Your Company LLC"
-                  />
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Design Details */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Design Vision</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label>Describe your design vision *</Label>
-                <Textarea
-                  required
-                  className="mt-2 h-32"
-                  placeholder="Tell us about your ideal rug... What style, theme, or concept are you envisioning? Any specific elements, patterns, or imagery you want included?"
-                  value={formData.description}
-                  onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                />
-              </div>
-
-              <div>
-                <Label>Upload Inspiration Images (Optional)</Label>
-                <div className="mt-2 border-2 border-dashed rounded-lg p-6 text-center">
-                  <input
-                    type="file"
-                    id="inspiration-upload"
-                    className="hidden"
-                    accept="image/*"
-                    onChange={(e) => handleImageUpload(e, 'inspirationImages')}
-                    disabled={uploading}
-                    multiple
-                  />
-                  <label htmlFor="inspiration-upload" className="cursor-pointer">
-                    <Upload className="w-8 h-8 mx-auto text-gray-400 mb-2" />
-                    <p className="text-gray-600">Click to upload reference images</p>
-                    <p className="text-xs text-gray-500 mt-1">Logos, artwork, color palettes, etc.</p>
-                  </label>
-                </div>
-                {formData.inspirationImages.length > 0 && (
-                  <div className="mt-4">
-                    <div className="grid grid-cols-3 gap-4">
-                      {formData.inspirationImages.map((url, idx) => (
-                       <div key={idx} className="relative">
-                         <img src={url} alt={`Inspiration ${idx + 1}`} className="w-full h-32 object-cover rounded" />
-                         <Button
-                           type="button"
-                           variant="outline"
-                           size="sm"
-                           className="absolute bottom-2 right-2 bg-white"
-                           onClick={() => {
-                             setSelectedImage(url);
-                             setVisualizerOpen(true);
-                           }}
-                         >
-                           <Palette className="w-4 h-4 mr-1" />
-                           Draw
-                         </Button>
-                       </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Size and Specifications */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Size & Specifications</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label>Preferred Size</Label>
-                <Input
-                  value={formData.preferredSize}
-                  onChange={(e) => setFormData(prev => ({ ...prev, preferredSize: e.target.value }))}
-                  placeholder="e.g., 5x7, 8x10, 6ft round"
-                />
-                <p className="text-xs text-gray-500 mt-1">Leave blank if flexible</p>
-              </div>
-
-              <div>
-                <Label>Preferred Colors</Label>
-                <Input
-                  value={formData.preferredColors}
-                  onChange={(e) => setFormData(prev => ({ ...prev, preferredColors: e.target.value }))}
-                  placeholder="e.g., Navy blue and gold, earth tones, black and white"
-                />
-              </div>
-
-              <div>
-                <Label>Number of Colors in Design</Label>
-                <Select
-                  value={formData.numColors}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, numColors: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1-2">1-2 colors (Simple)</SelectItem>
-                    <SelectItem value="3-4">3-4 colors (Moderate)</SelectItem>
-                    <SelectItem value="5+">5+ colors (Complex)</SelectItem>
-                    <SelectItem value="flexible">Flexible - You decide</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label>Budget Range (Optional)</Label>
-                <Select
-                  value={formData.budgetRange}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, budgetRange: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a range" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="under-500">Under $500</SelectItem>
-                    <SelectItem value="500-1000">$500 - $1,000</SelectItem>
-                    <SelectItem value="1000-2000">$1,000 - $2,000</SelectItem>
-                    <SelectItem value="2000+">$2,000+</SelectItem>
-                    <SelectItem value="flexible">Flexible</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Timeline */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Production Timeline</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid md:grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, rushOrder: false }))}
-                  className={`p-4 border-2 rounded-lg text-left transition-all ${
-                    !formData.rushOrder ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <Clock className="w-5 h-5 text-gray-600" />
-                    <span className="font-bold">Standard Timeline</span>
-                  </div>
-                  <div className="text-sm text-gray-600 mb-2">3 weeks production + shipping</div>
-                  <div className="text-lg font-bold text-blue-600">Included</div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setFormData(prev => ({ ...prev, rushOrder: true }))}
-                  className={`p-4 border-2 rounded-lg text-left transition-all ${
-                    formData.rushOrder ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <Zap className="w-5 h-5 text-orange-600" />
-                    <span className="font-bold">Rush Order</span>
-                  </div>
-                  <div className="text-sm text-gray-600 mb-2">2 weeks total — at your door</div>
-                  <div className="text-lg font-bold text-orange-600">+$99</div>
-                </button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Free Submission Info */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Submit Your Request</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-green-600 mb-2">FREE</div>
-                  <p className="text-sm text-gray-700">
-                    No payment required at this time. We'll send you a detailed estimate within 48 hours.
-                  </p>
-                </div>
-              </div>
-
-              <div className="space-y-3 text-sm text-gray-700">
-                <p>• Get a free, detailed design estimate and mockup</p>
-                <p>• Review the estimate and pricing before committing</p>
-                <p>• Payment only required after you approve the estimate</p>
-                <p>• No deposit, no obligation</p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Submit */}
-          <Button
-            type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-lg py-7"
-            disabled={submitting || uploading}
-          >
-            {submitting ? (
-              <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                Submitting...
-              </>
-            ) : (
-              'Submit Free Commission Request'
-            )}
-          </Button>
-          <p className="text-center text-xs text-gray-500">
-            You'll receive a detailed estimate within 48 hours
+          <h1 className="text-5xl md:text-6xl font-black mb-3" style={{ fontFamily: 'var(--font-heading)', color: 'var(--brand-dark)' }}>
+            Commission Your <span style={{ color: 'var(--brand-red)' }}>Dream Rug</span>
+          </h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Describe your vision, generate an AI preview, mark it up, and submit — all in one place. Built for designers and dreamers.
           </p>
-        </form>
+        </div>
 
-        {visualizerOpen && selectedImage && (
-          <RugVisualizerPro
-            rugImage={selectedImage}
-            rugName="Design Concept"
-            onClose={() => {
-              setVisualizerOpen(false);
-              setSelectedImage(null);
-            }}
-          />
-        )}
+        {/* Step Pills */}
+        <div className="flex gap-2 justify-center mb-8 flex-wrap">
+          {STEPS.map((step, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => setActiveStep(i)}
+              className="px-4 py-2 rounded-full text-sm font-bold transition-all"
+              style={activeStep === i
+                ? { backgroundColor: 'var(--brand-blue)', color: 'white' }
+                : { backgroundColor: 'white', color: 'var(--brand-dark)', border: '2px solid #e5e7eb' }}
+            >
+              {i + 1}. {step}
+            </button>
+          ))}
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* LEFT COLUMN — Design Inputs */}
+            <div className="md:col-span-2 space-y-6">
+
+              {/* STEP 0 — Design Vision */}
+              {(activeStep === 0 || activeStep > 0) && (
+                <Card className="rounded-3xl shadow-sm overflow-hidden" style={{ border: '2px solid #e5e7eb' }}>
+                  <div className="h-2" style={{ background: 'linear-gradient(90deg, var(--brand-blue), var(--brand-red))' }} />
+                  <CardHeader>
+                    <CardTitle className="text-2xl flex items-center gap-2">
+                      <span className="text-3xl">✏️</span> Design Vision
+                    </CardTitle>
+                    <p className="text-sm text-gray-500">Tell us about your dream rug — the more detail, the better your AI preview</p>
+                  </CardHeader>
+                  <CardContent className="space-y-5">
+                    <div>
+                      <Label className="font-bold">Describe your design *</Label>
+                      <Textarea
+                        required
+                        className="mt-2 h-28 resize-none text-base"
+                        placeholder="e.g. A bold geometric pattern with navy and gold, abstract brushstrokes in the center, inspired by Moroccan tiles..."
+                        value={formData.description}
+                        onChange={(e) => update('description', e.target.value)}
+                      />
+                      <p className="text-xs text-gray-400 mt-1">{formData.description.length} chars — more detail = better AI preview</p>
+                    </div>
+
+                    {/* Size Picker */}
+                    <div>
+                      <Label className="font-bold">Preferred Size</Label>
+                      <div className="grid grid-cols-4 gap-2 mt-2">
+                        {SIZES.map(s => (
+                          <button
+                            type="button"
+                            key={s}
+                            onClick={() => update('preferredSize', s)}
+                            className="py-2 px-3 rounded-xl text-sm font-bold border-2 transition-all"
+                            style={formData.preferredSize === s
+                              ? { borderColor: 'var(--brand-blue)', backgroundColor: 'var(--brand-blue)', color: 'white' }
+                              : { borderColor: '#e5e7eb', backgroundColor: 'white', color: 'var(--brand-dark)' }}
+                          >
+                            {s}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Color Palette Picker */}
+                    <div>
+                      <Label className="font-bold">Color Palette</Label>
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
+                        {COLOR_PALETTES.map((p) => (
+                          <button
+                            type="button"
+                            key={p.label}
+                            onClick={() => {
+                              setSelectedPalette(p.label);
+                              update('preferredColors', p.label);
+                            }}
+                            className="p-3 rounded-xl border-2 text-left transition-all"
+                            style={selectedPalette === p.label
+                              ? { borderColor: 'var(--brand-blue)', backgroundColor: '#eff6ff' }
+                              : { borderColor: '#e5e7eb', backgroundColor: 'white' }}
+                          >
+                            <div className="flex gap-1 mb-1">
+                              {p.colors.map((c, i) => (
+                                <div key={i} className="w-5 h-5 rounded-full" style={{ backgroundColor: c }} />
+                              ))}
+                            </div>
+                            <div className="text-xs font-bold text-gray-700">{p.label}</div>
+                          </button>
+                        ))}
+                      </div>
+                      <Input
+                        className="mt-2"
+                        placeholder="Or describe your own: e.g. dusty rose with sage green"
+                        value={selectedPalette ? '' : formData.preferredColors}
+                        onChange={(e) => { setSelectedPalette(null); update('preferredColors', e.target.value); }}
+                      />
+                    </div>
+
+                    {/* Complexity */}
+                    <div>
+                      <Label className="font-bold">Design Complexity</Label>
+                      <div className="grid grid-cols-3 gap-3 mt-2">
+                        {[
+                          { val: '1-2', label: 'Simple', emoji: '⬜', sub: '1–2 colors' },
+                          { val: '3-4', label: 'Moderate', emoji: '🎨', sub: '3–4 colors' },
+                          { val: '5+', label: 'Complex', emoji: '🌈', sub: '5+ colors' },
+                        ].map(opt => (
+                          <button
+                            type="button"
+                            key={opt.val}
+                            onClick={() => update('numColors', opt.val)}
+                            className="py-3 px-2 rounded-xl border-2 text-center transition-all"
+                            style={formData.numColors === opt.val
+                              ? { borderColor: 'var(--brand-red)', backgroundColor: '#fff5f3', color: 'var(--brand-dark)' }
+                              : { borderColor: '#e5e7eb', backgroundColor: 'white' }}
+                          >
+                            <div className="text-2xl mb-1">{opt.emoji}</div>
+                            <div className="text-sm font-bold">{opt.label}</div>
+                            <div className="text-xs text-gray-500">{opt.sub}</div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Budget */}
+                    <div>
+                      <Label className="font-bold">Budget Range</Label>
+                      <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mt-2">
+                        {[
+                          { val: 'under-500', label: 'Under $500' },
+                          { val: '500-1000', label: '$500–$1K' },
+                          { val: '1000-2000', label: '$1K–$2K' },
+                          { val: '2000+', label: '$2K+' },
+                          { val: 'flexible', label: 'Flexible' },
+                        ].map(b => (
+                          <button
+                            type="button"
+                            key={b.val}
+                            onClick={() => update('budgetRange', b.val)}
+                            className="py-2 px-3 rounded-xl text-sm font-bold border-2 transition-all"
+                            style={formData.budgetRange === b.val
+                              ? { borderColor: 'var(--brand-cyan)', backgroundColor: '#f0fdf4', color: 'var(--brand-dark)' }
+                              : { borderColor: '#e5e7eb', backgroundColor: 'white' }}
+                          >
+                            {b.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Inspiration Images */}
+                    <div>
+                      <Label className="font-bold">Upload Inspiration Images</Label>
+                      <div className="mt-2">
+                        <label htmlFor="inspiration-upload" className={`flex flex-col items-center justify-center w-full h-28 border-3 border-dashed rounded-2xl cursor-pointer transition-all ${uploading ? 'opacity-50' : 'hover:bg-gray-50'}`}
+                          style={{ borderColor: 'var(--brand-blue)', borderWidth: '2px', borderStyle: 'dashed' }}>
+                          <input
+                            type="file"
+                            id="inspiration-upload"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            disabled={uploading}
+                          />
+                          {uploading ? (
+                            <><Loader2 className="w-6 h-6 animate-spin mb-1" style={{ color: 'var(--brand-blue)' }} /><span className="text-sm text-gray-500">Uploading...</span></>
+                          ) : (
+                            <><Upload className="w-6 h-6 mb-1" style={{ color: 'var(--brand-blue)' }} /><span className="text-sm font-semibold" style={{ color: 'var(--brand-blue)' }}>Click to upload reference image</span><span className="text-xs text-gray-400">Logos, art, room photos, etc.</span></>
+                          )}
+                        </label>
+                        {formData.inspirationImages.length > 0 && (
+                          <div className="flex gap-2 mt-3 flex-wrap">
+                            {formData.inspirationImages.map((url, idx) => (
+                              <div key={idx} className="relative w-20 h-20">
+                                <img src={url} alt="" className="w-full h-full object-cover rounded-xl" />
+                                <button
+                                  type="button"
+                                  onClick={() => update('inspirationImages', formData.inspirationImages.filter((_, i) => i !== idx))}
+                                  className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <Button
+                      type="button"
+                      onClick={() => setActiveStep(1)}
+                      className="w-full py-4 rounded-xl font-bold text-base"
+                      style={{ backgroundColor: 'var(--brand-blue)', color: 'white', border: 'none' }}
+                    >
+                      Next: Tell Us About Your Space →
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* STEP 1 — Space & Timeline */}
+              {(activeStep >= 1) && (
+                <Card className="rounded-3xl shadow-sm" style={{ border: '2px solid #e5e7eb' }}>
+                  <div className="h-2" style={{ background: 'linear-gradient(90deg, var(--brand-red), var(--brand-cyan))' }} />
+                  <CardHeader>
+                    <CardTitle className="text-2xl flex items-center gap-2">
+                      <span className="text-3xl">🏛️</span> Your Space & Timeline
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-5">
+                    {/* Project Type */}
+                    <div>
+                      <Label className="font-bold">Project Type</Label>
+                      <div className="grid grid-cols-2 gap-3 mt-2">
+                        {[
+                          { val: 'residential', label: 'Residential', emoji: '🏠', sub: 'Home, apartment' },
+                          { val: 'commercial', label: 'Commercial', emoji: '🏢', sub: 'Hotel, office, retail' },
+                        ].map(opt => (
+                          <button
+                            type="button"
+                            key={opt.val}
+                            onClick={() => update('projectType', opt.val)}
+                            className="py-4 rounded-2xl border-2 text-center transition-all"
+                            style={formData.projectType === opt.val
+                              ? { borderColor: 'var(--brand-blue)', backgroundColor: '#eff6ff' }
+                              : { borderColor: '#e5e7eb', backgroundColor: 'white' }}
+                          >
+                            <div className="text-3xl mb-1">{opt.emoji}</div>
+                            <div className="font-bold text-sm">{opt.label}</div>
+                            <div className="text-xs text-gray-500">{opt.sub}</div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {formData.projectType === 'commercial' && (
+                      <div>
+                        <Label className="font-bold">Business Name</Label>
+                        <Input className="mt-1" value={formData.businessName} onChange={(e) => update('businessName', e.target.value)} placeholder="Your Company LLC" />
+                      </div>
+                    )}
+
+                    {/* Timeline */}
+                    <div>
+                      <Label className="font-bold">Production Timeline</Label>
+                      <div className="grid grid-cols-2 gap-3 mt-2">
+                        <button
+                          type="button"
+                          onClick={() => update('rushOrder', false)}
+                          className="p-4 rounded-2xl border-2 text-left transition-all"
+                          style={!formData.rushOrder ? { borderColor: 'var(--brand-blue)', backgroundColor: '#eff6ff' } : { borderColor: '#e5e7eb', backgroundColor: 'white' }}
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <Clock className="w-5 h-5 text-gray-500" />
+                            <span className="font-bold text-sm">Standard</span>
+                          </div>
+                          <div className="text-xs text-gray-600">3–5 weeks to your door</div>
+                          <div className="text-base font-bold mt-1" style={{ color: 'var(--brand-blue)' }}>Included</div>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => update('rushOrder', true)}
+                          className="p-4 rounded-2xl border-2 text-left transition-all"
+                          style={formData.rushOrder ? { borderColor: 'var(--brand-red)', backgroundColor: '#fff5f3' } : { borderColor: '#e5e7eb', backgroundColor: 'white' }}
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <Zap className="w-5 h-5 text-orange-500" />
+                            <span className="font-bold text-sm">Rush Order ⚡</span>
+                          </div>
+                          <div className="text-xs text-gray-600">2 weeks total — at your door</div>
+                          <div className="text-base font-bold mt-1 text-orange-600">+$99</div>
+                        </button>
+                      </div>
+                    </div>
+
+                    <Button
+                      type="button"
+                      onClick={() => setActiveStep(2)}
+                      className="w-full py-4 rounded-xl font-bold text-base"
+                      style={{ backgroundColor: 'var(--brand-red)', color: 'white', border: 'none' }}
+                    >
+                      Next: Generate AI Preview →
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* STEP 2 — AI Preview */}
+              {(activeStep >= 2) && (
+                <Card className="rounded-3xl shadow-sm" style={{ border: '2px solid #e5e7eb' }}>
+                  <div className="h-2" style={{ background: 'linear-gradient(90deg, var(--brand-cyan), var(--brand-blue))' }} />
+                  <CardHeader>
+                    <CardTitle className="text-2xl flex items-center gap-2">
+                      <span className="text-3xl">🤖</span> AI Preview & Markup
+                    </CardTitle>
+                    <p className="text-sm text-gray-500">Generate a sample from your description, then draw notes directly on it</p>
+                  </CardHeader>
+                  <CardContent>
+                    <AIPreviewPanel formData={formData} onMarkupSave={handleMarkupSave} />
+                  </CardContent>
+                  <div className="px-6 pb-6">
+                    <Button
+                      type="button"
+                      onClick={() => setActiveStep(3)}
+                      className="w-full py-4 rounded-xl font-bold text-base"
+                      style={{ backgroundColor: 'var(--brand-cyan)', color: 'var(--brand-dark)', border: 'none' }}
+                    >
+                      Next: Contact & Submit →
+                    </Button>
+                  </div>
+                </Card>
+              )}
+
+              {/* STEP 3 — Contact & Submit */}
+              {(activeStep >= 3) && (
+                <Card className="rounded-3xl shadow-sm" style={{ border: '2px solid #e5e7eb' }}>
+                  <div className="h-2" style={{ background: 'linear-gradient(90deg, var(--brand-blue), var(--brand-dark))' }} />
+                  <CardHeader>
+                    <CardTitle className="text-2xl flex items-center gap-2">
+                      <span className="text-3xl">📬</span> Contact Info & Submit
+                    </CardTitle>
+                    <p className="text-sm text-gray-500">Free submission — payment only after you approve the estimate</p>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid md:grid-cols-3 gap-3">
+                      <div>
+                        <Label className="font-bold">Name *</Label>
+                        <Input required className="mt-1" value={formData.name} onChange={(e) => update('name', e.target.value)} placeholder="Jane Smith" />
+                      </div>
+                      <div>
+                        <Label className="font-bold">Email *</Label>
+                        <Input required type="email" className="mt-1" value={formData.email} onChange={(e) => update('email', e.target.value)} placeholder="jane@studio.com" />
+                      </div>
+                      <div>
+                        <Label className="font-bold">Phone *</Label>
+                        <Input required className="mt-1" value={formData.phone} onChange={(e) => update('phone', e.target.value)} placeholder="(555) 123-4567" />
+                      </div>
+                    </div>
+
+                    {/* Summary Box */}
+                    <div className="rounded-2xl p-4 space-y-2 text-sm" style={{ backgroundColor: 'var(--brand-cream)', border: '2px solid var(--brand-blue)' }}>
+                      <p className="font-bold text-gray-800">📋 Your Commission Summary</p>
+                      {formData.preferredSize && <p>📐 Size: {formData.preferredSize}</p>}
+                      {formData.preferredColors && <p>🎨 Colors: {formData.preferredColors}</p>}
+                      {formData.budgetRange && <p>💰 Budget: {formData.budgetRange}</p>}
+                      <p>⏱ Timeline: {formData.rushOrder ? '⚡ Rush — 2 weeks (+$99)' : 'Standard — 3–5 weeks'}</p>
+                      {aiPreviewUrl && <p>🖼 AI Preview: Included</p>}
+                      {markupNotes.length > 0 && <p>📝 Design notes: {markupNotes.length} added</p>}
+                    </div>
+
+                    <Button
+                      type="submit"
+                      disabled={submitting || uploading}
+                      className="w-full py-6 rounded-2xl text-lg font-black"
+                      style={{ background: 'linear-gradient(135deg, var(--brand-blue), var(--brand-red))', color: 'white', border: 'none' }}
+                    >
+                      {submitting ? (
+                        <><Loader2 className="w-5 h-5 mr-2 animate-spin" />Submitting...</>
+                      ) : (
+                        '🚀 Submit Free Commission Request'
+                      )}
+                    </Button>
+                    <p className="text-center text-xs text-gray-500">No payment required. We'll send a detailed estimate within 48 hours.</p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+
+            {/* RIGHT COLUMN — Business Account */}
+            <div className="space-y-6">
+              <BusinessAccountPanel
+                formData={formData}
+                aiPreviewUrl={aiPreviewUrl}
+                markupNotes={markupNotes}
+                onLoadDesign={handleLoadDesign}
+              />
+
+              {/* Timeline Explainer */}
+              <Card className="rounded-3xl shadow-sm" style={{ border: '2px solid #e5e7eb' }}>
+                <CardContent className="pt-6 space-y-4">
+                  <p className="font-black text-lg">📅 How It Works</p>
+                  {[
+                    { icon: '📝', step: 'Submit free request', time: 'Now' },
+                    { icon: '📬', step: 'Get detailed estimate', time: '48 hrs' },
+                    { icon: '💳', step: 'Approve & pay deposit', time: 'After review' },
+                    { icon: '🎨', step: 'We paint your rug', time: formData.rushOrder ? '~1 week' : '2–4 weeks' },
+                    { icon: '🚚', step: 'Shipped to your door', time: formData.rushOrder ? '2 wks total' : '3–5 wks total' },
+                  ].map((s, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <div className="text-2xl">{s.icon}</div>
+                      <div className="flex-1">
+                        <div className="text-sm font-semibold text-gray-800">{s.step}</div>
+                        <div className="text-xs text-gray-500">{s.time}</div>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {/* Why Rugly */}
+              <div className="rounded-3xl p-5 space-y-3" style={{ background: 'var(--brand-dark)', color: 'white' }}>
+                <p className="font-black text-lg">⭐ Why Rugly?</p>
+                <p className="text-sm opacity-80">100% hand-painted, one-of-a-kind rugs used by interior designers, boutique hotels, and brands.</p>
+                <div className="space-y-2 text-sm">
+                  <p>✅ Real artists, no print-on-demand</p>
+                  <p>✅ Any size, any design</p>
+                  <p>✅ Free design estimate</p>
+                  <p>✅ 24hr damage guarantee</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   );
