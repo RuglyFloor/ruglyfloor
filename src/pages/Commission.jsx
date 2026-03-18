@@ -160,7 +160,7 @@ export default function Commission() {
 
   const totalCost = () => {
     let deposit = 300;
-    const rush = formData.rushOrder ? 159 : 0;
+    const rush = formData.rushOrder ? 99 : 0;
     const discount = couponValidation?.valid ? couponValidation.discount_amount : 0;
     return (deposit - discount) + rush;
   };
