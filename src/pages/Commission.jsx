@@ -100,7 +100,30 @@ export default function Commission() {
     rushOrder: false,
   });
 
+  const [draftId, setDraftId] = useState(null);
+  const [generatingProposal, setGeneratingProposal] = useState(false);
+  const autoSaveTimer = useRef(null);
+
   const update = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
+
+  // Auto-save draft on every change (debounced 3s)
+  useEffect(() => {
+    if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
+    autoSaveTimer.current = setTimeout(async () => {
+      try {
+        const res = await base44.functions.invoke('saveCommissionDraft', {
+          draftId,
+          formData,
+          aiPreviewUrl,
+          markupNotes,
+        });
+        if (res.data?.draftId && !draftId) setDraftId(res.data.draftId);
+      } catch {
+        // silent fail — auto-save is best-effort
+      }
+    }, 3000);
+    return () => clearTimeout(autoSaveTimer.current);
+  }, [formData, aiPreviewUrl, markupNotes]);
 
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
