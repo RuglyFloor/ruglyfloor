@@ -258,8 +258,8 @@ export default function Commission() {
                       <Label className="font-bold">Budget Range</Label>
                       <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mt-2">
                         {[
-                          { val: 'under-500', label: 'Under $500' },
-                          { val: '500-1000', label: '$500–$1K' },
+                         { val: '350-500', label: '$350–$500' },
+                         { val: '500-1000', label: '$500–$1K' },
                           { val: '1000-2000', label: '$1K–$2K' },
                           { val: '2000+', label: '$2K+' },
                           { val: 'flexible', label: 'Flexible' },
