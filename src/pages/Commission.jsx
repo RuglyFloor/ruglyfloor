@@ -426,15 +426,15 @@ export default function Commission() {
 
               {/* STEP 3 — AI Preview */}
               {activeStep === 3 && (
-                <SectionCard step={3} title="AI Preview & Markup" subtitle="Generate a preview from your description, then annotate it directly.">
+                <SectionCard step={3} title="AI Preview & Markup" optional subtitle="Click 'Generate Preview' to see your rug come to life — then draw notes directly on the image. You can skip and submit without a preview.">
                   <AIPreviewPanel formData={formData} onMarkupSave={handleMarkupSave} />
                   <div className="flex gap-3 pt-2">
                     <Button type="button" variant="outline" onClick={() => setActiveStep(2)} className="flex-1 py-3 font-bold">
                       ← Back
                     </Button>
-                    <Button type="button" onClick={() => setActiveStep(4)} className="flex-1 py-3 font-bold"
+                    <Button type="button" onClick={() => setActiveStep(4)} className="flex-1 py-3 font-bold flex items-center justify-center gap-2"
                       style={{ backgroundColor: 'var(--brand-cyan)', color: 'var(--brand-dark)', border: 'none' }}>
-                      Next: Contact &amp; Submit →
+                      Continue to Submit <ChevronRight className="w-4 h-4" />
                     </Button>
                   </div>
                 </SectionCard>
