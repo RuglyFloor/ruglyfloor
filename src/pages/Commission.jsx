@@ -163,18 +163,34 @@ export default function Commission() {
     }
     setSubmitting(true);
     try {
+      // Submit the commission
       const response = await base44.functions.invoke('createCommissionCheckout', {
         formData: { ...formData, aiPreviewUrl, markupNotes, floorPlan },
         couponCode: null
       });
-      if (response.data.orderId) {
-        setSubmitted(true);
-      } else {
-        throw new Error('Failed to submit commission');
-      }
+      if (!response.data.orderId) throw new Error('Failed to submit commission');
+
+      // Generate design proposal
+      setGeneratingProposal(true);
+      const proposalRes = await base44.functions.invoke('generateDesignProposal', {
+        formData,
+        aiPreviewUrl,
+        markupNotes,
+        draftId,
+      });
+
+      // Store proposal in sessionStorage then navigate
+      sessionStorage.setItem('rugly_commission_proposal', JSON.stringify({
+        proposal: proposalRes.data.proposal,
+        formData,
+        aiPreviewUrl,
+      }));
+
+      navigate('/DesignProposal');
     } catch (error) {
       alert('Failed to submit. Please try again. Error: ' + error.message);
       setSubmitting(false);
+      setGeneratingProposal(false);
     }
   };
 
