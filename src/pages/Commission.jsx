@@ -473,7 +473,14 @@ export default function Commission() {
                     <div className="rounded-2xl p-4 space-y-2 text-sm" style={{ backgroundColor: 'var(--brand-cream)', border: '2px solid var(--brand-blue)' }}>
                       <p className="font-bold text-gray-800">📋 Your Commission Summary</p>
                       {formData.preferredSize && <p>📐 Size: {formData.preferredSize}</p>}
-                      {formData.preferredColors && <p>🎨 Colors: {formData.preferredColors}</p>}
+                      {formData.preferredColors?.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          <span>🎨 Colors:</span>
+                          {formData.preferredColors.map((c, i) => (
+                            <div key={i} className="w-5 h-5 rounded-full border border-white shadow-sm inline-block" style={{ backgroundColor: c }} title={c} />
+                          ))}
+                        </div>
+                      )}
                       {formData.budgetRange && <p>💰 Budget: {formData.budgetRange}</p>}
                       <p>⏱ Timeline: {formData.rushOrder ? '⚡ Rush — 2 weeks (+$99)' : 'Standard — 3–5 weeks'}</p>
                       {aiPreviewUrl && <p>🖼 AI Preview: Included</p>}
