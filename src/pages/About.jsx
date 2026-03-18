@@ -87,7 +87,7 @@ export default function About() {
               transition={{ delay: 0.2, duration: 0.6 }}
               className="relative group"
             >
-              <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-500" />
+
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/59b0dcad2_ryanhensley.png"
                 alt="Ryan Hensley at work"
