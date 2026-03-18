@@ -64,11 +64,11 @@ const QUALITY_TIERS = [
 
 const SIZES = [
   { id: 'tiny', label: 'Tiny', value: 'tiny', price: 79, step: 0, measurement: '2x3' },
-  { id: 'sm', label: 'Small', value: 'small', price: 200, step: 1, measurement: '4x6' },
-  { id: 'md', label: 'Medium', value: 'medium', price: 300, step: 2, measurement: '5x7' },
-  { id: 'lg', label: 'Large', value: 'large', price: 400, step: 3, measurement: '8x10' },
-  { id: 'hg', label: 'Huge', value: 'huge', price: 500, step: 4, measurement: '9x11' },
-  { id: 'rd', label: '3.14', value: '4ft round', price: 250, step: 1, measurement: '4 foot round' }
+  { id: 'sm', label: 'Small', value: 'small', price: 139, step: 1, measurement: '4x6' },
+  { id: 'md', label: 'Medium', value: 'medium', price: 199, step: 2, measurement: '5x7' },
+  { id: 'lg', label: 'Large', value: 'large', price: 259, step: 3, measurement: '8x10' },
+  { id: 'hg', label: 'Huge', value: 'huge', price: 319, step: 4, measurement: '9x11' },
+  { id: 'rd', label: '3.14', value: '4ft round', price: 159, step: 1, measurement: '4 foot round' }
 ];
 
 const BASE_COLORS = [
