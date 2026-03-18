@@ -31,7 +31,7 @@ export default function Commission() {
     inspirationImages: [],
     description: '',
     preferredSize: '',
-    preferredColors: '',
+    preferredColors: [],
     numColors: '3-4',
     budgetRange: '',
     projectType: 'residential',
