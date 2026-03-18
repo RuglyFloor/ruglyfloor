@@ -142,7 +142,7 @@ export default function About() {
               <h3 className="text-4xl text-gray-900" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>Featured Work</h3>
             </div>
             <div className="relative group max-w-4xl mx-auto">
-              <div className="absolute -inset-2 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-3xl opacity-20 group-hover:opacity-30 transition-opacity duration-500 blur-xl" />
+
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/e411705e7_Screenshot2026-01-07at015736.png"
                 alt="Custom Pan Am rug design"
