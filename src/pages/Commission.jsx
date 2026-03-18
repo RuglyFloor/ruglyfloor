@@ -442,20 +442,18 @@ export default function Commission() {
 
               {/* STEP 4 — Submit */}
               {activeStep === 4 && (
-                <SectionCard step={4} title="Contact Info & Submit" subtitle="Free to submit — we'll send a detailed estimate within 48 hours.">
-                  <div className="grid md:grid-cols-3 gap-3">
-                    <div>
-                      <Label className="font-bold text-sm">Name *</Label>
-                      <Input required className="mt-1" value={formData.name} onChange={(e) => update('name', e.target.value)} placeholder="Jane Smith" />
-                    </div>
-                    <div>
-                      <Label className="font-bold text-sm">Email *</Label>
-                      <Input required type="email" className="mt-1" value={formData.email} onChange={(e) => update('email', e.target.value)} placeholder="jane@studio.com" />
-                    </div>
-                    <div>
-                      <Label className="font-bold text-sm">Phone *</Label>
-                      <Input required className="mt-1" value={formData.phone} onChange={(e) => update('phone', e.target.value)} placeholder="(555) 123-4567" />
-                    </div>
+                <SectionCard step={4} title="Almost Done — Contact Info" subtitle="All three fields are required. We'll send your free estimate within 48 hours. No payment now.">
+                  <p className="text-xs font-bold uppercase tracking-wide" style={{ color: 'var(--brand-red)' }}>All fields required</p>
+                  <div className="grid md:grid-cols-3 gap-4">
+                    <FieldGroup label="Your Name" required>
+                      <Input className="mt-1" value={formData.name} onChange={(e) => update('name', e.target.value)} placeholder="Jane Smith" />
+                    </FieldGroup>
+                    <FieldGroup label="Email" required>
+                      <Input type="email" className="mt-1" value={formData.email} onChange={(e) => update('email', e.target.value)} placeholder="jane@studio.com" />
+                    </FieldGroup>
+                    <FieldGroup label="Phone" required>
+                      <Input className="mt-1" value={formData.phone} onChange={(e) => update('phone', e.target.value)} placeholder="(555) 123-4567" />
+                    </FieldGroup>
                   </div>
 
                   {/* Summary */}
