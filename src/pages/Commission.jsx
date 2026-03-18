@@ -454,7 +454,7 @@ export default function Commission() {
                   </div>
 
                   <div className="flex gap-3">
-                    <Button type="button" variant="outline" onClick={() => setActiveStep(2)} className="flex-1 py-3 font-bold">
+                    <Button type="button" variant="outline" onClick={() => setActiveStep(3)} className="flex-1 py-3 font-bold">
                       ← Back
                     </Button>
                     <Button type="submit" disabled={submitting || uploading} className="flex-1 py-3 font-black text-base"
