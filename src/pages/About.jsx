@@ -329,7 +329,7 @@ export default function About() {
         >
           <h2 className="text-5xl md:text-6xl text-white mb-6 leading-tight" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>
             Art That Lives <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Where You Do</span>
+            <span style={{color: 'var(--brand-cyan)'}}>Where You Do</span>
           </h2>
           <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed" style={{ fontFamily: 'var(--font-body)' }}>
             Every <span className="rugly-text">Rugly</span> is hand-painted in our studio, crafted to bring bold, beautiful design into your everyday life.
