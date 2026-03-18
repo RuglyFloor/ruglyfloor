@@ -46,7 +46,7 @@ export default function About() {
           </motion.div>
 
           <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 tracking-tight">
-            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 rugly-text">Rugly</span>
+            About <span className="rugly-text" style={{color: 'var(--brand-cyan)'}}>Rugly</span>
           </h1>
           <p className="text-2xl md:text-3xl text-blue-100 mb-12 font-light">
             Where art meets the floor
