@@ -34,17 +34,43 @@ function Tile({ selected, onClick, children, className = '' }) {
   );
 }
 
-function SectionCard({ step, title, subtitle, children }) {
+function SectionCard({ step, title, subtitle, required: requiredFields = [], optional = false, children }) {
   const accent = ['var(--brand-blue)', 'var(--brand-dark)', 'var(--brand-red)', 'var(--brand-cyan)', 'var(--brand-dark)'][step] || 'var(--brand-blue)';
   return (
     <Card className="rounded-2xl shadow-sm overflow-hidden bg-white" style={{ border: '1.5px solid #e5e7eb' }}>
-      <div className="h-1" style={{ backgroundColor: accent }} />
-      <CardHeader className="pb-2">
-        <CardTitle className="text-xl font-black" style={{ color: 'var(--brand-dark)' }}>{title}</CardTitle>
-        {subtitle && <p className="text-sm text-gray-500 font-normal mt-0.5">{subtitle}</p>}
+      <div className="h-1.5" style={{ backgroundColor: accent }} />
+      <CardHeader className="pb-3">
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <CardTitle className="text-xl font-black" style={{ color: 'var(--brand-dark)' }}>{title}</CardTitle>
+            {subtitle && <p className="text-sm text-gray-500 font-normal mt-1">{subtitle}</p>}
+          </div>
+          {optional && (
+            <span className="shrink-0 text-xs font-bold px-2 py-0.5 rounded-full mt-1" style={{ background: '#f3f4f6', color: '#9ca3af' }}>Optional</span>
+          )}
+        </div>
+        {requiredFields.length > 0 && (
+          <p className="text-xs font-semibold mt-2" style={{ color: accent }}>
+            Required: {requiredFields.join(', ')}
+          </p>
+        )}
       </CardHeader>
-      <CardContent className="space-y-5 pt-0">{children}</CardContent>
+      <CardContent className="space-y-6 pt-0">{children}</CardContent>
     </Card>
+  );
+}
+
+function FieldGroup({ label, required, hint, children }) {
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center gap-2">
+        <Label className="font-bold text-sm" style={{ color: 'var(--brand-dark)' }}>{label}</Label>
+        {required && <span className="text-xs font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(240,70,36,0.1)', color: 'var(--brand-red)' }}>Required</span>}
+        {!required && <span className="text-xs text-gray-400">Optional</span>}
+      </div>
+      {hint && <p className="text-xs text-gray-400">{hint}</p>}
+      {children}
+    </div>
   );
 }
 
