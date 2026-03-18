@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import SEOHead from '../components/seo/SEOHead';
 import AIPreviewPanel from '../components/commission/AIPreviewPanel';
 import BusinessAccountPanel from '../components/commission/BusinessAccountPanel';
+import ColorPaletteBuilder from '../components/commission/ColorPaletteBuilder';
 
 const SIZES = ['2x3', '3x5', '4x6', '5x7', '6x9', '8x10', '9x12', 'Custom'];
 const COLOR_PALETTES = [
