@@ -115,7 +115,7 @@ export default function Commission() {
     setSubmitting(true);
     try {
       const response = await base44.functions.invoke('createCommissionCheckout', {
-        formData: { ...formData, aiPreviewUrl, markupNotes },
+        formData: { ...formData, aiPreviewUrl, markupNotes, floorPlan },
         couponCode: null
       });
       if (response.data.orderId) {
