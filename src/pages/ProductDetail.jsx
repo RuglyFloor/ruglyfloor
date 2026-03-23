@@ -192,7 +192,31 @@ export default function ProductDetail() {
                 <p className="text-gray-700 leading-relaxed whitespace-pre-line">
                   {product.long_description || product.description || 'This stunning hand-painted rug is a one-of-a-kind piece of functional art. Each rug is carefully crafted using premium materials and painted by skilled artists to bring unique character to your space.'}
                 </p>
-              </CardContent>
+              
+              {/* Trust Badges */}
+              <div className="grid grid-cols-3 gap-3 mt-4">
+                <div className="flex flex-col items-center text-center p-3 bg-gray-50 rounded-lg">
+                  <span className="text-green-600 text-lg mb-1">✅</span>
+                  <span className="text-xs text-gray-600 font-medium">Hand-painted in Lansing, MI</span>
+                </div>
+                <div className="flex flex-col items-center text-center p-3 bg-gray-50 rounded-lg">
+                  <span className="text-green-600 text-lg mb-1">🛡️</span>
+                  <span className="text-xs text-gray-600 font-medium">Full replacement if damaged</span>
+                </div>
+                <div className="flex flex-col items-center text-center p-3 bg-gray-50 rounded-lg">
+                  <span className="text-green-600 text-lg mb-1">🔒</span>
+                  <span className="text-xs text-gray-600 font-medium">Secure checkout via Stripe</span>
+                </div>
+              </div>
+
+              {/* Shipping info */}
+              <div className="mt-3 p-3 bg-blue-50 rounded-lg flex items-center gap-2">
+                <span className="text-blue-600">🚚</span>
+                <span className="text-sm text-blue-800">
+                  {product.qualityTier === 'budget' ? 'Free shipping on this rug' : 'Ships for $15 — 3 to 5 business days'}
+                </span>
+              </div>
+            </CardContent>
             </Card>
 
             {/* Product Details */}
