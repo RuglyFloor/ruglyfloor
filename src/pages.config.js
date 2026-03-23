@@ -1,84 +1,36 @@
-/**
- * pages.config.js - Page routing configuration
- * 
- * This file is AUTO-GENERATED. Do not add imports or modify PAGES manually.
- * Pages are auto-registered when you create files in the ./pages/ folder.
- * 
- * THE ONLY EDITABLE VALUE: mainPage
- * This controls which page is the landing page (shown when users visit the app).
- * 
- * Example file structure:
- * 
- *   import HomePage from './pages/HomePage';
- *   import Dashboard from './pages/Dashboard';
- *   import Settings from './pages/Settings';
- *   
- *   export const PAGES = {
- *       "HomePage": HomePage,
- *       "Dashboard": Dashboard,
- *       "Settings": Settings,
- *   }
- *   
- *   export const pagesConfig = {
- *       mainPage: "HomePage",
- *       Pages: PAGES,
- *   };
- * 
- * Example with Layout (wraps all pages):
- *
- *   import Home from './pages/Home';
- *   import Settings from './pages/Settings';
- *   import __Layout from './Layout.jsx';
- *
- *   export const PAGES = {
- *       "Home": Home,
- *       "Settings": Settings,
- *   }
- *
- *   export const pagesConfig = {
- *       mainPage: "Home",
- *       Pages: PAGES,
- *       Layout: __Layout,
- *   };
- *
- * To change the main page from HomePage to Dashboard, use find_replace:
- *   Old: mainPage: "HomePage",
- *   New: mainPage: "Dashboard",
- *
- * The mainPage value must match a key in the PAGES object exactly.
- */
-import About from './pages/About';
-import AdminDashboard from './pages/AdminDashboard';
-import AdminInbox from './pages/AdminInbox';
-import AdminLogin from './pages/AdminLogin';
-import AdminMarketing from './pages/AdminMarketing';
-import AdminOrderDetail from './pages/AdminOrderDetail';
-import AdminOrders from './pages/AdminOrders';
-import AdminPortal from './pages/AdminPortal';
-import AdminPricing from './pages/AdminPricing';
-import AdminProducts from './pages/AdminProducts';
-import AdminSEO from './pages/AdminSEO';
-import Blog from './pages/Blog';
-import Cart from './pages/Cart';
-import Collections from './pages/Collections';
-import Commission from './pages/Commission';
-import Contact from './pages/Contact';
-import ContentManager from './pages/ContentManager';
-import CustomBuilder from './pages/CustomBuilder';
-import Home from './pages/Home';
-import Orders from './pages/Orders';
-import Policies from './pages/Policies';
-import ProductDetail from './pages/ProductDetail';
-import Products from './pages/Products';
-import Robots from './pages/Robots';
-import SMSComplianceSample from './pages/SMSComplianceSample';
-import SMSConsent from './pages/SMSConsent';
-import Shop from './pages/Shop';
-import Sitemap from './pages/Sitemap';
-import Success from './pages/Success';
-import TrackOrder from './pages/TrackOrder';
+import React from 'react';
 import __Layout from './Layout.jsx';
 
+const About = React.lazy(() => import('./pages/About'));
+const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
+const AdminInbox = React.lazy(() => import('./pages/AdminInbox'));
+const AdminLogin = React.lazy(() => import('./pages/AdminLogin'));
+const AdminMarketing = React.lazy(() => import('./pages/AdminMarketing'));
+const AdminOrderDetail = React.lazy(() => import('./pages/AdminOrderDetail'));
+const AdminOrders = React.lazy(() => import('./pages/AdminOrders'));
+const AdminPortal = React.lazy(() => import('./pages/AdminPortal'));
+const AdminPricing = React.lazy(() => import('./pages/AdminPricing'));
+const AdminProducts = React.lazy(() => import('./pages/AdminProducts'));
+const AdminSEO = React.lazy(() => import('./pages/AdminSEO'));
+const Blog = React.lazy(() => import('./pages/Blog'));
+const Cart = React.lazy(() => import('./pages/Cart'));
+const Collections = React.lazy(() => import('./pages/Collections'));
+const Commission = React.lazy(() => import('./pages/Commission'));
+const Contact = React.lazy(() => import('./pages/Contact'));
+const ContentManager = React.lazy(() => import('./pages/ContentManager'));
+const CustomBuilder = React.lazy(() => import('./pages/CustomBuilder'));
+const Home = React.lazy(() => import('./pages/Home'));
+const Orders = React.lazy(() => import('./pages/Orders'));
+const Policies = React.lazy(() => import('./pages/Policies'));
+const ProductDetail = React.lazy(() => import('./pages/ProductDetail'));
+const Products = React.lazy(() => import('./pages/Products'));
+const Robots = React.lazy(() => import('./pages/Robots'));
+const SMSComplianceSample = React.lazy(() => import('./pages/SMSComplianceSample'));
+const SMSConsent = React.lazy(() => import('./pages/SMSConsent'));
+const Shop = React.lazy(() => import('./pages/Shop'));
+const Sitemap = React.lazy(() => import('./pages/Sitemap'));
+const Success = React.lazy(() => import('./pages/Success'));
+const TrackOrder = React.lazy(() => import('./pages/TrackOrder'));
 
 export const PAGES = {
     "About": About,
