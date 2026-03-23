@@ -155,6 +155,11 @@ export default function Home() {
                 Custom Quote / Commercial
               </button>
             </Link>
+            <Link to={createPageUrl('Shop')}>
+              <button className="bg-white text-black font-black px-10 py-3 hover:bg-gray-100 transition-all tracking-wide mt-1" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '1.1rem' }}>
+                Shop Original Rugs →
+              </button>
+            </Link>
           </div>
           {/* Trust bar */}
           <div className="mt-8 flex flex-wrap justify-center gap-4 md:gap-8 text-white/90 text-sm font-medium">
