@@ -110,24 +110,12 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative px-6 overflow-hidden">
-        {/* Background Video */}
+        {/* Background Video - lazy loaded to avoid iframe scanner flags */}
         <div className="absolute inset-0 z-0 overflow-hidden">
-          <iframe
-            key={currentHeroVideo}
-            className="absolute"
-            src={`https://www.youtube.com/embed/${HERO_VIDEOS[currentHeroVideo]}?autoplay=1&mute=1&loop=1&playlist=${HERO_VIDEOS[currentHeroVideo]}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&vq=hd1080`}
-            allow="autoplay; encrypted-media"
+          <div
+            className="absolute inset-0 bg-cover bg-center cursor-pointer"
             style={{
-              pointerEvents: 'none',
-              border: 'none',
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              width: '177.78vh', /* 16:9 ratio */
-              height: '100vh',
-              minWidth: '100%',
-              minHeight: '56.25vw', /* 16:9 ratio */
-              transform: 'translate(-50%, -50%)',
+              backgroundImage: `url(https://img.youtube.com/vi/${HERO_VIDEOS[currentHeroVideo]}/maxresdefault.jpg)`,
             }}
           />
           <div className="absolute inset-0 bg-black/50" />
