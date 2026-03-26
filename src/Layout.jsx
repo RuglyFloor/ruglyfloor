@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
-import { ShoppingCart, Menu, X, Facebook, Instagram, Twitter, Mail, Video } from 'lucide-react';
+import { ShoppingCart, Menu, X, Facebook, Instagram, Twitter, Mail, Video, Star, Lock, ShieldCheck, Truck } from 'lucide-react';
 import ContactCards from '@/components/custom/ContactCards';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
@@ -260,20 +260,20 @@ export default function Layout({ children, currentPageName }) {
             <div className="mt-6 pt-6" style={{borderTop: '1px solid rgba(255,255,255,0.1)'}}>
               {/* Trust Badges */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <a href="https://www.yelp.com/biz/rugly-floor-lansing" target="_blank" rel="noopener noreferrer" className="text-center hover:opacity-80 transition-opacity">
-                  <div className="text-2xl mb-1">⭐</div>
+                <a href="https://www.yelp.com/biz/rugly-floor-lansing" target="_blank" rel="noopener noreferrer" className="text-center hover:opacity-80 transition-opacity flex flex-col items-center">
+                  <Star className="w-6 h-6 mb-1" style={{color: 'var(--brand-cyan)'}} />
                   <div className="text-xs text-gray-400">5-Star Yelp Reviews</div>
                 </a>
-                <div className="text-center">
-                  <div className="text-2xl mb-1">🔒</div>
+                <div className="text-center flex flex-col items-center">
+                  <Lock className="w-6 h-6 mb-1" style={{color: 'var(--brand-cyan)'}} />
                   <div className="text-xs text-gray-400">Secure Checkout</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl mb-1">✓</div>
+                <div className="text-center flex flex-col items-center">
+                  <ShieldCheck className="w-6 h-6 mb-1" style={{color: 'var(--brand-cyan)'}} />
                   <div className="text-xs text-gray-400">24-Hour Guarantee</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl mb-1">🚚</div>
+                <div className="text-center flex flex-col items-center">
+                  <Truck className="w-6 h-6 mb-1" style={{color: 'var(--brand-cyan)'}} />
                   <div className="text-xs text-gray-400">Free shipping on all Crugly Purchases</div>
                 </div>
               </div>
