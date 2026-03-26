@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Copy, Check, Phone, Globe, RotateCcw } from 'lucide-react';
 
+
 function FlipCard({ icon, emoji, title, value, copyValue, href }) {
   const [flipped, setFlipped] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -89,14 +90,14 @@ export default function ContactCards() {
         href="mailto:info@ruglyfloor.com"
       />
       <FlipCard
-        emoji="📞"
+        icon={<Phone className="w-8 h-8 mb-3" style={{ color: 'var(--brand-blue)' }} />}
         title="Call Us"
         value="(517) 777-8474"
         copyValue="5177778474"
         href="tel:5177778474"
       />
       <FlipCard
-        emoji="🌐"
+        icon={<Globe className="w-8 h-8 mb-3" style={{ color: 'var(--brand-blue)' }} />}
         title="Visit Us"
         value="www.ruglyfloor.com"
         copyValue="https://ruglyfloor.com"
