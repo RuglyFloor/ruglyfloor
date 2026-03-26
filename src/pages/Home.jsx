@@ -111,9 +111,11 @@ export default function Home() {
 
         <div className="max-w-6xl mx-auto text-center relative z-10 py-32">
           <img
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/7e922323a_RUGLYMASTERLOGO-61.png"
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/7e922323a_RUGLYMASTERLOGO-61.png?width=448&quality=80"
             alt="RUGLY"
-            className="h-32 md:h-48 mx-auto mb-6" />
+            className="h-32 md:h-48 mx-auto mb-6"
+            fetchpriority="high"
+            width="448" height="224" />
 
           <h2 className="text-3xl md:text-5xl font-bold mb-12 text-white">Your Rug, Your Rules
 
@@ -180,7 +182,7 @@ export default function Home() {
                 body:"Use our builder to pick your size, colors, and upload your design — or describe your vision and we'll handle it.",
                 color:'#4075ff',
                 images:[
-                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/db8fa3de2_Screenshot2026-02-20at115711.png",
+                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/db8fa3de2_Screenshot2026-02-20at115711.png?width=700&quality=75",
                 ]
               },
               {
@@ -188,8 +190,8 @@ export default function Home() {
                 body:'We send you a digital preview before anything is painted. You approve it. Zero risk, zero surprises.',
                 color:'#24f0a0',
                 images:[
-                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/f59403e57_IMG_1559.jpg",
-                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/604e7c19a_IMG_1564.jpg",
+                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/f59403e57_IMG_1559.jpg?width=400&quality=75",
+                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/604e7c19a_IMG_1564.jpg?width=400&quality=75",
                 ]
               },
               {
@@ -197,8 +199,8 @@ export default function Home() {
                 body:'Hand-painted in our Michigan studio. Free shipping on Crugly. Flat rate on Rugly. Or pick it up locally.',
                 color:'#f04624',
                 images:[
-                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/6ea7a20dd_IMG_1766.jpg",
-                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/3c3b3497d_finishedproduct.png",
+                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/6ea7a20dd_IMG_1766.jpg?width=400&quality=75",
+                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/3c3b3497d_finishedproduct.png?width=400&quality=75",
                 ]
               }
             ].map(s => {
@@ -246,9 +248,9 @@ export default function Home() {
           <h2 className="text-2xl md:text-3xl font-bold text-center text-white mb-10">What Customers Are Saying</h2>
           <div className="grid md:grid-cols-3 gap-6" style={{minHeight:'300px'}}>
             {[
-              { quote:'I purchased a rug from Rugly Floor and I absolutely adore how it turned out. With a child and four pets, I opted for the budget-friendly choice since rugs in my home experience a lot of spills. However, I still wanted to incorporate decor that adds a stylish and unique flair, and my rug certainly achieves that. I receive numerous compliments on it.', name:'Melissa L.', loc:'Denver, CO', source:'Yelp', color:'#f04624', image:'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/98d60c66e_Madonna.jpg' },
-              { quote:'I received three rugs from Rugly Floor and I love all of them! I have them in my business and would highly recommend these rugs for home or commercial use!', name:'Laura B.', loc:'Lansing, MI', source:'Yelp', color:'#24f0a0', image:'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/c64c9f4d1_IMG_1668.jpg' },
-              { quote:'Ordered a portrait rug of my golden retriever for my boyfriend\'s birthday. Ryan sent over a digital preview first and it looked exactly like our dog. It arrived in like 11 days and we were both blown away. Already telling everyone about it.', name:'Brittany H.', loc:'Grand Rapids, MI', source:'Google', color:'#4075ff', image:'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/284c9e6ee_panam.jpg' },
+              { quote:'I purchased a rug from Rugly Floor and I absolutely adore how it turned out. With a child and four pets, I opted for the budget-friendly choice since rugs in my home experience a lot of spills. However, I still wanted to incorporate decor that adds a stylish and unique flair, and my rug certainly achieves that. I receive numerous compliments on it.', name:'Melissa L.', loc:'Denver, CO', source:'Yelp', color:'#f04624', image:'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/98d60c66e_Madonna.jpg?width=600&quality=75' },
+              { quote:'I received three rugs from Rugly Floor and I love all of them! I have them in my business and would highly recommend these rugs for home or commercial use!', name:'Laura B.', loc:'Lansing, MI', source:'Yelp', color:'#24f0a0', image:'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/c64c9f4d1_IMG_1668.jpg?width=600&quality=75' },
+              { quote:'Ordered a portrait rug of my golden retriever for my boyfriend\'s birthday. Ryan sent over a digital preview first and it looked exactly like our dog. It arrived in like 11 days and we were both blown away. Already telling everyone about it.', name:'Brittany H.', loc:'Grand Rapids, MI', source:'Google', color:'#4075ff', image:'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/284c9e6ee_panam.jpg?width=600&quality=75' },
             ].map((t, i) => {
               const [flipped, setFlipped] = React.useState(false);
               return (
@@ -278,7 +280,7 @@ export default function Home() {
                     </div>
                     {/* Back - customer photo */}
                     <div className="hiw-back" style={{borderRadius:'1rem', overflow:'hidden'}}>
-                      <img src={t.image} alt={`${t.name}'s rug`} className="w-full h-full object-cover" />
+                      <img src={t.image} alt={`${t.name}'s rug`} className="w-full h-full object-cover" loading="lazy" />
                       <div className="absolute bottom-0 left-0 right-0 px-4 py-3 text-white font-bold text-sm text-center" style={{backgroundColor:`${t.color}cc`}}>
                         {t.name}'s Rugly
                       </div>
@@ -296,14 +298,16 @@ export default function Home() {
         {/* Background Images */}
         <div className="absolute inset-0 z-0 opacity-70">
           <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/1ef1e78ef_IMG_1668.jpg"
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/1ef1e78ef_IMG_1668.jpg?width=700&quality=75"
             alt="Capital Hippie Store"
             className="absolute left-0 top-1/2 -translate-y-1/2 w-1/2 h-96 object-cover rounded-r-3xl"
+            loading="lazy"
           />
           <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/cf829bd48_finishedproduct.png"
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/cf829bd48_finishedproduct.png?width=700&quality=75"
             alt="Finished Product"
             className="absolute right-0 top-1/2 -translate-y-1/2 w-1/2 h-96 object-cover rounded-l-3xl"
+            loading="lazy"
           />
         </div>
 
@@ -416,9 +420,10 @@ export default function Home() {
       <section className="py-20 px-6 bg-slate-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <img
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg"
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg?width=1200&quality=70"
             alt="Rugly Background"
-            className="w-full h-full object-cover" />
+            className="w-full h-full object-cover"
+            loading="lazy" />
 
         </div>
         <div className="max-w-4xl mx-auto text-center relative z-10">

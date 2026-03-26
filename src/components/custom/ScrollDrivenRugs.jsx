@@ -65,9 +65,15 @@ export default function ScrollDrivenRugs({ products, handleGrabIt, isCheckingOut
                 <div className="flex-shrink-0 w-full md:w-1/2 max-w-lg">
                   <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-white aspect-square">
                     <img
-                      src={images[0]?.url || product.image_url}
+                      src={(() => {
+                        const url = images[0]?.url || product.image_url || '';
+                        if (url.includes('supabase.co')) return `${url}?width=600&quality=75`;
+                        return url;
+                      })()}
                       alt={product.name}
                       className="w-full h-full object-contain p-4"
+                      loading="lazy"
+                      width="600" height="600"
                     />
                     {!product.in_stock && (
                       <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
