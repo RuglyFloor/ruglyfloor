@@ -1,9 +1,52 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { motion } from 'framer-motion';
+import { base44 } from '@/api/base44Client';
+
+function hexToRgb(hex) {
+  const h = hex.replace('#', '');
+  return {
+    r: parseInt(h.slice(0, 2), 16),
+    g: parseInt(h.slice(2, 4), 16),
+    b: parseInt(h.slice(4, 6), 16),
+  };
+}
+
+function applyStencil(imageData, paintHex, baseHex) {
+  const data = imageData.data;
+  const paint = hexToRgb(paintHex);
+
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+    const a = data[i + 3];
+
+    if (a < 30) {
+      data[i + 3] = 0;
+      continue;
+    }
+
+    const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+    const threshold = 180;
+
+    if (luminance < threshold) {
+      const intensity = 1 - luminance / threshold;
+      data[i] = paint.r;
+      data[i + 1] = paint.g;
+      data[i + 2] = paint.b;
+      data[i + 3] = Math.round(intensity * 255);
+    } else {
+      // transparent → base color shows through
+      data[i + 3] = 0;
+    }
+  }
+  return imageData;
+}
 
 export default function LiveRugPreview({ config, pricingData }) {
   const canvasRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -20,7 +63,6 @@ export default function LiveRugPreview({ config, pricingData }) {
     const W = rect.width;
     const H = rect.height;
 
-    // Resolve colors
     const baseColorObj = config.baseColor
       ? pricingData.baseColors.find(c => c.name === config.baseColor)
       : null;
@@ -35,9 +77,8 @@ export default function LiveRugPreview({ config, pricingData }) {
     ctx.fillStyle = baseHex;
     ctx.fillRect(0, 0, W, H);
 
-    // Draw placeholder text if incomplete
     if (!config.qualityTier || !config.size || !config.baseColor) {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
       ctx.font = '18px sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText('Select options to preview', W / 2, H / 2);
@@ -46,99 +87,59 @@ export default function LiveRugPreview({ config, pricingData }) {
 
     if (!config.designUrl) return;
 
-    // Load image and apply stencil color effect
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => {
-      // Figure out draw dimensions (contain within canvas)
-      const imgRatio = img.width / img.height;
-      const canvasRatio = W / H;
+    const drawStencilFromDataUrl = (dataUrl) => {
+      const img = new Image();
+      img.onload = () => {
+        const imgRatio = img.width / img.height;
+        const canvasRatio = W / H;
 
-      let drawWidth, drawHeight, offsetX, offsetY;
-      if (imgRatio > canvasRatio) {
-        drawWidth = W * 0.9;
-        drawHeight = drawWidth / imgRatio;
-      } else {
-        drawHeight = H * 0.9;
-        drawWidth = drawHeight * imgRatio;
-      }
-      offsetX = (W - drawWidth) / 2;
-      offsetY = (H - drawHeight) / 2;
-
-      // Draw image to an offscreen canvas at exact draw size
-      const offscreen = document.createElement('canvas');
-      offscreen.width = drawWidth;
-      offscreen.height = drawHeight;
-      const octx = offscreen.getContext('2d');
-      octx.drawImage(img, 0, 0, drawWidth, drawHeight);
-
-      // Get pixel data
-      const imageData = octx.getImageData(0, 0, drawWidth, drawHeight);
-      const data = imageData.data;
-
-      // Parse paint color into rgb
-      const pr = parseInt(paintHex.slice(1, 3), 16);
-      const pg = parseInt(paintHex.slice(3, 5), 16);
-      const pb = parseInt(paintHex.slice(5, 7), 16);
-
-      // Threshold: dark pixels → paint color, light pixels → transparent (show base)
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        const a = data[i + 3];
-
-        if (a < 30) {
-          // Already transparent — keep transparent
-          data[i + 3] = 0;
-          continue;
-        }
-
-        // Luminance check — dark pixels are the stencil/design
-        const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
-        const threshold = 180; // pixels darker than this become paint color
-
-        if (luminance < threshold) {
-          // Dark pixel → paint color, opacity based on how dark it is
-          const intensity = 1 - luminance / threshold;
-          data[i] = pr;
-          data[i + 1] = pg;
-          data[i + 2] = pb;
-          data[i + 3] = Math.round(intensity * 255);
+        let drawWidth, drawHeight;
+        if (imgRatio > canvasRatio) {
+          drawWidth = W * 0.9;
+          drawHeight = drawWidth / imgRatio;
         } else {
-          // Light pixel → transparent (show base color through)
-          data[i + 3] = 0;
+          drawHeight = H * 0.9;
+          drawWidth = drawHeight * imgRatio;
         }
-      }
+        const offsetX = (W - drawWidth) / 2;
+        const offsetY = (H - drawHeight) / 2;
 
-      octx.putImageData(imageData, 0, 0);
+        const offscreen = document.createElement('canvas');
+        offscreen.width = Math.round(drawWidth);
+        offscreen.height = Math.round(drawHeight);
+        const octx = offscreen.getContext('2d');
+        octx.drawImage(img, 0, 0, offscreen.width, offscreen.height);
 
-      // Draw back to main canvas
-      ctx.drawImage(offscreen, offsetX, offsetY, drawWidth, drawHeight);
-    };
+        const imageData = octx.getImageData(0, 0, offscreen.width, offscreen.height);
+        const stenciled = applyStencil(imageData, paintHex, baseHex);
+        octx.putImageData(stenciled, 0, 0);
 
-    img.onerror = () => {
-      // Fallback: just draw image normally if cross-origin fails
-      ctx.fillStyle = baseHex;
-      ctx.fillRect(0, 0, W, H);
-      const fallbackImg = new Image();
-      fallbackImg.src = config.designUrl;
-      fallbackImg.onload = () => {
-        ctx.globalAlpha = 0.6;
-        ctx.drawImage(fallbackImg, 0, 0, W, H);
-        ctx.globalAlpha = 1;
+        // Redraw base (in case async replaced it)
+        ctx.fillStyle = baseHex;
+        ctx.fillRect(0, 0, W, H);
+        ctx.drawImage(offscreen, offsetX, offsetY, drawWidth, drawHeight);
+        setLoading(false);
       };
+      img.src = dataUrl;
     };
 
-    img.src = config.designUrl;
+    setLoading(true);
+
+    // Fetch via backend proxy to avoid CORS
+    base44.functions.invoke('imageProxy', { imageUrl: config.designUrl })
+      .then(res => {
+        if (res.data?.dataUrl) {
+          drawStencilFromDataUrl(res.data.dataUrl);
+        } else {
+          setLoading(false);
+        }
+      })
+      .catch(() => setLoading(false));
+
   }, [config, pricingData]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
       <Card className="p-4 shadow-2xl">
         <div className="relative aspect-[4/3] bg-gray-100 rounded-lg overflow-hidden">
           <canvas
@@ -146,7 +147,11 @@ export default function LiveRugPreview({ config, pricingData }) {
             className="w-full h-full"
             style={{ imageRendering: 'crisp-edges' }}
           />
-
+          {loading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white/50">
+              <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+            </div>
+          )}
           {config.size && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -161,7 +166,7 @@ export default function LiveRugPreview({ config, pricingData }) {
         </div>
         {config.designUrl && config.paintColor && (
           <p className="text-xs text-center text-gray-400 mt-2">
-            Dark areas shown in selected paint color • Base color fills background
+            Dark areas → paint color · Light areas → base color
           </p>
         )}
       </Card>
