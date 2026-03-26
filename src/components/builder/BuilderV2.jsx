@@ -171,6 +171,8 @@ export default function BuilderV2() {
               config={config}
               pricingData={pricingData}
               completionPercentage={completionPercentage}
+              onToggleShading={() => handleConfigChange('hasShading', !config.hasShading)}
+              onToggleSecondColor={() => handleConfigChange('hasSecondColor', !config.hasSecondColor)}
             />
           </motion.div>
         </div>

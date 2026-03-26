@@ -6,7 +6,7 @@ import { ShoppingCart, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../../utils';
 
-export default function PriceCalculator({ config, pricingData, completionPercentage }) {
+export default function PriceCalculator({ config, pricingData, completionPercentage, onToggleShading, onToggleSecondColor }) {
   const navigate = useNavigate();
 
   const calculatePrice = () => {
@@ -123,7 +123,7 @@ export default function PriceCalculator({ config, pricingData, completionPercent
         {/* Add-ons Toggle */}
         <div className="border-t pt-4 space-y-2">
           <button
-            onClick={() => {}}
+            onClick={onToggleShading}
             className={`w-full p-3 rounded-lg border-2 transition-all text-left text-sm ${
               config.hasShading 
                 ? 'border-purple-600 bg-purple-50' 
@@ -137,7 +137,7 @@ export default function PriceCalculator({ config, pricingData, completionPercent
           </button>
 
           <button
-            onClick={() => {}}
+            onClick={onToggleSecondColor}
             className={`w-full p-3 rounded-lg border-2 transition-all text-left text-sm ${
               config.hasSecondColor 
                 ? 'border-yellow-600 bg-yellow-50' 

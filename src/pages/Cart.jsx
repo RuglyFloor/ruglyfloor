@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Trash2, ShoppingBag, BookmarkPlus, Mail, MessageSquare, Phone } from 'lucide-react';
+import { Trash2, ShoppingBag, BookmarkPlus, Mail, MessageSquare, Phone, Pencil } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
@@ -300,6 +300,15 @@ export default function Cart() {
                           </div>
                         </div>
                         <div className="flex gap-2 flex-shrink-0">
+                          {item.type === 'custom' && (
+                            <button
+                              onClick={() => navigate(createPageUrl('CustomBuilder'))}
+                              className="p-2 rounded-lg transition-all hover:bg-gray-100"
+                              title="Edit design"
+                            >
+                              <Pencil className="w-5 h-5" style={{ color: tierColor }} />
+                            </button>
+                          )}
                           <button
                             onClick={() => saveForLater(index)}
                             className="p-2 rounded-lg transition-all hover:bg-gray-100"
