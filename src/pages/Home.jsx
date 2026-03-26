@@ -417,18 +417,18 @@ export default function Home() {
       </section>
 
       {/* Studio Story */}
-      <section className="py-20 px-6 bg-slate-900 text-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
+      <section className="py-20 px-6 text-white relative overflow-hidden" style={{backgroundColor: '#0f172a'}}>
+        <div className="absolute inset-0">
           <img
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg?width=1200&quality=70"
-            alt="Rugly Background"
-            className="w-full h-full object-cover"
+            src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&q=70&auto=format&fit=crop"
+            alt="Studio Background"
+            className="w-full h-full object-cover opacity-30"
             loading="lazy" />
-
+          <div className="absolute inset-0" style={{background: 'linear-gradient(to bottom, rgba(15,23,42,0.7), rgba(15,23,42,0.85))'}} />
         </div>
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h2 className="text-4xl font-bold mb-6">FROM THE STUDIO TO YOUR LIVING ROOM.</h2>
-          <div className="space-y-4 text-lg text-slate-300 mb-8">
+          <h2 className="text-4xl font-light mb-6 tracking-wide">FROM THE STUDIO TO YOUR LIVING ROOM.</h2>
+          <div className="space-y-4 text-lg text-slate-200 mb-8">
             <p>
               Rugly was born at the intersection of fine art and functional design. Founder Ryan Hensley brings years of experience in commercial space design, building unique Airbnbs, and creating brand identities to the most overlooked canvas in your home: the floor.
             </p>
