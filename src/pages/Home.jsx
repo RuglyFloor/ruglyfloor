@@ -103,7 +103,7 @@ export default function Home() {
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: `url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg)`,
+              backgroundImage: `url(https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/6012b360c_panam.png)`,
             }}
           />
           <div className="absolute inset-0 bg-black/50" />
