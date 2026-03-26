@@ -10,19 +10,12 @@ import { generateLocalBusinessSchema } from '../components/seo/SchemaGenerator';
 import { useSEO } from '../components/seo/useSEO';
 import ScrollDrivenRugs from '../components/custom/ScrollDrivenRugs';
 
-const HERO_VIDEOS = [
-  'gRRxZX3WlLI',
-  'yqRmNKha3vU',
-];
-
 export default function Home() {
   const seoData = useSEO('');
   const navigate = useNavigate();
   const [currentProduct, setCurrentProduct] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
-  const [currentHeroVideo, setCurrentHeroVideo] = useState(0);
-
   const { data: products = [], isLoading: productsLoading } = useQuery({
     queryKey: ['featured-products'],
     queryFn: () => base44.entities.Product.filter({ category: 'original' })
@@ -105,12 +98,12 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative px-6 overflow-hidden">
-        {/* Background Video - lazy loaded to avoid iframe scanner flags */}
+        {/* Background Image */}
         <div className="absolute inset-0 z-0 overflow-hidden">
           <div
-            className="absolute inset-0 bg-cover bg-center cursor-pointer"
+            className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: `url(https://img.youtube.com/vi/${HERO_VIDEOS[currentHeroVideo]}/maxresdefault.jpg)`,
+              backgroundImage: `url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/684e49dba_IMG_1570.jpg)`,
             }}
           />
           <div className="absolute inset-0 bg-black/50" />
