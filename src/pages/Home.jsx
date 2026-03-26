@@ -427,7 +427,7 @@ export default function Home() {
           <div className="absolute inset-0" style={{background: 'linear-gradient(to bottom, rgba(15,23,42,0.7), rgba(15,23,42,0.85))'}} />
         </div>
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h2 className="text-4xl font-light mb-6 tracking-wide">FROM THE STUDIO TO YOUR LIVING ROOM.</h2>
+          <h2 className="text-4xl font-light mb-6 tracking-wide" style={{color: '#ffffff'}}>FROM THE STUDIO TO YOUR LIVING ROOM.</h2>
           <div className="space-y-4 text-lg text-slate-200 mb-8">
             <p>
               Rugly was born at the intersection of fine art and functional design. Founder Ryan Hensley brings years of experience in commercial space design, building unique Airbnbs, and creating brand identities to the most overlooked canvas in your home: the floor.
