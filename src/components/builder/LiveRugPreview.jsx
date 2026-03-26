@@ -12,34 +12,67 @@ function hexToRgb(hex) {
   };
 }
 
-function applyStencil(imageData, paintHex, baseHex) {
+// Detect if image is predominantly line-art (high contrast B&W)
+function isLineArt(data) {
+  let dark = 0, light = 0, total = 0;
+  for (let i = 0; i < data.length; i += 4) {
+    if (data[i + 3] < 30) continue;
+    const lum = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+    if (lum < 80) dark++;
+    else if (lum > 200) light++;
+    total++;
+  }
+  if (total === 0) return false;
+  // If 70%+ of pixels are very dark or very light → line art
+  return (dark + light) / total > 0.70;
+}
+
+// Line-art mode: dark pixels → paint color, light → transparent (base shows through)
+function applyStencil(imageData, paintHex) {
   const data = imageData.data;
   const paint = hexToRgb(paintHex);
-
   for (let i = 0; i < data.length; i += 4) {
-    const r = data[i];
-    const g = data[i + 1];
-    const b = data[i + 2];
     const a = data[i + 3];
-
-    if (a < 30) {
-      data[i + 3] = 0;
-      continue;
-    }
-
-    const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+    if (a < 30) { data[i + 3] = 0; continue; }
+    const lum = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
     const threshold = 180;
-
-    if (luminance < threshold) {
-      const intensity = 1 - luminance / threshold;
+    if (lum < threshold) {
+      const intensity = 1 - lum / threshold;
       data[i] = paint.r;
       data[i + 1] = paint.g;
       data[i + 2] = paint.b;
       data[i + 3] = Math.round(intensity * 255);
     } else {
-      // transparent → base color shows through
       data[i + 3] = 0;
     }
+  }
+  return imageData;
+}
+
+// Color-art mode: tint the image by blending toward paint color, preserve composition
+function applyColorTint(imageData, paintHex, baseHex) {
+  const data = imageData.data;
+  const paint = hexToRgb(paintHex);
+  const base = hexToRgb(baseHex);
+
+  for (let i = 0; i < data.length; i += 4) {
+    const a = data[i + 3];
+    if (a < 30) continue;
+    const r = data[i], g = data[i + 1], b = data[i + 2];
+    const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+
+    // Very light/white pixels → tint toward base color slightly
+    if (lum > 220) {
+      data[i]     = Math.round(r * 0.6 + base.r * 0.4);
+      data[i + 1] = Math.round(g * 0.6 + base.g * 0.4);
+      data[i + 2] = Math.round(b * 0.6 + base.b * 0.4);
+    } else if (lum < 60) {
+      // Very dark pixels → tint toward paint color
+      data[i]     = Math.round(r * 0.3 + paint.r * 0.7);
+      data[i + 1] = Math.round(g * 0.3 + paint.g * 0.7);
+      data[i + 2] = Math.round(b * 0.3 + paint.b * 0.7);
+    }
+    // Mid-tones keep their original color (preserves the design's character)
   }
   return imageData;
 }
@@ -47,10 +80,16 @@ function applyStencil(imageData, paintHex, baseHex) {
 export default function LiveRugPreview({ config, pricingData }) {
   const canvasRef = useRef(null);
   const [loading, setLoading] = useState(false);
+  const abortRef = useRef(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
+    // Cancel any pending proxy fetch
+    if (abortRef.current) abortRef.current = false;
+    const thisRender = {};
+    abortRef.current = thisRender;
 
     const ctx = canvas.getContext('2d');
     const dpr = window.devicePixelRatio || 1;
@@ -79,7 +118,7 @@ export default function LiveRugPreview({ config, pricingData }) {
 
     if (!config.qualityTier || !config.size || !config.baseColor) {
       ctx.fillStyle = 'rgba(0,0,0,0.3)';
-      ctx.font = '18px sans-serif';
+      ctx.font = '16px sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText('Select options to preview', W / 2, H / 2);
       return;
@@ -87,18 +126,20 @@ export default function LiveRugPreview({ config, pricingData }) {
 
     if (!config.designUrl) return;
 
-    const drawStencilFromDataUrl = (dataUrl) => {
+    const renderImage = (dataUrl) => {
+      if (thisRender !== abortRef.current) return; // stale render
       const img = new Image();
       img.onload = () => {
+        if (thisRender !== abortRef.current) return;
+
         const imgRatio = img.width / img.height;
         const canvasRatio = W / H;
-
         let drawWidth, drawHeight;
         if (imgRatio > canvasRatio) {
-          drawWidth = W * 0.9;
+          drawWidth = W * 0.88;
           drawHeight = drawWidth / imgRatio;
         } else {
-          drawHeight = H * 0.9;
+          drawHeight = H * 0.88;
           drawWidth = drawHeight * imgRatio;
         }
         const offsetX = (W - drawWidth) / 2;
@@ -110,14 +151,28 @@ export default function LiveRugPreview({ config, pricingData }) {
         const octx = offscreen.getContext('2d');
         octx.drawImage(img, 0, 0, offscreen.width, offscreen.height);
 
+        // Sample pixels to decide rendering mode
         const imageData = octx.getImageData(0, 0, offscreen.width, offscreen.height);
-        const stenciled = applyStencil(imageData, paintHex, baseHex);
-        octx.putImageData(stenciled, 0, 0);
+        const lineArt = isLineArt(imageData.data);
 
-        // Redraw base (in case async replaced it)
+        if (lineArt) {
+          applyStencil(imageData, paintHex);
+        } else {
+          applyColorTint(imageData, paintHex, baseHex);
+        }
+        octx.putImageData(imageData, 0, 0);
+
+        // Redraw base then composite
         ctx.fillStyle = baseHex;
         ctx.fillRect(0, 0, W, H);
+
+        // Subtle border/shadow for the design area
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,0.15)';
+        ctx.shadowBlur = 12;
         ctx.drawImage(offscreen, offsetX, offsetY, drawWidth, drawHeight);
+        ctx.restore();
+
         setLoading(false);
       };
       img.src = dataUrl;
@@ -125,16 +180,19 @@ export default function LiveRugPreview({ config, pricingData }) {
 
     setLoading(true);
 
-    // Fetch via backend proxy to avoid CORS
     base44.functions.invoke('imageProxy', { imageUrl: config.designUrl })
       .then(res => {
+        if (thisRender !== abortRef.current) return;
         if (res.data?.dataUrl) {
-          drawStencilFromDataUrl(res.data.dataUrl);
+          renderImage(res.data.dataUrl);
         } else {
           setLoading(false);
         }
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        if (thisRender !== abortRef.current) return;
+        setLoading(false);
+      });
 
   }, [config, pricingData]);
 
@@ -148,7 +206,7 @@ export default function LiveRugPreview({ config, pricingData }) {
             style={{ imageRendering: 'crisp-edges' }}
           />
           {loading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-white/50">
+            <div className="absolute inset-0 flex items-center justify-center bg-white/40">
               <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
             </div>
           )}
@@ -166,7 +224,7 @@ export default function LiveRugPreview({ config, pricingData }) {
         </div>
         {config.designUrl && config.paintColor && (
           <p className="text-xs text-center text-gray-400 mt-2">
-            Dark areas → paint color · Light areas → base color
+            Real-time preview • Colors and design update instantly
           </p>
         )}
       </Card>
