@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { ShoppingCart, Menu, X, Facebook, Instagram, Twitter, Mail, Video } from 'lucide-react';
+import ContactCards from '@/components/custom/ContactCards';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 
@@ -219,37 +220,7 @@ export default function Layout({ children, currentPageName }) {
               Have a question about custom rugs or need help with your order? We're here to help.
             </p>
 
-            <div className="grid md:grid-cols-3 gap-8 mb-8">
-              <div className="rounded-xl p-6 transition-colors" style={{border: '2px solid var(--brand-blue)'}} 
-                   onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--brand-cream)'}
-                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                <Mail className="w-8 h-8 mx-auto mb-3" style={{color: 'var(--brand-blue)'}} />
-                <h3 className="font-bold text-lg mb-2" style={{color: 'var(--brand-dark)'}}>Email Us</h3>
-                <a href="mailto:info@ruglyfloor.com" className="text-lg" style={{color: 'var(--brand-dark)'}}>
-                  info@ruglyfloor.com
-                </a>
-              </div>
-
-              <div className="rounded-xl p-6 transition-colors" style={{border: '2px solid var(--brand-blue)'}}
-                   onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--brand-cream)'}
-                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                <div className="w-8 h-8 mx-auto mb-3 flex items-center justify-center text-2xl" style={{color: 'var(--brand-blue)'}}>📞</div>
-                <h3 className="font-bold text-lg mb-2" style={{color: 'var(--brand-dark)'}}>Call Us</h3>
-                <a href="tel:5177778474" className="text-lg" style={{color: 'var(--brand-dark)'}}>
-                  (517) 777-8474
-                </a>
-              </div>
-
-              <div className="rounded-xl p-6 transition-colors" style={{border: '2px solid var(--brand-blue)'}}
-                   onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--brand-cream)'}
-                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                <div className="w-8 h-8 mx-auto mb-3 flex items-center justify-center text-2xl" style={{color: 'var(--brand-blue)'}}>🌐</div>
-                <h3 className="font-bold text-lg mb-2" style={{color: 'var(--brand-dark)'}}>Visit Us</h3>
-                <a href="https://ruglyfloor.com" className="text-lg" style={{color: 'var(--brand-dark)'}}>
-                  www.ruglyfloor.com
-                </a>
-              </div>
-            </div>
+            <ContactCards />
 
             {/* Social Media Links */}
             <div className="flex justify-center gap-6">
