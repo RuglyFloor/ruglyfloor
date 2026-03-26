@@ -12,34 +12,6 @@ function hexToRgb(hex) {
   };
 }
 
-// Returns true if image is mostly high-contrast B&W (line art / logos)
-function isLineArt(data) {
-  let extremes = 0, total = 0;
-  for (let i = 0; i < data.length; i += 16) { // sample every 4th pixel
-    if (data[i + 3] < 30) continue;
-    const lum = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
-    if (lum < 60 || lum > 210) extremes++;
-    total++;
-  }
-  return total > 0 && extremes / total > 0.65;
-}
-
-// For B&W line art: map dark→paint color, light→transparent (base shows through)
-function applyStencil(data, paintHex) {
-  const p = hexToRgb(paintHex);
-  for (let i = 0; i < data.length; i += 4) {
-    if (data[i + 3] < 30) { data[i + 3] = 0; continue; }
-    const lum = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
-    if (lum < 180) {
-      const intensity = 1 - lum / 180;
-      data[i] = p.r; data[i + 1] = p.g; data[i + 2] = p.b;
-      data[i + 3] = Math.round(intensity * 255);
-    } else {
-      data[i + 3] = 0;
-    }
-  }
-}
-
 export default function LiveRugPreview({ config, pricingData }) {
   const canvasRef = useRef(null);
   const [loading, setLoading] = useState(false);
@@ -68,7 +40,7 @@ export default function LiveRugPreview({ config, pricingData }) {
     const baseHex = baseColorObj?.hex || '#e5e7eb';
     const paintHex = paintColorObj?.hex || '#111827';
 
-    // Always fill base color first
+    // Fill base color
     ctx.fillStyle = baseHex;
     ctx.fillRect(0, 0, W, H);
 
@@ -84,9 +56,10 @@ export default function LiveRugPreview({ config, pricingData }) {
 
     setLoading(true);
 
+    // Fetch stencil image via proxy (avoids CORS)
     base44.functions.invoke('imageProxy', { imageUrl: config.designUrl })
       .then(res => {
-        if (renderIdRef.current !== renderId) return; // stale
+        if (renderIdRef.current !== renderId) return;
         if (!res.data?.dataUrl) { setLoading(false); return; }
 
         const img = new Image();
@@ -104,28 +77,30 @@ export default function LiveRugPreview({ config, pricingData }) {
           const ox = (W - dw) / 2;
           const oy = (H - dh) / 2;
 
+          // The stencil image is black on transparent.
+          // We tint it to the paint color using canvas compositing.
           const off = document.createElement('canvas');
           off.width = Math.round(dw);
           off.height = Math.round(dh);
           const octx = off.getContext('2d');
+
+          // Draw stencil
           octx.drawImage(img, 0, 0, off.width, off.height);
 
-          const imageData = octx.getImageData(0, 0, off.width, off.height);
+          // Tint to paint color: fill paint color using source-in (only where stencil has pixels)
+          const paint = hexToRgb(paintHex);
+          octx.globalCompositeOperation = 'source-in';
+          octx.fillStyle = `rgb(${paint.r}, ${paint.g}, ${paint.b})`;
+          octx.fillRect(0, 0, off.width, off.height);
+          octx.globalCompositeOperation = 'source-over';
 
-          if (isLineArt(imageData.data)) {
-            // B&W stencil: replace dark pixels with paint color
-            applyStencil(imageData.data, paintHex);
-            octx.putImageData(imageData, 0, 0);
-          }
-          // For color images: just draw as-is over the base color
-
-          // Re-fill base color (in case anything cleared it)
+          // Composite onto main canvas (base color already filled)
           ctx.fillStyle = baseHex;
           ctx.fillRect(0, 0, W, H);
 
           ctx.save();
-          ctx.shadowColor = 'rgba(0,0,0,0.2)';
-          ctx.shadowBlur = 10;
+          ctx.shadowColor = 'rgba(0,0,0,0.15)';
+          ctx.shadowBlur = 8;
           ctx.drawImage(off, ox, oy, dw, dh);
           ctx.restore();
 
