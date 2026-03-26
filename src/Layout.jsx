@@ -138,10 +138,10 @@ export default function Layout({ children, currentPageName }) {
           <div className="flex justify-between items-center">
             <Link to={createPageUrl('Home')} className="flex items-center gap-2">
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/9a05f04b4_RUGLYMASTERLOGO-92.png?width=140&quality=80" 
+                src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/938135f33_RUGLYMASTERLOGOsmall.png" 
                 alt="Rugly" 
-                className="h-10"
-                width="70" height="70"
+                className="h-12"
+                width="48" height="48"
               />
             </Link>
 
