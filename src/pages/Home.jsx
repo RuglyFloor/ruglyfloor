@@ -120,15 +120,14 @@ export default function Home() {
             fetchpriority="high"
             width="448" height="224" />
 
-          <h2 className="text-3xl md:text-5xl font-bold mb-12 text-white">Your Rug, Your Rules
-
+          <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">Design Your Rug. See It Instantly.
           </h2>
-          <p className="text-lg md:text-xl text-white mb-12 max-w-3xl mx-auto">Choose <strong>Crugly</strong>, <strong className="rugly-text">Rugly</strong>, or <strong className="rugly-text">Rugly LX</strong>. Pick colors, play with patterns, watch it live.
+          <p className="text-lg md:text-xl text-white mb-12 max-w-3xl mx-auto">Upload a design and preview your custom rug in seconds
           </p>
           <div className="flex flex-col items-center gap-3">
             <Link to={createPageUrl('CustomBuilder')}>
               <button className="bg-transparent border border-white text-white font-black px-12 py-6 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '1.575rem', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
-                Create It Now
+                Start Designing
               </button>
             </Link>
             <Link to={createPageUrl('Commission')}>
