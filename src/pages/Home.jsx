@@ -9,6 +9,7 @@ import SEOHead from '../components/seo/SEOHead';
 import { generateLocalBusinessSchema } from '../components/seo/SchemaGenerator';
 import { useSEO } from '../components/seo/useSEO';
 import ScrollDrivenRugs from '../components/custom/ScrollDrivenRugs';
+import FlipCard from '../components/custom/FlipCard';
 
 export default function Home() {
   const seoData = useSEO('');
@@ -183,9 +184,7 @@ export default function Home() {
                 num:'Step 1', title:'Upload / Design Your Rug', icon: <Upload className="w-10 h-10" />,
                 body:"Use our builder to pick your size, colors, and upload your design — or describe your vision and we'll handle it.",
                 color:'#4075ff',
-                images:[
-                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/db8fa3de2_Screenshot2026-02-20at115711.png?width=700&quality=75",
-                ]
+                images:["https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/db8fa3de2_Screenshot2026-02-20at115711.png?width=700&quality=75"]
               },
               {
                 num:'Step 2', title:'Deploy Your Design', icon: <Paintbrush className="w-10 h-10" />,
@@ -205,41 +204,32 @@ export default function Home() {
                   "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/3c3b3497d_finishedproduct.png?width=400&quality=75",
                 ]
               }
-            ].map(s => {
-              const [flipped, setFlipped] = React.useState(false);
-              return (
-                <div
-                  key={s.num}
-                  className={`hiw-flip-card${flipped ? ' hiw-flipped' : ''}`}
-                  style={{height:'300px'}}
-                  onClick={() => setFlipped(f => !f)}
-                  onMouseEnter={() => { if (window.matchMedia('(hover: hover)').matches) setFlipped(true); }}
-                  onMouseLeave={() => { if (window.matchMedia('(hover: hover)').matches) setFlipped(false); }}
-                >
-                  <div className="hiw-flip-inner">
-                    {/* Front */}
-                    <div className="hiw-front bg-white flex flex-col justify-center items-center p-6 text-center" style={{border:`3px solid ${s.color}`}}>
-                      <div className="mb-3" style={{color:s.color}}>{s.icon}</div>
-                      <div className="text-xs font-black tracking-widest mb-2" style={{color:s.color}}>{s.num}</div>
-                      <h3 className="text-xl font-bold mb-3" style={{color:'#343634'}}>{s.title}</h3>
-                      <p className="text-gray-600 text-sm leading-relaxed">{s.body}</p>
-                      <div className="mt-4 text-xs" style={{color:s.color}}>Hover / tap to see →</div>
+            ].map(s => (
+              <FlipCard
+                key={s.num}
+                frontContent={
+                  <div className="bg-white flex flex-col justify-center items-center p-6 text-center w-full h-full" style={{border:`3px solid ${s.color}`, borderRadius:'1rem'}}>
+                    <div className="mb-3" style={{color:s.color}}>{s.icon}</div>
+                    <div className="text-xs font-black tracking-widest mb-2" style={{color:s.color}}>{s.num}</div>
+                    <h3 className="text-xl font-bold mb-3" style={{color:'#343634'}}>{s.title}</h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">{s.body}</p>
+                    <div className="mt-4 text-xs" style={{color:s.color}}>Hover / tap to see →</div>
+                  </div>
+                }
+                backContent={
+                  <div className="w-full h-full relative" style={{backgroundColor: s.color, borderRadius:'1rem', overflow:'hidden'}}>
+                    <div className="w-full h-full flex">
+                      {s.images.map((img, i) => (
+                        <img key={i} src={img} alt={s.title} className="flex-1 object-cover" style={{width:`${100/s.images.length}%`}} />
+                      ))}
                     </div>
-                    {/* Back - images */}
-                    <div className="hiw-back" style={{backgroundColor: s.color}}>
-                      <div className="w-full h-full flex">
-                        {s.images.map((img, i) => (
-                          <img key={i} src={img} alt={s.title} className="flex-1 object-cover" style={{width:`${100/s.images.length}%`}} />
-                        ))}
-                      </div>
-                      <div className="absolute bottom-0 left-0 right-0 px-4 py-3 text-white font-bold text-sm text-center" style={{backgroundColor:`${s.color}cc`}}>
-                        {s.title}
-                      </div>
+                    <div className="absolute bottom-0 left-0 right-0 px-4 py-3 text-white font-bold text-sm text-center" style={{backgroundColor:`${s.color}cc`}}>
+                      {s.title}
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                }
+              />
+            ))}
           </div>
         </div>
       </section>
@@ -252,45 +242,36 @@ export default function Home() {
             {[
               { quote:'I purchased a rug from Rugly Floor and I absolutely adore how it turned out. With a child and four pets, I opted for the budget-friendly choice since rugs in my home experience a lot of spills. However, I still wanted to incorporate decor that adds a stylish and unique flair, and my rug certainly achieves that. I receive numerous compliments on it.', name:'Melissa L.', loc:'Denver, CO', source:'Yelp', color:'#f04624', image:'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/98d60c66e_Madonna.jpg?width=600&quality=75' },
               { quote:'I received three rugs from Rugly Floor and I love all of them! I have them in my business and would highly recommend these rugs for home or commercial use!', name:'Laura B.', loc:'Lansing, MI', source:'Yelp', color:'#24f0a0', image:'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/c64c9f4d1_IMG_1668.jpg?width=600&quality=75' },
-              { quote:'Ordered a portrait rug of my golden retriever for my boyfriend\'s birthday. Ryan sent over a digital preview first and it looked exactly like our dog. It arrived in like 11 days and we were both blown away. Already telling everyone about it.', name:'Brittany H.', loc:'Grand Rapids, MI', source:'Google', color:'#4075ff', image:'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/284c9e6ee_panam.jpg?width=600&quality=75' },
-            ].map((t, i) => {
-              const [flipped, setFlipped] = React.useState(false);
-              return (
-                <div
-                  key={i}
-                  className={`hiw-flip-card${flipped ? ' hiw-flipped' : ''}`}
-                  style={{height:'300px'}}
-                  onClick={() => setFlipped(f => !f)}
-                  onMouseEnter={() => { if (window.matchMedia('(hover: hover)').matches) setFlipped(true); }}
-                  onMouseLeave={() => { if (window.matchMedia('(hover: hover)').matches) setFlipped(false); }}
-                >
-                  <div className="hiw-flip-inner">
-                    {/* Front */}
-                    <div className="hiw-front bg-white flex flex-col justify-between p-6" style={{borderRadius:'1rem'}}>
-                      <div>
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex">{[...Array(5)].map((_,j) => <span key={j} className="text-yellow-400 text-lg">★</span>)}</div>
-                          <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{backgroundColor: t.source === 'Yelp' ? '#d32323' : '#4285F4', color:'white'}}>{t.source}</span>
-                        </div>
-                        <p className="text-gray-700 text-sm leading-relaxed mb-4">"{t.quote}"</p>
+              { quote:"Ordered a portrait rug of my golden retriever for my boyfriend's birthday. Ryan sent over a digital preview first and it looked exactly like our dog. It arrived in like 11 days and we were both blown away. Already telling everyone about it.", name:'Brittany H.', loc:'Grand Rapids, MI', source:'Google', color:'#4075ff', image:'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/284c9e6ee_panam.jpg?width=600&quality=75' },
+            ].map((t, i) => (
+              <FlipCard
+                key={i}
+                frontContent={
+                  <div className="bg-white flex flex-col justify-between p-6 w-full h-full" style={{borderRadius:'1rem'}}>
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex">{[...Array(5)].map((_,j) => <span key={j} className="text-yellow-400 text-lg">★</span>)}</div>
+                        <span className="text-xs font-semibold px-2 py-1 rounded-full" style={{backgroundColor: t.source === 'Yelp' ? '#d32323' : '#4285F4', color:'white'}}>{t.source}</span>
                       </div>
-                      <div>
-                        <div className="font-bold text-sm" style={{color:'#343634'}}>{t.name}</div>
-                        <div className="text-xs text-gray-500 mb-2">{t.loc}</div>
-                        <div className="text-xs" style={{color: t.color}}>Hover / tap to see their rug →</div>
-                      </div>
+                      <p className="text-gray-700 text-sm leading-relaxed mb-4">"{t.quote}"</p>
                     </div>
-                    {/* Back - customer photo */}
-                    <div className="hiw-back" style={{borderRadius:'1rem', overflow:'hidden'}}>
-                      <img src={t.image} alt={`${t.name}'s rug`} className="w-full h-full object-cover" loading="lazy" />
-                      <div className="absolute bottom-0 left-0 right-0 px-4 py-3 text-white font-bold text-sm text-center" style={{backgroundColor:`${t.color}cc`}}>
-                        {t.name}'s Rugly
-                      </div>
+                    <div>
+                      <div className="font-bold text-sm" style={{color:'#343634'}}>{t.name}</div>
+                      <div className="text-xs text-gray-500 mb-2">{t.loc}</div>
+                      <div className="text-xs" style={{color: t.color}}>Hover / tap to see their rug →</div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                }
+                backContent={
+                  <div className="w-full h-full relative" style={{borderRadius:'1rem', overflow:'hidden'}}>
+                    <img src={t.image} alt={`${t.name}'s rug`} className="w-full h-full object-cover" loading="lazy" />
+                    <div className="absolute bottom-0 left-0 right-0 px-4 py-3 text-white font-bold text-sm text-center" style={{backgroundColor:`${t.color}cc`}}>
+                      {t.name}'s Rugly
+                    </div>
+                  </div>
+                }
+              />
+            ))}
           </div>
         </div>
       </section>
