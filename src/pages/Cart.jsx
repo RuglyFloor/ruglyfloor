@@ -30,7 +30,7 @@ export default function Cart() {
   const [couponCode, setCouponCode] = useState('');
   const [couponValidation, setCouponValidation] = useState(null);
   const [validatingCoupon, setValidatingCoupon] = useState(false);
-  const [useGuestCheckout, setUseGuestCheckout] = useState(true);
+  const [useGuestCheckout] = useState(false);
   const [taxRate, setTaxRate] = useState(0);
   const [finalSaleAcknowledged, setFinalSaleAcknowledged] = useState(false);
 
@@ -132,19 +132,23 @@ export default function Cart() {
     const timeOnSite = Math.floor((Date.now() - siteStartTime) / 1000);
     const referrerSource = sessionStorage.getItem('rugly_referrer') || document.referrer || 'direct';
     
-    // Minimal validation for guest checkout
-    if (!customerInfo.email) {
-      alert('Please provide your email address');
+    if (!customerInfo.email || !customerInfo.email.includes('@')) {
+      alert('Please provide a valid email address');
       return;
     }
 
-    if (!useGuestCheckout && (!customerInfo.name || !customerInfo.street || !customerInfo.city)) {
-      alert('Please complete all required fields');
+    if (!customerInfo.phone) {
+      alert('Please provide your phone number');
       return;
     }
 
-    if (!useGuestCheckout && customerInfo.phone && !smsConsent) {
-      alert('Please consent to receive text messages if you provide a phone number');
+    if (!customerInfo.name) {
+      alert('Please provide your full name');
+      return;
+    }
+
+    if (customerInfo.phone && !smsConsent) {
+      alert('Please consent to receive text messages to continue');
       return;
     }
 
@@ -168,14 +172,14 @@ export default function Cart() {
     try {
       const response = await base44.functions.invoke('createCheckout', { 
         cart, 
-        customerInfo: useGuestCheckout ? { email: customerInfo.email, timeOnSite, referrerSource } : {
+        customerInfo: {
           ...customerInfo,
           timeOnSite,
           referrerSource
         },
         designInstructions,
         couponCode: couponValidation?.valid ? couponCode : null,
-        guestCheckout: useGuestCheckout
+        smsConsent
       });
 
       if (response.data.url) {
@@ -380,22 +384,18 @@ export default function Cart() {
               </div>
               
               <div className="space-y-4">
-                {/* Guest Checkout Toggle */}
-                <div className="flex items-center gap-3 p-4 bg-blue-50 border-2 border-blue-200 rounded-xl">
-                  <input
-                    type="checkbox"
-                    id="guestCheckout"
-                    checked={useGuestCheckout}
-                    onChange={(e) => setUseGuestCheckout(e.target.checked)}
-                    className="w-5 h-5 rounded border-2 border-blue-400"
+                <div>
+                  <Label className="text-sm font-semibold mb-2 block">Full Name *</Label>
+                  <Input 
+                    value={customerInfo.name}
+                    onChange={(e) => setCustomerInfo(prev => ({ ...prev, name: e.target.value }))}
+                    className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
+                    placeholder="Jane Smith"
                   />
-                  <label htmlFor="guestCheckout" className="text-sm font-semibold cursor-pointer flex-1">
-                    ⚡ Express checkout (email only)
-                  </label>
                 </div>
 
                 <div>
-                  <Label className="text-sm font-semibold mb-2 block">Email * {useGuestCheckout && <span className="text-xs text-gray-500">(Updates sent here)</span>}</Label>
+                  <Label className="text-sm font-semibold mb-2 block">Email *</Label>
                   <Input 
                     type="email"
                     value={customerInfo.email}
@@ -405,81 +405,34 @@ export default function Cart() {
                   />
                 </div>
 
-                {!useGuestCheckout && (
-                  <>
-                    <div>
-                      <Label className="text-sm font-semibold mb-2 block">Full Name *</Label>
-                      <Input 
-                        value={customerInfo.name}
-                        onChange={(e) => setCustomerInfo(prev => ({ ...prev, name: e.target.value }))}
-                        className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
-                      />
+                <div>
+                  <Label className="text-sm font-semibold mb-2 block">Phone * <span className="text-xs text-gray-500 font-normal">(for order updates)</span></Label>
+                  <Input 
+                    type="tel"
+                    value={customerInfo.phone}
+                    onChange={(e) => setCustomerInfo(prev => ({ ...prev, phone: e.target.value }))}
+                    placeholder="(555) 123-4567"
+                    className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
+                  />
+                </div>
+
+                {/* SMS Consent — always shown once phone is entered */}
+                {customerInfo.phone && (
+                  <div className="flex items-start space-x-2 p-4 bg-gray-50 border-2 border-gray-200 rounded-xl">
+                    <Checkbox 
+                      id="sms-consent" 
+                      checked={smsConsent}
+                      onCheckedChange={setSmsConsent}
+                    />
+                    <div className="flex-1">
+                      <label
+                        htmlFor="sms-consent"
+                        className="text-xs leading-relaxed cursor-pointer text-gray-700"
+                      >
+                        I consent to receive text messages from Rugly Floors about my order. Message frequency varies. Message and data rates may apply. Reply STOP to cancel.
+                      </label>
                     </div>
-                    <div>
-                      <Label className="text-sm font-semibold mb-2 block">Phone</Label>
-                      <Input 
-                        value={customerInfo.phone}
-                        onChange={(e) => setCustomerInfo(prev => ({ ...prev, phone: e.target.value }))}
-                        placeholder="(555) 123-4567"
-                        className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
-                      />
-                    </div>
-                    
-                    {/* SMS Consent */}
-                    {customerInfo.phone && (
-                      <div className="flex items-start space-x-2 p-4 bg-gray-50 border-2 border-gray-200 rounded-xl">
-                        <Checkbox 
-                          id="sms-consent" 
-                          checked={smsConsent}
-                          onCheckedChange={setSmsConsent}
-                        />
-                        <div className="flex-1">
-                          <label
-                            htmlFor="sms-consent"
-                            className="text-xs leading-relaxed cursor-pointer text-gray-700"
-                          >
-                            I consent to receive text messages from Rugly Floors. Message frequency varies. Message and data rates may apply. Reply STOP to cancel.
-                          </label>
-                        </div>
-                      </div>
-                    )}
-                    <div>
-                      <Label className="text-sm font-semibold mb-2 block">Street Address *</Label>
-                      <Input 
-                        value={customerInfo.street}
-                        onChange={(e) => setCustomerInfo(prev => ({ ...prev, street: e.target.value }))}
-                        className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label className="text-sm font-semibold mb-2 block">City *</Label>
-                        <Input 
-                          value={customerInfo.city}
-                          onChange={(e) => setCustomerInfo(prev => ({ ...prev, city: e.target.value }))}
-                          className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-sm font-semibold mb-2 block">State *</Label>
-                        <Input 
-                          value={customerInfo.state}
-                          onChange={(e) => setCustomerInfo(prev => ({ ...prev, state: e.target.value.toUpperCase() }))}
-                          placeholder="MI"
-                          maxLength={2}
-                          className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-semibold mb-2 block">ZIP Code</Label>
-                      <Input 
-                        value={customerInfo.zip}
-                        onChange={(e) => setCustomerInfo(prev => ({ ...prev, zip: e.target.value }))}
-                        className="border-2 border-gray-300 focus:border-gray-900 rounded-lg"
-                      />
-                    </div>
-                  </>
+                  </div>
                 )}
 
                 {/* Master Design Instructions */}
@@ -615,7 +568,7 @@ export default function Cart() {
                     className="w-full text-white font-bold py-5 lg:py-6 text-base lg:text-lg rounded-xl transition-all"
                     style={{ backgroundColor: '#343634', border: 'none' }}
                     onClick={handleCheckout}
-                    disabled={submitting || !customerInfo.email || !finalSaleAcknowledged}
+                    disabled={submitting || !customerInfo.email || !customerInfo.phone || !customerInfo.name || !finalSaleAcknowledged || (customerInfo.phone && !smsConsent)}
                   >
                     {submitting ? 'Processing...' : `Pay $${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : paymentAmount.toFixed(2)}`}
                   </Button>

@@ -4,7 +4,7 @@ import { Sparkles, RefreshCw } from 'lucide-react';
 
 const RUG_ROOM_IMAGE = 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/bc893af7a_Yourdesignhere.png';
 
-export default function RugPreviewGenerator({ config, tier, sizeObj, BASE_COLORS }) {
+export default function RugPreviewGenerator({ config, tier, sizeObj, BASE_COLORS, onPreviewGenerated }) {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -53,6 +53,7 @@ Result: a photorealistic room scene with a ${sizeObj?.measurement || ''} ${tier?
       });
 
       setPreviewUrl(result.url);
+      if (onPreviewGenerated) onPreviewGenerated(result.url);
     } catch (err) {
       console.error('Preview generation error:', err);
       setError('Preview generation failed. Please try again.');
