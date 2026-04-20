@@ -7,6 +7,7 @@ import { createPageUrl } from '../utils';
 import DesignLibrary from '../components/custom/DesignLibrary';
 import SEOHead from '../components/seo/SEOHead';
 import ColorWheelPicker from '../components/custom/ColorWheelPicker';
+import RugPreviewGenerator from '../components/custom/RugPreviewGenerator';
 
 const QUALITY_TIERS = [
   {
@@ -416,32 +417,13 @@ export default function CustomBuilder() {
               </div>
             )}
 
-            {/* Preview */}
-            {config.imageUrl && (
-              <div className="mb-6 rounded-2xl overflow-hidden border-4" style={{ borderColor: tierColor }}>
-                <img src={config.imageUrl} alt="Your design" className="w-full max-h-80 object-contain bg-gray-50" />
-                <div className="p-4 bg-white">
-                  <div className="grid grid-cols-3 gap-3 text-center text-sm">
-                    <div className="p-2 rounded-lg" style={{ backgroundColor: `${tierColor}10` }}>
-                      <div className="text-xs text-gray-500">Quality</div>
-                      <div className="font-bold" style={{ color: tierColor }}>{tier?.label}</div>
-                    </div>
-                    <div className="p-2 rounded-lg" style={{ backgroundColor: `${tierColor}10` }}>
-                      <div className="text-xs text-gray-500">Size</div>
-                      <div className="font-bold" style={{ color: tierColor }}>{sizeObj?.measurement}</div>
-                    </div>
-                    <div className="p-2 rounded-lg" style={{ backgroundColor: `${tierColor}10` }}>
-                      <div className="text-xs text-gray-500">Colors</div>
-                      <div className="flex items-center justify-center gap-1">
-                        {config.baseColor && <span className="w-4 h-4 rounded-full border border-gray-300 inline-block" style={{ backgroundColor: BASE_COLORS.find(c => c.name === config.baseColor)?.hex }} />}
-                        {config.paintColorHex && <span className="w-4 h-4 rounded-full border border-gray-300 inline-block" style={{ backgroundColor: config.paintColorHex }} />}
-                        {config.hasSecondColor && config.secondPaintColorHex && <span className="w-4 h-4 rounded-full border border-gray-300 inline-block" style={{ backgroundColor: config.secondPaintColorHex }} />}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* AI Rug Preview */}
+            <RugPreviewGenerator
+              config={config}
+              tier={tier}
+              sizeObj={sizeObj}
+              BASE_COLORS={BASE_COLORS}
+            />
 
             {/* Guarantees */}
             <div className="text-xs text-gray-500 text-center mb-4 space-y-1">
