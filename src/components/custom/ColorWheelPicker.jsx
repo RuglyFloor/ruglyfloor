@@ -55,7 +55,7 @@ const PRESET_COLORS = [
 ];
 
 export default function ColorWheelPicker({ value, onChange, label = 'Paint Color' }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [hsv, setHsv] = useState(() => {
     if (value && value.startsWith('#')) return hexToHsv(value);
     return { h: 0, s: 0.8, v: 0.9 };
@@ -133,7 +133,12 @@ export default function ColorWheelPicker({ value, onChange, label = 'Paint Color
     ctx.fill();
   }, [hsv, selectedHex]);
 
-  useEffect(() => { drawWheel(); }, [drawWheel]);
+  useEffect(() => {
+    if (isOpen) {
+      // Wait a tick for the canvas to mount in the DOM
+      requestAnimationFrame(() => { drawWheel(); });
+    }
+  }, [isOpen, drawWheel]);
 
   const getWheelPos = (e, canvas) => {
     const rect = canvas.getBoundingClientRect();
