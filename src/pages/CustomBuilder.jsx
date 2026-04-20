@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import DesignLibrary from '../components/custom/DesignLibrary';
 import SEOHead from '../components/seo/SEOHead';
+import ColorWheelPicker from '../components/custom/ColorWheelPicker';
 
 const QUALITY_TIERS = [
   {
@@ -96,7 +97,9 @@ export default function CustomBuilder() {
     size: '',
     baseColor: '',
     paintColor: '',
+    paintColorHex: '#dc143c',
     secondPaintColor: '',
+    secondPaintColorHex: '#2e5090',
     imageUrl: '',
     hasSecondColor: false
   });
@@ -134,8 +137,8 @@ export default function CustomBuilder() {
       materialDetail: tier.materialDetail,
       size: sizeObj.label,
       baseColor: config.baseColor,
-      paintColor: config.paintColor,
-      secondPaintColor: config.secondPaintColor || null,
+      paintColor: config.paintColorHex || config.paintColor,
+      secondPaintColor: config.hasSecondColor ? (config.secondPaintColorHex || config.secondPaintColor) : null,
       imageUrl: config.imageUrl,
       previewUrl: config.imageUrl,
       hasSecondColor: config.hasSecondColor,
@@ -152,7 +155,7 @@ export default function CustomBuilder() {
   const canProceed = () => {
     if (step === 1) return !!config.qualityTier;
     if (step === 2) return !!config.size;
-    if (step === 3) return !!config.baseColor && !!config.paintColor;
+    if (step === 3) return !!config.baseColor && !!config.paintColorHex;
     if (step === 4) return !!config.imageUrl;
     return false;
   };
@@ -318,31 +321,17 @@ export default function CustomBuilder() {
                 <span className="w-7 h-7 rounded-full text-white text-sm flex items-center justify-center font-black" style={{ backgroundColor: tierColor }}>2</span>
                 Paint Color
               </div>
-              <div className="grid grid-cols-4 gap-3">
-                {PAINT_COLORS.map(c => (
-                  <button
-                    key={c.name}
-                    onClick={() => setConfig(prev => ({ ...prev, paintColor: c.name }))}
-                    className="p-2 rounded-xl border-2 transition-all"
-                    style={{ borderColor: config.paintColor === c.name ? tierColor : '#e5e7eb' }}
-                  >
-                    <div
-                      className="w-full aspect-square rounded-lg border border-gray-200 mb-1"
-                      style={{
-                        backgroundColor: c.hex,
-                        boxShadow: c.name === 'White' ? 'inset 0 0 0 1px #d1d5db' : 'none'
-                      }}
-                    />
-                    <div className="text-xs text-center font-medium">{c.name}</div>
-                  </button>
-                ))}
-              </div>
+              <ColorWheelPicker
+                label="Paint Color"
+                value={config.paintColorHex}
+                onChange={(hex) => setConfig(prev => ({ ...prev, paintColor: hex, paintColorHex: hex }))}
+              />
             </div>
 
             {/* Optional 2nd color */}
             <div className="mb-8">
               <button
-                onClick={() => setConfig(prev => ({ ...prev, hasSecondColor: !prev.hasSecondColor, secondPaintColor: '' }))}
+                onClick={() => setConfig(prev => ({ ...prev, hasSecondColor: !prev.hasSecondColor, secondPaintColor: '', secondPaintColorHex: '#2e5090' }))}
                 className="w-full p-4 rounded-xl border-2 text-left transition-all flex items-center justify-between"
                 style={{ borderColor: config.hasSecondColor ? tierColor : '#e5e7eb', backgroundColor: config.hasSecondColor ? `${tierColor}10` : 'white' }}
               >
@@ -357,18 +346,12 @@ export default function CustomBuilder() {
               </button>
 
               {config.hasSecondColor && (
-                <div className="mt-3 grid grid-cols-4 gap-3">
-                  {PAINT_COLORS.map(c => (
-                    <button
-                      key={c.name}
-                      onClick={() => setConfig(prev => ({ ...prev, secondPaintColor: c.name }))}
-                      className="p-2 rounded-xl border-2 transition-all"
-                      style={{ borderColor: config.secondPaintColor === c.name ? tierColor : '#e5e7eb' }}
-                    >
-                      <div className="w-full aspect-square rounded-lg border border-gray-200 mb-1" style={{ backgroundColor: c.hex }} />
-                      <div className="text-xs text-center font-medium">{c.name}</div>
-                    </button>
-                  ))}
+                <div className="mt-3">
+                  <ColorWheelPicker
+                    label="2nd Paint Color"
+                    value={config.secondPaintColorHex}
+                    onChange={(hex) => setConfig(prev => ({ ...prev, secondPaintColor: hex, secondPaintColorHex: hex }))}
+                  />
                 </div>
               )}
             </div>
@@ -451,8 +434,8 @@ export default function CustomBuilder() {
                       <div className="text-xs text-gray-500">Colors</div>
                       <div className="flex items-center justify-center gap-1">
                         {config.baseColor && <span className="w-4 h-4 rounded-full border border-gray-300 inline-block" style={{ backgroundColor: BASE_COLORS.find(c => c.name === config.baseColor)?.hex }} />}
-                        {config.paintColor && <span className="w-4 h-4 rounded-full border border-gray-300 inline-block" style={{ backgroundColor: PAINT_COLORS.find(c => c.name === config.paintColor)?.hex }} />}
-                        {config.secondPaintColor && <span className="w-4 h-4 rounded-full border border-gray-300 inline-block" style={{ backgroundColor: PAINT_COLORS.find(c => c.name === config.secondPaintColor)?.hex }} />}
+                        {config.paintColorHex && <span className="w-4 h-4 rounded-full border border-gray-300 inline-block" style={{ backgroundColor: config.paintColorHex }} />}
+                        {config.hasSecondColor && config.secondPaintColorHex && <span className="w-4 h-4 rounded-full border border-gray-300 inline-block" style={{ backgroundColor: config.secondPaintColorHex }} />}
                       </div>
                     </div>
                   </div>
