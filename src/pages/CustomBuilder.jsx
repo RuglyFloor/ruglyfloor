@@ -1,1 +1,434 @@
-export { default } from './CustomBuilder.jsx';
+import React, { useState, useRef } from 'react';
+import { base44 } from '@/api/base44Client';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '../utils';
+import { Upload, X, ShoppingCart } from 'lucide-react';
+import RugPreviewGenerator from '../components/custom/RugPreviewGenerator';
+import SEOHead from '../components/seo/SEOHead';
+
+const BASE_COLORS = [
+  { name: 'Ivory', hex: '#F5F0E8' },
+  { name: 'White', hex: '#FFFFFF' },
+  { name: 'Beige', hex: '#C8A97B' },
+  { name: 'Light Gray', hex: '#C0BDB8' },
+  { name: 'Charcoal', hex: '#4A4A4A' },
+  { name: 'Black', hex: '#1A1A1A' },
+  { name: 'Navy', hex: '#1B2A4A' },
+  { name: 'Rust', hex: '#B84C2A' },
+  { name: 'Olive', hex: '#6B7A3B' },
+  { name: 'Sage', hex: '#8FAF89' },
+];
+
+const PAINT_COLORS = [
+  { name: 'Black', hex: '#1A1A1A' },
+  { name: 'White', hex: '#FFFFFF' },
+  { name: 'Red', hex: '#CC2200' },
+  { name: 'Navy', hex: '#1B2A4A' },
+  { name: 'Gold', hex: '#C9A84C' },
+  { name: 'Forest Green', hex: '#2D5A27' },
+  { name: 'Burgundy', hex: '#7A1B2A' },
+  { name: 'Royal Blue', hex: '#2850A0' },
+  { name: 'Orange', hex: '#D4581A' },
+  { name: 'Purple', hex: '#5C2D7A' },
+  { name: 'Teal', hex: '#1A6B6B' },
+  { name: 'Brown', hex: '#5C3A1E' },
+  { name: 'Custom', hex: null },
+];
+
+const QUALITY_TIERS = [
+  {
+    id: 'crugly',
+    label: 'Crugly',
+    tagline: 'Best value · Most popular',
+    description: 'Hand-painted on a quality base rug. Perfect for bedrooms, dorms, offices.',
+    color: '#24f0a0',
+    prices: { '2x3': 79, '3x5': 119, '4x6': 149, '5x7': 189, '6x9': 239 },
+    shipping: 'FREE shipping',
+    eta: '10–14 business days',
+  },
+  {
+    id: 'rugly',
+    label: 'Rugly',
+    tagline: 'Premium quality',
+    description: 'Thicker pile, richer colors, premium base rug. Living room worthy.',
+    color: '#4075ff',
+    prices: { '2x3': 129, '3x5': 199, '4x6': 259, '5x7': 329, '6x9': 419 },
+    shipping: '$15–$50 shipping',
+    eta: '14–21 business days',
+  },
+  {
+    id: 'rugly_lx',
+    label: 'Rugly LX',
+    tagline: 'Luxury · Commission',
+    description: 'Top-of-line materials, artist-level detail, certificate of authenticity.',
+    color: '#f04624',
+    prices: { '2x3': 249, '3x5': 399, '4x6': 549, '5x7': 699, '6x9': 899 },
+    shipping: 'Shipping quoted at completion',
+    eta: '3–6 weeks',
+    depositOnly: true,
+  },
+];
+
+const SIZES = [
+  { id: '2x3', label: "2' × 3'", measurement: "2' × 3'" },
+  { id: '3x5', label: "3' × 5'", measurement: "3' × 5'" },
+  { id: '4x6', label: "4' × 6'", measurement: "4' × 6'" },
+  { id: '5x7', label: "5' × 7'", measurement: "5' × 7'" },
+  { id: '6x9', label: "6' × 9'", measurement: "6' × 9'" },
+];
+
+export default function CustomBuilder() {
+  const navigate = useNavigate();
+
+  const [tier, setTier] = useState(null);
+  const [size, setSize] = useState(null);
+  const [baseColor, setBaseColor] = useState(null);
+  const [paintColor, setPaintColor] = useState(null);
+  const [customPaintHex, setCustomPaintHex] = useState('#000000');
+  const [hasSecondColor, setHasSecondColor] = useState(false);
+  const [secondPaintColor, setSecondPaintColor] = useState(null);
+  const [customSecondHex, setCustomSecondHex] = useState('#ffffff');
+  const [imageUrl, setImageUrl] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(null);
+  const [designInstructions, setDesignInstructions] = useState('');
+
+  const fileInputRef = useRef(null);
+
+  const paintHex = paintColor?.name === 'Custom' ? customPaintHex : (paintColor?.hex || null);
+  const secondHex = secondPaintColor?.name === 'Custom' ? customSecondHex : (secondPaintColor?.hex || null);
+  const price = tier && size ? (tier.prices[size.id] || 0) : 0;
+  const isComplete = !!tier && !!size && !!baseColor && !!paintColor && !!imageUrl;
+  const tierColor = tier?.color || '#4075ff';
+
+  const handleUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const result = await base44.integrations.Core.UploadFile({ file });
+      setImageUrl(result.file_url);
+    } catch (err) {
+      console.error('Upload error:', err);
+      alert('Upload failed. Please try again.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleAddToCart = () => {
+    if (!isComplete) return;
+    const cartItem = {
+      type: 'custom',
+      qualityTier: tier.id,
+      qualityLabel: tier.label,
+      size: size.label,
+      sizeMeasurement: size.measurement,
+      baseColor: baseColor.name,
+      baseColorHex: baseColor.hex,
+      paintColor: paintColor.name,
+      paintColorHex: paintHex,
+      hasSecondColor,
+      secondPaintColor: hasSecondColor ? (secondPaintColor?.name || null) : null,
+      secondPaintColorHex: hasSecondColor ? secondHex : null,
+      imageUrl,
+      originalUploadUrl: imageUrl,
+      previewUrl: previewUrl || imageUrl,
+      aiPreviewUrl: previewUrl || null,
+      designInstructions,
+      price,
+      name: `Custom ${tier.label} Rug — ${size.label}`,
+    };
+    const cart = JSON.parse(localStorage.getItem('rugly_cart') || '[]');
+    cart.push(cartItem);
+    localStorage.setItem('rugly_cart', JSON.stringify(cart));
+    navigate(createPageUrl('Cart'));
+  };
+
+  const previewConfig = {
+    imageUrl,
+    baseColor: baseColor?.name || null,
+    paintColorHex: paintHex,
+    hasSecondColor,
+    secondPaintColorHex: hasSecondColor ? secondHex : null,
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 pb-28">
+      <SEOHead
+        title="Build Your Custom Rug — Rugly Floor"
+        description="Design your own hand-painted rug. Choose quality, size, colors, upload your design, and get an AI preview instantly."
+        url="/CustomBuilder"
+      />
+
+      <div className="max-w-4xl mx-auto px-4 py-10 space-y-10">
+
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="text-4xl md:text-5xl font-black mb-2" style={{ fontFamily: 'Barlow Condensed, sans-serif', color: '#343634' }}>
+            Build Your Rug
+          </h1>
+          <p className="text-gray-500 text-lg">Fill in each step — your AI preview generates automatically</p>
+        </div>
+
+        {/* STEP 1: Quality */}
+        <section>
+          <h2 className="text-2xl font-black mb-4" style={{ color: '#343634' }}>1. Choose Quality</h2>
+          <div className="grid md:grid-cols-3 gap-4">
+            {QUALITY_TIERS.map(t => (
+              <button
+                key={t.id}
+                onClick={() => setTier(t)}
+                className="text-left p-5 rounded-2xl border-4 transition-all w-full"
+                style={{
+                  borderColor: tier?.id === t.id ? t.color : '#e5e7eb',
+                  backgroundColor: tier?.id === t.id ? `${t.color}15` : '#ffffff',
+                  boxShadow: tier?.id === t.id ? `0 4px 20px ${t.color}40` : undefined,
+                }}
+              >
+                <div className="font-black text-xl mb-1" style={{ color: t.color }}>{t.label}</div>
+                <div className="text-xs font-bold mb-2 text-gray-500">{t.tagline}</div>
+                <div className="text-sm text-gray-600 mb-3">{t.description}</div>
+                <div className="text-xs text-gray-500">{t.shipping} · {t.eta}</div>
+                {t.depositOnly && (
+                  <div className="mt-2 text-xs font-bold px-2 py-1 rounded-full inline-block" style={{ backgroundColor: `${t.color}20`, color: t.color }}>
+                    $100 deposit to start
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* STEP 2: Size */}
+        <section>
+          <h2 className="text-2xl font-black mb-4" style={{ color: '#343634' }}>2. Choose Size</h2>
+          <div className="flex flex-wrap gap-3">
+            {SIZES.map(s => (
+              <button
+                key={s.id}
+                onClick={() => setSize(s)}
+                className="px-5 py-3 rounded-xl font-bold transition-all"
+                style={{
+                  border: `3px solid ${size?.id === s.id ? tierColor : '#e5e7eb'}`,
+                  backgroundColor: size?.id === s.id ? `${tierColor}15` : '#ffffff',
+                  color: size?.id === s.id ? tierColor : '#343634',
+                }}
+              >
+                <div className="text-lg">{s.label}</div>
+                {tier && <div className="text-sm font-black">${tier.prices[s.id]}</div>}
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* STEP 3: Base Color */}
+        <section>
+          <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>3. Rug Base Color</h2>
+          <p className="text-sm text-gray-500 mb-4">The background color of the rug itself</p>
+          <div className="flex flex-wrap gap-3">
+            {BASE_COLORS.map(c => (
+              <button
+                key={c.name}
+                onClick={() => setBaseColor(c)}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all"
+                style={{
+                  border: `3px solid ${baseColor?.name === c.name ? tierColor : '#e5e7eb'}`,
+                  backgroundColor: baseColor?.name === c.name ? `${tierColor}10` : '#ffffff',
+                }}
+              >
+                <div className="w-6 h-6 rounded-full border border-gray-300 flex-shrink-0" style={{ backgroundColor: c.hex }} />
+                <span className="text-sm">{c.name}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* STEP 4: Paint Color */}
+        <section>
+          <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>4. Paint Color</h2>
+          <p className="text-sm text-gray-500 mb-4">The color your design will be painted in</p>
+          <div className="flex flex-wrap gap-3 mb-4">
+            {PAINT_COLORS.map(c => (
+              <button
+                key={c.name}
+                onClick={() => setPaintColor(c)}
+                className="flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all"
+                style={{
+                  border: `3px solid ${paintColor?.name === c.name ? tierColor : '#e5e7eb'}`,
+                  backgroundColor: paintColor?.name === c.name ? `${tierColor}10` : '#ffffff',
+                }}
+              >
+                {c.hex ? (
+                  <div className="w-6 h-6 rounded-full border border-gray-300 flex-shrink-0" style={{ backgroundColor: c.hex }} />
+                ) : (
+                  <div className="w-6 h-6 rounded-full border border-gray-300 flex-shrink-0 bg-gradient-to-br from-red-400 via-green-400 to-blue-400" />
+                )}
+                <span className="text-sm">{c.name}</span>
+              </button>
+            ))}
+          </div>
+          {paintColor?.name === 'Custom' && (
+            <div className="flex items-center gap-3 mb-4">
+              <label className="text-sm font-semibold">Custom color:</label>
+              <input type="color" value={customPaintHex} onChange={e => setCustomPaintHex(e.target.value)}
+                className="w-10 h-10 rounded cursor-pointer border border-gray-300" />
+              <span className="text-sm font-mono text-gray-600">{customPaintHex}</span>
+            </div>
+          )}
+
+          <button
+            onClick={() => { setHasSecondColor(v => !v); if (hasSecondColor) setSecondPaintColor(null); }}
+            className="flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-xl border-2 transition-all"
+            style={{
+              borderColor: hasSecondColor ? tierColor : '#e5e7eb',
+              backgroundColor: hasSecondColor ? `${tierColor}10` : '#f9fafb',
+              color: hasSecondColor ? tierColor : '#6b7280',
+            }}
+          >
+            🎨 {hasSecondColor ? '✓ 2nd Paint Color Added' : 'Add a 2nd Paint Color (optional)'}
+          </button>
+
+          {hasSecondColor && (
+            <div className="mt-4 pl-4 border-l-4" style={{ borderColor: tierColor }}>
+              <p className="text-sm font-semibold mb-3 text-gray-600">2nd Paint Color:</p>
+              <div className="flex flex-wrap gap-3 mb-3">
+                {PAINT_COLORS.map(c => (
+                  <button
+                    key={c.name}
+                    onClick={() => setSecondPaintColor(c)}
+                    className="flex items-center gap-2 px-3 py-2 rounded-xl font-semibold transition-all text-sm"
+                    style={{
+                      border: `2px solid ${secondPaintColor?.name === c.name ? tierColor : '#e5e7eb'}`,
+                      backgroundColor: secondPaintColor?.name === c.name ? `${tierColor}10` : '#ffffff',
+                    }}
+                  >
+                    {c.hex ? (
+                      <div className="w-5 h-5 rounded-full border border-gray-300 flex-shrink-0" style={{ backgroundColor: c.hex }} />
+                    ) : (
+                      <div className="w-5 h-5 rounded-full border border-gray-300 flex-shrink-0 bg-gradient-to-br from-red-400 via-green-400 to-blue-400" />
+                    )}
+                    {c.name}
+                  </button>
+                ))}
+              </div>
+              {secondPaintColor?.name === 'Custom' && (
+                <div className="flex items-center gap-3">
+                  <label className="text-sm font-semibold">Custom color:</label>
+                  <input type="color" value={customSecondHex} onChange={e => setCustomSecondHex(e.target.value)}
+                    className="w-10 h-10 rounded cursor-pointer border border-gray-300" />
+                  <span className="text-sm font-mono text-gray-600">{customSecondHex}</span>
+                </div>
+              )}
+            </div>
+          )}
+        </section>
+
+        {/* STEP 5: Upload Design */}
+        <section>
+          <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>5. Upload Your Design</h2>
+          <p className="text-sm text-gray-500 mb-4">PNG, JPG, or SVG. High contrast images work best.</p>
+          {!imageUrl ? (
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full border-4 border-dashed rounded-2xl p-12 text-center transition-all"
+              style={{ borderColor: tierColor, backgroundColor: `${tierColor}08` }}
+              disabled={uploading}
+            >
+              {uploading ? (
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-10 h-10 rounded-full border-4 border-gray-200 animate-spin" style={{ borderTopColor: tierColor }} />
+                  <span className="font-bold" style={{ color: tierColor }}>Uploading…</span>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-3">
+                  <Upload className="w-12 h-12" style={{ color: tierColor }} />
+                  <span className="text-lg font-bold" style={{ color: tierColor }}>Click to Upload Design</span>
+                  <span className="text-sm text-gray-500">PNG · JPG · SVG · up to 20MB</span>
+                </div>
+              )}
+            </button>
+          ) : (
+            <div className="relative inline-block">
+              <img src={imageUrl} alt="Your design" className="max-h-48 rounded-xl border-4 object-contain"
+                style={{ borderColor: tierColor }} />
+              <button
+                onClick={() => { setImageUrl(null); setPreviewUrl(null); }}
+                className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
+        </section>
+
+        {/* STEP 6: Design Notes */}
+        <section>
+          <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>6. Design Notes (Optional)</h2>
+          <p className="text-sm text-gray-500 mb-4">Any special instructions for our artists?</p>
+          <textarea
+            value={designInstructions}
+            onChange={e => setDesignInstructions(e.target.value)}
+            className="w-full border-2 border-gray-200 rounded-xl p-4 text-sm focus:outline-none focus:border-gray-400 resize-none"
+            rows={3}
+            placeholder="e.g. 'Keep the text bold', 'Use only 2 colors', 'Center the design'"
+          />
+        </section>
+
+        {/* AI PREVIEW */}
+        <section>
+          <h2 className="text-2xl font-black mb-3" style={{ color: '#343634' }}>Your AI Preview</h2>
+          <RugPreviewGenerator
+            config={previewConfig}
+            tier={tier}
+            sizeObj={size}
+            BASE_COLORS={BASE_COLORS}
+            onPreviewGenerated={setPreviewUrl}
+          />
+        </section>
+
+      </div>
+
+      {/* Sticky CTA bar */}
+      <div
+        className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t-4 px-4 py-3 flex items-center justify-between gap-4"
+        style={{ borderColor: isComplete ? tierColor : '#e5e7eb' }}
+      >
+        <div className="flex-shrink-0">
+          {tier && size ? (
+            <div>
+              <div className="text-2xl font-black" style={{ color: tierColor }}>${price}</div>
+              <div className="text-xs text-gray-500">{tier.label} · {size.label}{tier.depositOnly ? ' · $100 deposit' : ''}</div>
+            </div>
+          ) : (
+            <div className="text-sm text-gray-400">Select options above</div>
+          )}
+        </div>
+
+        <div className="flex flex-wrap gap-1 flex-1 justify-center">
+          {!tier && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Quality</span>}
+          {!size && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Size</span>}
+          {!baseColor && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Base Color</span>}
+          {!paintColor && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Paint Color</span>}
+          {!imageUrl && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Design</span>}
+          {isComplete && <span className="text-xs px-2 py-1 rounded-full font-bold" style={{ backgroundColor: `${tierColor}20`, color: tierColor }}>✓ Ready!</span>}
+        </div>
+
+        <button
+          onClick={handleAddToCart}
+          disabled={!isComplete}
+          className="flex items-center gap-2 font-black text-white px-8 py-4 rounded-2xl text-lg transition-all flex-shrink-0"
+          style={{
+            backgroundColor: isComplete ? tierColor : '#d1d5db',
+            cursor: isComplete ? 'pointer' : 'not-allowed',
+            fontFamily: 'Barlow Condensed, sans-serif',
+          }}
+        >
+          <ShoppingCart className="w-5 h-5" />
+          {isComplete ? 'Add to Cart' : 'Complete Above'}
+        </button>
+      </div>
+    </div>
+  );
+}

@@ -30,7 +30,7 @@ export default function Cart() {
   const [couponCode, setCouponCode] = useState('');
   const [couponValidation, setCouponValidation] = useState(null);
   const [validatingCoupon, setValidatingCoupon] = useState(false);
-  const [useGuestCheckout] = useState(false);
+  const [useGuestCheckout, setUseGuestCheckout] = useState(false);
   const [taxRate, setTaxRate] = useState(0);
   const [finalSaleAcknowledged, setFinalSaleAcknowledged] = useState(false);
 
