@@ -7,16 +7,13 @@ import RugPreviewGenerator from '../components/custom/RugPreviewGenerator';
 import SEOHead from '../components/seo/SEOHead';
 
 const BASE_COLORS = [
-  { name: 'Ivory', hex: '#F5F0E8' },
-  { name: 'White', hex: '#FFFFFF' },
-  { name: 'Beige', hex: '#C8A97B' },
-  { name: 'Light Gray', hex: '#C0BDB8' },
-  { name: 'Charcoal', hex: '#4A4A4A' },
+  { name: 'Teal', hex: '#1B3A4A' },
   { name: 'Black', hex: '#1A1A1A' },
-  { name: 'Navy', hex: '#1B2A4A' },
-  { name: 'Rust', hex: '#B84C2A' },
-  { name: 'Olive', hex: '#6B7A3B' },
-  { name: 'Sage', hex: '#8FAF89' },
+  { name: 'Ivory', hex: '#E8E4DC' },
+  { name: 'Red', hex: '#8B1A1A' },
+  { name: 'Dark Green', hex: '#1A3A2A' },
+  { name: 'Gray', hex: '#A0A0A0' },
+  { name: 'Purple', hex: '#4A1A6A' },
 ];
 
 const PAINT_COLORS = [
