@@ -212,7 +212,7 @@ export default function Layout({ children, currentPageName }) {
       <main>{children}</main>
 
       {/* Footer */}
-      <footer className="py-16 px-6 mt-20" style={{backgroundColor: 'var(--brand-dark)', color: '#d1d5db'}}>
+      <footer className="py-16 px-6 mt-20 pb-32" style={{backgroundColor: 'var(--brand-dark)', color: '#d1d5db'}}>
         <div className="max-w-7xl mx-auto">
           {/* Contact Us Section - Cutout Style */}
           <div className="rounded-2xl p-12 mb-12 text-center bg-white" style={{border: '4px solid var(--brand-blue)'}}>

@@ -174,7 +174,7 @@ export default function CustomBuilder() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-40">
+    <div className="min-h-screen bg-gray-50 pb-32">
       <SEOHead
         title="Build Your Custom Rug — Rugly Floor"
         description="Design your own hand-painted rug. Choose quality, size, colors, upload your design, and get an AI preview instantly."
