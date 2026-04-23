@@ -435,14 +435,14 @@ export default function CustomBuilder() {
 
         {/* STEP 6: Design Notes */}
         <section>
-          <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>6. Design Notes (Optional)</h2>
-          <p className="text-sm text-gray-500 mb-4">Any special instructions for our artists?</p>
+          <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>6. Additional Instructions (Optional)</h2>
+          <p className="text-sm text-gray-500 mb-4">These go directly to the AI preview and to our artists — be as specific as you like.</p>
           <textarea
             value={designInstructions}
             onChange={e => setDesignInstructions(e.target.value)}
             className="w-full border-2 border-gray-200 rounded-xl p-4 text-sm focus:outline-none focus:border-gray-400 resize-none"
-            rows={3}
-            placeholder="e.g. 'Keep the text bold', 'Use only 2 colors', 'Center the design'"
+            rows={4}
+            placeholder="e.g. 'Keep all text exactly as shown', 'The logo should take up 80% of the rug', 'Use gold only for the border', 'Make the background black not gray'"
           />
         </section>
 
@@ -455,6 +455,7 @@ export default function CustomBuilder() {
             sizeObj={size}
             BASE_COLORS={BASE_COLORS}
             onPreviewGenerated={setPreviewUrl}
+            designInstructions={designInstructions}
           />
         </section>
 

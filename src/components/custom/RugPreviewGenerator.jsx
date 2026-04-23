@@ -4,7 +4,7 @@ import { Sparkles, RefreshCw } from 'lucide-react';
 
 const RUG_ROOM_IMAGE = 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/bc893af7a_Yourdesignhere.png';
 
-export default function RugPreviewGenerator({ config, tier, sizeObj, BASE_COLORS, onPreviewGenerated }) {
+export default function RugPreviewGenerator({ config, tier, sizeObj, BASE_COLORS, onPreviewGenerated, designInstructions }) {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -16,7 +16,7 @@ export default function RugPreviewGenerator({ config, tier, sizeObj, BASE_COLORS
   const paintColorHex = config.paintColorHex || '#000000';
   const secondPaintColorHex = config.hasSecondColor ? (config.secondPaintColorHex || null) : null;
 
-  const inputHash = `${config.imageUrl}|${config.baseColor}|${paintColorHex}|${secondPaintColorHex}`;
+  const inputHash = `${config.imageUrl}|${config.baseColor}|${paintColorHex}|${secondPaintColorHex}|${designInstructions}`;
   const hasChangedSinceLastGen = lastGenRef.current !== null && lastGenRef.current !== inputHash;
   const canGenerate = !!config.imageUrl && !!config.baseColor && !!paintColorHex;
   // Regenerate is active if there are changes since last gen, or if never generated yet
@@ -33,19 +33,30 @@ export default function RugPreviewGenerator({ config, tier, sizeObj, BASE_COLORS
         ? `primary paint color ${paintColorHex} and secondary paint color ${secondPaintColorHex}`
         : `paint color ${paintColorHex}`;
 
-      const prompt = `You are a rug visualization expert. Your task:
+      const extraInstructions = designInstructions?.trim()
+        ? `\n\nADDITIONAL CUSTOMER INSTRUCTIONS (follow exactly): ${designInstructions.trim()}`
+        : '';
 
-1. Take the customer's uploaded design image and simplify it to a bold stencil-style artwork — ${config.hasSecondColor ? '3-4' : '2'} flat colors max, removing gradients and fine detail, as if it were cut as a stencil and hand-painted.
+      const prompt = `You are a professional rug visualization artist. Reproduce the customer's uploaded design AS FAITHFULLY AS POSSIBLE onto the rug in the room photo. Follow every step precisely:
 
-2. Composite that stencil design centered on the white rug lying flat in the room photo, respecting the rug's perspective/foreshortening (the rug is photographed at a slight angle from above).
+STEP 1 — DESIGN FIDELITY (most important):
+Analyze the customer's uploaded image carefully. Preserve the EXACT shapes, composition, proportions, and layout of their design. Do NOT simplify, stylize, or alter the artwork — reproduce it as accurately as possible as if it were painted by hand on the rug.
 
-3. Recolor the rug base to match hex color ${baseColorHex} (${config.baseColor}).
+STEP 2 — COLOR MATCHING (critical):
+- Rug base color: paint the entire rug background to EXACTLY match hex ${baseColorHex} (${config.baseColor}). This must be precise.
+- Design paint color: use EXACTLY hex ${paintColorHex} for the primary painted elements of the design.${secondPaintColorHex ? `\n- Secondary paint color: use EXACTLY hex ${secondPaintColorHex} for secondary design elements.` : ''}
+- Do NOT substitute, approximate, or blend these colors — match them exactly.
 
-4. Paint the stencil design using ${colorDescription}. It should look hand-painted with slight texture/brush strokes, not digitally printed.
+STEP 3 — PLACEMENT:
+Center the design on the rug, respecting the rug's perspective and foreshortening as seen in the room photo (slight overhead angle). Scale the design to fill most of the rug area.
 
-5. Keep the room background (sofa, guitar, bookshelf, concrete floor) EXACTLY as in the original room photo — only the rug changes.
+STEP 4 — PAINTING STYLE:
+The design should look hand-painted with slight brush texture — not digitally printed. Paint strokes should follow the shapes of the design.
 
-Result: a photorealistic room scene with a ${sizeObj?.measurement || ''} ${tier?.label || ''} rug, ${config.baseColor} base, with the customer's design painted in ${colorDescription}. No text or labels.`;
+STEP 5 — BACKGROUND:
+Keep the entire room background (sofa, guitar, bookshelf, concrete floor, walls) EXACTLY unchanged. Only the rug itself should change.
+
+Final result: a photorealistic room scene with a ${sizeObj?.measurement || ''} ${tier?.label || ''} rug featuring the customer's design painted with ${colorDescription} on a ${config.baseColor} (${baseColorHex}) base.${extraInstructions}`;
 
       const result = await base44.integrations.Core.GenerateImage({
         prompt,
