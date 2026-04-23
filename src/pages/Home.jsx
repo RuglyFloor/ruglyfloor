@@ -152,6 +152,22 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Free Shipping Banner */}
+      <section className="py-4 px-6" style={{backgroundColor: '#24f0a0'}}>
+        <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-center gap-3 text-center">
+          <Truck className="w-5 h-5 flex-shrink-0" style={{color:'#343634'}} />
+          <span className="font-black text-lg tracking-wide" style={{fontFamily:'Barlow Condensed, sans-serif', color:'#343634'}}>
+            FREE SHIPPING ON ALL CRUGLY ORDERS
+          </span>
+          <span className="text-sm font-semibold" style={{color:'#1a3a2a'}}>
+            — Hand-painted custom rugs starting at $79. No shipping cost. Ever.
+          </span>
+          <Link to={createPageUrl('CustomBuilder')}>
+            <span className="font-black text-sm underline underline-offset-2" style={{color:'#343634'}}>Design Yours →</span>
+          </Link>
+        </div>
+      </section>
+
       {/* How It Works - Flip Cards */}
       <section className="py-16 px-6 bg-white">
         <div className="max-w-4xl mx-auto">
