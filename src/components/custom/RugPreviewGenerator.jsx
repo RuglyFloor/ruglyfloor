@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Sparkles, RefreshCw } from 'lucide-react';
 
-const RUG_ROOM_IMAGE = 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/bc893af7a_Yourdesignhere.png';
+const RUG_ROOM_IMAGE = 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/4d402d91e_generated_image.png';
 
 export default function RugPreviewGenerator({ config, tier, sizeObj, BASE_COLORS, onPreviewGenerated, designInstructions }) {
   const [previewUrl, setPreviewUrl] = useState(null);
