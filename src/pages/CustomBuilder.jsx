@@ -251,14 +251,24 @@ export default function CustomBuilder() {
               <button
                 key={c.name}
                 onClick={() => setBaseColor(c)}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all"
+                className="flex flex-col items-center gap-2 p-2 rounded-xl font-semibold transition-all"
                 style={{
                   border: `3px solid ${baseColor?.name === c.name ? tierColor : '#e5e7eb'}`,
                   backgroundColor: baseColor?.name === c.name ? `${tierColor}10` : '#ffffff',
+                  minWidth: '72px',
                 }}
               >
-                <div className="w-6 h-6 rounded-full border border-gray-300 flex-shrink-0" style={{ backgroundColor: c.hex }} />
-                <span className="text-sm">{c.name}</span>
+                <div className="w-16 h-16 rounded-md overflow-hidden flex-shrink-0 relative border border-gray-200" style={{ backgroundColor: c.hex }}>
+                  <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', inset: 0 }}>
+                    <defs>
+                      <pattern id={`dot-${c.name.replace(/\s/g,'')}`} x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+                        <circle cx="3" cy="3" r="1.2" fill="rgba(0,0,0,0.18)" />
+                      </pattern>
+                    </defs>
+                    <rect width="100%" height="100%" fill={`url(#dot-${c.name.replace(/\s/g,'')})`} />
+                  </svg>
+                </div>
+                <span className="text-xs text-center leading-tight">{c.name}</span>
               </button>
             ))}
           </div>
