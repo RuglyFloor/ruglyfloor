@@ -151,6 +151,37 @@ export default function About() {
             </div>
           </motion.div>
 
+          {/* Studio Photos */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="mt-16"
+          >
+            <div className="text-center mb-10">
+              <div className="inline-block px-4 py-2 rounded-full mb-4" style={{backgroundColor:'rgba(36,240,160,0.15)'}}>
+                <span className="font-semibold text-sm" style={{color:'var(--brand-blue)'}}>Behind the Scenes</span>
+              </div>
+              <h3 className="text-4xl text-gray-900" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>Our Studio</h3>
+              <p className="text-gray-500 mt-2 text-lg">Where the magic happens — Lansing, Michigan</p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              <img
+                src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/55661a42b_IMG_0057.jpg"
+                alt="Rugly studio - workspace with art supplies and brick walls"
+                className="rounded-2xl shadow-xl w-full object-cover"
+                style={{ maxHeight: '480px' }}
+              />
+              <img
+                src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/fc5f363f5_IMG_0053.jpg"
+                alt="Rugly studio - hammock chair and design workstation"
+                className="rounded-2xl shadow-xl w-full object-cover"
+                style={{ maxHeight: '480px' }}
+              />
+            </div>
+          </motion.div>
+
           {/* Before You Order - Foundation Guide */}
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
