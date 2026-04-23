@@ -56,6 +56,9 @@ The design should look hand-painted with slight brush texture — not digitally 
 STEP 5 — BACKGROUND:
 Keep the entire room background (sofa, guitar, bookshelf, concrete floor, walls) EXACTLY unchanged. Only the rug itself should change.
 
+STEP 6 — CLEAN OUTPUT (critical):
+The final image must contain NO text, labels, watermarks, template IDs, or annotations of any kind — not on the rug, not below it, not anywhere in the image. Remove any "Template-CRUGLY", product codes, dashed borders, or placeholder text that may appear in the reference image.
+
 Final result: a photorealistic room scene with a ${sizeObj?.measurement || ''} ${tier?.label || ''} rug featuring the customer's design painted with ${colorDescription} on a ${config.baseColor} (${baseColorHex}) base.${extraInstructions}`;
 
       const result = await base44.integrations.Core.GenerateImage({
