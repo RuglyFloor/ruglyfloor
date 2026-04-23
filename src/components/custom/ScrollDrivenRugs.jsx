@@ -59,11 +59,11 @@ export default function ScrollDrivenRugs({ products, handleGrabIt, isCheckingOut
             return (
               <div
                 key={product.id}
-                className="min-w-[100vw] w-screen h-full flex flex-col md:flex-row items-center justify-center gap-8 px-8 md:px-20"
+                className="min-w-[100vw] w-screen h-full flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 px-4 md:px-20 py-4 md:py-0"
               >
                 {/* Image */}
-                <div className="flex-shrink-0 w-full md:w-1/2 max-w-lg">
-                  <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-white aspect-square">
+                <div className="flex-shrink-0 w-full md:w-1/2 max-w-lg" style={{ maxHeight: '45vh', height: '45vh' }}>
+                  <div className="relative rounded-2xl overflow-hidden shadow-2xl bg-white h-full">
                     <img
                       src={(() => {
                         const url = images[0]?.url || product.image_url || '';
@@ -71,17 +71,17 @@ export default function ScrollDrivenRugs({ products, handleGrabIt, isCheckingOut
                         return url;
                       })()}
                       alt={product.name}
-                      className="w-full h-full object-contain p-4"
+                      className="w-full h-full object-contain p-3"
                       loading="lazy"
                       width="600" height="600"
                     />
                     {!product.in_stock && (
                       <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                        <span className="bg-red-600 text-white font-bold text-2xl px-6 py-3 rounded-lg">SOLD OUT</span>
+                        <span className="bg-red-600 text-white font-bold text-xl px-4 py-2 rounded-lg">SOLD OUT</span>
                       </div>
                     )}
                     {/* Counter badge */}
-                    <div className="absolute top-4 right-4 bg-black/60 text-white text-sm font-bold px-3 py-1 rounded-full">
+                    <div className="absolute top-3 right-3 bg-black/60 text-white text-xs font-bold px-2 py-1 rounded-full">
                       {i + 1} / {count}
                     </div>
                   </div>
@@ -89,30 +89,30 @@ export default function ScrollDrivenRugs({ products, handleGrabIt, isCheckingOut
 
                 {/* Info */}
                 <div className="w-full md:w-1/2 max-w-md text-center md:text-left">
-                  <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">{product.name}</h3>
-                  <p className="text-gray-600 text-lg leading-relaxed mb-4">
+                  <h3 className="text-2xl md:text-5xl font-bold text-gray-900 mb-2 md:mb-3">{product.name}</h3>
+                  <p className="text-gray-600 text-sm md:text-lg leading-relaxed mb-2 md:mb-4 line-clamp-3 md:line-clamp-none">
                     {typeof product.description === 'string'
                       ? product.description
                       : product.description?.description || 'Handcrafted custom rug design'}
                   </p>
                   {product.size && (
-                    <p className="text-gray-500 text-sm mb-4">Size: {product.size}</p>
+                    <p className="text-gray-500 text-sm mb-2 md:mb-4">Size: {product.size}</p>
                   )}
-                  <div className="text-5xl font-bold mb-8" style={{ color: 'var(--brand-blue)' }}>
+                  <div className="text-3xl md:text-5xl font-bold mb-4 md:mb-8" style={{ color: 'var(--brand-blue)' }}>
                     ${product.price}
                   </div>
-                  <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+                  <div className="flex flex-row gap-2 md:gap-3 justify-center md:justify-start">
                     <Button
-                      size="lg"
-                      className="font-bold text-lg py-6 px-8"
+                      size="default"
+                      className="font-bold md:text-lg md:py-6 md:px-8"
                       onClick={() => navigate(createPageUrl('ProductDetail') + `?id=${product.id}`)}
                     >
                       View Details
                     </Button>
                     <Button
                       variant="outline"
-                      size="lg"
-                      className="font-bold text-lg py-6 px-8"
+                      size="default"
+                      className="font-bold md:text-lg md:py-6 md:px-8"
                       onClick={() => navigate(createPageUrl('CustomBuilder'))}
                     >
                       Customize Similar
