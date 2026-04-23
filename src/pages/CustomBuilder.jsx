@@ -9,6 +9,7 @@ import SEOHead from '../components/seo/SEOHead';
 const BASE_COLORS_CRUGLY = [
   { name: 'Teal', hex: '#1B3A4A' },
   { name: 'Black', hex: '#1A1A1A' },
+  { name: 'White', hex: '#F5F5F5' },
   { name: 'Ivory', hex: '#E8E4DC' },
   { name: 'Red', hex: '#8B1A1A' },
   { name: 'Dark Green', hex: '#1A3A2A' },
