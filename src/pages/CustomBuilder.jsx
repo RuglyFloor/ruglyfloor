@@ -247,30 +247,44 @@ export default function CustomBuilder() {
           <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>3. Rug Base Color</h2>
           <p className="text-sm text-gray-500 mb-4">The background color of the rug itself</p>
           <div className="flex flex-wrap gap-3">
-            {baseColorOptions.map(c => (
-              <button
-                key={c.name}
-                onClick={() => setBaseColor(c)}
-                className="flex flex-col items-center gap-2 p-2 rounded-xl font-semibold transition-all"
-                style={{
-                  border: `3px solid ${baseColor?.name === c.name ? tierColor : '#e5e7eb'}`,
-                  backgroundColor: baseColor?.name === c.name ? `${tierColor}10` : '#ffffff',
-                  minWidth: '72px',
-                }}
-              >
-                <div className="w-16 h-16 rounded-md overflow-hidden flex-shrink-0 relative border border-gray-200" style={{ backgroundColor: c.hex }}>
-                  <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', inset: 0 }}>
-                    <defs>
-                      <pattern id={`dot-${c.name.replace(/\s/g,'')}`} x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
-                        <circle cx="3" cy="3" r="1.2" fill="rgba(0,0,0,0.18)" />
-                      </pattern>
-                    </defs>
-                    <rect width="100%" height="100%" fill={`url(#dot-${c.name.replace(/\s/g,'')})`} />
-                  </svg>
-                </div>
-                <span className="text-xs text-center leading-tight">{c.name}</span>
-              </button>
-            ))}
+            {baseColorOptions.map(c => {
+              const isCrugly = tier?.id === 'crugly' || !tier;
+              const patId = `tex-${c.name.replace(/\s/g,'')}`;
+              return (
+                <button
+                  key={c.name}
+                  onClick={() => setBaseColor(c)}
+                  className="flex flex-col items-center gap-2 p-2 rounded-xl font-semibold transition-all"
+                  style={{
+                    border: `3px solid ${baseColor?.name === c.name ? tierColor : '#e5e7eb'}`,
+                    backgroundColor: baseColor?.name === c.name ? `${tierColor}10` : '#ffffff',
+                    minWidth: '72px',
+                  }}
+                >
+                  <div className="w-16 h-16 rounded-md overflow-hidden flex-shrink-0 relative border border-gray-200" style={{ backgroundColor: c.hex }}>
+                    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', inset: 0 }}>
+                      <defs>
+                        {isCrugly ? (
+                          /* Crugly: raised hobnail dot texture */
+                          <pattern id={patId} x="0" y="0" width="7" height="7" patternUnits="userSpaceOnUse">
+                            <circle cx="3.5" cy="3.5" r="2.2" fill="rgba(255,255,255,0.13)" />
+                            <circle cx="3.5" cy="3.5" r="1.4" fill="rgba(0,0,0,0.12)" />
+                          </pattern>
+                        ) : (
+                          /* Rugly: looped berber texture */
+                          <pattern id={patId} x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse">
+                            <ellipse cx="1.5" cy="2" rx="1.2" ry="0.7" fill="rgba(255,255,255,0.15)" />
+                            <ellipse cx="3.8" cy="3.5" rx="1.2" ry="0.7" fill="rgba(0,0,0,0.12)" />
+                          </pattern>
+                        )}
+                      </defs>
+                      <rect width="100%" height="100%" fill={`url(#${patId})`} />
+                    </svg>
+                  </div>
+                  <span className="text-xs text-center leading-tight">{c.name}</span>
+                </button>
+              );
+            })}
           </div>
         </section>
 
@@ -283,18 +297,31 @@ export default function CustomBuilder() {
               <button
                 key={c.name}
                 onClick={() => setPaintColor(c)}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl font-semibold transition-all"
+                className="flex flex-col items-center gap-1 p-2 rounded-xl font-semibold transition-all"
                 style={{
                   border: `3px solid ${paintColor?.name === c.name ? tierColor : '#e5e7eb'}`,
                   backgroundColor: paintColor?.name === c.name ? `${tierColor}10` : '#ffffff',
+                  minWidth: '60px',
                 }}
               >
-                {c.hex ? (
-                  <div className="w-6 h-6 rounded-full border border-gray-300 flex-shrink-0" style={{ backgroundColor: c.hex }} />
-                ) : (
-                  <div className="w-6 h-6 rounded-full border border-gray-300 flex-shrink-0 bg-gradient-to-br from-red-400 via-green-400 to-blue-400" />
-                )}
-                <span className="text-sm">{c.name}</span>
+                <svg width="28" height="36" viewBox="0 0 28 36" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
+                  <path d="M14 2 C14 2, 2 16, 2 24 C2 30.627 7.373 36 14 36 C20.627 36 26 30.627 26 24 C26 16, 14 2 14 2 Z"
+                    fill={c.hex || 'url(#paintGrad)'}
+                    stroke="rgba(0,0,0,0.15)"
+                    strokeWidth="1"
+                  />
+                  {!c.hex && (
+                    <defs>
+                      <linearGradient id="paintGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#f87171" />
+                        <stop offset="50%" stopColor="#4ade80" />
+                        <stop offset="100%" stopColor="#60a5fa" />
+                      </linearGradient>
+                    </defs>
+                  )}
+                  <ellipse cx="10" cy="22" rx="3" ry="2" fill="rgba(255,255,255,0.25)" transform="rotate(-20 10 22)" />
+                </svg>
+                <span className="text-xs text-center leading-tight">{c.name}</span>
               </button>
             ))}
           </div>
@@ -327,18 +354,31 @@ export default function CustomBuilder() {
                   <button
                     key={c.name}
                     onClick={() => setSecondPaintColor(c)}
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl font-semibold transition-all text-sm"
+                    className="flex flex-col items-center gap-1 p-2 rounded-xl font-semibold transition-all"
                     style={{
                       border: `2px solid ${secondPaintColor?.name === c.name ? tierColor : '#e5e7eb'}`,
                       backgroundColor: secondPaintColor?.name === c.name ? `${tierColor}10` : '#ffffff',
+                      minWidth: '56px',
                     }}
                   >
-                    {c.hex ? (
-                      <div className="w-5 h-5 rounded-full border border-gray-300 flex-shrink-0" style={{ backgroundColor: c.hex }} />
-                    ) : (
-                      <div className="w-5 h-5 rounded-full border border-gray-300 flex-shrink-0 bg-gradient-to-br from-red-400 via-green-400 to-blue-400" />
-                    )}
-                    {c.name}
+                    <svg width="24" height="30" viewBox="0 0 28 36" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
+                      <path d="M14 2 C14 2, 2 16, 2 24 C2 30.627 7.373 36 14 36 C20.627 36 26 30.627 26 24 C26 16, 14 2 14 2 Z"
+                        fill={c.hex || 'url(#paintGrad2)'}
+                        stroke="rgba(0,0,0,0.15)"
+                        strokeWidth="1"
+                      />
+                      {!c.hex && (
+                        <defs>
+                          <linearGradient id="paintGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#f87171" />
+                            <stop offset="50%" stopColor="#4ade80" />
+                            <stop offset="100%" stopColor="#60a5fa" />
+                          </linearGradient>
+                        </defs>
+                      )}
+                      <ellipse cx="10" cy="22" rx="3" ry="2" fill="rgba(255,255,255,0.25)" transform="rotate(-20 10 22)" />
+                    </svg>
+                    <span className="text-xs text-center leading-tight">{c.name}</span>
                   </button>
                 ))}
               </div>
