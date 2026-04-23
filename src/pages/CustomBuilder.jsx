@@ -6,7 +6,7 @@ import { Upload, X, ShoppingCart } from 'lucide-react';
 import RugPreviewGenerator from '../components/custom/RugPreviewGenerator';
 import SEOHead from '../components/seo/SEOHead';
 
-const BASE_COLORS = [
+const BASE_COLORS_CRUGLY = [
   { name: 'Teal', hex: '#1B3A4A' },
   { name: 'Black', hex: '#1A1A1A' },
   { name: 'Ivory', hex: '#E8E4DC' },
@@ -15,6 +15,28 @@ const BASE_COLORS = [
   { name: 'Gray', hex: '#A0A0A0' },
   { name: 'Purple', hex: '#4A1A6A' },
 ];
+
+const BASE_COLORS_RUGLY = [
+  { name: 'Beige', hex: '#D4C5A9' },
+  { name: 'Black', hex: '#1A1A1A' },
+  { name: 'Burgundy', hex: '#5C1A2A' },
+  { name: 'Dark Green', hex: '#1A3A2A' },
+  { name: 'Light Gray', hex: '#C8C8C8' },
+  { name: 'Medium Gray', hex: '#8A8A8A' },
+  { name: 'Blue-Gray', hex: '#6A7A8A' },
+  { name: 'Brown', hex: '#7A5A3A' },
+  { name: 'Dark Brown', hex: '#4A3020' },
+  { name: 'Charcoal', hex: '#3A3A3A' },
+  { name: 'Tan', hex: '#B8A080' },
+  { name: 'Sage', hex: '#8A9A7A' },
+  { name: 'Navy', hex: '#1A2A4A' },
+  { name: 'Lavender', hex: '#9A8AB0' },
+  { name: 'Light Purple', hex: '#C0A8D0' },
+  { name: 'Dusty Rose', hex: '#C09090' },
+];
+
+// Default (fallback)
+const BASE_COLORS = BASE_COLORS_CRUGLY;
 
 const PAINT_COLORS = [
   { name: 'Black', hex: '#1A1A1A' },
@@ -92,6 +114,7 @@ export default function CustomBuilder() {
 
   const fileInputRef = useRef(null);
 
+  const baseColorOptions = tier?.id === 'rugly' || tier?.id === 'rugly_lx' ? BASE_COLORS_RUGLY : BASE_COLORS_CRUGLY;
   const paintHex = paintColor?.name === 'Custom' ? customPaintHex : (paintColor?.hex || null);
   const secondHex = secondPaintColor?.name === 'Custom' ? customSecondHex : (secondPaintColor?.hex || null);
   const price = tier && size ? (tier.prices[size.id] || 0) : 0;
@@ -175,7 +198,7 @@ export default function CustomBuilder() {
             {QUALITY_TIERS.map(t => (
               <button
                 key={t.id}
-                onClick={() => setTier(t)}
+                onClick={() => { setTier(t); setBaseColor(null); }}
                 className="text-left p-5 rounded-2xl border-4 transition-all w-full"
                 style={{
                   borderColor: tier?.id === t.id ? t.color : '#e5e7eb',
@@ -224,7 +247,7 @@ export default function CustomBuilder() {
           <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>3. Rug Base Color</h2>
           <p className="text-sm text-gray-500 mb-4">The background color of the rug itself</p>
           <div className="flex flex-wrap gap-3">
-            {BASE_COLORS.map(c => (
+            {baseColorOptions.map(c => (
               <button
                 key={c.name}
                 onClick={() => setBaseColor(c)}
