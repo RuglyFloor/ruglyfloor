@@ -81,20 +81,23 @@ export default function Cart() {
 
   // Shipping cost calculation
   const getShippingCost = () => {
-    const hasCrugly = cart.some(item => item.qualityTier === 'budget');
-    if (hasCrugly && cart.every(item => item.qualityTier === 'budget')) {
-      return 0; // Free shipping for Crugly only orders
+    if (cart.length === 0) return 0;
+    // Free shipping if all items are Crugly or Original
+    if (cart.every(item => item.qualityTier === 'crugly' || item.qualityTier === 'budget' || item.qualityTier === 'original')) {
+      return 0;
     }
-    return subtotal > 0 ? 15 : 0;
+    return 15;
   };
 
   const shippingCost = getShippingCost();
   const taxAmount = (subtotal + shippingCost) * taxRate;
   const totalAmount = subtotal + shippingCost + taxAmount;
 
-  // Check if cart has Crugly or Rugly (requires upfront payment)
+  // Check if cart has Crugly or Rugly (requires upfront payment; rugly_lx is deposit-only)
   const hasUpfrontPaymentItems = cart.some(item => 
-    item.qualityTier === 'budget' || item.qualityTier === 'good'
+    item.qualityTier === 'crugly' || item.qualityTier === 'rugly' || 
+    item.qualityTier === 'budget' || item.qualityTier === 'good' ||
+    item.qualityTier === 'original'
   );
   const paymentAmount = hasUpfrontPaymentItems ? totalAmount : 100; // Full payment for Crugly/Rugly, deposit for Rugly Lux
 
