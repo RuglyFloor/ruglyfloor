@@ -27,6 +27,12 @@ function AdminProductsContent() {
   const [uploading, setUploading] = useState(false);
   const [generatingAI, setGeneratingAI] = useState(false);
   const [aiSuggestion, setAiSuggestion] = useState('');
+  const [aiSettings, setAiSettings] = useState({
+    roomStyle: 'modern',
+    lighting: 'natural',
+    colorTone: 'warm',
+    roomType: 'auto'
+  });
   // Shipping options per tier
   const SHIPPING_OPTIONS = {
     crugly: { label: 'Crugly — FREE Shipping', value: 'FREE shipping included' },
@@ -123,17 +129,47 @@ function AdminProductsContent() {
       const widthIn = Math.round(widthFt * 12);
       const lengthIn = Math.round(lengthFt * 12);
 
-      // Determine appropriate room type based on rug size
-      let roomContext = '';
-      if (widthFt <= 3 || lengthFt <= 3) {
-        roomContext = `small entryway or home office. The rug (${rugSize} ft) sits near a doorway or under a desk. The room has warm lighting, clean walls, and natural wood accents.`;
+      // Determine room type: use user override or auto-select by size
+      const { roomStyle, lighting, colorTone, roomType: roomTypeSetting } = aiSettings;
+
+      const LIGHTING_MAP = {
+        natural: 'soft natural daylight streaming through large windows, realistic window shadows on the floor',
+        golden: 'golden hour afternoon sunlight, warm amber tones, long soft shadows across the floor',
+        studio: 'bright even studio lighting, soft shadows, clean and professional',
+        moody: 'dim ambient lighting with accent lamps, dramatic shadows, intimate atmosphere'
+      };
+      const STYLE_MAP = {
+        modern: 'clean lines, minimalist furniture, neutral palette, contemporary design',
+        bohemian: 'eclectic layered textiles, plants, rattan furniture, warm earthy tones',
+        luxury: 'high-end marble accents, velvet furniture, gold fixtures, designer aesthetic',
+        rustic: 'reclaimed wood, exposed beams, vintage furniture, cozy farmhouse feel',
+        scandinavian: 'white walls, light oak wood, simple clean furniture, hygge atmosphere'
+      };
+      const TONE_MAP = {
+        warm: 'warm tones: honey, cream, soft amber in walls and furniture',
+        cool: 'cool tones: soft grey, white, pale blue accents',
+        neutral: 'balanced neutral tones: greige walls, natural wood, white trim',
+        bold: 'rich bold tones: deep navy or forest green walls, contrast with the rug'
+      };
+
+      let autoRoomType = '';
+      if (roomTypeSetting !== 'auto') {
+        autoRoomType = roomTypeSetting;
+      } else if (widthFt <= 3 || lengthFt <= 3) {
+        autoRoomType = 'entryway';
       } else if (widthFt <= 5 || lengthFt <= 5) {
-        roomContext = `cozy bedroom or reading nook. The rug (${rugSize} ft) is placed at the foot of a bed or in front of a small sofa. Warm ambient lighting, soft textiles, and a lived-in feel.`;
+        autoRoomType = 'bedroom';
       } else if (widthFt <= 8 || lengthFt <= 8) {
-        roomContext = `stylish living room with a sectional sofa and coffee table centered on the rug (${rugSize} ft). Modern furniture, neutral tones, large windows with natural light, indoor plants.`;
+        autoRoomType = 'living room';
       } else {
-        roomContext = `large open-plan living and dining area. The rug (${rugSize} ft) anchors a full dining table and chairs or a large seating arrangement. High ceilings, exposed beams, warm lighting, natural materials.`;
+        autoRoomType = 'open-plan living and dining area';
       }
+
+      const lightingDesc = LIGHTING_MAP[lighting] || LIGHTING_MAP.natural;
+      const styleDesc = STYLE_MAP[roomStyle] || STYLE_MAP.modern;
+      const toneDesc = TONE_MAP[colorTone] || TONE_MAP.warm;
+
+      const roomContext = `${autoRoomType} with ${styleDesc}. ${toneDesc}. Lighting: ${lightingDesc}.`;
 
       // Generate product name/description only — NO pricing
       const productInfo = await base44.integrations.Core.InvokeLLM({
@@ -161,34 +197,45 @@ DO NOT suggest a price.`,
 
       // Generate both images in parallel
       const [roomImage, measurementImage] = await Promise.all([
-        // ROOM IMAGE: exact rug design placed realistically in a real-looking room at correct scale
-        base44.integrations.Core.GenerateImage({
-          prompt: `PHOTOREALISTIC interior design photograph. Place EXACTLY this rug — preserving every detail of its design, colors, and pattern with 100% accuracy — on the floor of a ${roomContext}
 
-CRITICAL RULES:
-- The rug design must be an EXACT COPY of the uploaded image. Do not simplify, alter colors, or change any design element.
-- The rug is ${rugSize} feet (${widthFt}' wide × ${lengthFt}' long). Scale it accurately relative to furniture and the room.
-- The room must look like a REAL photograph taken by a professional interior photographer — not a render, not a painting, not an illustration.
-- Natural lighting with realistic shadows and reflections on the rug surface.
-- Furniture and decor should feel real and lived-in, not staged or fake.
-- No text, no watermarks, no borders.
-${aiSuggestion ? `- Additional styling: ${aiSuggestion}` : ''}`,
+        // ── ROOM IMAGE ──────────────────────────────────────────────────────
+        base44.integrations.Core.GenerateImage({
+          prompt: `Ultra-photorealistic interior design photograph — shot with a Canon EOS R5, 24mm lens, f/2.8, ISO 400.
+
+SCENE: A real-world ${roomContext}
+The rug (${widthFt} ft wide × ${lengthFt} ft long) is placed flat on the floor as the centerpiece of the room.
+
+RUG FIDELITY — THIS IS THE MOST IMPORTANT RULE:
+- Reproduce this specific rug with ABSOLUTE ACCURACY. Every brushstroke, every color, every edge, every detail of the design must be an exact match to the uploaded image.
+- Do NOT simplify, stylize, blur, or abstract the rug design. It must be recognizable as the exact same rug.
+- The rug's proportions must be correct: ${widthFt}' wide × ${lengthFt}' long (${widthFt > lengthFt ? 'wider than tall' : widthFt === lengthFt ? 'square' : 'taller than wide'}).
+- Show the rug in natural perspective foreshortening as it would appear on the floor from a standing eye-level view.
+
+PHOTOREALISM REQUIREMENTS:
+- The room must look like a real photograph, indistinguishable from a shot taken in an actual furnished room.
+- Realistic contact shadows where the rug meets the floor. Subtle light sheen on the rug surface. Slight texture visible in the pile.
+- Furniture casts soft shadows onto the rug edges.
+- No CGI look, no painterly textures, no soft focus. Tack-sharp on the rug.
+- No text, no watermarks, no borders, no labels.
+${aiSuggestion ? `ADDITIONAL DIRECTION: ${aiSuggestion}` : ''}`,
           existing_image_urls: [mainImage]
         }),
 
-        // MEASUREMENT IMAGE: clean white-background product sheet with dimension lines
+        // ── MEASUREMENT / SPEC IMAGE ────────────────────────────────────────
         base44.integrations.Core.GenerateImage({
-          prompt: `Professional product specification photograph of this rug on a PURE WHITE background.
+          prompt: `Clean professional product catalog photograph on a pure white (#FFFFFF) background. No gradients, no grey — pure white.
 
-REQUIREMENTS:
-- Reproduce the rug design with PIXEL-PERFECT accuracy — every color, every line, every detail must match the source image exactly.
-- The rug is displayed flat, centered, slightly angled (15° perspective) to show depth.
-- Add clean, professional measurement annotation lines around the rug:
-  • A horizontal double-arrow line below the rug labeled "${widthFt}' (${widthIn}")" for width
-  • A vertical double-arrow line to the right labeled "${lengthFt}' (${lengthIn}")" for length
-- Annotation lines should be thin black lines with small serif tick marks at each end. Text in a clean sans-serif font, dark gray.
-- Soft drop shadow under the rug on the white background.
-- No other text, no watermarks, no background color — pure white only.`,
+THE RUG (mandatory exact reproduction):
+- Reproduce this rug with ABSOLUTE PIXEL-PERFECT accuracy. Every color, line, shape, and brushstroke must be identical to the uploaded image. Do not stylize, simplify, or alter any part of the design.
+- Rug is ${widthFt} ft wide × ${lengthFt} ft long (${widthIn}" × ${lengthIn}"). Maintain correct aspect ratio: ${(widthFt/lengthFt).toFixed(2)} width-to-length.
+- Display the rug centered, viewed from a slight overhead angle (20° tilt), flat and unwrinkled, fully visible.
+- Soft realistic drop shadow directly beneath the rug.
+
+MEASUREMENT ANNOTATIONS (drawn as clean vector-style lines ON the image):
+- WIDTH annotation: A thin black horizontal line with arrowheads (→|←) spanning the full width of the rug, positioned 30px below the rug bottom edge. Label centered below the line in clean sans-serif font: "${widthFt}' wide  (${widthIn}")"
+- LENGTH annotation: A thin black vertical line with arrowheads (↑|↓) spanning the full length of the rug, positioned 30px to the right of the rug right edge. Label rotated 90° to the right in clean sans-serif font: "${lengthFt}' long  (${lengthIn}")"
+- Line color: #222222. Font: Helvetica or Arial, 14px, #333333. Tick marks at each arrowhead end.
+- No other text, no brand names, no watermarks.`,
           existing_image_urls: [mainImage]
         })
       ]);
@@ -393,16 +440,82 @@ REQUIREMENTS:
                     onGenerateAI={generatingAI ? null : handleAIGenerate}
                   />
                   {formData.all_images.length > 0 && (
-                    <div className="mt-3 space-y-2">
-                      <Label className="text-sm text-gray-600">AI Suggestions (Optional)</Label>
-                      <Textarea
-                        value={aiSuggestion}
-                        onChange={(e) => setAiSuggestion(e.target.value)}
-                        placeholder="e.g., 'Make it look cozy and warm with autumn colors' or 'Place in a modern minimalist space'"
-                        rows={2}
-                        className="text-sm"
-                      />
-                      <p className="text-xs text-gray-500">💡 Add styling suggestions for AI-generated room photos and product details</p>
+                    <div className="mt-3 space-y-3 p-3 bg-gray-50 rounded-lg border">
+                      <p className="text-xs font-semibold text-gray-700 uppercase tracking-wide">🎨 AI Image Settings</p>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <Label className="text-xs text-gray-600">Room Type</Label>
+                          <Select value={aiSettings.roomType} onValueChange={(v) => setAiSettings(prev => ({ ...prev, roomType: v }))}>
+                            <SelectTrigger className="h-8 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="auto">Auto (by size)</SelectItem>
+                              <SelectItem value="living room">Living Room</SelectItem>
+                              <SelectItem value="bedroom">Bedroom</SelectItem>
+                              <SelectItem value="dining room">Dining Room</SelectItem>
+                              <SelectItem value="home office">Home Office</SelectItem>
+                              <SelectItem value="entryway">Entryway / Foyer</SelectItem>
+                              <SelectItem value="open-plan living and dining area">Open Plan</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-gray-600">Room Style</Label>
+                          <Select value={aiSettings.roomStyle} onValueChange={(v) => setAiSettings(prev => ({ ...prev, roomStyle: v }))}>
+                            <SelectTrigger className="h-8 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="modern">Modern / Minimalist</SelectItem>
+                              <SelectItem value="bohemian">Bohemian</SelectItem>
+                              <SelectItem value="luxury">Luxury / High-End</SelectItem>
+                              <SelectItem value="rustic">Rustic / Farmhouse</SelectItem>
+                              <SelectItem value="scandinavian">Scandinavian</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-gray-600">Lighting</Label>
+                          <Select value={aiSettings.lighting} onValueChange={(v) => setAiSettings(prev => ({ ...prev, lighting: v }))}>
+                            <SelectTrigger className="h-8 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="natural">Natural Daylight</SelectItem>
+                              <SelectItem value="golden">Golden Hour</SelectItem>
+                              <SelectItem value="studio">Studio / Bright</SelectItem>
+                              <SelectItem value="moody">Moody / Ambient</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label className="text-xs text-gray-600">Color Tone</Label>
+                          <Select value={aiSettings.colorTone} onValueChange={(v) => setAiSettings(prev => ({ ...prev, colorTone: v }))}>
+                            <SelectTrigger className="h-8 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="warm">Warm</SelectItem>
+                              <SelectItem value="cool">Cool</SelectItem>
+                              <SelectItem value="neutral">Neutral</SelectItem>
+                              <SelectItem value="bold">Bold / Dramatic</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label className="text-xs text-gray-600">Additional Styling Notes (Optional)</Label>
+                        <Textarea
+                          value={aiSuggestion}
+                          onChange={(e) => setAiSuggestion(e.target.value)}
+                          placeholder="e.g., 'Include a dog lounging on the rug' or 'Show with holiday decor in the background'"
+                          rows={2}
+                          className="text-sm"
+                        />
+                      </div>
                     </div>
                   )}
                 </div>
