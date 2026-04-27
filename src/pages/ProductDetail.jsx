@@ -12,7 +12,6 @@ import { createPageUrl } from '../utils';
 export default function ProductDetail() {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   // Get product ID from URL
   const urlParams = new URLSearchParams(window.location.search);
@@ -40,34 +39,22 @@ export default function ProductDetail() {
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
-  const handleBuyNow = async () => {
-    // Check if running in iframe
-    if (window.self !== window.top) {
-      alert('Checkout is only available on the published app. Please visit the full site to complete your purchase.');
-      return;
-    }
-
-    setIsCheckingOut(true);
-    try {
-      const response = await base44.functions.invoke('createCheckout', {
-        items: [{
-          type: 'original',
-          product_id: product.id,
-          name: product.name,
-          size: product.size,
-          image_url: images[0] || product.image_url,
-          price: product.price
-        }]
-      });
-
-      if (response.data.url) {
-        window.location.href = response.data.url;
-      }
-    } catch (error) {
-      console.error('Checkout error:', error);
-      alert('Failed to start checkout. Please try again.');
-      setIsCheckingOut(false);
-    }
+  const handleBuyNow = () => {
+    const cartItem = {
+      type: 'original',
+      product_id: product.id,
+      name: product.name,
+      size: product.size || '',
+      imageUrl: images[0] || product.image_url || '',
+      previewUrl: images[0] || product.image_url || '',
+      price: product.price,
+      qualityTier: 'original',
+      qualityLabel: 'Original Rugly',
+    };
+    const cart = JSON.parse(localStorage.getItem('rugly_cart') || '[]');
+    cart.push(cartItem);
+    localStorage.setItem('rugly_cart', JSON.stringify(cart));
+    navigate(createPageUrl('Cart'));
   };
 
   if (isLoading) {
@@ -314,21 +301,12 @@ export default function ProductDetail() {
             {/* Purchase Button */}
             <div className="space-y-4">
               <Button
-                onClick={handleBuyNow}
-                disabled={!product.in_stock || isCheckingOut}
-                className="w-full h-14 text-lg bg-blue-600 hover:bg-blue-700"
+              onClick={handleBuyNow}
+              disabled={!product.in_stock}
+              className="w-full h-14 text-lg bg-blue-600 hover:bg-blue-700"
               >
-                {isCheckingOut ? (
-                  <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <ShoppingCart className="w-5 h-5 mr-2" />
-                    {product.in_stock ? 'Buy Now' : 'Out of Stock'}
-                  </>
-                )}
+              <ShoppingCart className="w-5 h-5 mr-2" />
+              {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
               </Button>
 
               <p className="text-center text-sm text-gray-500">
