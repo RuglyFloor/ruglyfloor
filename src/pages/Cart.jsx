@@ -559,7 +559,7 @@ export default function Cart() {
                       onCheckedChange={setFinalSaleAcknowledged}
                     />
                     <label htmlFor="final-sale-ack" className="text-xs leading-relaxed cursor-pointer text-gray-700">
-                      ✅ I understand my rug is made to order and hand-painted just for me. If there are any quality issues or damage, I'm covered with a full replacement or refund.{' '}
+                      I understand my rug is made to order and hand-painted just for me. If there are any quality issues or damage, I'm covered with a full replacement or refund.{' '}
                       <a href="/Policies" className="underline text-gray-500" target="_blank">See our guarantee</a>
                     </label>
                   </div>
