@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Upload, Loader2, Clock, Zap, Sparkles, X, CheckCircle2, ChevronRight } from 'lucide-react';
+import BookConsultationButton from '@/components/booking/BookConsultationButton';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import SEOHead from '../components/seo/SEOHead';
@@ -235,9 +236,13 @@ export default function Commission() {
           <h1 className="text-5xl md:text-6xl font-black mb-3" style={{ fontFamily: 'var(--font-heading)', color: 'var(--brand-dark)' }}>
             Commission Your <span style={{ color: 'var(--brand-red)' }}>Dream Rug</span>
           </h1>
-          <p className="text-base text-gray-500 max-w-xl mx-auto">
+          <p className="text-base text-gray-500 max-w-xl mx-auto mb-6">
             Describe your vision, generate an AI preview, and submit — all free. Payment only after you approve.
           </p>
+          <div className="flex flex-wrap justify-center gap-3 mb-2">
+            <BookConsultationButton source="commission" variant="light" size_btn="md" label="Book a Free Design Call with Ryan" />
+          </div>
+          <p className="text-xs text-gray-400 mt-1">Prefer to talk it through first? Book a free 15 or 30-min Zoom with Ryan.</p>
         </div>
 
         {/* Step Indicator */}

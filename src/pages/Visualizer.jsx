@@ -9,10 +9,13 @@ import VisualizerGallery from '@/components/visualizer/VisualizerGallery';
 import VisualizerSizeSelector from '@/components/visualizer/VisualizerSizeSelector';
 import VisualizerPreview from '@/components/visualizer/VisualizerPreview';
 import VisualizerLeadForm from '@/components/visualizer/VisualizerLeadForm';
+import BookConsultationButton from '@/components/booking/BookConsultationButton';
+import { useNavigate } from 'react-router-dom';
 
 const STYLE_TAGS = ['Abstract', 'Geometric', 'Nature', 'Portrait', 'Typography', 'Floral', 'Retro', 'Minimalist'];
 
 export default function Visualizer() {
+  const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(true);
   const [step, setStep] = useState(1); // 1=describe, 2=preview, 3=submit
   const [description, setDescription] = useState('');
@@ -288,12 +291,24 @@ export default function Visualizer() {
                 </div>
               </div>
             )}
-            <button
-              onClick={() => { setStep(1); setPreviewUrl(null); setDescription(''); setSelectedTags([]); setRoomPhotoUrl(null); setSubmitted(false); setShareToken(null); }}
-              style={{ color: accent, background: 'transparent', border: `1.5px solid ${accent}`, borderRadius: 10, padding: '12px 28px', fontSize: '1rem', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '0.05em' }}
-            >
-              Design Another Rug
-            </button>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center', marginTop: 8 }}>
+              <BookConsultationButton
+                previewUrl={previewUrl}
+                shareUrl={shareUrl}
+                description={description}
+                size={selectedSize}
+                source="visualizer"
+                variant="dark"
+                size_btn="lg"
+                label="BOOK A FREE DESIGN CALL WITH RYAN"
+              />
+              <button
+                onClick={() => { setStep(1); setPreviewUrl(null); setDescription(''); setSelectedTags([]); setRoomPhotoUrl(null); setSubmitted(false); setShareToken(null); }}
+                style={{ color: accent, background: 'transparent', border: `1.5px solid ${darkMode ? '#333' : '#ddd'}`, borderRadius: 10, padding: '12px 24px', fontSize: '1rem', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', letterSpacing: '0.05em' }}
+              >
+                Design Another Rug
+              </button>
+            </div>
           </div>
         )}
 

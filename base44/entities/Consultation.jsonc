@@ -1,0 +1,94 @@
+{
+  "name": "Consultation",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "preferred_time": {
+      "type": "string",
+      "description": "Selected time slot ISO string"
+    },
+    "duration": {
+      "type": "string",
+      "enum": [
+        "15min",
+        "30min"
+      ],
+      "default": "30min"
+    },
+    "room_photos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Uploaded room photo URLs"
+    },
+    "preferred_size": {
+      "type": "string"
+    },
+    "color_style_notes": {
+      "type": "string"
+    },
+    "idea_description": {
+      "type": "string"
+    },
+    "budget_range": {
+      "type": "string"
+    },
+    "visualizer_preview_url": {
+      "type": "string",
+      "description": "Linked Visualizer preview image"
+    },
+    "visualizer_share_url": {
+      "type": "string",
+      "description": "Public share link to Visualizer design"
+    },
+    "visualizer_description": {
+      "type": "string",
+      "description": "Rug description from Visualizer"
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "visualizer",
+        "commission",
+        "direct"
+      ],
+      "default": "direct"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "booked",
+        "consulted",
+        "quote_sent",
+        "commission_started",
+        "closed"
+      ],
+      "default": "booked"
+    },
+    "admin_notes": {
+      "type": "string"
+    },
+    "zoom_link": {
+      "type": "string"
+    },
+    "confirmation_sent": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "name",
+    "email",
+    "phone",
+    "preferred_time"
+  ]
+}

@@ -1,11 +1,23 @@
 import React from 'react';
-import { Loader2, RefreshCw, ArrowLeft, Send } from 'lucide-react';
+import { Loader2, RefreshCw, ArrowLeft, Send, Calendar } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function VisualizerPreview({
   generating, previewUrl, size, priceEstimate, description, selectedTags,
   darkMode, surface, text, muted, accent,
   onRegenerate, onBack, onSendToRyan
 }) {
+  const navigate = useNavigate();
+
+  const handleBookConsultation = () => {
+    const params = new URLSearchParams();
+    if (previewUrl) params.set('preview_url', previewUrl);
+    if (description) params.set('description', description);
+    if (size) params.set('size', size);
+    params.set('source', 'visualizer');
+    navigate(`/BookConsultation?${params.toString()}`);
+  };
+
   return (
     <div style={{ maxWidth: 760, margin: '0 auto' }}>
       <button onClick={onBack} style={{ background: 'transparent', border: 'none', color: muted, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, marginBottom: 24, fontFamily: 'Barlow Condensed, sans-serif', fontSize: '0.95rem', letterSpacing: '0.05em' }}>
@@ -65,15 +77,21 @@ export default function VisualizerPreview({
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               <button
                 onClick={onRegenerate}
-                style={{ flex: 1, minWidth: 140, border: `1.5px solid ${darkMode ? '#333' : '#ddd'}`, background: 'transparent', color: text, borderRadius: 10, padding: '12px 0', fontSize: '1rem', fontWeight: 700, cursor: 'pointer', fontFamily: 'Barlow Condensed, sans-serif', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'border-color 0.15s' }}
+                style={{ flex: 1, minWidth: 120, border: `1.5px solid ${darkMode ? '#333' : '#ddd'}`, background: 'transparent', color: text, borderRadius: 10, padding: '12px 0', fontSize: '1rem', fontWeight: 700, cursor: 'pointer', fontFamily: 'Barlow Condensed, sans-serif', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'border-color 0.15s' }}
               >
                 <RefreshCw size={16} /> REGENERATE
               </button>
               <button
                 onClick={onSendToRyan}
-                style={{ flex: 2, minWidth: 180, background: accent, color: 'white', border: 'none', borderRadius: 10, padding: '12px 0', fontSize: '1.1rem', fontWeight: 900, cursor: 'pointer', fontFamily: 'Barlow Condensed, sans-serif', letterSpacing: '0.08em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'opacity 0.15s' }}
+                style={{ flex: 2, minWidth: 160, background: accent, color: 'white', border: 'none', borderRadius: 10, padding: '12px 0', fontSize: '1rem', fontWeight: 900, cursor: 'pointer', fontFamily: 'Barlow Condensed, sans-serif', letterSpacing: '0.07em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'opacity 0.15s' }}
               >
-                <Send size={16} /> SEND THIS TO RYAN
+                <Send size={16} /> SEND TO RYAN
+              </button>
+              <button
+                onClick={handleBookConsultation}
+                style={{ flex: 2, minWidth: 180, background: '#0f0f0f', color: 'white', border: `1.5px solid ${darkMode ? '#333' : '#555'}`, borderRadius: 10, padding: '12px 0', fontSize: '1rem', fontWeight: 900, cursor: 'pointer', fontFamily: 'Barlow Condensed, sans-serif', letterSpacing: '0.07em', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, transition: 'opacity 0.15s' }}
+              >
+                <Calendar size={16} /> BOOK A FREE CALL
               </button>
             </div>
           </div>

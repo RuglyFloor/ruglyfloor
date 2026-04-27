@@ -11,6 +11,8 @@ import DesignProposal from './pages/DesignProposal';
 import Visualizer from './pages/Visualizer';
 import VisualizerShare from './pages/VisualizerShare';
 import AdminVisualizer from './pages/AdminVisualizer';
+import BookConsultation from './pages/BookConsultation';
+import AdminConsultations from './pages/AdminConsultations';
 import React, { Suspense } from 'react';
 
 const { Pages, Layout, mainPage } = pagesConfig;
@@ -66,6 +68,8 @@ const AuthenticatedApp = () => {
         <Route path="/Visualizer" element={<Visualizer />} />
         <Route path="/VisualizerShare" element={<VisualizerShare />} />
         <Route path="/AdminVisualizer" element={<AdminVisualizer />} />
+        <Route path="/BookConsultation" element={<BookConsultation />} />
+        <Route path="/AdminConsultations" element={<AdminConsultations />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Suspense>
