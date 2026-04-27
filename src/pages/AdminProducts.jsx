@@ -123,9 +123,13 @@ function AdminProductsContent() {
 
       // Parse size string to get dimensions for room scale and measurement image
       // Handles formats like "5x7", "4x6", "8x10", "3x5", "5ft round", etc.
+      // Convention: first number = width (horizontal), second = length (vertical/depth)
       const sizeMatch = rugSize.match(/(\d+\.?\d*)\s*[xX×]\s*(\d+\.?\d*)/);
-      const widthFt = sizeMatch ? parseFloat(sizeMatch[1]) : 5;
-      const lengthFt = sizeMatch ? parseFloat(sizeMatch[2]) : 7;
+      const dim1 = sizeMatch ? parseFloat(sizeMatch[1]) : 5;
+      const dim2 = sizeMatch ? parseFloat(sizeMatch[2]) : 7;
+      // Always make widthFt the LARGER horizontal dimension for landscape display
+      const widthFt = Math.max(dim1, dim2);
+      const lengthFt = Math.min(dim1, dim2);
       const widthIn = Math.round(widthFt * 12);
       const lengthIn = Math.round(lengthFt * 12);
 
@@ -208,7 +212,7 @@ The rug (${widthFt} ft wide × ${lengthFt} ft long) is placed flat on the floor 
 RUG FIDELITY — THIS IS THE MOST IMPORTANT RULE:
 - Reproduce this specific rug with ABSOLUTE ACCURACY. Every brushstroke, every color, every edge, every detail of the design must be an exact match to the uploaded image.
 - Do NOT simplify, stylize, blur, or abstract the rug design. It must be recognizable as the exact same rug.
-- The rug's proportions must be correct: ${widthFt}' wide × ${lengthFt}' long (${widthFt > lengthFt ? 'wider than tall' : widthFt === lengthFt ? 'square' : 'taller than wide'}).
+- The rug's proportions must be correct: ${widthFt}' wide × ${lengthFt}' long. The rug is ALWAYS displayed in LANDSCAPE (wider than tall). Do NOT render the rug vertically/portrait.
 - Show the rug in natural perspective foreshortening as it would appear on the floor from a standing eye-level view.
 
 PHOTOREALISM REQUIREMENTS:
@@ -223,19 +227,18 @@ ${aiSuggestion ? `ADDITIONAL DIRECTION: ${aiSuggestion}` : ''}`,
 
         // ── MEASUREMENT / SPEC IMAGE ────────────────────────────────────────
         base44.integrations.Core.GenerateImage({
-          prompt: `Clean professional product catalog photograph on a pure white (#FFFFFF) background. No gradients, no grey — pure white.
+          prompt: `Professional product spec sheet image. Pure white background (#FFFFFF). No grey, no gradient.
 
-THE RUG (mandatory exact reproduction):
-- Reproduce this rug with ABSOLUTE PIXEL-PERFECT accuracy. Every color, line, shape, and brushstroke must be identical to the uploaded image. Do not stylize, simplify, or alter any part of the design.
-- Rug is ${widthFt} ft wide × ${lengthFt} ft long (${widthIn}" × ${lengthIn}"). Maintain correct aspect ratio: ${(widthFt/lengthFt).toFixed(2)} width-to-length.
-- Display the rug centered, viewed from a slight overhead angle (20° tilt), flat and unwrinkled, fully visible.
-- Soft realistic drop shadow directly beneath the rug.
+THE RUG — CRITICAL ORIENTATION AND FIDELITY RULES:
+1. ORIENTATION: The rug MUST be displayed in LANDSCAPE orientation — wider than tall. The horizontal width is ${widthFt} ft (${widthIn} inches). The vertical height is ${lengthFt} ft (${lengthIn} inches). The rug is ${(widthFt/lengthFt).toFixed(2)}x wider than it is tall. If the uploaded image appears portrait/vertical, ROTATE IT so it is displayed horizontally.
+2. DESIGN: Reproduce the rug's colors, patterns, and artwork faithfully. DO NOT repeat, tile, or duplicate any graphic elements. Do NOT render any text or words from the rug design — replace any text in the design with a solid color block matching the surrounding color.
+3. POSITION: Rug centered in the image with equal margin on all sides. Viewed flat from directly above (top-down, no perspective tilt). No wrinkles, soft drop shadow.
 
-MEASUREMENT ANNOTATIONS (drawn as clean vector-style lines ON the image):
-- WIDTH annotation: A thin black horizontal line with arrowheads (→|←) spanning the full width of the rug, positioned 30px below the rug bottom edge. Label centered below the line in clean sans-serif font: "${widthFt}' wide  (${widthIn}")"
-- LENGTH annotation: A thin black vertical line with arrowheads (↑|↓) spanning the full length of the rug, positioned 30px to the right of the rug right edge. Label rotated 90° to the right in clean sans-serif font: "${lengthFt}' long  (${lengthIn}")"
-- Line color: #222222. Font: Helvetica or Arial, 14px, #333333. Tick marks at each arrowhead end.
-- No other text, no brand names, no watermarks.`,
+MEASUREMENT LABELS (only 2 labels, no other text):
+- BOTTOM: A thin horizontal double-headed arrow (←→) spanning the full width of the rug, 20px below the rug. Centered text label below the arrow: "${widthFt}' wide (${widthIn}")"
+- RIGHT SIDE: A thin vertical double-headed arrow (↕) spanning the full height of the rug, 20px to the right. Text label rotated 90° clockwise: "${lengthFt}' tall (${lengthIn}")"
+- Arrow and line color: #333333. Font: Arial 13px #444444.
+- Absolutely NO other text anywhere in the image.`,
           existing_image_urls: [mainImage]
         })
       ]);
