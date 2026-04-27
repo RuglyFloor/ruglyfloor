@@ -14,38 +14,56 @@ export default function Policies() {
           </CardHeader>
           <CardContent className="space-y-4 text-gray-700">
             <p className="font-semibold">Effective Date: January 9, 2026</p>
-            
-            <div>
-              <h3 className="font-semibold text-lg mb-2">Damage or Quality Concerns</h3>
+
+            <p>
+              We stand behind every rug we make. If something goes wrong during shipping or doesn't meet your expectations,
+              we want to make it right. Here's how our return policy works depending on which product you ordered:
+            </p>
+
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <h3 className="font-semibold text-lg mb-2 text-green-800">Crugly — 14-Day Shipping Damage Return</h3>
               <p>
-                If your rug arrives damaged or with legitimate quality concerns, you may return it within 24 hours of delivery for a full refund. 
-                The rug must be returned in its original condition. Please contact us immediately at info@ruglyfloor.com with photos of the damage or quality issue.
+                We want you to love your Crugly. If your rug arrives damaged due to shipping, you have <strong>14 days from delivery</strong> to
+                contact us and initiate a return. To qualify, simply send us a photo of the damage at info@ruglyfloor.com within that window.
+              </p>
+              <p className="mt-2">
+                <strong>Return shipping is the customer's responsibility.</strong> Once we receive and inspect your returned rug,
+                we'll process your refund within 5–7 business days. Refunds are issued to your original payment method.
+              </p>
+            </div>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h3 className="font-semibold text-lg mb-2 text-blue-800">Rugly — 30-Day Satisfaction Return</h3>
+              <p>
+                Rugly-tier rugs come with a <strong>30-day return window</strong>. Whether your rug arrived damaged in shipping
+                or it just isn't the right fit for your space, we've got you covered.
+              </p>
+              <p className="mt-2">
+                Contact us at info@ruglyfloor.com or (517) 777-8474 within 30 days of delivery. The rug must be returned
+                in its original, unused condition. <strong>Return shipping is the customer's responsibility.</strong> Once we receive and inspect
+                the rug, your refund will be issued within 5–7 business days.
+              </p>
+            </div>
+
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <h3 className="font-semibold text-lg mb-2 text-amber-800">Rugly LX — Satisfaction Guarantee</h3>
+              <p>
+                Rugly LX is our top-tier, artist-crafted rug — and we guarantee you'll love it. If for any reason you're not
+                completely satisfied, reach out and we'll work with you personally to make it right. Every LX order comes
+                with a Certificate of Authenticity and our full satisfaction guarantee.
               </p>
             </div>
 
             <div>
-              <h3 className="font-semibold text-lg mb-2">Other Returns & Replacements</h3>
-              <p>
-                For reasons other than damage or quality defects (such as change of mind, incorrect size ordered, etc.), 
-                we offer replacements at a <strong>50% discount</strong>. Original shipping costs are non-refundable. 
-                The rug must be unused and in original condition.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-lg mb-2">Custom Orders — Final Sale</h3>
-              <p>
-                Due to the custom, hand-painted nature of our work, <strong>all custom rug orders (Cruglys and Ruglys) are final sale</strong>. 
-                We provide realistic previews during the design process to ensure you're satisfied before production begins.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold text-lg mb-2">Return Process</h3>
-              <p>
-                To initiate a return, contact us at info@ruglyfloor.com or call (517) 777-8474 within the applicable timeframe. 
-                Include your order number and reason for return. We will provide return shipping instructions. 
-                Refunds will be processed within 5-7 business days after we receive and inspect the returned item.
+              <h3 className="font-semibold text-lg mb-2">How to Start a Return</h3>
+              <ol className="list-decimal ml-6 space-y-1">
+                <li>Email <strong>info@ruglyfloor.com</strong> with your order number and a brief description (photos of any damage are always helpful).</li>
+                <li>We'll confirm your return is eligible and send you return instructions.</li>
+                <li>Ship the rug back to us — <strong>return shipping costs are the customer's responsibility.</strong></li>
+                <li>Once we receive and inspect the rug, your refund will be processed within <strong>5–7 business days</strong>.</li>
+              </ol>
+              <p className="mt-3 text-sm text-gray-500">
+                No refund will be issued until the returned item has been received and inspected at our studio.
               </p>
             </div>
           </CardContent>
@@ -59,43 +77,49 @@ export default function Policies() {
           <CardContent className="space-y-4 text-gray-700">
             <div>
               <h3 className="font-semibold text-lg mb-2">Production Time</h3>
-              <p>
-                Each rug is made to order and hand-painted in our studio. Production time varies based on complexity:
-              </p>
+              <p>Every rug is handcrafted in our studio after you order. Here's what to expect:</p>
               <ul className="list-disc ml-6 mt-2 space-y-1">
-                <li>Standard custom rugs: 2-4 weeks</li>
-                <li>Complex designs or premium effects: 4-6 weeks</li>
-                <li>Original Ruglys (in stock): 3-5 business days</li>
+                <li><strong>Crugly:</strong> 10–14 business days</li>
+                <li><strong>Rugly:</strong> 14–21 business days</li>
+                <li><strong>Rugly LX:</strong> 3–6 weeks (artist-level detail)</li>
+                <li><strong>Original Ruglys (in stock):</strong> Ships within 3–5 business days</li>
               </ul>
             </div>
 
-            <div>
-              <h3 className="font-semibold text-lg mb-2">Crugly Shipping</h3>
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+              <h3 className="font-semibold text-lg mb-2 text-green-800">🚚 Crugly — FREE Shipping</h3>
               <p>
-                <strong>Shipping for Crugly is FREE!</strong> Crugly shipments come folded and sealed in a box.
+                Every Crugly ships <strong>completely free</strong> within the continental United States.
+                Rugs are carefully folded and packaged in a sealed box to arrive safely at your door.
               </p>
             </div>
 
-            <div>
-              <h3 className="font-semibold text-lg mb-2">Rugly Flat Rate Shipping</h3>
-              <p>
-                Shipping costs for Rugly originals are based on rug size:
-              </p>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h3 className="font-semibold text-lg mb-2 text-blue-800">📦 Rugly — Flat Rate Shipping</h3>
+              <p>Rugly shipping is a flat rate based on rug size:</p>
               <ul className="list-disc ml-6 mt-2 space-y-1">
-                <li>Small, Medium, and Round (4ft): $29</li>
-                <li>Large: $59</li>
-                <li>Huge: $99</li>
+                <li>Small (2×3, 3×5): <strong>$15</strong></li>
+                <li>Medium (4×6, 5×7): <strong>$29</strong></li>
+                <li>Large (6×9, 8×10): <strong>$59</strong></li>
+                <li>Huge (9×12 and up): <strong>$99</strong></li>
               </ul>
-              <p className="mt-2">
-                We ship via ground shipping within the continental United States. 
-                International shipping is available upon request with additional fees.
+              <p className="mt-2 text-sm">Ships via ground carrier within the continental US. International shipping available on request.</p>
+            </div>
+
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <h3 className="font-semibold text-lg mb-2 text-amber-800">✨ Rugly LX — Specified Shipping</h3>
+              <p>
+                Due to the size and artisan nature of Rugly LX pieces, shipping costs are quoted individually at the
+                time of completion. We work with white-glove and freight carriers to make sure your piece arrives
+                safely and in perfect condition. You'll be notified of the exact shipping cost before we ship.
               </p>
             </div>
 
             <div>
               <h3 className="font-semibold text-lg mb-2">Order Tracking</h3>
               <p>
-                You will receive email updates throughout the production process and a tracking number when your rug ships.
+                You'll receive email and/or text updates throughout production. Once your rug ships, we'll send you
+                a tracking number so you can follow it every step of the way.
               </p>
             </div>
           </CardContent>

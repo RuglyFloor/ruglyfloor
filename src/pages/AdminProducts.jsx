@@ -27,6 +27,20 @@ function AdminProductsContent() {
   const [uploading, setUploading] = useState(false);
   const [generatingAI, setGeneratingAI] = useState(false);
   const [aiSuggestion, setAiSuggestion] = useState('');
+  // Shipping options per tier
+  const SHIPPING_OPTIONS = {
+    crugly: { label: 'Crugly — FREE Shipping', value: 'FREE shipping included' },
+    rugly: { label: 'Rugly — Flat Rate Shipping', value: 'Flat rate shipping (size-based)' },
+    rugly_lx: { label: 'Rugly LX — Specified Shipping', value: 'Shipping quoted at completion' }
+  };
+
+  // Return policy options per tier
+  const RETURN_OPTIONS = {
+    crugly: { label: '14-Day Shipping Damage Return (Crugly)', value: '14-day shipping damage return' },
+    rugly: { label: '30-Day Satisfaction Return (Rugly)', value: '30-day satisfaction return' },
+    rugly_lx: { label: 'Satisfaction Guarantee (Rugly LX)', value: 'Satisfaction guarantee' }
+  };
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -38,6 +52,7 @@ function AdminProductsContent() {
     backing: '',
     warranty: '',
     shipping_info: '',
+    return_policy: '',
     care_instructions: ''
   });
 
@@ -83,6 +98,7 @@ function AdminProductsContent() {
       backing: '',
       warranty: '',
       shipping_info: '',
+      return_policy: '',
       care_instructions: ''
     });
   };
@@ -97,68 +113,89 @@ function AdminProductsContent() {
     setGeneratingAI(true);
     try {
       const mainImage = selectedImages[0].url;
+      const rugSize = formData.size || '5x7';
 
-      // Generate product info using AI
+      // Parse size string to get dimensions for room scale and measurement image
+      // Handles formats like "5x7", "4x6", "8x10", "3x5", "5ft round", etc.
+      const sizeMatch = rugSize.match(/(\d+\.?\d*)\s*[xX×]\s*(\d+\.?\d*)/);
+      const widthFt = sizeMatch ? parseFloat(sizeMatch[1]) : 5;
+      const lengthFt = sizeMatch ? parseFloat(sizeMatch[2]) : 7;
+      const widthIn = Math.round(widthFt * 12);
+      const lengthIn = Math.round(lengthFt * 12);
+
+      // Determine appropriate room type based on rug size
+      let roomContext = '';
+      if (widthFt <= 3 || lengthFt <= 3) {
+        roomContext = `small entryway or home office. The rug (${rugSize} ft) sits near a doorway or under a desk. The room has warm lighting, clean walls, and natural wood accents.`;
+      } else if (widthFt <= 5 || lengthFt <= 5) {
+        roomContext = `cozy bedroom or reading nook. The rug (${rugSize} ft) is placed at the foot of a bed or in front of a small sofa. Warm ambient lighting, soft textiles, and a lived-in feel.`;
+      } else if (widthFt <= 8 || lengthFt <= 8) {
+        roomContext = `stylish living room with a sectional sofa and coffee table centered on the rug (${rugSize} ft). Modern furniture, neutral tones, large windows with natural light, indoor plants.`;
+      } else {
+        roomContext = `large open-plan living and dining area. The rug (${rugSize} ft) anchors a full dining table and chairs or a large seating arrangement. High ceilings, exposed beams, warm lighting, natural materials.`;
+      }
+
+      // Generate product name/description only — NO pricing
       const productInfo = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analyze this rug image and provide comprehensive product information. Extract or infer:
-        1. A catchy product name (concise, descriptive)
-        2. A compelling sales description (2-3 sentences highlighting unique features, style, and appeal)
-        3. Suggested price in USD (based on size, complexity, and market value for custom hand-painted rugs)
-        4. Dominant colors and design style
-        
-        ${aiSuggestion ? `Additional context from user: ${aiSuggestion}` : ''}
-        
-        Be professional and sales-oriented. Make it sound premium and artistic.`,
+        prompt: `You are a copywriter for a premium hand-painted rug brand called Rugly. 
+Analyze this rug image and provide:
+1. A short, catchy product name (3-5 words, no generic filler like "Beautiful" or "Stunning")
+2. A compelling 2-3 sentence sales description that highlights the design, colors, and mood it creates in a space. Sound warm and human, not corporate.
+3. The dominant colors visible
+4. The design style (e.g., abstract, geometric, floral, portrait, landscape, sports, etc.)
+
+${aiSuggestion ? `Additional context: ${aiSuggestion}` : ''}
+
+DO NOT suggest a price.`,
         file_urls: [mainImage],
         response_json_schema: {
           type: "object",
           properties: {
             name: { type: "string" },
             description: { type: "string" },
-            suggested_price: { type: "number" },
             colors: { type: "string" },
             style: { type: "string" }
           }
         }
       });
 
-      // Determine room type based on rug size
-      const size = formData.size.toLowerCase();
-      let roomType = 'living room';
-      let roomDescription = 'modern, contemporary living room with natural lighting. The room should have minimalist furniture, neutral walls, hardwood floors';
-      
-      // Check if it's a small rug (under 5 feet in any dimension)
-      if (size.includes('3x') || size.includes('4x') || size.includes('2x') || size.includes('x3') || size.includes('x4') || size.includes('x2')) {
-        const smallSpaces = ['home office', 'hallway', 'entryway', 'closet'];
-        roomType = smallSpaces[Math.floor(Math.random() * smallSpaces.length)];
-        
-        if (roomType === 'home office') {
-          roomDescription = 'bright home office with a desk, chair, and shelving. Modern workspace with natural light and minimalist decor';
-        } else if (roomType === 'hallway') {
-          roomDescription = 'elegant hallway with clean walls and good lighting. Simple, inviting entryway corridor';
-        } else if (roomType === 'entryway') {
-          roomDescription = 'welcoming entryway with a console table and mirror. Bright foyer with natural light';
-        } else {
-          roomDescription = 'organized closet space or dressing area. Clean, well-lit room with simple furnishings';
-        }
-      }
-
-      // Generate marketing images with custom suggestions
+      // Generate both images in parallel
       const [roomImage, measurementImage] = await Promise.all([
+        // ROOM IMAGE: exact rug design placed realistically in a real-looking room at correct scale
         base44.integrations.Core.GenerateImage({
-          prompt: `Create a photorealistic interior design mockup showing this rug placed in a ${roomDescription}. The rug should be the focal point. Make it look like a professional interior design photo. ${aiSuggestion ? `Additional styling: ${aiSuggestion}` : ''}`,
+          prompt: `PHOTOREALISTIC interior design photograph. Place EXACTLY this rug — preserving every detail of its design, colors, and pattern with 100% accuracy — on the floor of a ${roomContext}
+
+CRITICAL RULES:
+- The rug design must be an EXACT COPY of the uploaded image. Do not simplify, alter colors, or change any design element.
+- The rug is ${rugSize} feet (${widthFt}' wide × ${lengthFt}' long). Scale it accurately relative to furniture and the room.
+- The room must look like a REAL photograph taken by a professional interior photographer — not a render, not a painting, not an illustration.
+- Natural lighting with realistic shadows and reflections on the rug surface.
+- Furniture and decor should feel real and lived-in, not staged or fake.
+- No text, no watermarks, no borders.
+${aiSuggestion ? `- Additional styling: ${aiSuggestion}` : ''}`,
           existing_image_urls: [mainImage]
         }),
+
+        // MEASUREMENT IMAGE: clean white-background product sheet with dimension lines
         base44.integrations.Core.GenerateImage({
-          prompt: `Create a clean product image of this rug on a white background with clear measurement annotations. Show the exact dimensions (${formData.size}) marked with professional arrows and labels on all sides. Make it look like a technical product specification sheet with measurements clearly visible for width and length.`,
+          prompt: `Professional product specification photograph of this rug on a PURE WHITE background.
+
+REQUIREMENTS:
+- Reproduce the rug design with PIXEL-PERFECT accuracy — every color, every line, every detail must match the source image exactly.
+- The rug is displayed flat, centered, slightly angled (15° perspective) to show depth.
+- Add clean, professional measurement annotation lines around the rug:
+  • A horizontal double-arrow line below the rug labeled "${widthFt}' (${widthIn}")" for width
+  • A vertical double-arrow line to the right labeled "${lengthFt}' (${lengthIn}")" for length
+- Annotation lines should be thin black lines with small serif tick marks at each end. Text in a clean sans-serif font, dark gray.
+- Soft drop shadow under the rug on the white background.
+- No other text, no watermarks, no background color — pure white only.`,
           existing_image_urls: [mainImage]
         })
       ]);
 
-      // Add AI-generated images to all_images
       const newImages = [
         {
-          id: `ai-${Date.now()}-1`,
+          id: `ai-room-${Date.now()}`,
           url: roomImage.url,
           original_url: roomImage.url,
           selected: true,
@@ -166,7 +203,7 @@ function AdminProductsContent() {
           source: 'ai'
         },
         {
-          id: `ai-${Date.now()}-2`,
+          id: `ai-measure-${Date.now()}`,
           url: measurementImage.url,
           original_url: measurementImage.url,
           selected: true,
@@ -178,13 +215,12 @@ function AdminProductsContent() {
       setFormData(prev => ({
         ...prev,
         name: productInfo.name,
-        description: `${productInfo.description}\n\nStyle: ${productInfo.style}\nColors: ${productInfo.colors}`,
-        price: productInfo.suggested_price.toString(),
+        description: `${productInfo.description}\n\nStyle: ${productInfo.style} · Colors: ${productInfo.colors}`,
         all_images: [...prev.all_images, ...newImages]
       }));
 
       setAiSuggestion('');
-      alert('✨ AI generation complete! Review and adjust as needed.');
+      alert('✨ AI images generated! Set your price below and review before saving.');
     } catch (error) {
       console.error('AI generation error:', error);
       alert('Failed to generate AI content. Please try again.');
@@ -202,8 +238,8 @@ function AdminProductsContent() {
       return;
     }
 
-    if (!formData.backing || !formData.warranty || !formData.shipping_info || !formData.care_instructions) {
-      alert('Please fill in all required fields: Backing, Warranty, Shipping Info, and Care Instructions');
+    if (!formData.backing || !formData.warranty || !formData.shipping_info || !formData.return_policy || !formData.care_instructions) {
+      alert('Please fill in all required fields: Backing, Warranty, Shipping, Return Policy, and Care Instructions');
       return;
     }
     
@@ -215,7 +251,8 @@ function AdminProductsContent() {
       ...formData,
       price: parseFloat(formData.price),
       image_url: mainImage.url,
-      images: additionalImages
+      images: additionalImages,
+      return_policy: formData.return_policy
     };
 
     if (editingProduct) {
@@ -267,6 +304,7 @@ function AdminProductsContent() {
       backing: product.backing || '',
       warranty: product.warranty || '',
       shipping_info: product.shipping_info || '',
+      return_policy: product.return_policy || '',
       care_instructions: product.care_instructions || ''
     });
   };
@@ -390,25 +428,58 @@ function AdminProductsContent() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Shipping Info *</Label>
-                    <Input
-                      value={formData.shipping_info}
-                      onChange={(e) => setFormData(prev => ({ ...prev, shipping_info: e.target.value }))}
-                      placeholder="e.g., $59 flat rate (3-5 days)"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label>Care Instructions *</Label>
-                    <Input
-                      value={formData.care_instructions}
-                      onChange={(e) => setFormData(prev => ({ ...prev, care_instructions: e.target.value }))}
-                      placeholder="e.g., Machine washable, air dry"
-                      required
-                    />
-                  </div>
+                {/* Shipping dropdown */}
+                <div>
+                  <Label>Shipping Policy *</Label>
+                  <Select
+                    value={Object.keys(SHIPPING_OPTIONS).find(k => SHIPPING_OPTIONS[k].value === formData.shipping_info) || ''}
+                    onValueChange={(key) => setFormData(prev => ({ ...prev, shipping_info: SHIPPING_OPTIONS[key].value }))}
+                    required
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select shipping type..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(SHIPPING_OPTIONS).map(([key, opt]) => (
+                        <SelectItem key={key} value={key}>{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {formData.shipping_info && (
+                    <p className="text-xs text-gray-500 mt-1">→ {formData.shipping_info}</p>
+                  )}
+                </div>
+
+                {/* Return Policy dropdown */}
+                <div>
+                  <Label>Return Policy *</Label>
+                  <Select
+                    value={Object.keys(RETURN_OPTIONS).find(k => RETURN_OPTIONS[k].value === formData.return_policy) || ''}
+                    onValueChange={(key) => setFormData(prev => ({ ...prev, return_policy: RETURN_OPTIONS[key].value }))}
+                    required
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select return policy..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(RETURN_OPTIONS).map(([key, opt]) => (
+                        <SelectItem key={key} value={key}>{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {formData.return_policy && (
+                    <p className="text-xs text-gray-500 mt-1">→ {formData.return_policy}</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label>Care Instructions *</Label>
+                  <Input
+                    value={formData.care_instructions}
+                    onChange={(e) => setFormData(prev => ({ ...prev, care_instructions: e.target.value }))}
+                    placeholder="e.g., Machine washable, air dry"
+                    required
+                  />
                 </div>
 
                 <div>
