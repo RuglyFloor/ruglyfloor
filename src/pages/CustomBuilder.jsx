@@ -458,6 +458,26 @@ export default function CustomBuilder() {
             onPreviewGenerated={setPreviewUrl}
             designInstructions={designInstructions}
           />
+
+          {/* Inline Add to Cart CTA */}
+          {isComplete && (
+            <div className="mt-6 rounded-2xl p-6 text-center" style={{ backgroundColor: `${tierColor}12`, border: `2px solid ${tierColor}` }}>
+              <div className="text-lg font-black mb-1" style={{ color: tierColor, fontFamily: 'Barlow Condensed, sans-serif' }}>
+                ✓ Your rug is ready to order!
+              </div>
+              <div className="text-sm text-gray-500 mb-4">
+                {tier.label} · {size.label} · ${price} · {tier.shipping}
+              </div>
+              <button
+                onClick={handleAddToCart}
+                className="flex items-center gap-3 mx-auto font-black text-white px-10 py-4 rounded-2xl text-xl transition-all hover:opacity-90"
+                style={{ backgroundColor: tierColor, fontFamily: 'Barlow Condensed, sans-serif' }}
+              >
+                <ShoppingCart className="w-6 h-6" />
+                Add to Cart — ${price}
+              </button>
+            </div>
+          )}
         </section>
 
       </div>
