@@ -8,6 +8,9 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import DesignProposal from './pages/DesignProposal';
+import Visualizer from './pages/Visualizer';
+import VisualizerShare from './pages/VisualizerShare';
+import AdminVisualizer from './pages/AdminVisualizer';
 import React, { Suspense } from 'react';
 
 const { Pages, Layout, mainPage } = pagesConfig;
@@ -60,6 +63,9 @@ const AuthenticatedApp = () => {
           />
         ))}
         <Route path="/DesignProposal" element={<LayoutWrapper currentPageName="DesignProposal"><DesignProposal /></LayoutWrapper>} />
+        <Route path="/Visualizer" element={<Visualizer />} />
+        <Route path="/VisualizerShare" element={<VisualizerShare />} />
+        <Route path="/AdminVisualizer" element={<AdminVisualizer />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Suspense>

@@ -1,0 +1,68 @@
+{
+  "name": "VisualizerSubmission",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "room_description": {
+      "type": "string",
+      "description": "Text description of the room/rug idea"
+    },
+    "room_photo_url": {
+      "type": "string",
+      "description": "Uploaded room photo URL"
+    },
+    "size": {
+      "type": "string",
+      "description": "Selected rug size e.g. 5x7, 8x10, custom"
+    },
+    "style_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Style tags e.g. abstract, geometric, nature"
+    },
+    "price_estimate": {
+      "type": "number"
+    },
+    "preview_url": {
+      "type": "string",
+      "description": "AI-generated preview image URL"
+    },
+    "prompt_used": {
+      "type": "string",
+      "description": "Full AI prompt used to generate preview"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "new",
+        "contacted",
+        "quoted",
+        "closed"
+      ],
+      "default": "new"
+    },
+    "admin_notes": {
+      "type": "string"
+    },
+    "share_token": {
+      "type": "string",
+      "description": "Unique token for public shareable link"
+    }
+  },
+  "required": [
+    "email"
+  ]
+}

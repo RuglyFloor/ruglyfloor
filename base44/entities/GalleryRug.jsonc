@@ -1,0 +1,37 @@
+{
+  "name": "GalleryRug",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "image_url": {
+      "type": "string"
+    },
+    "style_tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "e.g. abstract, nature, geometric, portrait, typography"
+    },
+    "size": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "title",
+    "image_url"
+  ]
+}
