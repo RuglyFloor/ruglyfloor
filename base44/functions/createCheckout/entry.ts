@@ -188,7 +188,10 @@ Deno.serve(async (req) => {
     }
 
     // Create Stripe checkout session
-    const origin = req.headers.get('origin') || 'https://ruglyfloors.com';
+    const originHeader = req.headers.get('origin') || req.headers.get('referer') || '';
+    const origin = originHeader.startsWith('http') 
+      ? new URL(originHeader).origin 
+      : 'https://ruglyfloor.com';
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: lineItems,

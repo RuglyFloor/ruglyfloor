@@ -162,10 +162,15 @@ export default function Cart() {
       localStorage.setItem('rugly_customer_info', JSON.stringify(customerInfo));
     }
 
-    // Check if running in iframe (preview mode)
-    if (window.self !== window.top) {
-      alert('⚠️ Checkout only works in the published app. Please publish your app and open it in a new tab to complete the purchase.');
-      return;
+    // Check if running in Base44 preview iframe (not on actual published site)
+    try {
+      const isPreview = window.self !== window.top && window.location.hostname.includes('base44');
+      if (isPreview) {
+        alert('⚠️ Checkout only works in the published app. Please visit ruglyfloor.com to complete your purchase.');
+        return;
+      }
+    } catch (e) {
+      // Cross-origin iframe — not our preview, let it proceed
     }
 
     setSubmitting(true);
