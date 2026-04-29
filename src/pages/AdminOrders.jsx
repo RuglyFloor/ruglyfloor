@@ -115,7 +115,7 @@ function AdminOrdersContent() {
                         <div>Customer: {order.customer_name || order.customer_email}</div>
                         <div>Email: {order.customer_email}</div>
                         <div>Items: {order.items?.length || 0}</div>
-                        <div>Total: ${(order.total_amount / 100).toFixed(2)}</div>
+                        <div>Total: ${Number(order.total_amount || 0).toFixed(2)}</div>
                         {order.payment_timestamp && (
                           <div className="text-green-600">
                             Paid: {new Date(order.payment_timestamp).toLocaleDateString()}
