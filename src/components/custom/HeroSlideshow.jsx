@@ -27,7 +27,7 @@ export default function HeroSlideshow() {
         setPrev(null);
         setFading(false);
       }, 500);
-    }, 3500);
+    }, 1000);
     return () => clearInterval(interval);
   }, [current]);
 
