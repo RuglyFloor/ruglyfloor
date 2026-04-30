@@ -10,7 +10,7 @@ const SLIDES = [
   'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/dc8b4fbf2_mad.png',
   'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/5a5f4e667_dog.png',
   'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/2cc78e2f5_panam.png',
-  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/cb105cc4d_image.png',
+  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/9e314cac0_generated_image.png',
   'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/f7780a1d5_Firefly_mergetherugdesignsontothenewimagesimilardesignsthatmatchthesurroundings985409.png',
   'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/0b83ca218_29fe852dc_generated_image.png',
 ];
