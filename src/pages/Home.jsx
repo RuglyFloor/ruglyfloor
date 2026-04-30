@@ -9,6 +9,7 @@ import SEOHead from '../components/seo/SEOHead';
 import { generateLocalBusinessSchema } from '../components/seo/SchemaGenerator';
 import { useSEO } from '../components/seo/useSEO';
 import ScrollDrivenRugs from '../components/custom/ScrollDrivenRugs';
+import HeroSlideshow from '../components/custom/HeroSlideshow';
 import FlipCard from '../components/custom/FlipCard';
 
 export default function Home() {
@@ -99,20 +100,11 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative px-6 overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0 z-0 overflow-hidden">
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: window.innerWidth < 768
-            ? `url(https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/6012b360c_panam.png)`
-            : `url(https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/d8aa60919_ChicagoRug.png)`,
-            }}
-          />
-          <div className="absolute inset-0 bg-black/50" />
-        </div>
+        {/* Background Slideshow */}
+        <HeroSlideshow />
+        <div className="absolute inset-0 bg-black/50 z-10" />
 
-        <div className="max-w-6xl mx-auto text-center relative z-10 py-32">
+        <div className="max-w-6xl mx-auto text-center relative z-20 py-32">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/7e922323a_RUGLYMASTERLOGO-61.png?width=448&quality=80"
             alt="RUGLY"
