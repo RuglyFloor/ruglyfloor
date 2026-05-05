@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
-import { base44 } from '@/api/base44Client';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import { Upload, X, ShoppingCart } from 'lucide-react';
+import { ShoppingCart } from 'lucide-react';
+import DesignUploader from '../components/builder/DesignUploader';
 import RugPreviewGenerator from '../components/custom/RugPreviewGenerator';
 import SEOHead from '../components/seo/SEOHead';
 
@@ -109,11 +109,8 @@ export default function CustomBuilder() {
   const [secondPaintColor, setSecondPaintColor] = useState(null);
   const [customSecondHex, setCustomSecondHex] = useState('#ffffff');
   const [imageUrl, setImageUrl] = useState(null);
-  const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [designInstructions, setDesignInstructions] = useState('');
-
-  const fileInputRef = useRef(null);
 
   const baseColorOptions = tier?.id === 'rugly' || tier?.id === 'rugly_lx' ? BASE_COLORS_RUGLY : BASE_COLORS_CRUGLY;
   const paintHex = paintColor?.name === 'Custom' ? customPaintHex : (paintColor?.hex || null);
@@ -122,20 +119,7 @@ export default function CustomBuilder() {
   const isComplete = !!tier && !!size && !!baseColor && !!paintColor && !!imageUrl;
   const tierColor = tier?.color || '#4075ff';
 
-  const handleUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    try {
-      const result = await base44.integrations.Core.UploadFile({ file });
-      setImageUrl(result.file_url);
-    } catch (err) {
-      console.error('Upload error:', err);
-      alert('Upload failed. Please try again.');
-    } finally {
-      setUploading(false);
-    }
-  };
+
 
   const handleAddToCart = () => {
     if (!isComplete) return;
@@ -398,40 +382,12 @@ export default function CustomBuilder() {
         {/* STEP 5: Upload Design */}
         <section>
           <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>5. Upload Your Design</h2>
-          <p className="text-sm text-gray-500 mb-4">PNG, JPG, or SVG. High contrast images work best.</p>
-          {!imageUrl ? (
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full border-4 border-dashed rounded-2xl p-12 text-center transition-all"
-              style={{ borderColor: tierColor, backgroundColor: `${tierColor}08` }}
-              disabled={uploading}
-            >
-              {uploading ? (
-                <div className="flex flex-col items-center gap-3">
-                  <div className="w-10 h-10 rounded-full border-4 border-gray-200 animate-spin" style={{ borderTopColor: tierColor }} />
-                  <span className="font-bold" style={{ color: tierColor }}>Uploading…</span>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center gap-3">
-                  <Upload className="w-12 h-12" style={{ color: tierColor }} />
-                  <span className="text-lg font-bold" style={{ color: tierColor }}>Click to Upload Design</span>
-                  <span className="text-sm text-gray-500">PNG · JPG · SVG · up to 20MB</span>
-                </div>
-              )}
-            </button>
-          ) : (
-            <div className="relative inline-block">
-              <img src={imageUrl} alt="Your design" className="max-h-48 rounded-xl border-4 object-contain"
-                style={{ borderColor: tierColor }} />
-              <button
-                onClick={() => { setImageUrl(null); setPreviewUrl(null); }}
-                className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center shadow-lg"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          )}
-          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
+          <p className="text-sm text-gray-500 mb-4">Upload a photo, logo, or artwork — use the filter tabs to trace it into a clean line drawing.</p>
+          <DesignUploader
+            tierColor={tierColor}
+            onImageReady={(url) => { setImageUrl(url); }}
+            onClear={() => { setImageUrl(null); setPreviewUrl(null); }}
+          />
         </section>
 
         {/* STEP 6: Design Notes */}
