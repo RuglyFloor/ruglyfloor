@@ -103,8 +103,6 @@ export default function DesignUploader({ onImageReady, onProcessedImageReady, on
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [processedCanvas, setProcessedCanvas] = useState(null);
-  const [confirmed, setConfirmed] = useState(false);
-  const [confirmingUpload, setConfirmingUpload] = useState(false);
 
   const fileInputRef = useRef(null);
   const containerRef = useRef(null);
@@ -143,14 +141,19 @@ export default function DesignUploader({ onImageReady, onProcessedImageReady, on
 
   useEffect(() => {
     if (localImage) {
-      setConfirmed(false); // reset confirmation when settings change
       processImage();
     }
   }, [localImage, mode, threshold, processImage]);
 
+  // Notify parent whenever processed canvas changes (pass dataUrl for later upload)
+  useEffect(() => {
+    if (processedCanvas && onProcessedImageReady) {
+      onProcessedImageReady(processedCanvas.toDataURL('image/png'), mode);
+    }
+  }, [processedCanvas, mode]);
+
   const handleFile = async (file) => {
     if (!file) return;
-    setConfirmed(false);
     // Show local preview immediately
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -173,27 +176,6 @@ export default function DesignUploader({ onImageReady, onProcessedImageReady, on
     }
   };
 
-  // Upload the processed/stenciled canvas and notify parent
-  const handleConfirm = async () => {
-    if (!processedCanvas) return;
-    setConfirmingUpload(true);
-    try {
-      const dataUrl = processedCanvas.toDataURL('image/png');
-      // Convert dataUrl to blob/file
-      const res = await fetch(dataUrl);
-      const blob = await res.blob();
-      const file = new File([blob], 'stencil.png', { type: 'image/png' });
-      const result = await base44.integrations.Core.UploadFile({ file });
-      if (onProcessedImageReady) onProcessedImageReady(result.file_url, dataUrl, mode, threshold);
-      setConfirmed(true);
-    } catch (err) {
-      console.error('Stencil upload error:', err);
-      alert('Failed to upload stencil. Please try again.');
-    } finally {
-      setConfirmingUpload(false);
-    }
-  };
-
   const handleDrop = (e) => {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
@@ -203,7 +185,6 @@ export default function DesignUploader({ onImageReady, onProcessedImageReady, on
   const handleClear = () => {
     setLocalImage(null);
     setProcessedCanvas(null);
-    setConfirmed(false);
     if (onClear) onClear();
   };
 
@@ -372,27 +353,8 @@ export default function DesignUploader({ onImageReady, onProcessedImageReady, on
         </div>
       </div>
 
-      {/* Confirm button */}
-      <div className="flex items-center gap-3">
-        {confirmed ? (
-          <div className="flex items-center gap-2 flex-1 px-4 py-2.5 rounded-xl font-bold text-sm"
-            style={{ backgroundColor: `${tierColor}15`, color: tierColor, border: `2px solid ${tierColor}` }}>
-            ✓ Stencil locked in — AI preview will use this result
-          </div>
-        ) : (
-          <button
-            onClick={handleConfirm}
-            disabled={!processedCanvas || confirmingUpload || uploading}
-            className="flex-1 py-3 rounded-xl font-black text-white text-base transition-all disabled:opacity-50"
-            style={{ backgroundColor: tierColor, fontFamily: 'Barlow Condensed, sans-serif' }}
-          >
-            {confirmingUpload ? 'Processing…' : '✓ Use This Stencil for AI Preview'}
-          </button>
-        )}
-      </div>
-
       <p className="text-xs text-gray-400 text-center">
-        Adjust filter &amp; threshold above, then confirm · AI will paint exactly this stencil onto the rug
+        Drag the divider to compare · Adjust filter &amp; threshold to fine-tune your stencil
       </p>
     </div>
   );

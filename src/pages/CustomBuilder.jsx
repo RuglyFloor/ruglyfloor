@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Sparkles, RefreshCw } from 'lucide-react';
 import DesignUploader from '../components/builder/DesignUploader';
 import RugPreviewGenerator from '../components/custom/RugPreviewGenerator';
 import SEOHead from '../components/seo/SEOHead';
@@ -109,10 +109,11 @@ export default function CustomBuilder() {
   const [secondPaintColor, setSecondPaintColor] = useState(null);
   const [customSecondHex, setCustomSecondHex] = useState('#ffffff');
   const [imageUrl, setImageUrl] = useState(null);
-  const [processedImageUrl, setProcessedImageUrl] = useState(null);
+  const [stencilDataUrl, setStencilDataUrl] = useState(null);
   const [stencilMode, setStencilMode] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [designInstructions, setDesignInstructions] = useState('');
+  const generatePreviewRef = useRef(null);
 
   const baseColorOptions = tier?.id === 'rugly' || tier?.id === 'rugly_lx' ? BASE_COLORS_RUGLY : BASE_COLORS_CRUGLY;
   const paintHex = paintColor?.name === 'Custom' ? customPaintHex : (paintColor?.hex || null);
@@ -120,6 +121,7 @@ export default function CustomBuilder() {
   const price = tier && size ? (tier.prices[size.id] || 0) : 0;
   const isComplete = !!tier && !!size && !!baseColor && !!paintColor && !!imageUrl;
   const tierColor = tier?.color || '#4075ff';
+  const canGenerate = !!stencilDataUrl && !!baseColor && !!paintColor;
 
 
 
@@ -138,7 +140,7 @@ export default function CustomBuilder() {
       hasSecondColor,
       secondPaintColor: hasSecondColor ? (secondPaintColor?.name || null) : null,
       secondPaintColorHex: hasSecondColor ? secondHex : null,
-      imageUrl,
+      imageUrl: imageUrl || null,
       originalUploadUrl: imageUrl,
       previewUrl: previewUrl || imageUrl,
       aiPreviewUrl: previewUrl || null,
@@ -154,7 +156,7 @@ export default function CustomBuilder() {
 
   const previewConfig = {
     imageUrl,
-    processedImageUrl,
+    stencilDataUrl,
     stencilMode,
     baseColor: baseColor?.name || null,
     paintColorHex: paintHex,
@@ -390,8 +392,8 @@ export default function CustomBuilder() {
           <DesignUploader
             tierColor={tierColor}
             onImageReady={(url) => { setImageUrl(url); }}
-            onProcessedImageReady={(url, _dataUrl, mode) => { setProcessedImageUrl(url); setStencilMode(mode); setPreviewUrl(null); }}
-            onClear={() => { setImageUrl(null); setProcessedImageUrl(null); setStencilMode(null); setPreviewUrl(null); }}
+            onProcessedImageReady={(dataUrl, mode) => { setStencilDataUrl(dataUrl); setStencilMode(mode); setPreviewUrl(null); }}
+            onClear={() => { setImageUrl(null); setStencilDataUrl(null); setStencilMode(null); setPreviewUrl(null); }}
           />
         </section>
 
@@ -408,6 +410,29 @@ export default function CustomBuilder() {
           />
         </section>
 
+        {/* GENERATE BUTTON */}
+        <section>
+          <button
+            onClick={() => generatePreviewRef.current?.()}
+            disabled={!canGenerate}
+            className="w-full flex items-center justify-center gap-3 font-black text-white py-5 rounded-2xl text-2xl transition-all"
+            style={{
+              backgroundColor: canGenerate ? tierColor : '#d1d5db',
+              cursor: canGenerate ? 'pointer' : 'not-allowed',
+              fontFamily: 'Barlow Condensed, sans-serif',
+              opacity: canGenerate ? 1 : 0.6,
+            }}
+          >
+            <Sparkles className="w-6 h-6" />
+            Generate Image
+          </button>
+          {!canGenerate && (
+            <p className="text-center text-sm text-gray-400 mt-2">
+              Complete steps 1–5 above to generate your AI preview
+            </p>
+          )}
+        </section>
+
         {/* AI PREVIEW */}
         <section>
           <h2 className="text-2xl font-black mb-3" style={{ color: '#343634' }}>Your AI Preview</h2>
@@ -418,6 +443,7 @@ export default function CustomBuilder() {
             BASE_COLORS={BASE_COLORS}
             onPreviewGenerated={setPreviewUrl}
             designInstructions={designInstructions}
+            generateRef={generatePreviewRef}
           />
 
           {/* Inline Add to Cart CTA */}

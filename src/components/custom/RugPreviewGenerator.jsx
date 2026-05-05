@@ -4,34 +4,29 @@ import { Sparkles, RefreshCw } from 'lucide-react';
 
 const RUG_ROOM_IMAGE = 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/4d402d91e_generated_image.png';
 
-export default function RugPreviewGenerator({ config, tier, sizeObj, BASE_COLORS, onPreviewGenerated, designInstructions }) {
+export default function RugPreviewGenerator({ config, tier, sizeObj, BASE_COLORS, onPreviewGenerated, designInstructions, generateRef }) {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Track what was used for the last generation
-  const lastGenRef = useRef(null);
-
   const baseColorHex = BASE_COLORS.find(c => c.name === config.baseColor)?.hex || '#ffffff';
   const paintColorHex = config.paintColorHex || '#000000';
   const secondPaintColorHex = config.hasSecondColor ? (config.secondPaintColorHex || null) : null;
-
-  const inputHash = `${config.processedImageUrl || config.imageUrl}|${config.baseColor}|${paintColorHex}|${secondPaintColorHex}|${designInstructions}|${config.stencilMode}`;
-  const hasChangedSinceLastGen = lastGenRef.current !== null && lastGenRef.current !== inputHash;
-  // Use processed stencil — require it to be confirmed before generating
-  const designImageUrl = config.processedImageUrl || config.imageUrl;
-  const hasStencil = !!config.processedImageUrl; // only generate once stencil is confirmed
-  const canGenerate = !!designImageUrl && !!config.baseColor && !!paintColorHex && hasStencil;
-  // Regenerate is active if there are changes since last gen, or if never generated yet
-  const regenerateActive = canGenerate && (lastGenRef.current === null || hasChangedSinceLastGen);
+  const tierColor = tier?.color || '#4075ff';
 
   const generatePreview = async () => {
-    if (!canGenerate) return;
+    if (!config.stencilDataUrl || !config.baseColor || !paintColorHex) return;
     setLoading(true);
     setError(null);
-    lastGenRef.current = inputHash;
 
     try {
+      // Upload the stencil dataUrl to get a public URL for the AI
+      const res = await fetch(config.stencilDataUrl);
+      const blob = await res.blob();
+      const stencilFile = new File([blob], 'stencil.png', { type: 'image/png' });
+      const uploadResult = await base44.integrations.Core.UploadFile({ file: stencilFile });
+      const stencilUrl = uploadResult.file_url;
+
       const colorDescription = secondPaintColorHex
         ? `primary paint color ${paintColorHex} and secondary paint color ${secondPaintColorHex}`
         : `paint color ${paintColorHex}`;
@@ -40,7 +35,6 @@ export default function RugPreviewGenerator({ config, tier, sizeObj, BASE_COLORS
         ? `\n\nADDITIONAL CUSTOMER INSTRUCTIONS (follow exactly): ${designInstructions.trim()}`
         : '';
 
-      // Size-to-room scale guidance
       const sizeScaleMap = {
         '2x3': 'small accent rug — about the size of a doormat, roughly 1/6 the visible floor area',
         '3x5': 'small area rug — covers roughly 1/4 of a typical room\'s visible floor area',
@@ -49,17 +43,13 @@ export default function RugPreviewGenerator({ config, tier, sizeObj, BASE_COLORS
         '6x9': 'extra-large area rug — covers roughly 2/3 of the visible floor area, extends under sofa legs',
       };
       const sizeGuide = sizeScaleMap[sizeObj?.id] || `${sizeObj?.measurement || ''} rug`;
-      const stencilNote = config.processedImageUrl
-        ? `The second reference image is the STENCIL/TRACE of the customer's design (${config.stencilMode || 'edge-detected'} filter). This is the EXACT pattern to paint — every line, shape, and silhouette in the stencil must appear on the rug with zero deviation. Treat it as a blueprint.`
-        : `The second reference image is the customer's original design. Trace its exact shapes and composition onto the rug.`;
 
       const prompt = `You are a photorealistic rug visualization artist. Your job: composite the customer's stencil design onto the rug in the room photo with pixel-perfect accuracy.
 
 STEP 1 — STENCIL FIDELITY (highest priority):
-${stencilNote}
+The second reference image is the STENCIL/TRACE of the customer's design (${config.stencilMode || 'edge-detected'} filter). This is the EXACT pattern to paint — every line, shape, and silhouette in the stencil must appear on the rug with zero deviation. Treat it as a blueprint.
 - Copy EVERY shape, line, and silhouette from the stencil EXACTLY as-is onto the rug surface.
 - Do NOT simplify, smooth, stylize, or re-interpret the design. Mirror it exactly.
-- If the stencil has thin lines — keep them thin. If it has solid blocks — keep them solid.
 - The painted design on the rug must be IDENTICAL in composition to the stencil image.
 
 STEP 2 — COLOR (critical, exact hex values):
@@ -87,12 +77,9 @@ STEP 6 — CLEAN OUTPUT:
 
 Final: a photorealistic room with a correctly-scaled ${sizeObj?.measurement || ''} ${tier?.label || ''} rug, showing the stencil design painted exactly in ${colorDescription} on a ${config.baseColor} (${baseColorHex}) base.${extraInstructions}`;
 
-      // Always send both room + stencil (processed preferred, fallback original)
-      const imageRefs = [RUG_ROOM_IMAGE, designImageUrl];
-
       const result = await base44.integrations.Core.GenerateImage({
         prompt,
-        existing_image_urls: imageRefs
+        existing_image_urls: [RUG_ROOM_IMAGE, stencilUrl],
       });
 
       setPreviewUrl(result.url);
@@ -100,66 +87,43 @@ Final: a photorealistic room with a correctly-scaled ${sizeObj?.measurement || '
     } catch (err) {
       console.error('Preview generation error:', err);
       setError('Preview generation failed. Please try again.');
-      // Reset so they can try again
-      lastGenRef.current = null;
     } finally {
       setLoading(false);
     }
   };
 
-  // Auto-generate when all required inputs first become available
+  // Expose generatePreview to parent via ref
   useEffect(() => {
-    if (canGenerate && lastGenRef.current === null && !loading) {
-      generatePreview();
+    if (generateRef) {
+      generateRef.current = generatePreview;
     }
-  }, [canGenerate]);
+  });
 
-  if (!canGenerate && !previewUrl) {
-    const hasImage = !!config.imageUrl;
-    const hasColors = !!config.baseColor && !!paintColorHex;
+  if (!previewUrl && !loading && !error) {
     return (
       <div className="rounded-2xl border-2 border-dashed border-gray-200 p-10 text-center text-gray-400">
         <Sparkles className="w-10 h-10 mx-auto mb-3 opacity-30" />
-        {hasImage && !config.processedImageUrl ? (
-          <div className="text-sm font-semibold text-amber-500">
-            ↑ Adjust your stencil settings above, then click "Use This Stencil" to generate your AI preview
-          </div>
-        ) : (
-          <div className="text-sm">Complete your color and design selections above to generate your preview</div>
-        )}
+        <div className="text-sm">Click "Generate Image" above to create your AI preview</div>
       </div>
     );
   }
 
-  const tierColor = tier?.color || '#4075ff';
-
   return (
     <div>
-      {/* Header row */}
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2 text-sm text-gray-500">
-          {hasChangedSinceLastGen && !loading && (
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: `${tierColor}20`, color: tierColor }}>
-              Selections changed
-            </span>
-          )}
+      {/* Regenerate button */}
+      {previewUrl && !loading && (
+        <div className="flex justify-end mb-3">
+          <button
+            onClick={generatePreview}
+            disabled={loading}
+            className="flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-xl border-2 transition-all"
+            style={{ borderColor: tierColor, color: tierColor, backgroundColor: `${tierColor}0d` }}
+          >
+            <RefreshCw className="w-4 h-4" />
+            Regenerate
+          </button>
         </div>
-        <button
-          onClick={generatePreview}
-          disabled={!regenerateActive || loading}
-          className="flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-xl border-2 transition-all"
-          style={{
-            borderColor: regenerateActive && !loading ? tierColor : '#e5e7eb',
-            color: regenerateActive && !loading ? tierColor : '#9ca3af',
-            backgroundColor: regenerateActive && !loading ? `${tierColor}0d` : '#f9fafb',
-            cursor: regenerateActive && !loading ? 'pointer' : 'not-allowed',
-            opacity: regenerateActive && !loading ? 1 : 0.5,
-          }}
-        >
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          {loading ? 'Generating…' : 'Regenerate Preview'}
-        </button>
-      </div>
+      )}
 
       {/* Preview box */}
       <div
@@ -175,7 +139,7 @@ Final: a photorealistic room with a correctly-scaled ${sizeObj?.measurement || '
                 style={{ color: tierColor }} />
             </div>
             <div className="font-bold text-gray-700 mb-1">Painting your rug…</div>
-            <div className="text-xs text-gray-400">AI is placing your design on the rug</div>
+            <div className="text-xs text-gray-400">Uploading stencil &amp; generating AI preview</div>
           </div>
         )}
 
@@ -193,13 +157,6 @@ Final: a photorealistic room with a correctly-scaled ${sizeObj?.measurement || '
             >
               Try Again
             </button>
-          </div>
-        )}
-
-        {!previewUrl && !loading && !error && (
-          <div className="flex flex-col items-center justify-center py-16">
-            <Sparkles className="w-10 h-10 mb-3 opacity-20" />
-            <div className="text-gray-400 text-sm">Generating preview…</div>
           </div>
         )}
       </div>
