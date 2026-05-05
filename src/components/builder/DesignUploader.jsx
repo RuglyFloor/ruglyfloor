@@ -95,14 +95,16 @@ function applyFilter(imageData, mode, threshold) {
   return new ImageData(out, width, height);
 }
 
-export default function DesignUploader({ onImageReady, onClear, tierColor = '#4075ff', uploading: parentUploading }) {
-  const [localImage, setLocalImage] = useState(null); // { url, dataUrl, naturalWidth, naturalHeight }
+export default function DesignUploader({ onImageReady, onProcessedImageReady, onClear, tierColor = '#4075ff' }) {
+  const [localImage, setLocalImage] = useState(null);
   const [mode, setMode] = useState('edges');
   const [threshold, setThreshold] = useState(0.5);
-  const [dividerX, setDividerX] = useState(0.5); // 0-1 fraction
+  const [dividerX, setDividerX] = useState(0.5);
   const [isDragging, setIsDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [processedCanvas, setProcessedCanvas] = useState(null);
+  const [confirmed, setConfirmed] = useState(false);
+  const [confirmingUpload, setConfirmingUpload] = useState(false);
 
   const fileInputRef = useRef(null);
   const containerRef = useRef(null);
@@ -141,12 +143,14 @@ export default function DesignUploader({ onImageReady, onClear, tierColor = '#40
 
   useEffect(() => {
     if (localImage) {
+      setConfirmed(false); // reset confirmation when settings change
       processImage();
     }
   }, [localImage, mode, threshold, processImage]);
 
   const handleFile = async (file) => {
     if (!file) return;
+    setConfirmed(false);
     // Show local preview immediately
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -155,7 +159,7 @@ export default function DesignUploader({ onImageReady, onClear, tierColor = '#40
     };
     reader.readAsDataURL(file);
 
-    // Upload in background
+    // Upload original in background
     setUploading(true);
     try {
       const result = await base44.integrations.Core.UploadFile({ file });
@@ -169,6 +173,27 @@ export default function DesignUploader({ onImageReady, onClear, tierColor = '#40
     }
   };
 
+  // Upload the processed/stenciled canvas and notify parent
+  const handleConfirm = async () => {
+    if (!processedCanvas) return;
+    setConfirmingUpload(true);
+    try {
+      const dataUrl = processedCanvas.toDataURL('image/png');
+      // Convert dataUrl to blob/file
+      const res = await fetch(dataUrl);
+      const blob = await res.blob();
+      const file = new File([blob], 'stencil.png', { type: 'image/png' });
+      const result = await base44.integrations.Core.UploadFile({ file });
+      if (onProcessedImageReady) onProcessedImageReady(result.file_url, dataUrl, mode, threshold);
+      setConfirmed(true);
+    } catch (err) {
+      console.error('Stencil upload error:', err);
+      alert('Failed to upload stencil. Please try again.');
+    } finally {
+      setConfirmingUpload(false);
+    }
+  };
+
   const handleDrop = (e) => {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
@@ -178,6 +203,7 @@ export default function DesignUploader({ onImageReady, onClear, tierColor = '#40
   const handleClear = () => {
     setLocalImage(null);
     setProcessedCanvas(null);
+    setConfirmed(false);
     if (onClear) onClear();
   };
 
@@ -346,8 +372,27 @@ export default function DesignUploader({ onImageReady, onClear, tierColor = '#40
         </div>
       </div>
 
+      {/* Confirm button */}
+      <div className="flex items-center gap-3">
+        {confirmed ? (
+          <div className="flex items-center gap-2 flex-1 px-4 py-2.5 rounded-xl font-bold text-sm"
+            style={{ backgroundColor: `${tierColor}15`, color: tierColor, border: `2px solid ${tierColor}` }}>
+            ✓ Stencil locked in — AI preview will use this result
+          </div>
+        ) : (
+          <button
+            onClick={handleConfirm}
+            disabled={!processedCanvas || confirmingUpload || uploading}
+            className="flex-1 py-3 rounded-xl font-black text-white text-base transition-all disabled:opacity-50"
+            style={{ backgroundColor: tierColor, fontFamily: 'Barlow Condensed, sans-serif' }}
+          >
+            {confirmingUpload ? 'Processing…' : '✓ Use This Stencil for AI Preview'}
+          </button>
+        )}
+      </div>
+
       <p className="text-xs text-gray-400 text-center">
-        Drag the divider to compare · The processed result will be used for your AI rug preview
+        Adjust filter &amp; threshold above, then confirm · AI will paint exactly this stencil onto the rug
       </p>
     </div>
   );

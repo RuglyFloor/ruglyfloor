@@ -109,6 +109,8 @@ export default function CustomBuilder() {
   const [secondPaintColor, setSecondPaintColor] = useState(null);
   const [customSecondHex, setCustomSecondHex] = useState('#ffffff');
   const [imageUrl, setImageUrl] = useState(null);
+  const [processedImageUrl, setProcessedImageUrl] = useState(null);
+  const [stencilMode, setStencilMode] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [designInstructions, setDesignInstructions] = useState('');
 
@@ -152,6 +154,8 @@ export default function CustomBuilder() {
 
   const previewConfig = {
     imageUrl,
+    processedImageUrl,
+    stencilMode,
     baseColor: baseColor?.name || null,
     paintColorHex: paintHex,
     hasSecondColor,
@@ -386,7 +390,8 @@ export default function CustomBuilder() {
           <DesignUploader
             tierColor={tierColor}
             onImageReady={(url) => { setImageUrl(url); }}
-            onClear={() => { setImageUrl(null); setPreviewUrl(null); }}
+            onProcessedImageReady={(url, _dataUrl, mode) => { setProcessedImageUrl(url); setStencilMode(mode); setPreviewUrl(null); }}
+            onClear={() => { setImageUrl(null); setProcessedImageUrl(null); setStencilMode(null); setPreviewUrl(null); }}
           />
         </section>
 

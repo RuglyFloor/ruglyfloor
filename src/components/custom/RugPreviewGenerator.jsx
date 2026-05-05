@@ -16,9 +16,12 @@ export default function RugPreviewGenerator({ config, tier, sizeObj, BASE_COLORS
   const paintColorHex = config.paintColorHex || '#000000';
   const secondPaintColorHex = config.hasSecondColor ? (config.secondPaintColorHex || null) : null;
 
-  const inputHash = `${config.imageUrl}|${config.baseColor}|${paintColorHex}|${secondPaintColorHex}|${designInstructions}`;
+  const inputHash = `${config.processedImageUrl || config.imageUrl}|${config.baseColor}|${paintColorHex}|${secondPaintColorHex}|${designInstructions}|${config.stencilMode}`;
   const hasChangedSinceLastGen = lastGenRef.current !== null && lastGenRef.current !== inputHash;
-  const canGenerate = !!config.imageUrl && !!config.baseColor && !!paintColorHex;
+  // Use processed stencil — require it to be confirmed before generating
+  const designImageUrl = config.processedImageUrl || config.imageUrl;
+  const hasStencil = !!config.processedImageUrl; // only generate once stencil is confirmed
+  const canGenerate = !!designImageUrl && !!config.baseColor && !!paintColorHex && hasStencil;
   // Regenerate is active if there are changes since last gen, or if never generated yet
   const regenerateActive = canGenerate && (lastGenRef.current === null || hasChangedSinceLastGen);
 
@@ -37,33 +40,59 @@ export default function RugPreviewGenerator({ config, tier, sizeObj, BASE_COLORS
         ? `\n\nADDITIONAL CUSTOMER INSTRUCTIONS (follow exactly): ${designInstructions.trim()}`
         : '';
 
-      const prompt = `You are a professional rug visualization artist. Reproduce the customer's uploaded design AS FAITHFULLY AS POSSIBLE onto the rug in the room photo. Follow every step precisely:
+      // Size-to-room scale guidance
+      const sizeScaleMap = {
+        '2x3': 'small accent rug — about the size of a doormat, roughly 1/6 the visible floor area',
+        '3x5': 'small area rug — covers roughly 1/4 of a typical room\'s visible floor area',
+        '4x6': 'medium area rug — covers roughly 1/3 of the visible floor area, fits under a coffee table',
+        '5x7': 'large area rug — covers roughly 1/2 the visible floor area, anchors a full seating area',
+        '6x9': 'extra-large area rug — covers roughly 2/3 of the visible floor area, extends under sofa legs',
+      };
+      const sizeGuide = sizeScaleMap[sizeObj?.id] || `${sizeObj?.measurement || ''} rug`;
+      const stencilNote = config.processedImageUrl
+        ? `The second reference image is the STENCIL/TRACE of the customer's design (${config.stencilMode || 'edge-detected'} filter). This is the EXACT pattern to paint — every line, shape, and silhouette in the stencil must appear on the rug with zero deviation. Treat it as a blueprint.`
+        : `The second reference image is the customer's original design. Trace its exact shapes and composition onto the rug.`;
 
-STEP 1 — DESIGN FIDELITY (most important):
-Analyze the customer's uploaded image carefully. Preserve the EXACT shapes, composition, proportions, and layout of their design. Do NOT simplify, stylize, or alter the artwork — reproduce it as accurately as possible as if it were painted by hand on the rug.
+      const prompt = `You are a photorealistic rug visualization artist. Your job: composite the customer's stencil design onto the rug in the room photo with pixel-perfect accuracy.
 
-STEP 2 — COLOR MATCHING (critical):
-- Rug base color: paint the entire rug background to EXACTLY match hex ${baseColorHex} (${config.baseColor}). This must be precise.
-- Design paint color: use EXACTLY hex ${paintColorHex} for the primary painted elements of the design.${secondPaintColorHex ? `\n- Secondary paint color: use EXACTLY hex ${secondPaintColorHex} for secondary design elements.` : ''}
-- Do NOT substitute, approximate, or blend these colors — match them exactly.
+STEP 1 — STENCIL FIDELITY (highest priority):
+${stencilNote}
+- Copy EVERY shape, line, and silhouette from the stencil EXACTLY as-is onto the rug surface.
+- Do NOT simplify, smooth, stylize, or re-interpret the design. Mirror it exactly.
+- If the stencil has thin lines — keep them thin. If it has solid blocks — keep them solid.
+- The painted design on the rug must be IDENTICAL in composition to the stencil image.
 
-STEP 3 — PLACEMENT:
-Center the design on the rug, respecting the rug's perspective and foreshortening as seen in the room photo (slight overhead angle). Scale the design to fill most of the rug area.
+STEP 2 — COLOR (critical, exact hex values):
+- Rug base / background: fill the entire rug field with EXACTLY hex ${baseColorHex} (${config.baseColor}). No variation.
+- Primary paint color: all stenciled design elements painted in EXACTLY hex ${paintColorHex}.${secondPaintColorHex ? `\n- Secondary paint color: secondary stencil elements painted in EXACTLY hex ${secondPaintColorHex}.` : ''}
+- No blending, no approximation — match hex values precisely.
+
+STEP 3 — RUG SIZE & ROOM SCALE (critical):
+The rug is a ${sizeObj?.measurement || ''} (${sizeGuide}).
+- The rug must occupy exactly this proportion of the floor in the room scene.
+- A 2x3 rug looks like a doormat. A 5x7 rug fills most of the seating area. Scale accordingly.
+- Show the correct aspect ratio: width-to-length ratio must match ${sizeObj?.measurement || ''}.
+- The rug lies flat on the floor with correct perspective foreshortening (slight overhead angle).
 
 STEP 4 — PAINTING STYLE:
-The design should look hand-painted with slight brush texture — not digitally printed. Paint strokes should follow the shapes of the design.
+- The design looks hand-painted with subtle brush texture — not digitally printed.
+- Paint strokes follow the outlines of the stencil shapes.
 
-STEP 5 — BACKGROUND:
-Keep the entire room background (sofa, guitar, bookshelf, concrete floor, walls) EXACTLY unchanged. Only the rug itself should change.
+STEP 5 — BACKGROUND (unchanged):
+- Keep every element outside the rug (sofa, guitar, bookshelf, floor, walls) EXACTLY as in the reference room photo.
+- Only the rug changes.
 
-STEP 6 — CLEAN OUTPUT (critical):
-The final image must contain NO text, labels, watermarks, template IDs, or annotations of any kind — not on the rug, not below it, not anywhere in the image. Remove any "Template-CRUGLY", product codes, dashed borders, or placeholder text that may appear in the reference image.
+STEP 6 — CLEAN OUTPUT:
+- Zero text, labels, watermarks, template codes, dashed borders, or annotations anywhere in the image.
 
-Final result: a photorealistic room scene with a ${sizeObj?.measurement || ''} ${tier?.label || ''} rug featuring the customer's design painted with ${colorDescription} on a ${config.baseColor} (${baseColorHex}) base.${extraInstructions}`;
+Final: a photorealistic room with a correctly-scaled ${sizeObj?.measurement || ''} ${tier?.label || ''} rug, showing the stencil design painted exactly in ${colorDescription} on a ${config.baseColor} (${baseColorHex}) base.${extraInstructions}`;
+
+      // Always send both room + stencil (processed preferred, fallback original)
+      const imageRefs = [RUG_ROOM_IMAGE, designImageUrl];
 
       const result = await base44.integrations.Core.GenerateImage({
         prompt,
-        existing_image_urls: [RUG_ROOM_IMAGE, config.imageUrl]
+        existing_image_urls: imageRefs
       });
 
       setPreviewUrl(result.url);
@@ -86,10 +115,18 @@ Final result: a photorealistic room scene with a ${sizeObj?.measurement || ''} $
   }, [canGenerate]);
 
   if (!canGenerate && !previewUrl) {
+    const hasImage = !!config.imageUrl;
+    const hasColors = !!config.baseColor && !!paintColorHex;
     return (
       <div className="rounded-2xl border-2 border-dashed border-gray-200 p-10 text-center text-gray-400">
         <Sparkles className="w-10 h-10 mx-auto mb-3 opacity-30" />
-        <div className="text-sm">Complete your color and design selections above to generate your preview</div>
+        {hasImage && !config.processedImageUrl ? (
+          <div className="text-sm font-semibold text-amber-500">
+            ↑ Adjust your stencil settings above, then click "Use This Stencil" to generate your AI preview
+          </div>
+        ) : (
+          <div className="text-sm">Complete your color and design selections above to generate your preview</div>
+        )}
       </div>
     );
   }
