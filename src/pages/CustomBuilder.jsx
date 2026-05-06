@@ -37,6 +37,24 @@ const BASE_COLORS_RUGLY = [
     imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/54d8e0971_6320B4A1-7472-4D39-8261-5B608044CC1B_1_105_c.jpeg',
     availableSizes: ['4x6', '5x7', '6x9', '9x12'],
   },
+  {
+    name: 'Wicker',
+    hex: '#8B6347',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/a1b0bab53_95EB2927-59F9-4EA7-B05B-80A96705265E_1_105_c.jpeg',
+    availableSizes: ['4x6', '5x7', '6x9', '9x12'],
+  },
+  {
+    name: 'Neptune',
+    hex: '#5A6A7A',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/972ff78b1_F0CF6525-432F-41C6-A246-8232ED33782D_1_105_c.jpeg',
+    availableSizes: ['4x6', '5x7', '6x9', '9x12'],
+  },
+  {
+    name: 'Tusk',
+    hex: '#EDE8DC',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/b1c86851b_6ECF3C28-65EE-454F-B7B0-5D63516B9798_1_105_c.jpeg',
+    availableSizes: ['4x6', '5x7', '6x9', '9x12'],
+  },
 ];
 
 const BASE_COLORS_RUGLY_LX = [
