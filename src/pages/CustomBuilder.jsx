@@ -7,32 +7,23 @@ import RugPreviewGenerator from '../components/custom/RugPreviewGenerator';
 import SEOHead from '../components/seo/SEOHead';
 
 const BASE_COLORS_CRUGLY = [
-  { name: 'Teal', hex: '#1B3A4A' },
-  { name: 'Black', hex: '#1A1A1A' },
   { name: 'White', hex: '#F5F5F5' },
+  { name: 'Black', hex: '#1A1A1A' },
+  { name: 'Navy', hex: '#1A2A4A' },
   { name: 'Ivory', hex: '#E8E4DC' },
-  { name: 'Red', hex: '#8B1A1A' },
-  { name: 'Dark Green', hex: '#1A3A2A' },
   { name: 'Gray', hex: '#A0A0A0' },
-  { name: 'Purple', hex: '#4A1A6A' },
 ];
 
 const BASE_COLORS_RUGLY = [
-  { name: 'Beige', hex: '#D4C5A9' },
+  { name: 'White', hex: '#F5F5F5' },
   { name: 'Black', hex: '#1A1A1A' },
-  { name: 'Burgundy', hex: '#5C1A2A' },
-  { name: 'Dark Green', hex: '#1A3A2A' },
+  { name: 'Navy', hex: '#1A2A4A' },
+  { name: 'Beige', hex: '#D4C5A9' },
   { name: 'Light Gray', hex: '#C8C8C8' },
   { name: 'Medium Gray', hex: '#8A8A8A' },
-  { name: 'Blue-Gray', hex: '#6A7A8A' },
-  { name: 'Brown', hex: '#7A5A3A' },
-  { name: 'Dark Brown', hex: '#4A3020' },
-  { name: 'Charcoal', hex: '#3A3A3A' },
   { name: 'Tan', hex: '#B8A080' },
   { name: 'Sage', hex: '#8A9A7A' },
-  { name: 'Navy', hex: '#1A2A4A' },
   { name: 'Lavender', hex: '#9A8AB0' },
-  { name: 'Light Purple', hex: '#C0A8D0' },
   { name: 'Dusty Rose', hex: '#C09090' },
 ];
 
