@@ -33,31 +33,31 @@ const BASE_COLORS_RUGLY = [
   {
     name: 'Snow Grey',
     hex: '#E8E8E4',
-    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/38d21016b_generated_image.png',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/bb7173294_generated_image.png',
     availableSizes: ['4x6', '5x7', '6x9', '9x12'],
   },
   {
     name: 'Stormy Dan',
     hex: '#7A7A7A',
-    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/d20cbc248_generated_image.png',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/4c8bb707d_generated_image.png',
     availableSizes: ['4x6', '5x7', '6x9', '9x12'],
   },
   {
     name: 'Wicker',
     hex: '#8B6347',
-    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/3ee0133ff_generated_image.png',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/25563b160_generated_image.png',
     availableSizes: ['4x6', '5x7', '6x9', '9x12'],
   },
   {
     name: 'Neptune',
     hex: '#5A6A7A',
-    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/0b3ac6d1c_generated_image.png',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/12f287ff4_generated_image.png',
     availableSizes: ['4x6', '5x7', '6x9', '9x12'],
   },
   {
     name: 'Tusk',
     hex: '#EDE8DC',
-    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/ebabf4659_generated_image.png',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/609befe57_generated_image.png',
     availableSizes: ['4x6', '5x7', '6x9', '9x12'],
   },
 ];
