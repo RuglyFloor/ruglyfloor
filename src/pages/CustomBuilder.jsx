@@ -139,7 +139,7 @@ const QUALITY_TIERS = [
     label: 'Rugly LX',
     tagline: 'Luxury · Commission',
     description: 'Top-of-line materials, artist-level detail, certificate of authenticity.',
-    color: '#f04624',
+    color: '#343634',
     prices: { '2x3': 249, '3x5': 399, '4x6': 549, '5x7': 699, '6x9': 899, '9x12': 1299 },
     shipping: 'Shipping quoted at completion',
     eta: '3–6 weeks',
