@@ -15,7 +15,7 @@ const BASE_COLORS_CRUGLY = [
   {
     name: 'Snowsand',
     hex: '#D8D4C8',
-    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/c1691aff5_6320B4A1-7472-4D39-8261-5B608044CC1B_1_105_c.jpeg',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/b0a28ee97_generated_image.png',
   },
 ];
 
@@ -33,31 +33,31 @@ const BASE_COLORS_RUGLY = [
   {
     name: 'Snow Grey',
     hex: '#E8E8E4',
-    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/4a057a30b_A7D8E657-0682-4F04-9B9F-F7408AF42E2D_1_105_c.jpeg',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/38d21016b_generated_image.png',
     availableSizes: ['4x6', '5x7', '6x9', '9x12'],
   },
   {
     name: 'Stormy Dan',
     hex: '#7A7A7A',
-    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/54d8e0971_6320B4A1-7472-4D39-8261-5B608044CC1B_1_105_c.jpeg',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/d20cbc248_generated_image.png',
     availableSizes: ['4x6', '5x7', '6x9', '9x12'],
   },
   {
     name: 'Wicker',
     hex: '#8B6347',
-    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/a1b0bab53_95EB2927-59F9-4EA7-B05B-80A96705265E_1_105_c.jpeg',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/3ee0133ff_generated_image.png',
     availableSizes: ['4x6', '5x7', '6x9', '9x12'],
   },
   {
     name: 'Neptune',
     hex: '#5A6A7A',
-    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/972ff78b1_F0CF6525-432F-41C6-A246-8232ED33782D_1_105_c.jpeg',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/0b3ac6d1c_generated_image.png',
     availableSizes: ['4x6', '5x7', '6x9', '9x12'],
   },
   {
     name: 'Tusk',
     hex: '#EDE8DC',
-    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/b1c86851b_6ECF3C28-65EE-454F-B7B0-5D63516B9798_1_105_c.jpeg',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/ebabf4659_generated_image.png',
     availableSizes: ['4x6', '5x7', '6x9', '9x12'],
   },
 ];
@@ -72,13 +72,13 @@ const BASE_COLORS_RUGLY_LX = [
   {
     name: 'Wicked',
     hex: '#B0B0AA',
-    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/8072ea8dc_E46E541C-1F88-4D68-ADA4-ABB0328C7559_1_105_c.jpeg',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/b29ecd00e_generated_image.png',
     availableSizes: ['4x6', '5x7', '9x12'],
   },
   {
     name: 'Storm',
     hex: '#7A7A7A',
-    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/d0f35f057_1CAF7D44-E863-4D52-9068-AA4256F9098A_1_105_c.jpeg',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/e1b8a0838_generated_image.png',
     availableSizes: ['4x6', '5x7', '9x12'],
   },
 ];
