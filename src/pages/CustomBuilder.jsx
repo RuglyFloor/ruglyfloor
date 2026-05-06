@@ -4,6 +4,8 @@ import { createPageUrl } from '../utils';
 import { ShoppingCart, Sparkles, RefreshCw } from 'lucide-react';
 import DesignUploader from '../components/builder/DesignUploader';
 import RugPreviewGenerator from '../components/custom/RugPreviewGenerator';
+import SquaresTileGrid from '../components/builder/SquaresTileGrid';
+import SquaresPreviewGenerator from '../components/builder/SquaresPreviewGenerator';
 import SEOHead from '../components/seo/SEOHead';
 
 const BASE_COLORS_CRUGLY = [
@@ -104,6 +106,16 @@ const PAINT_COLORS = [
 
 const QUALITY_TIERS = [
   {
+    id: 'squares',
+    label: 'Squares',
+    tagline: 'Custom tile installation',
+    description: 'Custom-painted carpet or smooth foam squares. Mix colors, create patterns, upload your design across any grid size.',
+    color: '#f04624',
+    pricePerTile: 12,
+    shipping: 'FREE shipping',
+    eta: '14–21 business days',
+  },
+  {
     id: 'crugly',
     label: 'Crugly',
     tagline: 'Best value · Most popular',
@@ -163,22 +175,45 @@ export default function CustomBuilder() {
   const [designInstructions, setDesignInstructions] = useState('');
   const generatePreviewRef = useRef(null);
 
+  // Squares-specific state
+  const [squaresGridData, setSquaresGridData] = useState(null);
+
+  const isSquares = tier?.id === 'squares';
   const baseColorOptions = tier?.id === 'rugly_lx' ? BASE_COLORS_RUGLY_LX : tier?.id === 'rugly' ? BASE_COLORS_RUGLY : BASE_COLORS_CRUGLY;
   const availableSizes = baseColor?.availableSizes
     ? SIZES.filter(s => baseColor.availableSizes.includes(s.id))
     : SIZES.filter(s => tier?.id !== 'crugly' || s.id !== '9x12');
   const paintHex = paintColor?.name === 'Custom' ? customPaintHex : (paintColor?.hex || null);
   const secondHex = secondPaintColor?.name === 'Custom' ? customSecondHex : (secondPaintColor?.hex || null);
-  const price = tier && size ? (tier.prices[size.id] || 0) : 0;
-  const isComplete = !!tier && !!size && !!baseColor && !!paintColor && !!imageUrl;
+  const squaresPrice = squaresGridData ? squaresGridData.totalTiles * (tier?.pricePerTile || 12) : 0;
+  const price = isSquares ? squaresPrice : (tier && size ? (tier.prices[size.id] || 0) : 0);
+  const isComplete = isSquares
+    ? !!squaresGridData && !!imageUrl && squaresGridData.totalTiles > 0
+    : !!tier && !!size && !!baseColor && !!paintColor && !!imageUrl;
   const tierColor = tier?.color || '#4075ff';
-  const canGenerate = !!stencilDataUrl && !!baseColor && !!paintColor;
+  const canGenerate = isSquares
+    ? !!stencilDataUrl && !!squaresGridData
+    : !!stencilDataUrl && !!baseColor && !!paintColor;
 
 
 
   const handleAddToCart = () => {
     if (!isComplete) return;
-    const cartItem = {
+    const cartItem = isSquares ? {
+      type: 'squares',
+      qualityTier: 'squares',
+      qualityLabel: 'Squares',
+      size: `${squaresGridData.cols}×${squaresGridData.rows} tiles (${squaresGridData.totalSqFt} sq ft)`,
+      sizeMeasurement: `${squaresGridData.cols * 2}'×${squaresGridData.rows * 2}'`,
+      surfaceType: squaresGridData.surfaceType,
+      tileCount: squaresGridData.totalTiles,
+      imageUrl: imageUrl || null,
+      previewUrl: previewUrl || imageUrl,
+      aiPreviewUrl: previewUrl || null,
+      designInstructions,
+      price,
+      name: `Custom Squares — ${squaresGridData.cols}×${squaresGridData.rows} tiles`,
+    } : {
       type: 'custom',
       qualityTier: tier.id,
       qualityLabel: tier.label,
@@ -262,30 +297,48 @@ export default function CustomBuilder() {
           </div>
         </section>
 
-        {/* STEP 2: Size */}
+        {/* STEP 2: Size / Grid */}
         <section>
-          <h2 className="text-2xl font-black mb-4" style={{ color: '#343634' }}>2. Choose Size</h2>
-          <div className="flex flex-wrap gap-3">
-            {availableSizes.map(s => (
-              <button
-                key={s.id}
-                onClick={() => setSize(s)}
-                className="px-5 py-3 rounded-xl font-bold transition-all"
-                style={{
-                  border: `3px solid ${size?.id === s.id ? tierColor : '#e5e7eb'}`,
-                  backgroundColor: size?.id === s.id ? `${tierColor}15` : '#ffffff',
-                  color: size?.id === s.id ? tierColor : '#343634',
-                }}
-              >
-                <div className="text-lg">{s.label}</div>
-                {tier && <div className="text-sm font-black">${tier.prices[s.id] || '—'}</div>}
-              </button>
-            ))}
-          </div>
+          {isSquares ? (
+            <>
+              <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>2. Design Your Tile Grid</h2>
+              <p className="text-sm text-gray-500 mb-4">Each tile is 24"×24". Click or drag to paint tiles. Price: ${tier.pricePerTile}/tile.</p>
+              <SquaresTileGrid
+                tierColor={tierColor}
+                onChange={(data) => setSquaresGridData(data)}
+              />
+              {squaresGridData && (
+                <div className="mt-3 text-sm font-bold" style={{ color: tierColor }}>
+                  {squaresGridData.totalTiles} tiles · {squaresGridData.totalSqFt} sq ft · ${squaresPrice}
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <h2 className="text-2xl font-black mb-4" style={{ color: '#343634' }}>2. Choose Size</h2>
+              <div className="flex flex-wrap gap-3">
+                {availableSizes.map(s => (
+                  <button
+                    key={s.id}
+                    onClick={() => setSize(s)}
+                    className="px-5 py-3 rounded-xl font-bold transition-all"
+                    style={{
+                      border: `3px solid ${size?.id === s.id ? tierColor : '#e5e7eb'}`,
+                      backgroundColor: size?.id === s.id ? `${tierColor}15` : '#ffffff',
+                      color: size?.id === s.id ? tierColor : '#343634',
+                    }}
+                  >
+                    <div className="text-lg">{s.label}</div>
+                    {tier && <div className="text-sm font-black">${tier.prices[s.id] || '—'}</div>}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
         </section>
 
-        {/* STEP 3: Base Color */}
-        <section>
+        {/* STEP 3: Base Color (hidden for Squares — colors are per-tile in the grid) */}
+        {!isSquares && <section>
           <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>3. Rug Base Color</h2>
           <p className="text-sm text-gray-500 mb-4">The background color of the rug itself</p>
           <div className="flex flex-wrap gap-3">
@@ -330,10 +383,39 @@ export default function CustomBuilder() {
               );
             })}
           </div>
-        </section>
+        </section>}
 
-        {/* STEP 4: Paint Color */}
-        <section>
+        {/* STEP 4: Paint Color (hidden for Squares — colors are per-tile in the grid) */}
+        {isSquares && <section>
+          <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>3. Paint Color</h2>
+          <p className="text-sm text-gray-500 mb-2">The color your design will be painted on top of the tiles</p>
+          <div className="flex flex-wrap gap-3 mb-4">
+            {PAINT_COLORS.map(c => (
+              <button
+                key={c.name}
+                onClick={() => setPaintColor(c)}
+                className="flex flex-col items-center gap-1 p-2 rounded-xl font-semibold transition-all"
+                style={{
+                  border: `3px solid ${paintColor?.name === c.name ? tierColor : '#e5e7eb'}`,
+                  backgroundColor: paintColor?.name === c.name ? `${tierColor}10` : '#ffffff',
+                  minWidth: '60px',
+                }}
+              >
+                <div className="w-8 h-8 rounded-full border border-gray-200 flex-shrink-0" style={{ backgroundColor: c.hex || '#ccc' }} />
+                <span className="text-xs text-center leading-tight">{c.name}</span>
+              </button>
+            ))}
+          </div>
+          {paintColor?.name === 'Custom' && (
+            <div className="flex items-center gap-3">
+              <label className="text-sm font-semibold">Custom color:</label>
+              <input type="color" value={customPaintHex} onChange={e => setCustomPaintHex(e.target.value)} className="w-10 h-10 rounded cursor-pointer border border-gray-300" />
+              <span className="text-sm font-mono text-gray-600">{customPaintHex}</span>
+            </div>
+          )}
+        </section>}
+
+        {!isSquares && <section>
           <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>4. Paint Color</h2>
           <p className="text-sm text-gray-500 mb-4">The color your design will be painted in</p>
           <div className="flex flex-wrap gap-3 mb-4">
@@ -436,12 +518,16 @@ export default function CustomBuilder() {
               )}
             </div>
           )}
-        </section>
+        </section>}
 
         {/* STEP 5: Upload Design */}
         <section>
-          <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>5. Upload Your Design</h2>
-          <p className="text-sm text-gray-500 mb-4">Upload a photo, logo, or artwork — use the filter tabs to trace it into a clean line drawing.</p>
+          <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>{isSquares ? '4' : '5'}. Upload Your Design</h2>
+          <p className="text-sm text-gray-500 mb-4">
+            {isSquares
+              ? 'Upload a photo, logo, or artwork — it will be traced and painted across your tile grid.'
+              : 'Upload a photo, logo, or artwork — use the filter tabs to trace it into a clean line drawing.'}
+          </p>
           <DesignUploader
             tierColor={tierColor}
             onImageReady={(url) => { setImageUrl(url); }}
@@ -452,7 +538,7 @@ export default function CustomBuilder() {
 
         {/* STEP 6: Design Notes */}
         <section>
-          <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>6. Additional Instructions (Optional)</h2>
+          <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>{isSquares ? '5' : '6'}. Additional Instructions (Optional)</h2>
           <p className="text-sm text-gray-500 mb-4">These go directly to the AI preview and to our artists — be as specific as you like.</p>
           <textarea
             value={designInstructions}
@@ -489,24 +575,37 @@ export default function CustomBuilder() {
         {/* AI PREVIEW */}
         <section>
           <h2 className="text-2xl font-black mb-3" style={{ color: '#343634' }}>Your AI Preview</h2>
-          <RugPreviewGenerator
-            config={previewConfig}
-            tier={tier}
-            sizeObj={size}
-            BASE_COLORS={BASE_COLORS}
-            onPreviewGenerated={setPreviewUrl}
-            designInstructions={designInstructions}
-            generateRef={generatePreviewRef}
-          />
+          {isSquares ? (
+            <SquaresPreviewGenerator
+              gridData={squaresGridData}
+              stencilDataUrl={stencilDataUrl}
+              designInstructions={designInstructions}
+              tierColor={tierColor}
+              generateRef={generatePreviewRef}
+              onPreviewGenerated={setPreviewUrl}
+            />
+          ) : (
+            <RugPreviewGenerator
+              config={previewConfig}
+              tier={tier}
+              sizeObj={size}
+              BASE_COLORS={BASE_COLORS}
+              onPreviewGenerated={setPreviewUrl}
+              designInstructions={designInstructions}
+              generateRef={generatePreviewRef}
+            />
+          )}
 
           {/* Inline Add to Cart CTA */}
           {isComplete && (
             <div className="mt-6 rounded-2xl p-6 text-center" style={{ backgroundColor: `${tierColor}12`, border: `2px solid ${tierColor}` }}>
               <div className="text-lg font-black mb-1" style={{ color: tierColor, fontFamily: 'Barlow Condensed, sans-serif' }}>
-                ✓ Your rug is ready to order!
+                ✓ {isSquares ? 'Your tile order is ready!' : 'Your rug is ready to order!'}
               </div>
               <div className="text-sm text-gray-500 mb-4">
-                {tier.label} · {size.label} · ${price} · {tier.shipping}
+                {isSquares
+                  ? `${squaresGridData.totalTiles} tiles · ${squaresGridData.totalSqFt} sq ft · $${price} · ${tier.shipping}`
+                  : `${tier.label} · ${size.label} · $${price} · ${tier.shipping}`}
               </div>
               <button
                 onClick={handleAddToCart}
@@ -528,10 +627,14 @@ export default function CustomBuilder() {
         style={{ borderColor: isComplete ? tierColor : '#e5e7eb' }}
       >
         <div className="flex-shrink-0">
-          {tier && size ? (
+          {tier && (isSquares ? squaresGridData : size) ? (
             <div>
               <div className="text-2xl font-black" style={{ color: tierColor }}>${price}</div>
-              <div className="text-xs text-gray-500">{tier.label} · {size.label}{tier.depositOnly ? ' · $100 deposit' : ''}</div>
+              <div className="text-xs text-gray-500">
+                {isSquares
+                  ? `${squaresGridData?.totalTiles || 0} tiles · ${squaresGridData?.totalSqFt || 0} sq ft`
+                  : `${tier.label} · ${size.label}${tier.depositOnly ? ' · $100 deposit' : ''}`}
+              </div>
             </div>
           ) : (
             <div className="text-sm text-gray-400">Select options above</div>
@@ -539,11 +642,20 @@ export default function CustomBuilder() {
         </div>
 
         <div className="flex flex-wrap gap-1 flex-1 justify-center">
-          {!tier && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Quality</span>}
-          {!size && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Size</span>}
-          {!baseColor && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Base Color</span>}
-          {!paintColor && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Paint Color</span>}
-          {!imageUrl && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Design</span>}
+          {!tier && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Category</span>}
+          {isSquares ? (
+            <>
+              {(!squaresGridData || squaresGridData.totalTiles === 0) && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Grid</span>}
+              {!imageUrl && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Design</span>}
+            </>
+          ) : (
+            <>
+              {!size && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Size</span>}
+              {!baseColor && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Base Color</span>}
+              {!paintColor && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Paint Color</span>}
+              {!imageUrl && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Design</span>}
+            </>
+          )}
           {isComplete && <span className="text-xs px-2 py-1 rounded-full font-bold" style={{ backgroundColor: `${tierColor}20`, color: tierColor }}>✓ Ready!</span>}
         </div>
 
