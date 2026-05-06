@@ -31,6 +31,12 @@ const BASE_COLORS_RUGLY = [
     imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/4a057a30b_A7D8E657-0682-4F04-9B9F-F7408AF42E2D_1_105_c.jpeg',
     availableSizes: ['4x6', '5x7', '6x9', '9x12'],
   },
+  {
+    name: 'Stormy Dan',
+    hex: '#7A7A7A',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/54d8e0971_6320B4A1-7472-4D39-8261-5B608044CC1B_1_105_c.jpeg',
+    availableSizes: ['4x6', '5x7', '6x9', '9x12'],
+  },
 ];
 
 const BASE_COLORS_RUGLY_LX = [
@@ -44,6 +50,12 @@ const BASE_COLORS_RUGLY_LX = [
     name: 'Wicked',
     hex: '#B0B0AA',
     imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/8072ea8dc_E46E541C-1F88-4D68-ADA4-ABB0328C7559_1_105_c.jpeg',
+    availableSizes: ['4x6', '5x7', '9x12'],
+  },
+  {
+    name: 'Storm',
+    hex: '#7A7A7A',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/d0f35f057_1CAF7D44-E863-4D52-9068-AA4256F9098A_1_105_c.jpeg',
     availableSizes: ['4x6', '5x7', '9x12'],
   },
 ];
