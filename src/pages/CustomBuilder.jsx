@@ -12,6 +12,11 @@ const BASE_COLORS_CRUGLY = [
   { name: 'Navy', hex: '#1A2A4A' },
   { name: 'Ivory', hex: '#E8E4DC' },
   { name: 'Gray', hex: '#A0A0A0' },
+  {
+    name: 'Snowsand',
+    hex: '#D8D4C8',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/c1691aff5_6320B4A1-7472-4D39-8261-5B608044CC1B_1_105_c.jpeg',
+  },
 ];
 
 const BASE_COLORS_RUGLY = [
