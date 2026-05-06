@@ -25,6 +25,27 @@ const BASE_COLORS_RUGLY = [
   { name: 'Sage', hex: '#8A9A7A' },
   { name: 'Lavender', hex: '#9A8AB0' },
   { name: 'Dusty Rose', hex: '#C09090' },
+  {
+    name: 'Snow Grey',
+    hex: '#E8E8E4',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/4a057a30b_A7D8E657-0682-4F04-9B9F-F7408AF42E2D_1_105_c.jpeg',
+    availableSizes: ['4x6', '5x7', '6x9', '9x12'],
+  },
+];
+
+const BASE_COLORS_RUGLY_LX = [
+  { name: 'White', hex: '#F5F5F5' },
+  { name: 'Black', hex: '#1A1A1A' },
+  { name: 'Navy', hex: '#1A2A4A' },
+  { name: 'Beige', hex: '#D4C5A9' },
+  { name: 'Light Gray', hex: '#C8C8C8' },
+  { name: 'Tan', hex: '#B8A080' },
+  {
+    name: 'Wicked',
+    hex: '#B0B0AA',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/8072ea8dc_E46E541C-1F88-4D68-ADA4-ABB0328C7559_1_105_c.jpeg',
+    availableSizes: ['4x6', '5x7', '9x12'],
+  },
 ];
 
 // Default (fallback)
@@ -63,7 +84,7 @@ const QUALITY_TIERS = [
     tagline: 'Premium quality',
     description: 'Thicker pile, richer colors, premium base rug. Living room worthy.',
     color: '#4075ff',
-    prices: { '2x3': 129, '3x5': 199, '4x6': 259, '5x7': 329, '6x9': 419 },
+    prices: { '2x3': 129, '3x5': 199, '4x6': 259, '5x7': 329, '6x9': 419, '9x12': 599 },
     shipping: '$15–$50 shipping',
     eta: '14–21 business days',
   },
@@ -73,7 +94,7 @@ const QUALITY_TIERS = [
     tagline: 'Luxury · Commission',
     description: 'Top-of-line materials, artist-level detail, certificate of authenticity.',
     color: '#f04624',
-    prices: { '2x3': 249, '3x5': 399, '4x6': 549, '5x7': 699, '6x9': 899 },
+    prices: { '2x3': 249, '3x5': 399, '4x6': 549, '5x7': 699, '6x9': 899, '9x12': 1299 },
     shipping: 'Shipping quoted at completion',
     eta: '3–6 weeks',
     depositOnly: true,
@@ -86,6 +107,7 @@ const SIZES = [
   { id: '4x6', label: "4' × 6'", measurement: "4' × 6'" },
   { id: '5x7', label: "5' × 7'", measurement: "5' × 7'" },
   { id: '6x9', label: "6' × 9'", measurement: "6' × 9'" },
+  { id: '9x12', label: "9' × 12'", measurement: "9' × 12'" },
 ];
 
 export default function CustomBuilder() {
@@ -106,7 +128,10 @@ export default function CustomBuilder() {
   const [designInstructions, setDesignInstructions] = useState('');
   const generatePreviewRef = useRef(null);
 
-  const baseColorOptions = tier?.id === 'rugly' || tier?.id === 'rugly_lx' ? BASE_COLORS_RUGLY : BASE_COLORS_CRUGLY;
+  const baseColorOptions = tier?.id === 'rugly_lx' ? BASE_COLORS_RUGLY_LX : tier?.id === 'rugly' ? BASE_COLORS_RUGLY : BASE_COLORS_CRUGLY;
+  const availableSizes = baseColor?.availableSizes
+    ? SIZES.filter(s => baseColor.availableSizes.includes(s.id))
+    : SIZES.filter(s => tier?.id !== 'crugly' || s.id !== '9x12');
   const paintHex = paintColor?.name === 'Custom' ? customPaintHex : (paintColor?.hex || null);
   const secondHex = secondPaintColor?.name === 'Custom' ? customSecondHex : (secondPaintColor?.hex || null);
   const price = tier && size ? (tier.prices[size.id] || 0) : 0;
@@ -206,7 +231,7 @@ export default function CustomBuilder() {
         <section>
           <h2 className="text-2xl font-black mb-4" style={{ color: '#343634' }}>2. Choose Size</h2>
           <div className="flex flex-wrap gap-3">
-            {SIZES.map(s => (
+            {availableSizes.map(s => (
               <button
                 key={s.id}
                 onClick={() => setSize(s)}
@@ -218,7 +243,7 @@ export default function CustomBuilder() {
                 }}
               >
                 <div className="text-lg">{s.label}</div>
-                {tier && <div className="text-sm font-black">${tier.prices[s.id]}</div>}
+                {tier && <div className="text-sm font-black">${tier.prices[s.id] || '—'}</div>}
               </button>
             ))}
           </div>
@@ -235,7 +260,7 @@ export default function CustomBuilder() {
               return (
                 <button
                   key={c.name}
-                  onClick={() => setBaseColor(c)}
+                  onClick={() => { setBaseColor(c); if (c.availableSizes && size && !c.availableSizes.includes(size.id)) setSize(null); }}
                   className="flex flex-col items-center gap-2 p-2 rounded-xl font-semibold transition-all"
                   style={{
                     border: `3px solid ${baseColor?.name === c.name ? tierColor : '#e5e7eb'}`,
@@ -244,24 +269,26 @@ export default function CustomBuilder() {
                   }}
                 >
                   <div className="w-16 h-16 rounded-md overflow-hidden flex-shrink-0 relative border border-gray-200" style={{ backgroundColor: c.hex }}>
-                    <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', inset: 0 }}>
-                      <defs>
-                        {isCrugly ? (
-                          /* Crugly: raised hobnail dot texture */
-                          <pattern id={patId} x="0" y="0" width="7" height="7" patternUnits="userSpaceOnUse">
-                            <circle cx="3.5" cy="3.5" r="2.2" fill="rgba(255,255,255,0.13)" />
-                            <circle cx="3.5" cy="3.5" r="1.4" fill="rgba(0,0,0,0.12)" />
-                          </pattern>
-                        ) : (
-                          /* Rugly: looped berber texture */
-                          <pattern id={patId} x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse">
-                            <ellipse cx="1.5" cy="2" rx="1.2" ry="0.7" fill="rgba(255,255,255,0.15)" />
-                            <ellipse cx="3.8" cy="3.5" rx="1.2" ry="0.7" fill="rgba(0,0,0,0.12)" />
-                          </pattern>
-                        )}
-                      </defs>
-                      <rect width="100%" height="100%" fill={`url(#${patId})`} />
-                    </svg>
+                    {c.imageUrl ? (
+                      <img src={c.imageUrl} alt={c.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style={{ position: 'absolute', inset: 0 }}>
+                        <defs>
+                          {isCrugly ? (
+                            <pattern id={patId} x="0" y="0" width="7" height="7" patternUnits="userSpaceOnUse">
+                              <circle cx="3.5" cy="3.5" r="2.2" fill="rgba(255,255,255,0.13)" />
+                              <circle cx="3.5" cy="3.5" r="1.4" fill="rgba(0,0,0,0.12)" />
+                            </pattern>
+                          ) : (
+                            <pattern id={patId} x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse">
+                              <ellipse cx="1.5" cy="2" rx="1.2" ry="0.7" fill="rgba(255,255,255,0.15)" />
+                              <ellipse cx="3.8" cy="3.5" rx="1.2" ry="0.7" fill="rgba(0,0,0,0.12)" />
+                            </pattern>
+                          )}
+                        </defs>
+                        <rect width="100%" height="100%" fill={`url(#${patId})`} />
+                      </svg>
+                    )}
                   </div>
                   <span className="text-xs text-center leading-tight">{c.name}</span>
                 </button>
