@@ -109,9 +109,8 @@ const QUALITY_TIERS = [
     id: 'squares',
     label: 'Squares',
     tagline: 'Custom tile installation',
-    description: 'Custom-painted carpet or smooth foam squares. Mix colors, create patterns, upload your design across any grid size.',
+    description: 'Custom-painted carpet or smooth squares. From a single runner to a full gym floor. $17.50–$25/tile + $2.50/paint color/tile.',
     color: '#f04624',
-    pricePerTile: 12,
     shipping: 'FREE shipping',
     eta: '14–21 business days',
   },
@@ -185,7 +184,7 @@ export default function CustomBuilder() {
     : SIZES.filter(s => tier?.id !== 'crugly' || s.id !== '9x12');
   const paintHex = paintColor?.name === 'Custom' ? customPaintHex : (paintColor?.hex || null);
   const secondHex = secondPaintColor?.name === 'Custom' ? customSecondHex : (secondPaintColor?.hex || null);
-  const squaresPrice = squaresGridData ? squaresGridData.totalTiles * (tier?.pricePerTile || 12) : 0;
+  const squaresPrice = squaresGridData?.price || 0;
   const price = isSquares ? squaresPrice : (tier && size ? (tier.prices[size.id] || 0) : 0);
   const isComplete = isSquares
     ? !!squaresGridData && !!imageUrl && squaresGridData.totalTiles > 0
@@ -207,6 +206,7 @@ export default function CustomBuilder() {
       sizeMeasurement: `${squaresGridData.cols * 2}'×${squaresGridData.rows * 2}'`,
       surfaceType: squaresGridData.surfaceType,
       tileCount: squaresGridData.totalTiles,
+      numPaintColors: squaresGridData.numPaintColors,
       imageUrl: imageUrl || null,
       previewUrl: previewUrl || imageUrl,
       aiPreviewUrl: previewUrl || null,
@@ -302,7 +302,7 @@ export default function CustomBuilder() {
           {isSquares ? (
             <>
               <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>2. Design Your Tile Grid</h2>
-              <p className="text-sm text-gray-500 mb-4">Each tile is 24"×24". Click or drag to paint tiles. Price: ${tier.pricePerTile}/tile.</p>
+              <p className="text-sm text-gray-500 mb-4">Each tile is 24″×24″. Paint any shape — runner to full gym. $17.50–$25/tile + $2.50/paint color/tile.</p>
               <SquaresTileGrid
                 tierColor={tierColor}
                 onChange={(data) => setSquaresGridData(data)}

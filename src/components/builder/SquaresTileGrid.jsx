@@ -1,7 +1,28 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 
-const TILE_PX = 32; // pixels per tile in grid display
-const MAX_TILES = 17; // max tiles per side (17x17 = ~400x400 ft at 24"/tile)
+const MAX_TILES_PER_SIDE = 200; // 200 tiles × 2ft = 400ft max per side
+const MIN_TILE_PX = 8;
+const MAX_TILE_PX = 40;
+
+// Tiered pricing: base per tile + $2.50 per paint color per tile
+export function calcSquaresPrice(totalTiles, numPaintColors) {
+  let baseRate;
+  if (totalTiles <= 4) baseRate = 25;
+  else if (totalTiles <= 10) baseRate = 20;
+  else baseRate = 17.50;
+  const baseCost = totalTiles * baseRate;
+  const paintCost = totalTiles * (numPaintColors * 2.50);
+  return Math.round(baseCost + paintCost);
+}
+
+// Count distinct paint colors used (non-white tiles)
+export function countPaintColors(grid) {
+  const colors = new Set();
+  grid.forEach(row => row.forEach(cell => {
+    if (cell && cell !== '#F5F5F5') colors.add(cell);
+  }));
+  return colors.size;
+}
 
 const DEFAULT_COLORS = [
   { name: 'White', hex: '#F5F5F5' },
@@ -34,18 +55,24 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
 
   const totalSqFt = cols * rows * 4; // each tile = 24"x24" = 4 sq ft
   const totalTiles = cols * rows;
+  const numPaintColors = countPaintColors(grid);
+  const price = calcSquaresPrice(totalTiles, numPaintColors);
+  // Dynamic tile size: shrink for large grids
+  const tilePx = Math.max(MIN_TILE_PX, Math.min(MAX_TILE_PX, Math.floor(320 / Math.max(cols, rows))));
 
   const resizeGrid = (newRows, newCols) => {
+    const clampedRows = Math.min(MAX_TILES_PER_SIDE, Math.max(1, newRows));
+    const clampedCols = Math.min(MAX_TILES_PER_SIDE, Math.max(1, newCols));
     setGrid(prev => {
-      const next = Array.from({ length: newRows }, (_, r) =>
-        Array.from({ length: newCols }, (_, c) =>
+      const next = Array.from({ length: clampedRows }, (_, r) =>
+        Array.from({ length: clampedCols }, (_, c) =>
           prev[r]?.[c] ?? '#F5F5F5'
         )
       );
       return next;
     });
-    setRows(newRows);
-    setCols(newCols);
+    setRows(clampedRows);
+    setCols(clampedCols);
   };
 
   const paintTile = useCallback((r, c) => {
@@ -70,7 +97,7 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
 
   // Notify parent on grid change
   useEffect(() => {
-    if (onChange) onChange({ grid, rows, cols, surfaceType, totalSqFt, totalTiles });
+    if (onChange) onChange({ grid, rows, cols, surfaceType, totalSqFt, totalTiles, numPaintColors, price });
   }, [grid, rows, cols, surfaceType]);
 
   const fillAll = () => {
@@ -107,31 +134,50 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
 
       {/* Grid Size Controls */}
       <div>
-        <p className="text-sm font-semibold mb-2 text-gray-600">
-          Grid Size — {cols} × {rows} tiles &nbsp;·&nbsp; {totalSqFt} sq ft &nbsp;·&nbsp; {totalTiles} tiles
+        <p className="text-sm font-semibold mb-1 text-gray-600">
+          Grid Size — {cols} × {rows} tiles &nbsp;·&nbsp; {cols * 2}′ × {rows * 2}′ &nbsp;·&nbsp; {totalSqFt} sq ft
         </p>
-        <div className="flex flex-wrap gap-4 items-center">
+        <p className="text-xs text-gray-400 mb-3">Each tile is 24″ × 24″. Set any shape — runner, room, gym floor.</p>
+        <div className="flex flex-wrap gap-4 items-center mb-3">
           <div className="flex items-center gap-2">
-            <label className="text-xs font-bold text-gray-500">WIDE</label>
-            <button onClick={() => cols > 1 && resizeGrid(rows, cols - 1)} className="w-7 h-7 rounded-lg bg-gray-100 font-bold text-lg leading-none">−</button>
-            <span className="w-8 text-center font-black">{cols}</span>
-            <button onClick={() => cols < MAX_TILES && resizeGrid(rows, cols + 1)} className="w-7 h-7 rounded-lg bg-gray-100 font-bold text-lg leading-none">+</button>
+            <label className="text-xs font-bold text-gray-500">WIDTH (tiles)</label>
+            <button onClick={() => resizeGrid(rows, cols - 1)} className="w-7 h-7 rounded-lg bg-gray-100 font-bold text-lg leading-none">−</button>
+            <input
+              type="number" min={1} max={MAX_TILES_PER_SIDE} value={cols}
+              onChange={e => resizeGrid(rows, parseInt(e.target.value) || 1)}
+              className="w-14 text-center font-black border border-gray-200 rounded-lg py-1 text-sm"
+            />
+            <button onClick={() => resizeGrid(rows, cols + 1)} className="w-7 h-7 rounded-lg bg-gray-100 font-bold text-lg leading-none">+</button>
           </div>
           <div className="flex items-center gap-2">
-            <label className="text-xs font-bold text-gray-500">TALL</label>
-            <button onClick={() => rows > 1 && resizeGrid(rows - 1, cols)} className="w-7 h-7 rounded-lg bg-gray-100 font-bold text-lg leading-none">−</button>
-            <span className="w-8 text-center font-black">{rows}</span>
-            <button onClick={() => rows < MAX_TILES && resizeGrid(rows + 1, cols)} className="w-7 h-7 rounded-lg bg-gray-100 font-bold text-lg leading-none">+</button>
+            <label className="text-xs font-bold text-gray-500">LENGTH (tiles)</label>
+            <button onClick={() => resizeGrid(rows - 1, cols)} className="w-7 h-7 rounded-lg bg-gray-100 font-bold text-lg leading-none">−</button>
+            <input
+              type="number" min={1} max={MAX_TILES_PER_SIDE} value={rows}
+              onChange={e => resizeGrid(parseInt(e.target.value) || 1, cols)}
+              className="w-14 text-center font-black border border-gray-200 rounded-lg py-1 text-sm"
+            />
+            <button onClick={() => resizeGrid(rows + 1, cols)} className="w-7 h-7 rounded-lg bg-gray-100 font-bold text-lg leading-none">+</button>
           </div>
-          {/* Quick presets */}
-          <div className="flex gap-2 flex-wrap">
-            {[[2,2],[3,3],[4,4],[5,5],[4,6],[6,4]].map(([c,r]) => (
-              <button key={`${c}x${r}`} onClick={() => resizeGrid(r, c)}
-                className="text-xs px-2 py-1 rounded-lg border border-gray-200 font-semibold hover:border-gray-400 transition-colors">
-                {c}×{r}
-              </button>
-            ))}
-          </div>
+        </div>
+        {/* Quick presets */}
+        <div className="flex gap-2 flex-wrap">
+          <span className="text-xs font-bold text-gray-400 self-center">Presets:</span>
+          {[
+            {label:'2×3 runner', c:1, r:3},
+            {label:'4×6', c:2, r:3},
+            {label:'5×8', c:3, r:4},
+            {label:'8×10', c:4, r:5},
+            {label:'10×12', c:5, r:6},
+            {label:'12×20 room', c:6, r:10},
+            {label:'20×40 studio', c:10, r:20},
+            {label:'40×80 gym', c:20, r:40},
+          ].map(({label,c,r}) => (
+            <button key={label} onClick={() => resizeGrid(r, c)}
+              className="text-xs px-2 py-1 rounded-lg border border-gray-200 font-semibold hover:border-gray-400 transition-colors whitespace-nowrap">
+              {label}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -162,35 +208,55 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
 
       {/* Tile Grid */}
       <div>
-        <p className="text-xs text-gray-400 mb-2">Click or drag to paint · Right-click to paint with active color</p>
-        <div
-          ref={gridRef}
-          className="inline-block border-2 rounded-xl overflow-hidden select-none"
-          style={{ borderColor: tierColor, cursor: 'crosshair' }}
-          onContextMenu={e => e.preventDefault()}
-        >
-          {grid.map((row, r) => (
-            <div key={r} className="flex">
-              {row.map((color, c) => (
-                <div
-                  key={c}
-                  onMouseDown={(e) => handleTileMouseDown(r, c, e)}
-                  onMouseEnter={() => handleTileMouseEnter(r, c)}
-                  onContextMenu={(e) => { e.preventDefault(); paintTile(r, c); }}
-                  style={{
-                    width: TILE_PX,
-                    height: TILE_PX,
-                    backgroundColor: color,
-                    borderRight: c < cols - 1 ? '1px solid rgba(0,0,0,0.12)' : undefined,
-                    borderBottom: r < rows - 1 ? '1px solid rgba(0,0,0,0.12)' : undefined,
-                    transition: 'background-color 0.05s',
-                  }}
-                />
-              ))}
-            </div>
-          ))}
+        <p className="text-xs text-gray-400 mb-2">Click or drag to paint tiles · Large grids: use presets above</p>
+        <div className="overflow-auto max-w-full">
+          <div
+            ref={gridRef}
+            className="inline-block border-2 rounded-xl overflow-hidden select-none"
+            style={{ borderColor: tierColor, cursor: 'crosshair' }}
+            onContextMenu={e => e.preventDefault()}
+          >
+            {grid.map((row, r) => (
+              <div key={r} className="flex">
+                {row.map((color, c) => (
+                  <div
+                    key={c}
+                    onMouseDown={(e) => handleTileMouseDown(r, c, e)}
+                    onMouseEnter={() => handleTileMouseEnter(r, c)}
+                    onContextMenu={(e) => { e.preventDefault(); paintTile(r, c); }}
+                    style={{
+                      width: tilePx,
+                      height: tilePx,
+                      backgroundColor: color,
+                      borderRight: c < cols - 1 ? '1px solid rgba(0,0,0,0.12)' : undefined,
+                      borderBottom: r < rows - 1 ? '1px solid rgba(0,0,0,0.12)' : undefined,
+                      flexShrink: 0,
+                    }}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
-        <p className="text-xs text-gray-400 mt-1">{cols} × {rows} = {totalTiles} tiles · Each tile 24"×24" · Total: {totalSqFt} sq ft</p>
+        {/* Price breakdown */}
+        <div className="mt-3 p-3 rounded-xl border" style={{ borderColor: `${tierColor}40`, backgroundColor: `${tierColor}08` }}>
+          <div className="text-xs text-gray-500 space-y-1">
+            <div className="flex justify-between">
+              <span>{totalTiles} tiles × ${totalTiles <= 4 ? '25' : totalTiles <= 10 ? '20' : '17.50'}/tile</span>
+              <span>${totalTiles <= 4 ? totalTiles * 25 : totalTiles <= 10 ? totalTiles * 20 : (totalTiles * 17.5).toFixed(2)}</span>
+            </div>
+            {numPaintColors > 0 && (
+              <div className="flex justify-between">
+                <span>{numPaintColors} paint color{numPaintColors > 1 ? 's' : ''} × $2.50 × {totalTiles} tiles</span>
+                <span>${(numPaintColors * 2.5 * totalTiles).toFixed(2)}</span>
+              </div>
+            )}
+            <div className="flex justify-between font-black text-sm pt-1" style={{ color: tierColor, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
+              <span>Total</span>
+              <span>${price}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
