@@ -62,33 +62,36 @@ function makGrid(rows, cols, fillColor = '#F5F5F5') {
 
 // Animated step reveal
 function SubStep({ visible, children }) {
+  const [mounted, setMounted] = useState(visible);
   const [show, setShow] = useState(false);
   const ref = useRef(null);
 
   useEffect(() => {
     if (visible) {
+      setMounted(true);
       const t = setTimeout(() => {
         setShow(true);
-        // scroll into view
         if (ref.current) {
           ref.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-      }, 80);
+      }, 60);
       return () => clearTimeout(t);
     } else {
       setShow(false);
+      const t = setTimeout(() => setMounted(false), 350);
+      return () => clearTimeout(t);
     }
   }, [visible]);
+
+  if (!mounted) return null;
 
   return (
     <div
       ref={ref}
       style={{
-        overflow: 'hidden',
-        maxHeight: show ? '1200px' : '0px',
         opacity: show ? 1 : 0,
-        transform: show ? 'translateY(0)' : 'translateY(-18px)',
-        transition: 'max-height 0.55s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease, transform 0.4s ease',
+        transform: show ? 'translateY(0)' : 'translateY(10px)',
+        transition: 'opacity 0.3s ease, transform 0.3s ease',
         pointerEvents: show ? 'auto' : 'none',
       }}
     >
