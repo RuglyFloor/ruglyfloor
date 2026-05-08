@@ -111,7 +111,7 @@ const QUALITY_TIERS = [
     tagline: 'Custom tile installation',
     description: 'Custom-painted carpet or smooth squares. From a single runner to a full gym floor. $17.50–$25/tile + $2.50/paint color/tile.',
     color: '#f04624',
-    shipping: 'FREE shipping',
+    shipping: 'FREE shipping on all Squares orders',
     eta: '14–21 business days',
   },
   {
