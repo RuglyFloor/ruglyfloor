@@ -73,19 +73,27 @@ Deno.serve(async (req) => {
     });
 
     // Send email to customer
-    const previewLine = quote.ai_preview_url
-      ? `<tr><td style="padding:16px 0;"><img src="${quote.ai_preview_url}" alt="Your Design Preview" style="max-width:100%;border-radius:12px;border:1px solid #e5e7eb;" /></td></tr>`
-      : (quote.image_url
-        ? `<tr><td style="padding:16px 0;"><img src="${quote.image_url}" alt="Your Design" style="max-width:100%;border-radius:12px;border:1px solid #e5e7eb;" /></td></tr>`
-        : '');
+    // Show AI preview first, fallback to uploaded image
+    const previewImgUrl = quote.ai_preview_url || quote.image_url || null;
+    const previewLabel = quote.ai_preview_url ? 'Your AI Design Preview' : 'Your Uploaded Design';
+    const previewLine = previewImgUrl
+      ? `<tr><td style="padding:16px 0;text-align:center;">
+           <p style="margin:0 0 8px;font-size:13px;color:#6b7280;font-style:italic;">${previewLabel}</p>
+           <img src="${previewImgUrl}" alt="${previewLabel}" style="max-width:100%;border-radius:12px;border:2px solid #e5e7eb;box-shadow:0 4px 16px rgba(0,0,0,0.1);" />
+         </td></tr>`
+      : '';
 
+    const g = quote.squares_grid_data;
     const designDetails = [
       quote.size_label && `<li><strong>Size:</strong> ${quote.size_label}</li>`,
       quote.base_color_name && `<li><strong>Base Color:</strong> ${quote.base_color_name}</li>`,
       quote.paint_color_name && `<li><strong>Paint Color:</strong> ${quote.paint_color_name}</li>`,
       quote.second_paint_color_name && `<li><strong>2nd Color:</strong> ${quote.second_paint_color_name}</li>`,
+      g && `<li><strong>Grid Size:</strong> ${g.cols}×${g.rows} tiles</li>`,
+      g && `<li><strong>Total Tiles:</strong> ${g.totalTiles} tiles (${g.totalSqFt} sq ft)</li>`,
+      g && g.numPaintColors && `<li><strong>Paint Colors:</strong> ${g.numPaintColors}</li>`,
+      g && g.surfaceType && `<li><strong>Surface Type:</strong> ${g.surfaceType}</li>`,
       quote.design_instructions && `<li><strong>Your Notes:</strong> ${quote.design_instructions}</li>`,
-      quote.squares_grid_data && `<li><strong>Grid:</strong> ${quote.squares_grid_data.cols}×${quote.squares_grid_data.rows} tiles · ${quote.squares_grid_data.totalSqFt} sq ft</li>`,
     ].filter(Boolean).join('');
 
     const notesSection = quote.admin_notes
@@ -152,12 +160,25 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-    await base44.asServiceRole.integrations.Core.SendEmail({
-      to: quote.customer_email,
-      from_name: 'Rugly Floor',
-      subject: `Your Custom Rugly Quote — $${quote.quoted_price.toFixed(2)} · Pay Now`,
-      body: emailBody,
+    const resendRes = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${Deno.env.get('RESEND_API_KEY')}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'Rugly Floor <info@ruglyfloor.com>',
+        to: [quote.customer_email],
+        subject: `Your Custom Rugly Quote — $${quote.quoted_price.toFixed(2)} · Pay Now`,
+        html: emailBody,
+      }),
     });
+
+    if (!resendRes.ok) {
+      const resendErr = await resendRes.text();
+      console.error('[sendQuoteWithPayment] Resend error:', resendErr);
+      throw new Error(`Email send failed: ${resendErr}`);
+    }
 
     console.log('[sendQuoteWithPayment] Quote sent:', quote.id, 'Session:', session.id);
     return Response.json({ success: true, payment_url: session.url, session_id: session.id });
