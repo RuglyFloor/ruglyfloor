@@ -29,15 +29,14 @@ export default function ScrollDrivenRugs({ products, handleGrabIt, isCheckingOut
       style={{ height: sectionHeight }}
       className="relative"
     >
-      {/* Section header — visible above the sticky block */}
-      <div className="text-center pt-20 pb-4 px-6 bg-gradient-to-b from-white to-transparent">
-        <h2 className="text-5xl font-bold text-gray-900 mb-2">Available Rugs</h2>
-        <p className="text-gray-500 text-lg">Scroll to browse — ready to ship</p>
-        <p className="text-xs text-gray-400 mt-1">↓ Keep scrolling</p>
-      </div>
-
       {/* Sticky viewport */}
       <div className="sticky top-0 h-screen overflow-hidden bg-gradient-to-b from-white via-blue-50 to-white">
+        {/* Section header — inside sticky so always visible */}
+        <div className="absolute top-0 left-0 right-0 z-10 text-center pt-5 pb-2 px-6 pointer-events-none">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-0.5">Available Rugs</h2>
+          <p className="text-gray-500 text-sm">Scroll to browse — ready to ship</p>
+        </div>
+
         {/* Progress bar */}
         <motion.div
           className="absolute top-0 left-0 h-1 origin-left"
@@ -59,7 +58,7 @@ export default function ScrollDrivenRugs({ products, handleGrabIt, isCheckingOut
             return (
               <div
                 key={product.id}
-                className="min-w-[100vw] w-screen h-full flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 px-4 md:px-20 py-4 md:py-0"
+                className="min-w-[100vw] w-screen h-full flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 px-4 md:px-20 pt-20 pb-4 md:pt-16 md:pb-0"
               >
                 {/* Image */}
                 <div className="flex-shrink-0 w-full md:w-1/2 max-w-lg" style={{ maxHeight: '45vh', height: '45vh' }}>
