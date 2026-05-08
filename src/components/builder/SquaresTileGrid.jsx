@@ -4,7 +4,6 @@ const MAX_TILES_PER_SIDE = 200;
 const MIN_TILE_PX = 8;
 const MAX_TILE_PX = 40;
 
-// Tiered pricing: base per tile + $2.50 per paint color per tile
 export function calcSquaresPrice(totalTiles, numPaintColors) {
   let baseRate;
   if (totalTiles <= 4) baseRate = 25;
@@ -41,7 +40,6 @@ const DEFAULT_COLORS = [
 
 const UNITS = ['tiles', 'feet', 'meters'];
 
-// Each tile = 24" = 2ft = 0.6096m
 function toTiles(value, unit) {
   const v = parseFloat(value);
   if (isNaN(v) || v <= 0) return 1;
@@ -58,20 +56,88 @@ function fromTiles(tiles, unit) {
   return String(tiles);
 }
 
-function makGrid(rows, cols) {
-  return Array.from({ length: rows }, () => Array(cols).fill('#F5F5F5'));
+function makGrid(rows, cols, fillColor = '#F5F5F5') {
+  return Array.from({ length: rows }, () => Array(cols).fill(fillColor));
+}
+
+// Animated step reveal
+function SubStep({ visible, children }) {
+  const [show, setShow] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (visible) {
+      const t = setTimeout(() => {
+        setShow(true);
+        // scroll into view
+        if (ref.current) {
+          ref.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 80);
+      return () => clearTimeout(t);
+    } else {
+      setShow(false);
+    }
+  }, [visible]);
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        overflow: 'hidden',
+        maxHeight: show ? '1200px' : '0px',
+        opacity: show ? 1 : 0,
+        transform: show ? 'translateY(0)' : 'translateY(-18px)',
+        transition: 'max-height 0.55s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease, transform 0.4s ease',
+        pointerEvents: show ? 'auto' : 'none',
+      }}
+    >
+      <div style={{ paddingTop: '4px' }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// Mini connector between sub-steps
+function MiniConnector({ active, color }) {
+  const [drawn, setDrawn] = useState(false);
+  useEffect(() => {
+    if (active) {
+      const t = setTimeout(() => setDrawn(true), 120);
+      return () => clearTimeout(t);
+    } else {
+      setDrawn(false);
+    }
+  }, [active]);
+
+  return (
+    <div style={{ display: 'flex', justifyContent: 'flex-start', paddingLeft: '12px', margin: '6px 0' }} aria-hidden>
+      <div style={{
+        width: 3,
+        height: drawn ? 28 : 0,
+        backgroundColor: color,
+        borderRadius: 2,
+        transition: 'height 0.35s cubic-bezier(0.4,0,0.2,1)',
+        opacity: drawn ? 1 : 0,
+      }} />
+    </div>
+  );
 }
 
 export default function SquaresTileGrid({ tierColor, onChange }) {
+  const [surfaceType, setSurfaceType] = useState(null);
   const [cols, setCols] = useState(4);
   const [rows, setRows] = useState(4);
-  const [widthInput, setWidthInput] = useState('8'); // default 4 tiles = 8 ft
+  const [widthInput, setWidthInput] = useState('8');
   const [heightInput, setHeightInput] = useState('8');
   const [widthUnit, setWidthUnit] = useState('feet');
   const [heightUnit, setHeightUnit] = useState('feet');
+  const [widthConfirmed, setWidthConfirmed] = useState(false);
+  const [heightConfirmed, setHeightConfirmed] = useState(false);
   const [grid, setGrid] = useState(() => makGrid(4, 4));
   const [activeColor, setActiveColor] = useState('#F5F5F5');
-  const [surfaceType, setSurfaceType] = useState('carpet');
+  const [colorConfirmed, setColorConfirmed] = useState(false);
   const [isPainting, setIsPainting] = useState(false);
 
   const totalSqFt = cols * rows * 4;
@@ -79,6 +145,7 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
   const numPaintColors = countPaintColors(grid);
   const price = calcSquaresPrice(totalTiles, numPaintColors);
   const tilePx = Math.max(MIN_TILE_PX, Math.min(MAX_TILE_PX, Math.floor(320 / Math.max(cols, rows))));
+  const gridHasNonDefault = grid.some(row => row.some(c => c !== '#F5F5F5'));
 
   const applyDimensions = (newRows, newCols) => {
     const cr = Math.min(MAX_TILES_PER_SIDE, Math.max(1, newRows));
@@ -90,15 +157,17 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
     setCols(cc);
   };
 
-  const handleWidthChange = (val, unit) => {
+  const handleWidthChange = (val) => {
     setWidthInput(val);
-    const newCols = toTiles(val, unit || widthUnit);
+    setWidthConfirmed(false);
+    const newCols = toTiles(val, widthUnit);
     applyDimensions(rows, newCols);
   };
 
-  const handleHeightChange = (val, unit) => {
+  const handleHeightChange = (val) => {
     setHeightInput(val);
-    const newRows = toTiles(val, unit || heightUnit);
+    setHeightConfirmed(false);
+    const newRows = toTiles(val, heightUnit);
     applyDimensions(newRows, cols);
   };
 
@@ -110,12 +179,6 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
   const handleHeightUnitChange = (unit) => {
     setHeightUnit(unit);
     setHeightInput(fromTiles(rows, unit));
-  };
-
-  const applyPreset = (r, c) => {
-    applyDimensions(r, c);
-    setWidthInput(fromTiles(c, widthUnit));
-    setHeightInput(fromTiles(r, heightUnit));
   };
 
   const paintTile = useCallback((r, c) => {
@@ -142,20 +205,27 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
 
   const fillAll = () => setGrid(Array.from({ length: rows }, () => Array(cols).fill(activeColor)));
   const clearGrid = () => setGrid(makGrid(rows, cols));
-
   const unitLabel = (unit) => ({ tiles: 'Tiles', feet: 'Feet', meters: 'Meters' }[unit]);
 
-  return (
-    <div className="space-y-5" onMouseUp={() => setIsPainting(false)} onMouseLeave={() => setIsPainting(false)}>
+  const confirmWidth = () => setWidthConfirmed(true);
+  const confirmHeight = () => setHeightConfirmed(true);
+  const confirmColor = () => setColorConfirmed(true);
 
-      {/* Surface Type */}
+  return (
+    <div
+      className="space-y-1"
+      onMouseUp={() => setIsPainting(false)}
+      onMouseLeave={() => setIsPainting(false)}
+    >
+
+      {/* SURFACE TYPE */}
       <div>
         <p className="text-sm font-semibold mb-2 text-gray-600">Surface Type</p>
         <div className="flex gap-3">
           {['carpet', 'smooth'].map(type => (
             <button
               key={type}
-              onClick={() => setSurfaceType(type)}
+              onClick={() => { setSurfaceType(type); setWidthConfirmed(false); setHeightConfirmed(false); setColorConfirmed(false); }}
               className="px-5 py-2 rounded-xl font-bold capitalize transition-all text-sm"
               style={{
                 border: `3px solid ${surfaceType === type ? tierColor : '#e5e7eb'}`,
@@ -169,168 +239,199 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
         </div>
       </div>
 
-      {/* Grid Size Controls with Unit Switching */}
-      <div>
-        <p className="text-sm font-semibold mb-1 text-gray-600">
-          Dimensions — {cols} × {rows} tiles &nbsp;·&nbsp; {cols * 2}′ × {rows * 2}′ &nbsp;·&nbsp; {(cols * 0.6096).toFixed(1)}m × {(rows * 0.6096).toFixed(1)}m &nbsp;·&nbsp; {totalSqFt} sq ft
-        </p>
-        <p className="text-xs text-gray-400 mb-3">Each tile is 24″ × 24″ (2ft / 0.61m). Enter dimensions in tiles, feet, or meters.</p>
-
-        <div className="flex flex-wrap gap-4 items-start mb-3">
-          {/* Width */}
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-bold text-gray-500">WIDTH</label>
-            <div className="flex items-center gap-1">
-              <button onClick={() => handleWidthChange(String(parseFloat(widthInput || 0) - (widthUnit === 'meters' ? 0.6096 : widthUnit === 'feet' ? 2 : 1)), null)}
-                className="w-7 h-9 rounded-lg bg-gray-100 font-bold text-lg leading-none">−</button>
-              <input
-                type="number" min={0} value={widthInput}
-                onChange={e => handleWidthChange(e.target.value, null)}
-                className="w-20 text-center font-black border border-gray-200 rounded-lg py-1.5 text-sm"
-              />
-              <button onClick={() => handleWidthChange(String(parseFloat(widthInput || 0) + (widthUnit === 'meters' ? 0.6096 : widthUnit === 'feet' ? 2 : 1)), null)}
-                className="w-7 h-9 rounded-lg bg-gray-100 font-bold text-lg leading-none">+</button>
-            </div>
-            <div className="flex gap-1">
+      {/* WIDTH */}
+      <MiniConnector active={!!surfaceType} color={tierColor} />
+      <SubStep visible={!!surfaceType}>
+        <div className="p-4 rounded-2xl bg-white border-2" style={{ borderColor: widthConfirmed ? `${tierColor}60` : '#e5e7eb' }}>
+          <label className="text-xs font-black text-gray-500 uppercase tracking-wide mb-2 block">Width</label>
+          <p className="text-xs text-gray-400 mb-3">Each tile is 24″ wide. Enter in tiles, feet, or meters.</p>
+          <div className="flex items-center gap-2 mb-3">
+            <button onClick={() => handleWidthChange(String(parseFloat(widthInput || 0) - (widthUnit === 'meters' ? 0.6096 : widthUnit === 'feet' ? 2 : 1)))}
+              className="w-9 h-9 rounded-xl bg-gray-100 font-bold text-lg leading-none flex-shrink-0">−</button>
+            <input
+              type="number" min={0} value={widthInput}
+              onChange={e => handleWidthChange(e.target.value)}
+              className="w-24 text-center font-black border-2 border-gray-200 rounded-xl py-2 text-lg focus:outline-none"
+              style={{ borderColor: widthConfirmed ? tierColor : undefined }}
+            />
+            <button onClick={() => handleWidthChange(String(parseFloat(widthInput || 0) + (widthUnit === 'meters' ? 0.6096 : widthUnit === 'feet' ? 2 : 1)))}
+              className="w-9 h-9 rounded-xl bg-gray-100 font-bold text-lg leading-none flex-shrink-0">+</button>
+            <div className="flex gap-1 ml-2">
               {UNITS.map(u => (
                 <button key={u} onClick={() => handleWidthUnitChange(u)}
-                  className="text-xs px-2 py-0.5 rounded-lg font-semibold transition-all"
-                  style={{
-                    backgroundColor: widthUnit === u ? tierColor : '#f3f4f6',
-                    color: widthUnit === u ? '#fff' : '#6b7280',
-                  }}
+                  className="text-xs px-2 py-1 rounded-lg font-semibold transition-all"
+                  style={{ backgroundColor: widthUnit === u ? tierColor : '#f3f4f6', color: widthUnit === u ? '#fff' : '#6b7280' }}
                 >{unitLabel(u)}</button>
               ))}
             </div>
           </div>
+          <div className="text-xs text-gray-400 mb-3">
+            = {cols} tile{cols !== 1 ? 's' : ''} · {cols * 2}′ · {(cols * 0.6096).toFixed(1)}m wide
+          </div>
+          {!widthConfirmed && (
+            <button
+              onClick={confirmWidth}
+              className="text-sm font-black px-5 py-2 rounded-xl text-white transition-all"
+              style={{ backgroundColor: tierColor }}
+            >
+              Confirm Width →
+            </button>
+          )}
+          {widthConfirmed && (
+            <div className="text-sm font-bold" style={{ color: tierColor }}>✓ {cols * 2}′ wide confirmed</div>
+          )}
+        </div>
+      </SubStep>
 
-          <div className="flex items-center mt-5 text-gray-400 font-bold text-xl">×</div>
-
-          {/* Height */}
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-bold text-gray-500">LENGTH</label>
-            <div className="flex items-center gap-1">
-              <button onClick={() => handleHeightChange(String(parseFloat(heightInput || 0) - (heightUnit === 'meters' ? 0.6096 : heightUnit === 'feet' ? 2 : 1)), null)}
-                className="w-7 h-9 rounded-lg bg-gray-100 font-bold text-lg leading-none">−</button>
-              <input
-                type="number" min={0} value={heightInput}
-                onChange={e => handleHeightChange(e.target.value, null)}
-                className="w-20 text-center font-black border border-gray-200 rounded-lg py-1.5 text-sm"
-              />
-              <button onClick={() => handleHeightChange(String(parseFloat(heightInput || 0) + (heightUnit === 'meters' ? 0.6096 : heightUnit === 'feet' ? 2 : 1)), null)}
-                className="w-7 h-9 rounded-lg bg-gray-100 font-bold text-lg leading-none">+</button>
-            </div>
-            <div className="flex gap-1">
+      {/* LENGTH */}
+      <MiniConnector active={widthConfirmed} color={tierColor} />
+      <SubStep visible={widthConfirmed}>
+        <div className="p-4 rounded-2xl bg-white border-2" style={{ borderColor: heightConfirmed ? `${tierColor}60` : '#e5e7eb' }}>
+          <label className="text-xs font-black text-gray-500 uppercase tracking-wide mb-2 block">Length</label>
+          <p className="text-xs text-gray-400 mb-3">Each tile is 24″ long. Enter in tiles, feet, or meters.</p>
+          <div className="flex items-center gap-2 mb-3">
+            <button onClick={() => handleHeightChange(String(parseFloat(heightInput || 0) - (heightUnit === 'meters' ? 0.6096 : heightUnit === 'feet' ? 2 : 1)))}
+              className="w-9 h-9 rounded-xl bg-gray-100 font-bold text-lg leading-none flex-shrink-0">−</button>
+            <input
+              type="number" min={0} value={heightInput}
+              onChange={e => handleHeightChange(e.target.value)}
+              className="w-24 text-center font-black border-2 border-gray-200 rounded-xl py-2 text-lg focus:outline-none"
+              style={{ borderColor: heightConfirmed ? tierColor : undefined }}
+            />
+            <button onClick={() => handleHeightChange(String(parseFloat(heightInput || 0) + (heightUnit === 'meters' ? 0.6096 : heightUnit === 'feet' ? 2 : 1)))}
+              className="w-9 h-9 rounded-xl bg-gray-100 font-bold text-lg leading-none flex-shrink-0">+</button>
+            <div className="flex gap-1 ml-2">
               {UNITS.map(u => (
                 <button key={u} onClick={() => handleHeightUnitChange(u)}
-                  className="text-xs px-2 py-0.5 rounded-lg font-semibold transition-all"
-                  style={{
-                    backgroundColor: heightUnit === u ? tierColor : '#f3f4f6',
-                    color: heightUnit === u ? '#fff' : '#6b7280',
-                  }}
+                  className="text-xs px-2 py-1 rounded-lg font-semibold transition-all"
+                  style={{ backgroundColor: heightUnit === u ? tierColor : '#f3f4f6', color: heightUnit === u ? '#fff' : '#6b7280' }}
                 >{unitLabel(u)}</button>
               ))}
             </div>
           </div>
-        </div>
-
-        {/* Quick presets */}
-        <div className="flex gap-2 flex-wrap">
-          <span className="text-xs font-bold text-gray-400 self-center">Presets:</span>
-          {[
-            { label: "2′×6′ runner", c: 1, r: 3 },
-            { label: "4′×6′", c: 2, r: 3 },
-            { label: "6′×8′", c: 3, r: 4 },
-            { label: "8′×10′", c: 4, r: 5 },
-            { label: "10′×12′", c: 5, r: 6 },
-            { label: "12′×20′ room", c: 6, r: 10 },
-            { label: "20′×40′ studio", c: 10, r: 20 },
-            { label: "40′×80′ gym", c: 20, r: 40 },
-          ].map(({ label, c, r }) => (
-            <button key={label} onClick={() => applyPreset(r, c)}
-              className="text-xs px-2 py-1 rounded-lg border border-gray-200 font-semibold hover:border-gray-400 transition-colors whitespace-nowrap">
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Color Palette */}
-      <div>
-        <p className="text-sm font-semibold mb-2 text-gray-600">Active Paint Color — click tiles to paint</p>
-        <div className="flex flex-wrap gap-2 mb-3">
-          {DEFAULT_COLORS.map(c => (
+          <div className="text-xs text-gray-400 mb-3">
+            = {rows} tile{rows !== 1 ? 's' : ''} · {rows * 2}′ · {(rows * 0.6096).toFixed(1)}m long
+          </div>
+          {!heightConfirmed && (
             <button
-              key={c.name}
-              onClick={() => setActiveColor(c.hex)}
-              title={c.name}
-              className="w-8 h-8 rounded-lg border-2 transition-all flex-shrink-0"
-              style={{
-                backgroundColor: c.hex,
-                borderColor: activeColor === c.hex ? tierColor : '#e5e7eb',
-                transform: activeColor === c.hex ? 'scale(1.25)' : 'scale(1)',
-                boxShadow: activeColor === c.hex ? `0 0 0 2px white, 0 0 0 4px ${tierColor}` : undefined,
-              }}
-            />
-          ))}
+              onClick={confirmHeight}
+              className="text-sm font-black px-5 py-2 rounded-xl text-white transition-all"
+              style={{ backgroundColor: tierColor }}
+            >
+              Confirm Length →
+            </button>
+          )}
+          {heightConfirmed && (
+            <div className="text-sm font-bold" style={{ color: tierColor }}>✓ {rows * 2}′ long confirmed — {totalTiles} tiles · {totalSqFt} sq ft</div>
+          )}
         </div>
-        <div className="flex gap-2">
-          <button onClick={fillAll} className="text-xs px-3 py-1.5 rounded-lg border-2 font-bold" style={{ borderColor: tierColor, color: tierColor }}>Fill All</button>
-          <button onClick={clearGrid} className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 font-semibold text-gray-500">Reset</button>
-        </div>
-      </div>
+      </SubStep>
 
-      {/* Tile Grid */}
-      <div>
-        <p className="text-xs text-gray-400 mb-2">Click or drag to paint tiles · Large grids: use presets above</p>
-        <div className="overflow-auto max-w-full">
-          <div
-            className="inline-block border-2 rounded-xl overflow-hidden select-none"
-            style={{ borderColor: tierColor, cursor: 'crosshair' }}
-            onContextMenu={e => e.preventDefault()}
-          >
-            {grid.map((row, r) => (
-              <div key={r} className="flex">
-                {row.map((color, c) => (
-                  <div
-                    key={c}
-                    onMouseDown={(e) => handleTileMouseDown(r, c, e)}
-                    onMouseEnter={() => handleTileMouseEnter(r, c)}
-                    style={{
-                      width: tilePx,
-                      height: tilePx,
-                      backgroundColor: color,
-                      borderRight: c < cols - 1 ? '1px solid rgba(0,0,0,0.12)' : undefined,
-                      borderBottom: r < rows - 1 ? '1px solid rgba(0,0,0,0.12)' : undefined,
-                      flexShrink: 0,
-                    }}
-                  />
-                ))}
-              </div>
+      {/* BASE TILE COLOR */}
+      <MiniConnector active={heightConfirmed} color={tierColor} />
+      <SubStep visible={heightConfirmed}>
+        <div className="p-4 rounded-2xl bg-white border-2" style={{ borderColor: colorConfirmed ? `${tierColor}60` : '#e5e7eb' }}>
+          <label className="text-xs font-black text-gray-500 uppercase tracking-wide mb-2 block">Base Tile Color</label>
+          <p className="text-xs text-gray-400 mb-3">The default background color of your tiles before any paint is applied.</p>
+          <div className="flex flex-wrap gap-2 mb-3">
+            {DEFAULT_COLORS.map(c => (
+              <button
+                key={c.name}
+                onClick={() => { setActiveColor(c.hex); setColorConfirmed(false); fillAll(); }}
+                title={c.name}
+                className="w-9 h-9 rounded-lg border-2 transition-all flex-shrink-0"
+                style={{
+                  backgroundColor: c.hex,
+                  borderColor: activeColor === c.hex ? tierColor : '#e5e7eb',
+                  transform: activeColor === c.hex ? 'scale(1.2)' : 'scale(1)',
+                  boxShadow: activeColor === c.hex ? `0 0 0 2px white, 0 0 0 4px ${tierColor}` : undefined,
+                }}
+              />
             ))}
           </div>
-        </div>
-
-        {/* Price breakdown */}
-        <div className="mt-3 p-3 rounded-xl border" style={{ borderColor: `${tierColor}40`, backgroundColor: `${tierColor}08` }}>
-          <div className="text-xs text-gray-500 space-y-1">
-            <div className="flex justify-between">
-              <span>{totalTiles} tiles × ${totalTiles <= 4 ? '25' : totalTiles <= 10 ? '20' : '17.50'}/tile</span>
-              <span>${totalTiles <= 4 ? totalTiles * 25 : totalTiles <= 10 ? totalTiles * 20 : (totalTiles * 17.5).toFixed(2)}</span>
+          {!colorConfirmed && (
+            <button
+              onClick={confirmColor}
+              className="text-sm font-black px-5 py-2 rounded-xl text-white transition-all"
+              style={{ backgroundColor: tierColor }}
+            >
+              Confirm Base Color →
+            </button>
+          )}
+          {colorConfirmed && (
+            <div className="text-sm font-bold flex items-center gap-2" style={{ color: tierColor }}>
+              <div className="w-4 h-4 rounded border border-gray-200 flex-shrink-0" style={{ backgroundColor: activeColor }} />
+              ✓ Base color set
             </div>
-            {numPaintColors > 0 && (
-              <div className="flex justify-between">
-                <span>{numPaintColors} paint color{numPaintColors > 1 ? 's' : ''} × $2.50 × {totalTiles} tiles</span>
-                <span>${(numPaintColors * 2.5 * totalTiles).toFixed(2)}</span>
-              </div>
-            )}
-            <div className="flex justify-between font-black text-sm pt-1" style={{ color: tierColor, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
-              <span>Total</span>
-              <span>${price}</span>
+          )}
+        </div>
+      </SubStep>
+
+      {/* TILE GRID */}
+      <MiniConnector active={colorConfirmed} color={tierColor} />
+      <SubStep visible={colorConfirmed}>
+        <div className="p-4 rounded-2xl bg-white border-2" style={{ borderColor: gridHasNonDefault ? `${tierColor}60` : '#e5e7eb' }}>
+          <label className="text-xs font-black text-gray-500 uppercase tracking-wide mb-1 block">Click & Drag to Paint</label>
+          <p className="text-xs text-gray-400 mb-3">Select a paint color below, then click or drag across tiles to apply your design.</p>
+
+          {/* Paint color swatches */}
+          <div className="flex flex-wrap gap-2 mb-3">
+            {DEFAULT_COLORS.map(c => (
+              <button
+                key={c.name}
+                onClick={() => setActiveColor(c.hex)}
+                title={c.name}
+                className="w-8 h-8 rounded-lg border-2 transition-all flex-shrink-0"
+                style={{
+                  backgroundColor: c.hex,
+                  borderColor: activeColor === c.hex ? tierColor : '#e5e7eb',
+                  transform: activeColor === c.hex ? 'scale(1.2)' : 'scale(1)',
+                  boxShadow: activeColor === c.hex ? `0 0 0 2px white, 0 0 0 4px ${tierColor}` : undefined,
+                }}
+              />
+            ))}
+          </div>
+
+          <div className="flex gap-2 mb-3">
+            <button onClick={fillAll} className="text-xs px-3 py-1.5 rounded-lg border-2 font-bold" style={{ borderColor: tierColor, color: tierColor }}>Fill All</button>
+            <button onClick={clearGrid} className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 font-semibold text-gray-500">Reset</button>
+          </div>
+
+          {/* Grid canvas */}
+          <div className="overflow-auto max-w-full">
+            <div
+              className="inline-block border-2 rounded-xl overflow-hidden select-none"
+              style={{ borderColor: tierColor, cursor: 'crosshair' }}
+              onContextMenu={e => e.preventDefault()}
+            >
+              {grid.map((row, r) => (
+                <div key={r} className="flex">
+                  {row.map((color, c) => (
+                    <div
+                      key={c}
+                      onMouseDown={(e) => handleTileMouseDown(r, c, e)}
+                      onMouseEnter={() => handleTileMouseEnter(r, c)}
+                      style={{
+                        width: tilePx,
+                        height: tilePx,
+                        backgroundColor: color,
+                        borderRight: c < cols - 1 ? '1px solid rgba(0,0,0,0.12)' : undefined,
+                        borderBottom: r < rows - 1 ? '1px solid rgba(0,0,0,0.12)' : undefined,
+                        flexShrink: 0,
+                      }}
+                    />
+                  ))}
+                </div>
+              ))}
             </div>
           </div>
+
+          <div className="mt-3 text-xs text-gray-400">
+            {cols} × {rows} tiles · {totalSqFt} sq ft
+          </div>
         </div>
-      </div>
+      </SubStep>
+
     </div>
   );
 }

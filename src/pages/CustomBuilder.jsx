@@ -188,13 +188,14 @@ export default function CustomBuilder() {
   const paintHex = paintColor?.name === 'Custom' ? customPaintHex : (paintColor?.hex || null);
   const secondHex = secondPaintColor?.name === 'Custom' ? customSecondHex : (secondPaintColor?.hex || null);
   const squaresPrice = squaresGridData?.price || 0;
+  const squaresGridPainted = !!(squaresGridData && squaresGridData.grid && squaresGridData.grid.some(row => row.some(c => c !== '#F5F5F5')));
   const price = isSquares ? squaresPrice : (tier && size ? (tier.prices[size.id] || 0) : 0);
   const isComplete = isSquares
-    ? !!squaresGridData && !!imageUrl && squaresGridData.totalTiles > 0
+    ? !!squaresGridData && squaresGridPainted && !!imageUrl && squaresGridData.totalTiles > 0
     : !!tier && !!size && !!baseColor && !!paintColor && !!imageUrl;
   const tierColor = tier?.color || '#4075ff';
   const canGenerate = isSquares
-    ? !!stencilDataUrl && !!squaresGridData
+    ? !!stencilDataUrl && squaresGridPainted
     : !!stencilDataUrl && !!baseColor && !!paintColor;
 
 
@@ -369,7 +370,7 @@ export default function CustomBuilder() {
         </section>
         </BuilderStep>
 
-        <StepConnector color={tierColor} active={isSquares ? !!squaresGridData : !!size} />
+        <StepConnector color={tierColor} active={isSquares ? !!(squaresGridData?.surfaceType) : !!size} />
 
         {/* STEP 3: Base Color (hidden for Squares — colors are per-tile in the grid) */}
         {!isSquares && <BuilderStep visible={!!size} color={tierColor} scrollOnAppear><section>
@@ -419,10 +420,10 @@ export default function CustomBuilder() {
           </div>
         </section></BuilderStep>}
 
-        <StepConnector color={tierColor} active={isSquares ? !!squaresGridData : !!baseColor} />
+        <StepConnector color={tierColor} active={isSquares ? squaresGridPainted : !!baseColor} />
 
         {/* STEP 4: Paint Color (hidden for Squares — colors are per-tile in the grid) */}
-        {isSquares && <BuilderStep visible={!!squaresGridData} color={tierColor} scrollOnAppear><section>
+        {isSquares && <BuilderStep visible={squaresGridPainted} color={tierColor} scrollOnAppear><section>
           <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>3. Paint Color</h2>
           <p className="text-sm text-gray-500 mb-2">The color your design will be painted on top of the tiles</p>
           <div className="flex flex-wrap gap-3 mb-4">
@@ -556,10 +557,10 @@ export default function CustomBuilder() {
           )}
         </section></BuilderStep>}
 
-        <StepConnector color={tierColor} active={isSquares ? !!squaresGridData : !!paintColor} />
+        <StepConnector color={tierColor} active={isSquares ? !!paintColor : !!paintColor} />
 
         {/* STEP 5: Upload Design */}
-        <BuilderStep visible={isSquares ? !!squaresGridData : !!paintColor} color={tierColor} scrollOnAppear>
+        <BuilderStep visible={isSquares ? !!paintColor : !!paintColor} color={tierColor} scrollOnAppear>
         <section>
           <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>{isSquares ? '4' : '5'}. Upload Your Design</h2>
           <p className="text-sm text-gray-500 mb-4">
