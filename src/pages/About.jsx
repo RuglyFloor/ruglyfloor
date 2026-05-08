@@ -61,7 +61,7 @@ export default function About() {
               </Button>
             </Link>
             <Link to={createPageUrl('Shop')}>
-              <Button size="lg" variant="outline" className="text-lg px-10 py-6 h-auto border-2 border-white text-white hover:bg-white hover:text-gray-900 font-bold">
+              <Button size="lg" variant="outline" className="text-lg px-10 py-6 h-auto border-2 border-white bg-white text-gray-900 hover:bg-gray-100 font-bold">
                 <ShoppingBag className="w-5 h-5 mr-2" />
                 Shop Originals
               </Button>
