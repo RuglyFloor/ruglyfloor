@@ -7,6 +7,8 @@ import RugPreviewGenerator from '../components/custom/RugPreviewGenerator';
 import SquaresTileGrid from '../components/builder/SquaresTileGrid';
 import SquaresPreviewGenerator from '../components/builder/SquaresPreviewGenerator';
 import QuoteRequestForm from '../components/builder/QuoteRequestForm';
+import StepConnector from '../components/builder/StepConnector';
+import BuilderStep from '../components/builder/BuilderStep';
 import SEOHead from '../components/seo/SEOHead';
 
 const BASE_COLORS_CRUGLY = [
@@ -272,33 +274,61 @@ export default function CustomBuilder() {
         {/* STEP 1: Quality */}
         <section>
           <h2 className="text-2xl font-black mb-4" style={{ color: '#343634' }}>1. Choose Quality</h2>
-          <div className="grid md:grid-cols-3 gap-4">
-            {QUALITY_TIERS.map(t => (
-              <button
-                key={t.id}
-                onClick={() => { setTier(t); setBaseColor(null); }}
-                className="text-left p-5 rounded-2xl border-4 transition-all w-full"
-                style={{
-                  borderColor: tier?.id === t.id ? t.color : '#e5e7eb',
-                  backgroundColor: tier?.id === t.id ? `${t.color}15` : '#ffffff',
-                  boxShadow: tier?.id === t.id ? `0 4px 20px ${t.color}40` : undefined,
-                }}
-              >
-                <div className="font-black text-xl mb-1" style={{ color: t.color }}>{t.label}</div>
-                <div className="text-xs font-bold mb-2 text-gray-500">{t.tagline}</div>
-                <div className="text-sm text-gray-600 mb-3">{t.description}</div>
-                <div className="text-xs text-gray-500">{t.shipping} · {t.eta}</div>
-                {t.depositOnly && (
-                  <div className="mt-2 text-xs font-bold px-2 py-1 rounded-full inline-block" style={{ backgroundColor: `${t.color}20`, color: t.color }}>
-                    $100 deposit to start
-                  </div>
-                )}
-              </button>
-            ))}
+          <div className="grid md:grid-cols-4 gap-4">
+            {QUALITY_TIERS.map(t => {
+              const isSelected = tier?.id === t.id;
+              const isKnockedOut = !!tier && !isSelected;
+              return (
+                <button
+                  key={t.id}
+                  onClick={() => { setTier(t); setBaseColor(null); setSize(null); setPaintColor(null); }}
+                  className="text-left rounded-2xl border-4 w-full overflow-hidden"
+                  style={{
+                    borderColor: isSelected ? t.color : '#e5e7eb',
+                    backgroundColor: isSelected ? `${t.color}15` : '#ffffff',
+                    boxShadow: isSelected ? `0 6px 28px ${t.color}50` : undefined,
+                    opacity: isKnockedOut ? 0.38 : 1,
+                    transform: isSelected ? 'scale(1.04)' : isKnockedOut ? 'scale(0.95)' : 'scale(1)',
+                    transition: 'all 0.35s cubic-bezier(0.4,0,0.2,1)',
+                    padding: isSelected ? '20px' : '16px 20px',
+                    filter: isKnockedOut ? 'grayscale(60%)' : 'none',
+                  }}
+                >
+                  {/* Color accent top bar */}
+                  <div style={{
+                    height: isSelected ? 5 : 3,
+                    backgroundColor: t.color,
+                    borderRadius: 3,
+                    marginBottom: 10,
+                    width: isSelected ? '100%' : '40%',
+                    transition: 'all 0.35s ease',
+                  }} />
+                  <div className="font-black text-xl mb-0.5" style={{ color: t.color }}>{t.label}</div>
+                  <div className="text-xs font-bold mb-1.5 text-gray-500">{t.tagline}</div>
+                  <div
+                    className="text-sm text-gray-600 mb-2 overflow-hidden"
+                    style={{
+                      maxHeight: isKnockedOut ? 0 : '5em',
+                      opacity: isKnockedOut ? 0 : 1,
+                      transition: 'max-height 0.3s ease, opacity 0.25s ease',
+                    }}
+                  >{t.description}</div>
+                  <div className="text-xs text-gray-500">{t.shipping} · {t.eta}</div>
+                  {t.depositOnly && isSelected && (
+                    <div className="mt-2 text-xs font-bold px-2 py-1 rounded-full inline-block" style={{ backgroundColor: `${t.color}20`, color: t.color }}>
+                      $100 deposit to start
+                    </div>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </section>
 
+        <StepConnector color={tierColor} active={!!tier} />
+
         {/* STEP 2: Size / Grid */}
+        <BuilderStep visible={!!tier} color={tierColor} scrollOnAppear>
         <section>
           {isSquares ? (
             <>
@@ -337,9 +367,12 @@ export default function CustomBuilder() {
             </>
           )}
         </section>
+        </BuilderStep>
+
+        <StepConnector color={tierColor} active={isSquares ? !!squaresGridData : !!size} />
 
         {/* STEP 3: Base Color (hidden for Squares — colors are per-tile in the grid) */}
-        {!isSquares && <section>
+        {!isSquares && <BuilderStep visible={!!size} color={tierColor} scrollOnAppear><section>
           <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>3. Rug Base Color</h2>
           <p className="text-sm text-gray-500 mb-4">The background color of the rug itself</p>
           <div className="flex flex-wrap gap-3">
@@ -384,10 +417,12 @@ export default function CustomBuilder() {
               );
             })}
           </div>
-        </section>}
+        </section></BuilderStep>}
+
+        <StepConnector color={tierColor} active={isSquares ? !!squaresGridData : !!baseColor} />
 
         {/* STEP 4: Paint Color (hidden for Squares — colors are per-tile in the grid) */}
-        {isSquares && <section>
+        {isSquares && <BuilderStep visible={!!squaresGridData} color={tierColor} scrollOnAppear><section>
           <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>3. Paint Color</h2>
           <p className="text-sm text-gray-500 mb-2">The color your design will be painted on top of the tiles</p>
           <div className="flex flex-wrap gap-3 mb-4">
@@ -414,9 +449,9 @@ export default function CustomBuilder() {
               <span className="text-sm font-mono text-gray-600">{customPaintHex}</span>
             </div>
           )}
-        </section>}
+        </section></BuilderStep>}
 
-        {!isSquares && <section>
+        {!isSquares && <BuilderStep visible={!!baseColor} color={tierColor} scrollOnAppear><section>
           <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>4. Paint Color</h2>
           <p className="text-sm text-gray-500 mb-4">The color your design will be painted in</p>
           <div className="flex flex-wrap gap-3 mb-4">
@@ -519,9 +554,12 @@ export default function CustomBuilder() {
               )}
             </div>
           )}
-        </section>}
+        </section></BuilderStep>}
+
+        <StepConnector color={tierColor} active={isSquares ? !!squaresGridData : !!paintColor} />
 
         {/* STEP 5: Upload Design */}
+        <BuilderStep visible={isSquares ? !!squaresGridData : !!paintColor} color={tierColor} scrollOnAppear>
         <section>
           <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>{isSquares ? '4' : '5'}. Upload Your Design</h2>
           <p className="text-sm text-gray-500 mb-4">
@@ -536,8 +574,12 @@ export default function CustomBuilder() {
             onClear={() => { setImageUrl(null); setStencilDataUrl(null); setStencilMode(null); setPreviewUrl(null); }}
           />
         </section>
+        </BuilderStep>
+
+        <StepConnector color={tierColor} active={!!imageUrl} />
 
         {/* STEP 6: Design Notes */}
+        <BuilderStep visible={!!imageUrl} color={tierColor} scrollOnAppear>
         <section>
           <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>{isSquares ? '5' : '6'}. Additional Instructions (Optional)</h2>
           <p className="text-sm text-gray-500 mb-4">These go directly to the AI preview and to our artists — be as specific as you like.</p>
@@ -549,8 +591,12 @@ export default function CustomBuilder() {
             placeholder="e.g. 'Keep all text exactly as shown', 'The logo should take up 80% of the rug', 'Use gold only for the border', 'Make the background black not gray'"
           />
         </section>
+        </BuilderStep>
+
+        <StepConnector color={tierColor} active={!!imageUrl} />
 
         {/* GENERATE BUTTON */}
+        <BuilderStep visible={!!imageUrl} color={tierColor}>
         <section>
           <button
             onClick={() => generatePreviewRef.current?.()}
@@ -572,6 +618,7 @@ export default function CustomBuilder() {
             </p>
           )}
         </section>
+        </BuilderStep>
 
         {/* AI PREVIEW */}
         <section>
