@@ -1,0 +1,110 @@
+{
+  "name": "DesignQuote",
+  "type": "object",
+  "properties": {
+    "customer_name": {
+      "type": "string",
+      "description": "Name of the customer"
+    },
+    "customer_email": {
+      "type": "string",
+      "description": "Email of the customer"
+    },
+    "customer_phone": {
+      "type": "string",
+      "description": "Phone number of the customer"
+    },
+    "design_type": {
+      "type": "string",
+      "enum": [
+        "rug",
+        "squares"
+      ],
+      "description": "Type of design"
+    },
+    "tier_id": {
+      "type": "string",
+      "description": "Quality tier ID"
+    },
+    "tier_label": {
+      "type": "string",
+      "description": "Quality tier label"
+    },
+    "size_label": {
+      "type": "string",
+      "description": "Rug size label"
+    },
+    "size_measurement": {
+      "type": "string",
+      "description": "Rug size measurement"
+    },
+    "base_color_name": {
+      "type": "string"
+    },
+    "base_color_hex": {
+      "type": "string"
+    },
+    "paint_color_name": {
+      "type": "string"
+    },
+    "paint_color_hex": {
+      "type": "string"
+    },
+    "has_second_color": {
+      "type": "boolean"
+    },
+    "second_paint_color_name": {
+      "type": "string"
+    },
+    "second_paint_color_hex": {
+      "type": "string"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Uploaded design image URL"
+    },
+    "ai_preview_url": {
+      "type": "string",
+      "description": "AI-generated preview image URL"
+    },
+    "design_instructions": {
+      "type": "string"
+    },
+    "squares_grid_data": {
+      "type": "object",
+      "description": "Grid data for squares orders"
+    },
+    "estimated_price": {
+      "type": "number",
+      "description": "Customer-side estimated price"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "quoted",
+        "accepted",
+        "rejected"
+      ],
+      "default": "pending"
+    },
+    "quoted_price": {
+      "type": "number",
+      "description": "Admin-set quoted price"
+    },
+    "admin_notes": {
+      "type": "string"
+    },
+    "quote_sent_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "customer_name",
+    "customer_email",
+    "design_type",
+    "tier_id",
+    "tier_label"
+  ]
+}

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 
-const MAX_TILES_PER_SIDE = 200; // 200 tiles × 2ft = 400ft max per side
+const MAX_TILES_PER_SIDE = 200;
 const MIN_TILE_PX = 8;
 const MAX_TILE_PX = 40;
 
@@ -15,7 +15,6 @@ export function calcSquaresPrice(totalTiles, numPaintColors) {
   return Math.round(baseCost + paintCost);
 }
 
-// Count distinct paint colors used (non-white tiles)
 export function countPaintColors(grid) {
   const colors = new Set();
   grid.forEach(row => row.forEach(cell => {
@@ -40,6 +39,25 @@ const DEFAULT_COLORS = [
   { name: 'Gray', hex: '#A0A0A0' },
 ];
 
+const UNITS = ['tiles', 'feet', 'meters'];
+
+// Each tile = 24" = 2ft = 0.6096m
+function toTiles(value, unit) {
+  const v = parseFloat(value);
+  if (isNaN(v) || v <= 0) return 1;
+  if (unit === 'tiles') return Math.max(1, Math.min(MAX_TILES_PER_SIDE, Math.round(v)));
+  if (unit === 'feet') return Math.max(1, Math.min(MAX_TILES_PER_SIDE, Math.max(1, Math.round(v / 2))));
+  if (unit === 'meters') return Math.max(1, Math.min(MAX_TILES_PER_SIDE, Math.max(1, Math.round(v / 0.6096))));
+  return 1;
+}
+
+function fromTiles(tiles, unit) {
+  if (unit === 'tiles') return String(tiles);
+  if (unit === 'feet') return String(tiles * 2);
+  if (unit === 'meters') return (tiles * 0.6096).toFixed(2);
+  return String(tiles);
+}
+
 function makGrid(rows, cols) {
   return Array.from({ length: rows }, () => Array(cols).fill('#F5F5F5'));
 }
@@ -47,32 +65,57 @@ function makGrid(rows, cols) {
 export default function SquaresTileGrid({ tierColor, onChange }) {
   const [cols, setCols] = useState(4);
   const [rows, setRows] = useState(4);
+  const [widthInput, setWidthInput] = useState('8'); // default 4 tiles = 8 ft
+  const [heightInput, setHeightInput] = useState('8');
+  const [widthUnit, setWidthUnit] = useState('feet');
+  const [heightUnit, setHeightUnit] = useState('feet');
   const [grid, setGrid] = useState(() => makGrid(4, 4));
   const [activeColor, setActiveColor] = useState('#F5F5F5');
   const [surfaceType, setSurfaceType] = useState('carpet');
   const [isPainting, setIsPainting] = useState(false);
-  const gridRef = useRef(null);
 
-  const totalSqFt = cols * rows * 4; // each tile = 24"x24" = 4 sq ft
+  const totalSqFt = cols * rows * 4;
   const totalTiles = cols * rows;
   const numPaintColors = countPaintColors(grid);
   const price = calcSquaresPrice(totalTiles, numPaintColors);
-  // Dynamic tile size: shrink for large grids
   const tilePx = Math.max(MIN_TILE_PX, Math.min(MAX_TILE_PX, Math.floor(320 / Math.max(cols, rows))));
 
-  const resizeGrid = (newRows, newCols) => {
-    const clampedRows = Math.min(MAX_TILES_PER_SIDE, Math.max(1, newRows));
-    const clampedCols = Math.min(MAX_TILES_PER_SIDE, Math.max(1, newCols));
-    setGrid(prev => {
-      const next = Array.from({ length: clampedRows }, (_, r) =>
-        Array.from({ length: clampedCols }, (_, c) =>
-          prev[r]?.[c] ?? '#F5F5F5'
-        )
-      );
-      return next;
-    });
-    setRows(clampedRows);
-    setCols(clampedCols);
+  const applyDimensions = (newRows, newCols) => {
+    const cr = Math.min(MAX_TILES_PER_SIDE, Math.max(1, newRows));
+    const cc = Math.min(MAX_TILES_PER_SIDE, Math.max(1, newCols));
+    setGrid(prev => Array.from({ length: cr }, (_, r) =>
+      Array.from({ length: cc }, (_, c) => prev[r]?.[c] ?? '#F5F5F5')
+    ));
+    setRows(cr);
+    setCols(cc);
+  };
+
+  const handleWidthChange = (val, unit) => {
+    setWidthInput(val);
+    const newCols = toTiles(val, unit || widthUnit);
+    applyDimensions(rows, newCols);
+  };
+
+  const handleHeightChange = (val, unit) => {
+    setHeightInput(val);
+    const newRows = toTiles(val, unit || heightUnit);
+    applyDimensions(newRows, cols);
+  };
+
+  const handleWidthUnitChange = (unit) => {
+    setWidthUnit(unit);
+    setWidthInput(fromTiles(cols, unit));
+  };
+
+  const handleHeightUnitChange = (unit) => {
+    setHeightUnit(unit);
+    setHeightInput(fromTiles(rows, unit));
+  };
+
+  const applyPreset = (r, c) => {
+    applyDimensions(r, c);
+    setWidthInput(fromTiles(c, widthUnit));
+    setHeightInput(fromTiles(r, heightUnit));
   };
 
   const paintTile = useCallback((r, c) => {
@@ -93,23 +136,17 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
     if (isPainting) paintTile(r, c);
   };
 
-  const handleMouseUp = () => setIsPainting(false);
-
-  // Notify parent on grid change
   useEffect(() => {
     if (onChange) onChange({ grid, rows, cols, surfaceType, totalSqFt, totalTiles, numPaintColors, price });
   }, [grid, rows, cols, surfaceType]);
 
-  const fillAll = () => {
-    setGrid(Array.from({ length: rows }, () => Array(cols).fill(activeColor)));
-  };
+  const fillAll = () => setGrid(Array.from({ length: rows }, () => Array(cols).fill(activeColor)));
+  const clearGrid = () => setGrid(makGrid(rows, cols));
 
-  const clearGrid = () => {
-    setGrid(makGrid(rows, cols));
-  };
+  const unitLabel = (unit) => ({ tiles: 'Tiles', feet: 'Feet', meters: 'Meters' }[unit]);
 
   return (
-    <div className="space-y-5" onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}>
+    <div className="space-y-5" onMouseUp={() => setIsPainting(false)} onMouseLeave={() => setIsPainting(false)}>
 
       {/* Surface Type */}
       <div>
@@ -132,48 +169,85 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
         </div>
       </div>
 
-      {/* Grid Size Controls */}
+      {/* Grid Size Controls with Unit Switching */}
       <div>
         <p className="text-sm font-semibold mb-1 text-gray-600">
-          Grid Size — {cols} × {rows} tiles &nbsp;·&nbsp; {cols * 2}′ × {rows * 2}′ &nbsp;·&nbsp; {totalSqFt} sq ft
+          Dimensions — {cols} × {rows} tiles &nbsp;·&nbsp; {cols * 2}′ × {rows * 2}′ &nbsp;·&nbsp; {(cols * 0.6096).toFixed(1)}m × {(rows * 0.6096).toFixed(1)}m &nbsp;·&nbsp; {totalSqFt} sq ft
         </p>
-        <p className="text-xs text-gray-400 mb-3">Each tile is 24″ × 24″. Set any shape — runner, room, gym floor.</p>
-        <div className="flex flex-wrap gap-4 items-center mb-3">
-          <div className="flex items-center gap-2">
-            <label className="text-xs font-bold text-gray-500">WIDTH (tiles)</label>
-            <button onClick={() => resizeGrid(rows, cols - 1)} className="w-7 h-7 rounded-lg bg-gray-100 font-bold text-lg leading-none">−</button>
-            <input
-              type="number" min={1} max={MAX_TILES_PER_SIDE} value={cols}
-              onChange={e => resizeGrid(rows, parseInt(e.target.value) || 1)}
-              className="w-14 text-center font-black border border-gray-200 rounded-lg py-1 text-sm"
-            />
-            <button onClick={() => resizeGrid(rows, cols + 1)} className="w-7 h-7 rounded-lg bg-gray-100 font-bold text-lg leading-none">+</button>
+        <p className="text-xs text-gray-400 mb-3">Each tile is 24″ × 24″ (2ft / 0.61m). Enter dimensions in tiles, feet, or meters.</p>
+
+        <div className="flex flex-wrap gap-4 items-start mb-3">
+          {/* Width */}
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-bold text-gray-500">WIDTH</label>
+            <div className="flex items-center gap-1">
+              <button onClick={() => handleWidthChange(String(parseFloat(widthInput || 0) - (widthUnit === 'meters' ? 0.6096 : widthUnit === 'feet' ? 2 : 1)), null)}
+                className="w-7 h-9 rounded-lg bg-gray-100 font-bold text-lg leading-none">−</button>
+              <input
+                type="number" min={0} value={widthInput}
+                onChange={e => handleWidthChange(e.target.value, null)}
+                className="w-20 text-center font-black border border-gray-200 rounded-lg py-1.5 text-sm"
+              />
+              <button onClick={() => handleWidthChange(String(parseFloat(widthInput || 0) + (widthUnit === 'meters' ? 0.6096 : widthUnit === 'feet' ? 2 : 1)), null)}
+                className="w-7 h-9 rounded-lg bg-gray-100 font-bold text-lg leading-none">+</button>
+            </div>
+            <div className="flex gap-1">
+              {UNITS.map(u => (
+                <button key={u} onClick={() => handleWidthUnitChange(u)}
+                  className="text-xs px-2 py-0.5 rounded-lg font-semibold transition-all"
+                  style={{
+                    backgroundColor: widthUnit === u ? tierColor : '#f3f4f6',
+                    color: widthUnit === u ? '#fff' : '#6b7280',
+                  }}
+                >{unitLabel(u)}</button>
+              ))}
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <label className="text-xs font-bold text-gray-500">LENGTH (tiles)</label>
-            <button onClick={() => resizeGrid(rows - 1, cols)} className="w-7 h-7 rounded-lg bg-gray-100 font-bold text-lg leading-none">−</button>
-            <input
-              type="number" min={1} max={MAX_TILES_PER_SIDE} value={rows}
-              onChange={e => resizeGrid(parseInt(e.target.value) || 1, cols)}
-              className="w-14 text-center font-black border border-gray-200 rounded-lg py-1 text-sm"
-            />
-            <button onClick={() => resizeGrid(rows + 1, cols)} className="w-7 h-7 rounded-lg bg-gray-100 font-bold text-lg leading-none">+</button>
+
+          <div className="flex items-center mt-5 text-gray-400 font-bold text-xl">×</div>
+
+          {/* Height */}
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-bold text-gray-500">LENGTH</label>
+            <div className="flex items-center gap-1">
+              <button onClick={() => handleHeightChange(String(parseFloat(heightInput || 0) - (heightUnit === 'meters' ? 0.6096 : heightUnit === 'feet' ? 2 : 1)), null)}
+                className="w-7 h-9 rounded-lg bg-gray-100 font-bold text-lg leading-none">−</button>
+              <input
+                type="number" min={0} value={heightInput}
+                onChange={e => handleHeightChange(e.target.value, null)}
+                className="w-20 text-center font-black border border-gray-200 rounded-lg py-1.5 text-sm"
+              />
+              <button onClick={() => handleHeightChange(String(parseFloat(heightInput || 0) + (heightUnit === 'meters' ? 0.6096 : heightUnit === 'feet' ? 2 : 1)), null)}
+                className="w-7 h-9 rounded-lg bg-gray-100 font-bold text-lg leading-none">+</button>
+            </div>
+            <div className="flex gap-1">
+              {UNITS.map(u => (
+                <button key={u} onClick={() => handleHeightUnitChange(u)}
+                  className="text-xs px-2 py-0.5 rounded-lg font-semibold transition-all"
+                  style={{
+                    backgroundColor: heightUnit === u ? tierColor : '#f3f4f6',
+                    color: heightUnit === u ? '#fff' : '#6b7280',
+                  }}
+                >{unitLabel(u)}</button>
+              ))}
+            </div>
           </div>
         </div>
+
         {/* Quick presets */}
         <div className="flex gap-2 flex-wrap">
           <span className="text-xs font-bold text-gray-400 self-center">Presets:</span>
           {[
-            {label:'2×3 runner', c:1, r:3},
-            {label:'4×6', c:2, r:3},
-            {label:'5×8', c:3, r:4},
-            {label:'8×10', c:4, r:5},
-            {label:'10×12', c:5, r:6},
-            {label:'12×20 room', c:6, r:10},
-            {label:'20×40 studio', c:10, r:20},
-            {label:'40×80 gym', c:20, r:40},
-          ].map(({label,c,r}) => (
-            <button key={label} onClick={() => resizeGrid(r, c)}
+            { label: "2′×6′ runner", c: 1, r: 3 },
+            { label: "4′×6′", c: 2, r: 3 },
+            { label: "6′×8′", c: 3, r: 4 },
+            { label: "8′×10′", c: 4, r: 5 },
+            { label: "10′×12′", c: 5, r: 6 },
+            { label: "12′×20′ room", c: 6, r: 10 },
+            { label: "20′×40′ studio", c: 10, r: 20 },
+            { label: "40′×80′ gym", c: 20, r: 40 },
+          ].map(({ label, c, r }) => (
+            <button key={label} onClick={() => applyPreset(r, c)}
               className="text-xs px-2 py-1 rounded-lg border border-gray-200 font-semibold hover:border-gray-400 transition-colors whitespace-nowrap">
               {label}
             </button>
@@ -211,7 +285,6 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
         <p className="text-xs text-gray-400 mb-2">Click or drag to paint tiles · Large grids: use presets above</p>
         <div className="overflow-auto max-w-full">
           <div
-            ref={gridRef}
             className="inline-block border-2 rounded-xl overflow-hidden select-none"
             style={{ borderColor: tierColor, cursor: 'crosshair' }}
             onContextMenu={e => e.preventDefault()}
@@ -223,7 +296,6 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
                     key={c}
                     onMouseDown={(e) => handleTileMouseDown(r, c, e)}
                     onMouseEnter={() => handleTileMouseEnter(r, c)}
-                    onContextMenu={(e) => { e.preventDefault(); paintTile(r, c); }}
                     style={{
                       width: tilePx,
                       height: tilePx,
@@ -238,6 +310,7 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
             ))}
           </div>
         </div>
+
         {/* Price breakdown */}
         <div className="mt-3 p-3 rounded-xl border" style={{ borderColor: `${tierColor}40`, backgroundColor: `${tierColor}08` }}>
           <div className="text-xs text-gray-500 space-y-1">
