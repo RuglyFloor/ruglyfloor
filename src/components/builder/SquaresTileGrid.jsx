@@ -141,6 +141,7 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
   const [grid, setGrid] = useState(() => makGrid(4, 4));
   const [activeColor, setActiveColor] = useState('#F5F5F5');
   const [isPainting, setIsPainting] = useState(false);
+  const [designConfirmed, setDesignConfirmed] = useState(false);
 
   const totalSqFt = cols * rows * 4;
   const totalTiles = cols * rows;
@@ -190,6 +191,7 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
       next[r][c] = activeColor;
       return next;
     });
+    setDesignConfirmed(false);
   }, [activeColor]);
 
   const handleTileMouseDown = (r, c, e) => {
@@ -203,14 +205,15 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
   };
 
   useEffect(() => {
-    if (onChange) onChange({ grid, rows, cols, surfaceType, totalSqFt, totalTiles, numPaintColors, price });
-  }, [grid, rows, cols, surfaceType, totalSqFt, totalTiles, numPaintColors, price]);
+    if (onChange) onChange(designConfirmed ? { grid, rows, cols, surfaceType, totalSqFt, totalTiles, numPaintColors, price } : null);
+  }, [grid, rows, cols, surfaceType, totalSqFt, totalTiles, numPaintColors, price, designConfirmed]);
 
   const fillAll = (color) => {
     const c = color ?? activeColor;
     setGrid(Array.from({ length: rows }, () => Array(cols).fill(c)));
+    setDesignConfirmed(false);
   };
-  const clearGrid = () => setGrid(makGrid(rows, cols));
+  const clearGrid = () => { setGrid(makGrid(rows, cols)); setDesignConfirmed(false); };
   const unitLabel = (unit) => ({ tiles: 'Tiles', feet: 'Feet', meters: 'Meters' }[unit]);
 
   const confirmWidth = () => setWidthConfirmed(true);
@@ -399,6 +402,23 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
           <div className="mt-3 text-xs text-gray-400">
             {cols} × {rows} tiles · {totalSqFt} sq ft
             {gridHasNonDefault && <span className="ml-2" style={{ color: tierColor }}>· design saved ✓</span>}
+          </div>
+
+          <div className="mt-4">
+            {!designConfirmed ? (
+              <button
+                onClick={() => setDesignConfirmed(true)}
+                className="w-full py-3 rounded-xl font-black text-white text-sm transition-all"
+                style={{ backgroundColor: tierColor }}
+              >
+                ✓ Confirm Tile Design → Continue
+              </button>
+            ) : (
+              <div className="flex items-center justify-between px-4 py-3 rounded-xl" style={{ backgroundColor: `${tierColor}15`, border: `2px solid ${tierColor}` }}>
+                <span className="text-sm font-bold" style={{ color: tierColor }}>✓ Tile design confirmed</span>
+                <button onClick={() => setDesignConfirmed(false)} className="text-xs text-gray-400 underline">Edit</button>
+              </div>
+            )}
           </div>
         </div>
       </SubStep>
