@@ -21,6 +21,8 @@ export default function BuilderStep({ children, visible, color, scrollOnAppear }
     }
   }, [visible]);
 
+  if (!visible && !shown) return null;
+
   return (
     <div
       ref={ref}
