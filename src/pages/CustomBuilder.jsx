@@ -616,7 +616,7 @@ export default function CustomBuilder() {
           )}
 
           {/* Inline CTA */}
-          {isComplete && tier?.id !== 'rugly_lx' && (
+          {isComplete && (
             <div className="mt-6 rounded-2xl p-6 text-center" style={{ backgroundColor: `${tierColor}12`, border: `2px solid ${tierColor}` }}>
               <div className="text-lg font-black mb-1" style={{ color: tierColor, fontFamily: 'Barlow Condensed, sans-serif' }}>
                 ✓ {isSquares ? 'Your tile order is ready!' : 'Your rug is ready to order!'}
@@ -637,33 +637,7 @@ export default function CustomBuilder() {
             </div>
           )}
 
-          {/* Quote Request Form for Rugly LX and Squares */}
-          {isComplete && (tier?.id === 'rugly_lx' || isSquares) && (
-            <div className="mt-6">
-              <QuoteRequestForm
-                tierColor={tierColor}
-                quoteData={{
-                  design_type: isSquares ? 'squares' : 'rug',
-                  tier_id: tier.id,
-                  tier_label: tier.label,
-                  size_label: isSquares ? `${squaresGridData.cols}×${squaresGridData.rows} tiles` : (size?.label || ''),
-                  size_measurement: isSquares ? `${squaresGridData.cols * 2}'×${squaresGridData.rows * 2}'` : (size?.measurement || ''),
-                  base_color_name: baseColor?.name || '',
-                  base_color_hex: baseColor?.hex || '',
-                  paint_color_name: paintColor?.name || '',
-                  paint_color_hex: paintHex || '',
-                  has_second_color: hasSecondColor,
-                  second_paint_color_name: hasSecondColor ? (secondPaintColor?.name || '') : '',
-                  second_paint_color_hex: hasSecondColor ? secondHex : '',
-                  image_url: imageUrl || '',
-                  ai_preview_url: previewUrl || '',
-                  design_instructions: designInstructions,
-                  squares_grid_data: isSquares ? squaresGridData : null,
-                  estimated_price: price,
-                }}
-              />
-            </div>
-          )}
+
         </section>
 
       </div>
@@ -706,34 +680,19 @@ export default function CustomBuilder() {
           {isComplete && <span className="text-xs px-2 py-1 rounded-full font-bold" style={{ backgroundColor: `${tierColor}20`, color: tierColor }}>✓ Ready!</span>}
         </div>
 
-        {(tier?.id === 'rugly_lx' || isSquares) ? (
-          <button
-            disabled={!isComplete}
-            onClick={() => document.querySelector('[data-quote-form]')?.scrollIntoView({ behavior: 'smooth' })}
-            className="flex items-center gap-2 font-black text-white px-8 py-4 rounded-2xl text-lg transition-all flex-shrink-0"
-            style={{
-              backgroundColor: isComplete ? tierColor : '#d1d5db',
-              cursor: isComplete ? 'pointer' : 'not-allowed',
-              fontFamily: 'Barlow Condensed, sans-serif',
-            }}
-          >
-            {isComplete ? '↓ Request Quote' : 'Complete Above'}
-          </button>
-        ) : (
-          <button
-            onClick={handleAddToCart}
-            disabled={!isComplete}
-            className="flex items-center gap-2 font-black text-white px-8 py-4 rounded-2xl text-lg transition-all flex-shrink-0"
-            style={{
-              backgroundColor: isComplete ? tierColor : '#d1d5db',
-              cursor: isComplete ? 'pointer' : 'not-allowed',
-              fontFamily: 'Barlow Condensed, sans-serif',
-            }}
-          >
-            <ShoppingCart className="w-5 h-5" />
-            {isComplete ? 'Add to Cart' : 'Complete Above'}
-          </button>
-        )}
+        <button
+          onClick={handleAddToCart}
+          disabled={!isComplete}
+          className="flex items-center gap-2 font-black text-white px-8 py-4 rounded-2xl text-lg transition-all flex-shrink-0"
+          style={{
+            backgroundColor: isComplete ? tierColor : '#d1d5db',
+            cursor: isComplete ? 'pointer' : 'not-allowed',
+            fontFamily: 'Barlow Condensed, sans-serif',
+          }}
+        >
+          <ShoppingCart className="w-5 h-5" />
+          {isComplete ? 'Add to Cart' : 'Complete Above'}
+        </button>
       </div>
     </div>
   );
