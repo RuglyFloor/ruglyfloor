@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, Package, Truck, Home } from 'lucide-react';
+import { CheckCircle, CheckCircle2, Package, Truck, Home } from 'lucide-react';
 import SEOHead from '../components/seo/SEOHead';
 import { base44 } from '@/api/base44Client';
 
@@ -10,18 +10,26 @@ export default function Success() {
   const navigate = useNavigate();
   const [sessionId, setSessionId] = useState('');
   const [orderInfo, setOrderInfo] = useState(null);
+  const [quote, setQuote] = useState(null);
+  const [quoteLoading, setQuoteLoading] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const sid = params.get('session_id');
+    const qid = params.get('quote_id');
+
     if (sid) {
       setSessionId(sid);
-      // Fetch order info to populate the Google Customer Reviews opt-in
       base44.functions.invoke('getOrderInfoForReview', { session_id: sid })
-        .then(res => {
-          if (res.data) setOrderInfo(res.data);
-        })
+        .then(res => { if (res.data) setOrderInfo(res.data); })
         .catch(() => {});
+    }
+
+    if (qid) {
+      setQuoteLoading(true);
+      base44.entities.DesignQuote.get(qid)
+        .then(data => { setQuote(data); setQuoteLoading(false); })
+        .catch(() => setQuoteLoading(false));
     }
   }, []);
 
@@ -53,6 +61,73 @@ export default function Success() {
       delete window.renderOptIn;
     };
   }, [orderInfo]);
+
+  // If this was a quote payment, show the same branded quote confirmation
+  if (quoteLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-gray-200 border-t-gray-800 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (quote) {
+    let description = `${quote.tier_label} Custom Rug`;
+    if (quote.design_type === 'squares' && quote.squares_grid_data) {
+      const g = quote.squares_grid_data;
+      description = `Custom Squares — ${g.cols}×${g.rows} tiles (${g.totalSqFt} sq ft)`;
+    } else if (quote.size_label) {
+      description = `${quote.tier_label} Custom Rug — ${quote.size_label}`;
+    }
+
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 py-12">
+        <img src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/938135f33_RUGLYMASTERLOGOsmall.png" alt="Rugly" className="h-14 mb-8" />
+        <div className="w-full max-w-lg bg-white rounded-3xl shadow-xl overflow-hidden">
+          <div className="px-8 py-6 text-center" style={{ backgroundColor: '#343634' }}>
+            <p className="text-gray-400 text-sm uppercase tracking-widest mb-1">Your Custom Design Quote</p>
+            <h1 className="text-white text-4xl font-black" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>✓ Paid — Thank You!</h1>
+          </div>
+          <div className="px-8 py-8 space-y-6">
+            {(quote.ai_preview_url || quote.image_url) && (
+              <img src={quote.ai_preview_url || quote.image_url} alt="Your Design" className="w-full rounded-2xl border border-gray-200 object-cover" style={{ maxHeight: 300 }} />
+            )}
+            <div className="space-y-2 text-sm text-gray-600">
+              <div className="text-lg font-black text-gray-800">{description}</div>
+              {quote.base_color_name && <div><span className="font-semibold">Base Color:</span> {quote.base_color_name}</div>}
+              {quote.paint_color_name && <div><span className="font-semibold">Paint Color:</span> {quote.paint_color_name}</div>}
+              {quote.second_paint_color_name && <div><span className="font-semibold">2nd Paint Color:</span> {quote.second_paint_color_name}</div>}
+              {quote.design_instructions && <div><span className="font-semibold">Your Notes:</span> {quote.design_instructions}</div>}
+            </div>
+            {quote.admin_notes && (
+              <div className="bg-blue-50 rounded-xl px-4 py-3 text-sm text-blue-800 border border-blue-100">
+                <span className="font-semibold">Note from our team:</span> {quote.admin_notes}
+              </div>
+            )}
+            {quote.quoted_price > 0 && (
+              <div className="text-center rounded-2xl py-6" style={{ backgroundColor: '#343634' }}>
+                <div className="text-gray-400 text-xs uppercase tracking-widest mb-1">Amount Paid</div>
+                <div className="text-white font-black text-5xl" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>${quote.quoted_price.toFixed(2)}</div>
+              </div>
+            )}
+            <div className="flex items-center justify-center gap-3 bg-green-50 rounded-2xl py-5 border border-green-200">
+              <CheckCircle2 className="w-6 h-6 text-green-600" />
+              <span className="font-bold text-green-800 text-lg">Payment Received — We're on it!</span>
+            </div>
+            <div className="text-center space-y-3">
+              <p className="text-sm text-gray-500">Our artists will begin production. We'll email you updates every step of the way.</p>
+              <p className="text-xs text-gray-400">
+                Questions? <a href="mailto:info@ruglyfloor.com" className="text-blue-500 underline">info@ruglyfloor.com</a> · <a href="tel:5177778474" className="text-blue-500 underline">(517) 777-8474</a>
+              </p>
+            </div>
+            <button onClick={() => navigate('/')} className="w-full py-3 rounded-2xl font-black text-gray-700 border-2 border-gray-200 hover:bg-gray-50 transition-colors" style={{ fontFamily: 'Barlow Condensed, sans-serif' }}>
+              Back to Home
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen py-12 px-6 bg-gradient-to-br from-green-50 to-blue-50">
