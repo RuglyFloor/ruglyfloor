@@ -210,7 +210,16 @@ export default function AdminNewQuote() {
                   <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>2. Design Your Tile Grid</h2>
                   <p className="text-sm text-gray-500 mb-4">Each tile is 24″×24″.</p>
                   <SquaresTileGrid tierColor={tierColor} onChange={setSquaresGridData} />
-                  {squaresGridData && <div className="mt-3 text-sm font-bold" style={{ color: tierColor }}>{squaresGridData.totalTiles} tiles · {squaresGridData.totalSqFt} sq ft · ${squaresPrice}</div>}
+                  {squaresGridData && (
+                    <div className="mt-4 flex items-center justify-between flex-wrap gap-3 bg-white border-2 rounded-2xl px-5 py-4" style={{ borderColor: tierColor }}>
+                      <div className="text-sm font-bold" style={{ color: tierColor }}>
+                        ✓ {squaresGridData.totalTiles} tiles · {squaresGridData.totalSqFt} sq ft · ${squaresPrice}
+                      </div>
+                      <div className="flex items-center gap-2 text-sm font-black text-white px-5 py-2 rounded-xl" style={{ backgroundColor: tierColor }}>
+                        ↓ Now upload the design artwork below
+                      </div>
+                    </div>
+                  )}
                 </>
               ) : (
                 <>
