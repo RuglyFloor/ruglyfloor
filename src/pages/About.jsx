@@ -182,6 +182,32 @@ export default function About() {
             </div>
           </motion.div>
 
+          {/* Process Video */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="mt-12"
+          >
+            <div className="text-center mb-8">
+              <div className="inline-block px-4 py-2 rounded-full mb-4" style={{backgroundColor:'rgba(240,70,36,0.1)'}}>
+                <span className="font-semibold text-sm" style={{color:'var(--brand-red)'}}>Watch It Happen</span>
+              </div>
+              <h3 className="text-4xl text-gray-900" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>The Making of a Rug</h3>
+              <p className="text-gray-500 mt-2 text-lg">See how every hand-painted rug comes to life</p>
+            </div>
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl" style={{ paddingBottom: '56.25%', height: 0 }}>
+              <iframe
+                className="absolute inset-0 w-full h-full"
+                src="https://www.youtube.com/embed/9uUCByDwbj0?autoplay=1&mute=1&loop=1&playlist=9uUCByDwbj0&controls=1&rel=0&modestbranding=1"
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+                title="The Making of a Rugly Rug"
+              />
+            </div>
+          </motion.div>
+
           {/* Before You Order - Foundation Guide */}
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
