@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import AdminProtected from '@/components/AdminProtected';
-import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, Clock, XCircle, DollarSign, ChevronDown, ChevronUp, Mail, ExternalLink } from 'lucide-react';
+import { CheckCircle2, Clock, XCircle, DollarSign, ChevronDown, ChevronUp, Mail, ExternalLink, Grid, Loader2, CreditCard } from 'lucide-react';
 
 const STATUS_CONFIG = {
   pending: { label: 'Pending', color: '#f59e0b', icon: Clock },
   quoted: { label: 'Quoted', color: '#4075ff', icon: DollarSign },
   accepted: { label: 'Accepted', color: '#24f0a0', icon: CheckCircle2 },
   rejected: { label: 'Rejected', color: '#f04624', icon: XCircle },
+  paid: { label: 'Paid', color: '#10b981', icon: CheckCircle2 },
 };
 
 function QuoteCard({ quote, onUpdate }) {
@@ -16,10 +16,13 @@ function QuoteCard({ quote, onUpdate }) {
   const [quotedPrice, setQuotedPrice] = useState(quote.quoted_price || '');
   const [adminNotes, setAdminNotes] = useState(quote.admin_notes || '');
   const [saving, setSaving] = useState(false);
-  const [sendingEmail, setSendingEmail] = useState(false);
+  const [sendingQuote, setSendingQuote] = useState(false);
+  const [processingCutouts, setProcessingCutouts] = useState(false);
+  const [cutoutResult, setCutoutResult] = useState(null);
 
   const cfg = STATUS_CONFIG[quote.status] || STATUS_CONFIG.pending;
   const Icon = cfg.icon;
+  const isSquares = quote.design_type === 'squares';
 
   const handleSave = async () => {
     setSaving(true);
@@ -36,37 +39,46 @@ function QuoteCard({ quote, onUpdate }) {
     onUpdate();
   };
 
-  const handleSendQuote = async () => {
-    if (!quotedPrice) return alert('Set a quoted price first.');
-    setSendingEmail(true);
+  const handleSendQuoteWithPayment = async () => {
+    if (!quotedPrice || parseFloat(quotedPrice) <= 0) {
+      alert('Set a quoted price first.');
+      return;
+    }
+    setSendingQuote(true);
+    // First save the price and notes
     await base44.entities.DesignQuote.update(quote.id, {
-      status: 'quoted',
       quoted_price: parseFloat(quotedPrice),
-      quote_sent_at: new Date().toISOString(),
+      admin_notes: adminNotes,
     });
-    await base44.integrations.Core.SendEmail({
-      to: quote.customer_email,
-      from_name: 'Rugly Floor',
-      subject: `Your Custom Rugly Quote — $${quotedPrice}`,
-      body: `
-Hi ${quote.customer_name},
+    try {
+      const res = await base44.functions.invoke('sendQuoteWithPayment', { quote_id: quote.id });
+      if (res.data?.success) {
+        alert(`✅ Quote sent to ${quote.customer_email} with Stripe Pay Now link!`);
+        onUpdate();
+      } else {
+        alert('Error: ' + (res.data?.error || 'Unknown error'));
+      }
+    } catch (err) {
+      alert('Failed to send quote: ' + err.message);
+    }
+    setSendingQuote(false);
+  };
 
-Great news — we've reviewed your custom ${quote.tier_label} design and we're ready to bring it to life!
-
-Your Quote: $${quotedPrice}
-${quote.size_label ? `Size: ${quote.size_label}` : ''}
-${quote.design_instructions ? `Your notes: "${quote.design_instructions}"` : ''}
-
-${adminNotes ? `From our team: ${adminNotes}` : ''}
-
-Ready to move forward? Reply to this email or visit ruglyfloor.com to place your order.
-
-— The Rugly Team
-      `.trim(),
-    });
-    onUpdate();
-    setSendingEmail(false);
-    alert('Quote email sent!');
+  const handleProcessCutouts = async () => {
+    setProcessingCutouts(true);
+    setCutoutResult(null);
+    try {
+      const res = await base44.functions.invoke('processSquaresCutouts', { quote_id: quote.id });
+      if (res.data?.success) {
+        setCutoutResult(res.data);
+        onUpdate();
+      } else {
+        alert('Error: ' + (res.data?.error || 'Unknown error'));
+      }
+    } catch (err) {
+      alert('Failed to process cutouts: ' + err.message);
+    }
+    setProcessingCutouts(false);
   };
 
   return (
@@ -81,12 +93,18 @@ Ready to move forward? Reply to this email or visit ruglyfloor.com to place your
           <Icon className="w-5 h-5 flex-shrink-0" style={{ color: cfg.color }} />
           <div>
             <div className="font-black text-base" style={{ color: '#343634' }}>{quote.customer_name}</div>
-            <div className="text-xs text-gray-500">{quote.customer_email} · {quote.tier_label} {quote.design_type === 'squares' ? '(Squares)' : quote.size_label ? `· ${quote.size_label}` : ''}</div>
+            <div className="text-xs text-gray-500">
+              {quote.customer_email} · {quote.tier_label}
+              {isSquares ? ' (Squares)' : quote.size_label ? ` · ${quote.size_label}` : ''}
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-xs font-bold px-2 py-1 rounded-full" style={{ backgroundColor: `${cfg.color}20`, color: cfg.color }}>{cfg.label}</span>
-          {quote.estimated_price > 0 && <span className="text-sm font-black text-gray-600">~${quote.estimated_price}</span>}
+          <span className="text-xs font-bold px-2 py-1 rounded-full" style={{ backgroundColor: `${cfg.color}20`, color: cfg.color }}>
+            {cfg.label}
+          </span>
+          {quote.quoted_price > 0 && <span className="text-sm font-black text-gray-700">${quote.quoted_price}</span>}
+          {quote.estimated_price > 0 && !quote.quoted_price && <span className="text-sm font-black text-gray-400">~${quote.estimated_price}</span>}
           {expanded ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
         </div>
       </div>
@@ -95,11 +113,12 @@ Ready to move forward? Reply to this email or visit ruglyfloor.com to place your
         <div className="px-5 py-4 space-y-4 border-t border-gray-100">
           {/* Design preview */}
           <div className="flex gap-4">
-            {quote.ai_preview_url && (
-              <img src={quote.ai_preview_url} alt="AI Preview" className="w-28 h-28 object-cover rounded-xl border border-gray-200 flex-shrink-0" />
-            )}
-            {!quote.ai_preview_url && quote.image_url && (
-              <img src={quote.image_url} alt="Upload" className="w-28 h-28 object-cover rounded-xl border border-gray-200 flex-shrink-0" />
+            {(quote.ai_preview_url || quote.image_url) && (
+              <img
+                src={quote.ai_preview_url || quote.image_url}
+                alt="Design"
+                className="w-28 h-28 object-cover rounded-xl border border-gray-200 flex-shrink-0"
+              />
             )}
             <div className="space-y-1 text-sm text-gray-600">
               {quote.base_color_name && <div><span className="font-semibold">Base:</span> {quote.base_color_name}</div>}
@@ -113,6 +132,11 @@ Ready to move forward? Reply to this email or visit ruglyfloor.com to place your
               {quote.image_url && (
                 <a href={quote.image_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-blue-600 text-xs">
                   <ExternalLink className="w-3 h-3" /> View Upload
+                </a>
+              )}
+              {quote.stripe_payment_link && (
+                <a href={quote.stripe_payment_link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-green-600 text-xs font-semibold">
+                  <CreditCard className="w-3 h-3" /> View Payment Link
                 </a>
               )}
             </div>
@@ -131,40 +155,108 @@ Ready to move forward? Reply to this email or visit ruglyfloor.com to place your
               />
             </div>
             <div>
-              <label className="text-xs font-bold text-gray-500 block mb-1">Admin Notes</label>
+              <label className="text-xs font-bold text-gray-500 block mb-1">Admin Notes (included in email)</label>
               <input
                 type="text"
                 value={adminNotes}
                 onChange={e => setAdminNotes(e.target.value)}
-                placeholder="Internal notes..."
+                placeholder="e.g. Colors may vary slightly..."
                 className="w-full border-2 rounded-xl px-3 py-2 text-sm focus:outline-none border-gray-200"
               />
             </div>
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <button onClick={handleSave} disabled={saving} className="text-sm font-bold px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors">
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="text-sm font-bold px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
+            >
               {saving ? 'Saving...' : 'Save Notes & Price'}
             </button>
+
+            {/* Primary CTA: Send Quote with Stripe Pay Now */}
             <button
-              onClick={handleSendQuote}
-              disabled={sendingEmail}
-              className="text-sm font-bold px-4 py-2 rounded-xl text-white flex items-center gap-1 transition-colors"
-              style={{ backgroundColor: '#4075ff' }}
+              onClick={handleSendQuoteWithPayment}
+              disabled={sendingQuote || !quotedPrice}
+              className="text-sm font-bold px-5 py-2 rounded-xl text-white flex items-center gap-2 transition-opacity hover:opacity-90 disabled:opacity-50"
+              style={{ backgroundColor: '#f04624' }}
             >
-              <Mail className="w-4 h-4" /> {sendingEmail ? 'Sending...' : 'Send Quote Email'}
+              {sendingQuote ? <Loader2 className="w-4 h-4 animate-spin" /> : <CreditCard className="w-4 h-4" />}
+              {sendingQuote ? 'Sending...' : 'Send Quote + Pay Link'}
             </button>
-            {quote.status !== 'accepted' && (
-              <button onClick={() => handleStatus('accepted')} className="text-sm font-bold px-4 py-2 rounded-xl text-white" style={{ backgroundColor: '#24f0a0', color: '#343634' }}>
+
+            {quote.status !== 'accepted' && quote.status !== 'paid' && (
+              <button
+                onClick={() => handleStatus('accepted')}
+                className="text-sm font-bold px-4 py-2 rounded-xl font-bold"
+                style={{ backgroundColor: '#24f0a0', color: '#343634' }}
+              >
                 Mark Accepted
               </button>
             )}
             {quote.status !== 'rejected' && (
-              <button onClick={() => handleStatus('rejected')} className="text-sm font-bold px-4 py-2 rounded-xl text-white" style={{ backgroundColor: '#f04624' }}>
+              <button
+                onClick={() => handleStatus('rejected')}
+                className="text-sm font-bold px-4 py-2 rounded-xl text-white"
+                style={{ backgroundColor: '#6b7280' }}
+              >
                 Mark Rejected
               </button>
             )}
           </div>
+
+          {/* Squares Cutout Processing */}
+          {isSquares && (
+            <div className="border-t border-gray-100 pt-4">
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <div className="text-sm font-bold text-gray-700">Tile Cutout Processing</div>
+                  <div className="text-xs text-gray-400">
+                    Generates per-tile crop coordinates (24″×24″ each) for production.
+                    {quote.cutouts_processed_at && (
+                      <span className="text-green-600 ml-2">✓ Last processed {new Date(quote.cutouts_processed_at).toLocaleDateString()}</span>
+                    )}
+                  </div>
+                </div>
+                <button
+                  onClick={handleProcessCutouts}
+                  disabled={processingCutouts}
+                  className="flex items-center gap-2 text-sm font-bold px-4 py-2 rounded-xl text-white flex-shrink-0"
+                  style={{ backgroundColor: '#4075ff' }}
+                >
+                  {processingCutouts ? <Loader2 className="w-4 h-4 animate-spin" /> : <Grid className="w-4 h-4" />}
+                  {processingCutouts ? 'Processing...' : 'Process Cutouts'}
+                </button>
+              </div>
+
+              {/* Cutout result summary */}
+              {cutoutResult && (
+                <div className="bg-gray-50 rounded-xl p-3 text-xs text-gray-600 space-y-1">
+                  <div className="font-bold text-gray-800">✓ {cutoutResult.painted_tiles} painted tiles mapped across {cutoutResult.total_tiles} total</div>
+                  <div>Source image: {cutoutResult.source_image_dimensions?.width}×{cutoutResult.source_image_dimensions?.height}px</div>
+                  <div>Each tile: {cutoutResult.tile_pixel_size?.width}×{cutoutResult.tile_pixel_size?.height}px = 24″×24″</div>
+                  {cutoutResult.color_breakdown && (
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {Object.entries(cutoutResult.color_breakdown).map(([color, count]) => (
+                        <span key={color} className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-white border border-gray-200">
+                          <span className="w-3 h-3 rounded-full inline-block border border-gray-300" style={{ backgroundColor: color }} />
+                          {count} tiles
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Show existing cutouts */}
+              {!cutoutResult && quote.tile_cutouts?.length > 0 && (
+                <div className="text-xs text-gray-500">
+                  {quote.tile_cutouts.length} tile positions stored · {quote.tile_cutouts.filter(t => t.is_painted).length} painted
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -191,6 +283,7 @@ export default function AdminQuotes() {
     pending: quotes.filter(q => q.status === 'pending').length,
     quoted: quotes.filter(q => q.status === 'quoted').length,
     accepted: quotes.filter(q => q.status === 'accepted').length,
+    paid: quotes.filter(q => q.status === 'paid').length,
     rejected: quotes.filter(q => q.status === 'rejected').length,
   };
 
@@ -199,11 +292,11 @@ export default function AdminQuotes() {
       <div className="min-h-screen bg-gray-50 p-6">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-black mb-1" style={{ fontFamily: 'Barlow Condensed, sans-serif', color: '#343634' }}>Design Quotes</h1>
-          <p className="text-gray-500 mb-6">Review, price, and send quotes to customers.</p>
+          <p className="text-gray-500 mb-6">Review, price, and send quotes with Stripe payment links to customers.</p>
 
           {/* Filter tabs */}
           <div className="flex flex-wrap gap-2 mb-6">
-            {['all', 'pending', 'quoted', 'accepted', 'rejected'].map(s => (
+            {['all', 'pending', 'quoted', 'paid', 'accepted', 'rejected'].map(s => (
               <button
                 key={s}
                 onClick={() => setFilter(s)}

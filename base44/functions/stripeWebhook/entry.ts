@@ -31,6 +31,7 @@ Deno.serve(async (req) => {
     switch (event.type) {
       case 'checkout.session.completed':
         await handleCheckoutCompleted(base44, event);
+        await handleQuotePayment(base44, event);
         break;
       
       case 'payment_intent.succeeded':
@@ -145,6 +146,36 @@ async function handlePaymentSucceeded(base44, event) {
 
     console.log('[Webhook] Order marked as PAID:', order.order_number);
   }
+}
+
+async function handleQuotePayment(base44, event) {
+  const session = event.data.object;
+  const quoteId = session.metadata?.quote_id;
+  const serviceType = session.metadata?.service_type;
+
+  if (!quoteId || serviceType !== 'design_quote') return;
+
+  console.log('[Webhook] Processing quote payment for quote:', quoteId);
+
+  const quote = await base44.asServiceRole.entities.DesignQuote.get(quoteId);
+  if (!quote) {
+    console.error('[Webhook] Quote not found:', quoteId);
+    return;
+  }
+
+  // Idempotency
+  if (quote.stripe_payment_intent_id === session.payment_intent) {
+    console.log('[Webhook] Quote payment already processed:', quoteId);
+    return;
+  }
+
+  await base44.asServiceRole.entities.DesignQuote.update(quoteId, {
+    status: 'paid',
+    stripe_payment_intent_id: session.payment_intent,
+    paid_at: new Date().toISOString(),
+  });
+
+  console.log('[Webhook] Quote marked as PAID:', quoteId);
 }
 
 async function handleRefund(base44, event) {

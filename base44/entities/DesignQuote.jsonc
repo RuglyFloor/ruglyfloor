@@ -74,6 +74,32 @@
       "type": "object",
       "description": "Grid data for squares orders"
     },
+    "tile_cutouts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "row": {
+            "type": "number"
+          },
+          "col": {
+            "type": "number"
+          },
+          "color": {
+            "type": "string"
+          },
+          "image_url": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Individual 24x24 tile cutout data for Squares orders"
+    },
+    "cutouts_processed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When tile cutouts were last processed"
+    },
     "estimated_price": {
       "type": "number",
       "description": "Customer-side estimated price"
@@ -84,7 +110,8 @@
         "pending",
         "quoted",
         "accepted",
-        "rejected"
+        "rejected",
+        "paid"
       ],
       "default": "pending"
     },
@@ -98,6 +125,23 @@
     "quote_sent_at": {
       "type": "string",
       "format": "date-time"
+    },
+    "stripe_payment_link": {
+      "type": "string",
+      "description": "Stripe checkout URL sent to customer"
+    },
+    "stripe_checkout_session_id": {
+      "type": "string",
+      "description": "Stripe checkout session ID for this quote"
+    },
+    "stripe_payment_intent_id": {
+      "type": "string",
+      "description": "Stripe payment intent ID after payment"
+    },
+    "paid_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the customer paid"
     }
   },
   "required": [
