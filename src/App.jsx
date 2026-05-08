@@ -15,6 +15,7 @@ import BookConsultation from './pages/BookConsultation';
 import AdminConsultations from './pages/AdminConsultations';
 import AdminQuotes from './pages/AdminQuotes';
 import QuoteView from './pages/QuoteView';
+import AdminNewQuote from './pages/AdminNewQuote';
 import React, { Suspense } from 'react';
 
 const { Pages, Layout, mainPage } = pagesConfig;
@@ -74,6 +75,7 @@ const AuthenticatedApp = () => {
         <Route path="/AdminConsultations" element={<AdminConsultations />} />
         <Route path="/AdminQuotes" element={<LayoutWrapper currentPageName="AdminQuotes"><AdminQuotes /></LayoutWrapper>} />
         <Route path="/QuoteView" element={<QuoteView />} />
+        <Route path="/AdminNewQuote" element={<AdminNewQuote />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Suspense>

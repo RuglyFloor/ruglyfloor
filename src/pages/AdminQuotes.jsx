@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import AdminProtected from '@/components/AdminProtected';
-import { CheckCircle2, Clock, XCircle, DollarSign, ChevronDown, ChevronUp, Mail, ExternalLink, Grid, Loader2, CreditCard, Plus, X } from 'lucide-react';
+import { CheckCircle2, Clock, XCircle, DollarSign, ChevronDown, ChevronUp, Mail, ExternalLink, Grid, Loader2, CreditCard, Plus } from 'lucide-react';
 
 const STATUS_CONFIG = {
   pending: { label: 'Pending', color: '#f59e0b', icon: Clock },
@@ -263,184 +264,11 @@ function QuoteCard({ quote, onUpdate }) {
   );
 }
 
-const TIER_OPTIONS = ['Crugly', 'Rugly', 'Rugly LX', 'Squares'];
-const SIZE_OPTIONS = ["2' × 3'", "3' × 5'", "4' × 6'", "5' × 7'", "6' × 9'", "9' × 12'", 'Custom'];
-
-function NewQuoteModal({ onClose, onCreated }) {
-  const [form, setForm] = useState({
-    customer_name: '',
-    customer_email: '',
-    customer_phone: '',
-    design_type: 'rug',
-    tier_id: 'crugly',
-    tier_label: 'Crugly',
-    size_label: '',
-    base_color_name: '',
-    paint_color_name: '',
-    design_instructions: '',
-    quoted_price: '',
-    admin_notes: '',
-  });
-  const [saving, setSaving] = useState(false);
-
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
-
-  const handleTierChange = (label) => {
-    const id = label.toLowerCase().replace(' ', '_');
-    set('tier_label', label);
-    set('tier_id', id);
-    set('design_type', label === 'Squares' ? 'squares' : 'rug');
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!form.customer_name || !form.customer_email) return alert('Name and email are required.');
-    setSaving(true);
-    await base44.entities.DesignQuote.create({
-      ...form,
-      quoted_price: form.quoted_price ? parseFloat(form.quoted_price) : undefined,
-      status: form.quoted_price ? 'quoted' : 'pending',
-    });
-    onCreated();
-    onClose();
-    setSaving(false);
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-xl font-black" style={{ color: '#343634' }}>New Quote</h2>
-          <button onClick={onClose} className="p-1 rounded-lg hover:bg-gray-100"><X className="w-5 h-5 text-gray-500" /></button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
-          {/* Customer Info */}
-          <div className="grid grid-cols-1 gap-3">
-            <div>
-              <label className="text-xs font-bold text-gray-500 block mb-1">Customer Name *</label>
-              <input value={form.customer_name} onChange={e => set('customer_name', e.target.value)} required
-                className="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-gray-400"
-                placeholder="Jane Smith" />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs font-bold text-gray-500 block mb-1">Email *</label>
-                <input type="email" value={form.customer_email} onChange={e => set('customer_email', e.target.value)} required
-                  className="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-gray-400"
-                  placeholder="jane@email.com" />
-              </div>
-              <div>
-                <label className="text-xs font-bold text-gray-500 block mb-1">Phone</label>
-                <input value={form.customer_phone} onChange={e => set('customer_phone', e.target.value)}
-                  className="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-gray-400"
-                  placeholder="(555) 000-0000" />
-              </div>
-            </div>
-          </div>
-
-          {/* Tier */}
-          <div>
-            <label className="text-xs font-bold text-gray-500 block mb-2">Quality Tier</label>
-            <div className="flex flex-wrap gap-2">
-              {TIER_OPTIONS.map(t => (
-                <button type="button" key={t} onClick={() => handleTierChange(t)}
-                  className="px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-all"
-                  style={{
-                    borderColor: form.tier_label === t ? '#343634' : '#e5e7eb',
-                    backgroundColor: form.tier_label === t ? '#343634' : '#fff',
-                    color: form.tier_label === t ? '#fff' : '#343634',
-                  }}>
-                  {t}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Size (not for Squares) */}
-          {form.design_type !== 'squares' && (
-            <div>
-              <label className="text-xs font-bold text-gray-500 block mb-2">Size</label>
-              <div className="flex flex-wrap gap-2">
-                {SIZE_OPTIONS.map(s => (
-                  <button type="button" key={s} onClick={() => set('size_label', s)}
-                    className="px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-all"
-                    style={{
-                      borderColor: form.size_label === s ? '#343634' : '#e5e7eb',
-                      backgroundColor: form.size_label === s ? '#343634' : '#fff',
-                      color: form.size_label === s ? '#fff' : '#343634',
-                    }}>
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Colors */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs font-bold text-gray-500 block mb-1">Base Color</label>
-              <input value={form.base_color_name} onChange={e => set('base_color_name', e.target.value)}
-                className="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-gray-400"
-                placeholder="e.g. White, Navy" />
-            </div>
-            <div>
-              <label className="text-xs font-bold text-gray-500 block mb-1">Paint Color</label>
-              <input value={form.paint_color_name} onChange={e => set('paint_color_name', e.target.value)}
-                className="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-gray-400"
-                placeholder="e.g. Black, Red" />
-            </div>
-          </div>
-
-          {/* Design Notes */}
-          <div>
-            <label className="text-xs font-bold text-gray-500 block mb-1">Design Instructions</label>
-            <textarea value={form.design_instructions} onChange={e => set('design_instructions', e.target.value)}
-              className="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-gray-400 resize-none"
-              rows={2} placeholder="Customer's design notes..." />
-          </div>
-
-          {/* Pricing & Notes */}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs font-bold text-gray-500 block mb-1">Quoted Price ($)</label>
-              <input type="number" value={form.quoted_price} onChange={e => set('quoted_price', e.target.value)}
-                className="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-gray-400"
-                placeholder="e.g. 349" />
-            </div>
-            <div>
-              <label className="text-xs font-bold text-gray-500 block mb-1">Admin Notes</label>
-              <input value={form.admin_notes} onChange={e => set('admin_notes', e.target.value)}
-                className="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-gray-400"
-                placeholder="Internal notes..." />
-            </div>
-          </div>
-
-          <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose}
-              className="flex-1 py-2.5 rounded-xl border-2 border-gray-200 font-bold text-sm text-gray-600 hover:bg-gray-50">
-              Cancel
-            </button>
-            <button type="submit" disabled={saving}
-              className="flex-1 py-2.5 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2"
-              style={{ backgroundColor: '#343634' }}>
-              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-              {saving ? 'Creating...' : 'Create Quote'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
-
 export default function AdminQuotes() {
+  const navigate = useNavigate();
   const [quotes, setQuotes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
-  const [showNewQuote, setShowNewQuote] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -468,7 +296,7 @@ export default function AdminQuotes() {
           <div className="flex items-start justify-between mb-1">
             <h1 className="text-4xl font-black" style={{ fontFamily: 'Barlow Condensed, sans-serif', color: '#343634' }}>Design Quotes</h1>
             <button
-              onClick={() => setShowNewQuote(true)}
+              onClick={() => navigate('/AdminNewQuote')}
               className="flex items-center gap-2 px-5 py-3 rounded-xl font-black text-white text-sm flex-shrink-0"
               style={{ backgroundColor: '#f04624', fontFamily: 'Barlow Condensed, sans-serif' }}
             >
@@ -476,7 +304,6 @@ export default function AdminQuotes() {
             </button>
           </div>
           <p className="text-gray-500 mb-6">Review, price, and send quotes with Stripe payment links to customers.</p>
-          {showNewQuote && <NewQuoteModal onClose={() => setShowNewQuote(false)} onCreated={load} />}
 
           {/* Filter tabs */}
           <div className="flex flex-wrap gap-2 mb-6">
