@@ -245,15 +245,16 @@ export default function Home() {
       <section className="py-14 px-6" style={{backgroundColor:'#343634'}}>
         <div className="max-w-5xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-center text-white mb-10">What Customers Are Saying</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6" style={{minHeight:'300px'}}>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6" style={{minHeight:'340px'}}>
             {[
               { quote:'I purchased a rug from Rugly Floor and I absolutely adore how it turned out. With a child and four pets, I opted for the budget-friendly choice since rugs in my home experience a lot of spills. However, I still wanted to incorporate decor that adds a stylish and unique flair, and my rug certainly achieves that. I receive numerous compliments on it.', name:'Melissa L.', loc:'Denver, CO', source:'Yelp', color:'#f04624', image:'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/98d60c66e_Madonna.jpg?width=600&quality=75' },
               { quote:'I received three rugs from Rugly Floor and I love all of them! I have them in my business and would highly recommend these rugs for home or commercial use!', name:'Laura B.', loc:'Lansing, MI', source:'Yelp', color:'#24f0a0', image:'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/c64c9f4d1_IMG_1668.jpg?width=600&quality=75' },
               { quote:"Ordered a portrait rug of my golden retriever for my boyfriend's birthday. Ryan sent over a digital preview first and it looked exactly like our dog. It arrived in like 11 days and we were both blown away. Already telling everyone about it.", name:'Brittany H.', loc:'Grand Rapids, MI', source:'Google', color:'#4075ff', image:'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/5a9897ce9_dog.png' },
-              { quote:"I'm genuinely impressed with my Rugly. The whole process was simple: I uploaded my image, got a preview to approve, and the finished rug arrived looking even better in person. The paint work is clean, the colors are bold, and the rug feels sturdy and well-made. What I appreciated most was the communication and the fact that I knew exactly what I was getting before anything was finalized. If you want a custom rug that looks professional, feels high quality, and turns out true to your design, Rugly delivers.", name:'Aaryn B.', loc:'Toronto, Canada', source:'Yelp', color:'#f04624', image:'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/c64c9f4d1_IMG_1668.jpg?width=600&quality=75' },
+              { quote:"I'm genuinely impressed with my Rugly. The whole process was simple: I uploaded my image, got a preview to approve, and the finished rug arrived looking even better in person. The paint work is clean, the colors are bold, and the rug feels sturdy and well-made. What I appreciated most was the communication and the fact that I knew exactly what I was getting before anything was finalized. If you want a custom rug that looks professional, feels high quality, and turns out true to your design, Rugly delivers.", name:'Aaryn B.', loc:'Toronto, Canada', source:'Yelp', color:'#f04624', image:'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/4e588a5a0_ruglyexamples.png' },
             ].map((t, i) => (
               <FlipCard
                 key={i}
+                height="380px"
                 frontContent={
                   <div className="bg-white flex flex-col justify-between p-6 w-full h-full" style={{borderRadius:'1rem'}}>
                     <div>
