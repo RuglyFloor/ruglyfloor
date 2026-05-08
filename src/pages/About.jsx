@@ -208,6 +208,125 @@ export default function About() {
             </div>
           </motion.div>
 
+          {/* Services / Product Lines */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="mt-16"
+          >
+            <div className="text-center mb-10">
+              <div className="inline-block px-4 py-2 rounded-full mb-4" style={{backgroundColor:'rgba(64,117,255,0.1)'}}>
+                <span className="font-semibold text-sm" style={{color:'var(--brand-blue)'}}>Our Services</span>
+              </div>
+              <h3 className="text-4xl text-gray-900" style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>What We Make</h3>
+              <p className="text-gray-500 mt-2 text-lg">Four product lines — something for every space and budget</p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Crugly */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1, duration: 0.5 }}
+                className="rounded-2xl overflow-hidden shadow-lg flex flex-col"
+                style={{ border: '3px solid #24f0a0' }}
+              >
+                <img
+                  src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/ccdb41f97_Untitled-2.png"
+                  alt="Crugly — Cost efficient custom rugs"
+                  className="w-full object-cover"
+                  style={{ height: '200px' }}
+                />
+                <div className="p-5 bg-white flex-1 flex flex-col">
+                  <p className="text-gray-600 text-sm leading-relaxed flex-1">Hand-painted on a quality base rug. Cost efficient, looks great, customized, with free shipping. Perfect for bedrooms, dorms, and offices.</p>
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">Pricing</div>
+                    <div className="text-lg font-black" style={{color:'#24f0a0'}}>$79 – $239</div>
+                    <div className="text-xs text-gray-400">2×3 to 6×9 · Free shipping</div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Rugly */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+                className="rounded-2xl overflow-hidden shadow-lg flex flex-col"
+                style={{ border: '3px solid #4075ff' }}
+              >
+                <img
+                  src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/f329f17c3_Untitled-1.png"
+                  alt="Rugly — Signature line"
+                  className="w-full object-cover"
+                  style={{ height: '200px' }}
+                />
+                <div className="p-5 bg-white flex-1 flex flex-col">
+                  <p className="text-gray-600 text-sm leading-relaxed flex-1">Our signature line. Thicker pile, richer colors, premium base rug. Quality, gorgeous, at a fair price. Living room worthy.</p>
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">Pricing</div>
+                    <div className="text-lg font-black" style={{color:'#4075ff'}}>$129 – $599</div>
+                    <div className="text-xs text-gray-400">2×3 to 9×12 · $15–$50 shipping</div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Rugly LX */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3, duration: 0.5 }}
+                className="rounded-2xl overflow-hidden shadow-lg flex flex-col"
+                style={{ border: '3px solid #343634' }}
+              >
+                <img
+                  src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/cd9f621e8_Untitled-3.png"
+                  alt="Rugly LX — High end, 3-D, Unlimited"
+                  className="w-full object-cover"
+                  style={{ height: '200px' }}
+                />
+                <div className="p-5 bg-white flex-1 flex flex-col">
+                  <p className="text-gray-600 text-sm leading-relaxed flex-1">Top-of-line materials, artist-level detail. High end, 3-D, unlimited design possibilities. Includes a certificate of authenticity.</p>
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">Pricing</div>
+                    <div className="text-lg font-black" style={{color:'#343634'}}>$249 – $1,299</div>
+                    <div className="text-xs text-gray-400">2×3 to 9×12 · $100 deposit to start</div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Rugly Square */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+                className="rounded-2xl overflow-hidden shadow-lg flex flex-col"
+                style={{ border: '3px solid #f04624' }}
+              >
+                <img
+                  src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/1ce7c1dfd_Untitled-4.png"
+                  alt="Rugly Square — Custom tile installation"
+                  className="w-full object-cover"
+                  style={{ height: '200px' }}
+                />
+                <div className="p-5 bg-white flex-1 flex flex-col">
+                  <p className="text-gray-600 text-sm leading-relaxed flex-1">Custom-painted carpet or smooth tiles. From a single runner to a full gym floor. Design any shape — tile by tile.</p>
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">Pricing</div>
+                    <div className="text-lg font-black" style={{color:'#f04624'}}>$17.50 – $25 / tile</div>
+                    <div className="text-xs text-gray-400">+ $2.50/paint color/tile · Free shipping</div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+
           {/* Before You Order - Foundation Guide */}
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
