@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Package, FileText, TrendingUp, LogOut, ShoppingBag, Mail, Award, DollarSign, RefreshCw } from 'lucide-react';
+import { Package, FileText, TrendingUp, LogOut, ShoppingBag, Mail, Award, DollarSign, RefreshCw, MessageSquare } from 'lucide-react';
 import { createPageUrl } from '../utils';
 import { base44 } from '@/api/base44Client';
 
@@ -81,7 +81,13 @@ export default function AdminPortal() {
       page: 'AdminMarketing',
       color: 'bg-pink-500'
     },
-
+    {
+      title: 'Design Quotes',
+      icon: MessageSquare,
+      description: 'Review, price, and send quotes to customers',
+      page: 'AdminQuotes',
+      color: 'bg-purple-500'
+    },
   ];
 
   return (
