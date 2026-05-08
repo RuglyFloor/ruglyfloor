@@ -102,9 +102,9 @@ export default function AdminNewQuote() {
   const squaresPrice = squaresGridData?.price || 0;
   const squaresGridPainted = !!(squaresGridData?.grid?.some(row => row.some(c => c !== '#F5F5F5')));
   const estimatedPrice = isSquares ? squaresPrice : (tier && size ? (tier.prices?.[size.id] || 0) : 0);
-  const canGenerate = isSquares ? (!!stencilDataUrl && squaresGridPainted) : (!!stencilDataUrl && !!baseColor && !!paintColor);
+  const canGenerate = isSquares ? (!!stencilDataUrl && !!squaresGridData) : (!!stencilDataUrl && !!baseColor && !!paintColor);
   const designReady = isSquares
-    ? (!!squaresGridData && squaresGridPainted && !!imageUrl)
+    ? (!!squaresGridData && !!imageUrl)
     : (!!tier && !!size && !!baseColor && !!paintColor && !!imageUrl);
 
   const previewConfig = { imageUrl, stencilDataUrl, stencilMode, baseColor: baseColor?.name || null, paintColorHex: paintHex, hasSecondColor, secondPaintColorHex: hasSecondColor ? secondHex : null };
@@ -254,12 +254,12 @@ export default function AdminNewQuote() {
             </BuilderStep>
           )}
 
-          <StepConnector color={tierColor} active={isSquares ? squaresGridPainted : !!baseColor} />
+          <StepConnector color={tierColor} active={isSquares ? !!squaresGridData : !!baseColor} />
 
-          {/* ── STEP 4: Paint Color ── */}
-          <BuilderStep visible={isSquares ? squaresGridPainted : !!baseColor} color={tierColor} scrollOnAppear>
+          {/* ── STEP 4: Paint Color (rug only) ── */}
+          <BuilderStep visible={!isSquares && !!baseColor} color={tierColor} scrollOnAppear>
             <section>
-              <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>{isSquares ? '3' : '4'}. Paint Color</h2>
+              <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>4. Paint Color</h2>
               <p className="text-sm text-gray-500 mb-4">The color your design will be painted in</p>
               <div className="flex flex-wrap gap-3 mb-4">
                 {PAINT_COLORS.map(c => (
@@ -312,10 +312,10 @@ export default function AdminNewQuote() {
             </section>
           </BuilderStep>
 
-          <StepConnector color={tierColor} active={!!paintColor} />
+          <StepConnector color={tierColor} active={isSquares ? !!squaresGridData : !!paintColor} />
 
           {/* ── STEP 5: Upload Design ── */}
-          <BuilderStep visible={!!paintColor} color={tierColor} scrollOnAppear>
+          <BuilderStep visible={isSquares ? !!squaresGridData : !!paintColor} color={tierColor} scrollOnAppear>
             <section>
               <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>{isSquares ? '4' : '5'}. Upload Design</h2>
               <p className="text-sm text-gray-500 mb-4">Upload the customer's photo, logo, or artwork.</p>

@@ -137,7 +137,6 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
   const [heightConfirmed, setHeightConfirmed] = useState(false);
   const [grid, setGrid] = useState(() => makGrid(4, 4));
   const [activeColor, setActiveColor] = useState('#F5F5F5');
-  const [colorConfirmed, setColorConfirmed] = useState(false);
   const [isPainting, setIsPainting] = useState(false);
 
   const totalSqFt = cols * rows * 4;
@@ -146,6 +145,7 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
   const price = calcSquaresPrice(totalTiles, numPaintColors);
   const tilePx = Math.max(MIN_TILE_PX, Math.min(MAX_TILE_PX, Math.floor(320 / Math.max(cols, rows))));
   const gridHasNonDefault = grid.some(row => row.some(c => c !== '#F5F5F5'));
+  const baseColor = grid[0]?.[0] ?? '#F5F5F5';
 
   const applyDimensions = (newRows, newCols) => {
     const cr = Math.min(MAX_TILES_PER_SIDE, Math.max(1, newRows));
@@ -201,15 +201,17 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
 
   useEffect(() => {
     if (onChange) onChange({ grid, rows, cols, surfaceType, totalSqFt, totalTiles, numPaintColors, price });
-  }, [grid, rows, cols, surfaceType]);
+  }, [grid, rows, cols, surfaceType, totalSqFt, totalTiles, numPaintColors, price]);
 
-  const fillAll = () => setGrid(Array.from({ length: rows }, () => Array(cols).fill(activeColor)));
+  const fillAll = (color) => {
+    const c = color ?? activeColor;
+    setGrid(Array.from({ length: rows }, () => Array(cols).fill(c)));
+  };
   const clearGrid = () => setGrid(makGrid(rows, cols));
   const unitLabel = (unit) => ({ tiles: 'Tiles', feet: 'Feet', meters: 'Meters' }[unit]);
 
   const confirmWidth = () => setWidthConfirmed(true);
   const confirmHeight = () => setHeightConfirmed(true);
-  const confirmColor = () => setColorConfirmed(true);
 
   return (
     <div
@@ -225,7 +227,7 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
           {['carpet', 'smooth'].map(type => (
             <button
               key={type}
-              onClick={() => { setSurfaceType(type); setWidthConfirmed(false); setHeightConfirmed(false); setColorConfirmed(false); }}
+              onClick={() => { setSurfaceType(type); setWidthConfirmed(false); setHeightConfirmed(false); }}
               className="px-5 py-2 rounded-xl font-bold capitalize transition-all text-sm"
               style={{
                 border: `3px solid ${surfaceType === type ? tierColor : '#e5e7eb'}`,
@@ -327,17 +329,19 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
         </div>
       </SubStep>
 
-      {/* BASE TILE COLOR */}
+      {/* UNIFIED COLOR + GRID */}
       <MiniConnector active={heightConfirmed} color={tierColor} />
       <SubStep visible={heightConfirmed}>
-        <div className="p-4 rounded-2xl bg-white border-2" style={{ borderColor: colorConfirmed ? `${tierColor}60` : '#e5e7eb' }}>
-          <label className="text-xs font-black text-gray-500 uppercase tracking-wide mb-2 block">Base Tile Color</label>
-          <p className="text-xs text-gray-400 mb-3">The default background color of your tiles before any paint is applied.</p>
+        <div className="p-4 rounded-2xl bg-white border-2" style={{ borderColor: gridHasNonDefault ? `${tierColor}60` : '#e5e7eb' }}>
+          <label className="text-xs font-black text-gray-500 uppercase tracking-wide mb-1 block">Design Your Tiles</label>
+          <p className="text-xs text-gray-400 mb-3">Pick a color, then click or drag tiles to paint them. Use "Fill All" to set the base color for all tiles at once.</p>
+
+          {/* Color swatches */}
           <div className="flex flex-wrap gap-2 mb-3">
             {DEFAULT_COLORS.map(c => (
               <button
                 key={c.name}
-                onClick={() => { setActiveColor(c.hex); setColorConfirmed(false); fillAll(); }}
+                onClick={() => setActiveColor(c.hex)}
                 title={c.name}
                 className="w-9 h-9 rounded-lg border-2 transition-all flex-shrink-0"
                 style={{
@@ -349,51 +353,14 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
               />
             ))}
           </div>
-          {!colorConfirmed && (
-            <button
-              onClick={confirmColor}
-              className="text-sm font-black px-5 py-2 rounded-xl text-white transition-all"
-              style={{ backgroundColor: tierColor }}
-            >
-              Confirm Base Color →
-            </button>
-          )}
-          {colorConfirmed && (
-            <div className="text-sm font-bold flex items-center gap-2" style={{ color: tierColor }}>
-              <div className="w-4 h-4 rounded border border-gray-200 flex-shrink-0" style={{ backgroundColor: activeColor }} />
-              ✓ Base color set
+
+          {/* Active color indicator + actions */}
+          <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center gap-2 text-xs font-semibold text-gray-600">
+              <div className="w-5 h-5 rounded border border-gray-200 flex-shrink-0" style={{ backgroundColor: activeColor }} />
+              Active color
             </div>
-          )}
-        </div>
-      </SubStep>
-
-      {/* TILE GRID */}
-      <MiniConnector active={colorConfirmed} color={tierColor} />
-      <SubStep visible={colorConfirmed}>
-        <div className="p-4 rounded-2xl bg-white border-2" style={{ borderColor: gridHasNonDefault ? `${tierColor}60` : '#e5e7eb' }}>
-          <label className="text-xs font-black text-gray-500 uppercase tracking-wide mb-1 block">Click & Drag to Paint</label>
-          <p className="text-xs text-gray-400 mb-3">Select a paint color below, then click or drag across tiles to apply your design.</p>
-
-          {/* Paint color swatches */}
-          <div className="flex flex-wrap gap-2 mb-3">
-            {DEFAULT_COLORS.map(c => (
-              <button
-                key={c.name}
-                onClick={() => setActiveColor(c.hex)}
-                title={c.name}
-                className="w-8 h-8 rounded-lg border-2 transition-all flex-shrink-0"
-                style={{
-                  backgroundColor: c.hex,
-                  borderColor: activeColor === c.hex ? tierColor : '#e5e7eb',
-                  transform: activeColor === c.hex ? 'scale(1.2)' : 'scale(1)',
-                  boxShadow: activeColor === c.hex ? `0 0 0 2px white, 0 0 0 4px ${tierColor}` : undefined,
-                }}
-              />
-            ))}
-          </div>
-
-          <div className="flex gap-2 mb-3">
-            <button onClick={fillAll} className="text-xs px-3 py-1.5 rounded-lg border-2 font-bold" style={{ borderColor: tierColor, color: tierColor }}>Fill All</button>
+            <button onClick={() => fillAll()} className="text-xs px-3 py-1.5 rounded-lg border-2 font-bold" style={{ borderColor: tierColor, color: tierColor }}>Fill All</button>
             <button onClick={clearGrid} className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 font-semibold text-gray-500">Reset</button>
           </div>
 
@@ -428,6 +395,7 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
 
           <div className="mt-3 text-xs text-gray-400">
             {cols} × {rows} tiles · {totalSqFt} sq ft
+            {gridHasNonDefault && <span className="ml-2" style={{ color: tierColor }}>· design saved ✓</span>}
           </div>
         </div>
       </SubStep>

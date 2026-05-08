@@ -191,11 +191,11 @@ export default function CustomBuilder() {
   const squaresGridPainted = !!(squaresGridData && squaresGridData.grid && squaresGridData.grid.some(row => row.some(c => c !== '#F5F5F5')));
   const price = isSquares ? squaresPrice : (tier && size ? (tier.prices[size.id] || 0) : 0);
   const isComplete = isSquares
-    ? !!squaresGridData && squaresGridPainted && !!imageUrl && squaresGridData.totalTiles > 0
+    ? !!squaresGridData && !!imageUrl && squaresGridData.totalTiles > 0
     : !!tier && !!size && !!baseColor && !!paintColor && !!imageUrl;
   const tierColor = tier?.color || '#4075ff';
   const canGenerate = isSquares
-    ? !!stencilDataUrl && squaresGridPainted
+    ? !!stencilDataUrl && !!squaresGridData
     : !!stencilDataUrl && !!baseColor && !!paintColor;
 
 
@@ -420,37 +420,7 @@ export default function CustomBuilder() {
           </div>
         </section></BuilderStep>}
 
-        <StepConnector color={tierColor} active={isSquares ? squaresGridPainted : !!baseColor} />
-
-        {/* STEP 4: Paint Color (hidden for Squares — colors are per-tile in the grid) */}
-        {isSquares && <BuilderStep visible={squaresGridPainted} color={tierColor} scrollOnAppear><section>
-          <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>3. Paint Color</h2>
-          <p className="text-sm text-gray-500 mb-2">The color your design will be painted on top of the tiles</p>
-          <div className="flex flex-wrap gap-3 mb-4">
-            {PAINT_COLORS.map(c => (
-              <button
-                key={c.name}
-                onClick={() => setPaintColor(c)}
-                className="flex flex-col items-center gap-1 p-2 rounded-xl font-semibold transition-all"
-                style={{
-                  border: `3px solid ${paintColor?.name === c.name ? tierColor : '#e5e7eb'}`,
-                  backgroundColor: paintColor?.name === c.name ? `${tierColor}10` : '#ffffff',
-                  minWidth: '60px',
-                }}
-              >
-                <div className="w-8 h-8 rounded-full border border-gray-200 flex-shrink-0" style={{ backgroundColor: c.hex || '#ccc' }} />
-                <span className="text-xs text-center leading-tight">{c.name}</span>
-              </button>
-            ))}
-          </div>
-          {paintColor?.name === 'Custom' && (
-            <div className="flex items-center gap-3">
-              <label className="text-sm font-semibold">Custom color:</label>
-              <input type="color" value={customPaintHex} onChange={e => setCustomPaintHex(e.target.value)} className="w-10 h-10 rounded cursor-pointer border border-gray-300" />
-              <span className="text-sm font-mono text-gray-600">{customPaintHex}</span>
-            </div>
-          )}
-        </section></BuilderStep>}
+        <StepConnector color={tierColor} active={isSquares ? !!squaresGridData : !!baseColor} />
 
         {!isSquares && <BuilderStep visible={!!baseColor} color={tierColor} scrollOnAppear><section>
           <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>4. Paint Color</h2>
@@ -557,10 +527,10 @@ export default function CustomBuilder() {
           )}
         </section></BuilderStep>}
 
-        <StepConnector color={tierColor} active={isSquares ? !!paintColor : !!paintColor} />
+        <StepConnector color={tierColor} active={isSquares ? !!squaresGridData : !!paintColor} />
 
         {/* STEP 5: Upload Design */}
-        <BuilderStep visible={isSquares ? !!paintColor : !!paintColor} color={tierColor} scrollOnAppear>
+        <BuilderStep visible={isSquares ? !!squaresGridData : !!paintColor} color={tierColor} scrollOnAppear>
         <section>
           <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>{isSquares ? '4' : '5'}. Upload Your Design</h2>
           <p className="text-sm text-gray-500 mb-4">
