@@ -90,6 +90,9 @@ Deno.serve(async (req) => {
 
     // Handle different event types
     if (event.type === 'checkout.session.completed') {
+      // Handle updating the Order entity (from createCheckout flow)
+      await handleOrderPayment(base44, event);
+      // Handle creating RuglyOrder + Customer records
       await handleDepositPaid(base44, event);
     } else if (event.type === 'invoice.paid') {
       await handleInvoicePaid(base44, event);
@@ -105,6 +108,75 @@ Deno.serve(async (req) => {
   }
 });
 
+// Handles Order entity updates (from createCheckout flow) and DesignQuote payments
+async function handleOrderPayment(base44, event) {
+  const session = event.data.object;
+  const orderNumber = session.metadata?.order_number;
+  const orderId = session.metadata?.order_id;
+  const quoteId = session.metadata?.quote_id;
+  const serviceType = session.metadata?.service_type;
+
+  // Handle DesignQuote payment
+  if (quoteId && serviceType === 'design_quote') {
+    console.log('[handleOrderPayment] Processing DesignQuote payment:', quoteId);
+    try {
+      const quote = await base44.asServiceRole.entities.DesignQuote.get(quoteId);
+      if (quote && quote.stripe_payment_intent_id !== session.payment_intent) {
+        await base44.asServiceRole.entities.DesignQuote.update(quoteId, {
+          status: 'paid',
+          stripe_payment_intent_id: session.payment_intent,
+          paid_at: new Date().toISOString(),
+        });
+        console.log('[handleOrderPayment] DesignQuote marked PAID:', quoteId);
+      }
+    } catch (err) {
+      console.error('[handleOrderPayment] DesignQuote update error:', err.message);
+    }
+    return; // DesignQuotes don't create RuglyOrders
+  }
+
+  // Handle Order entity update (from createCheckout)
+  if (!orderNumber && !orderId) return;
+
+  console.log('[handleOrderPayment] Processing Order payment, order_number:', orderNumber, 'order_id:', orderId);
+
+  try {
+    let order = null;
+    if (orderNumber) {
+      const orders = await base44.asServiceRole.entities.Order.filter({ order_number: orderNumber });
+      order = orders[0];
+    } else if (orderId) {
+      order = await base44.asServiceRole.entities.Order.get(orderId);
+    }
+
+    if (!order) {
+      console.error('[handleOrderPayment] Order not found:', orderNumber || orderId);
+      return;
+    }
+
+    if (order.stripe_event_id === event.id) {
+      console.log('[handleOrderPayment] Already processed:', event.id);
+      return;
+    }
+
+    await base44.asServiceRole.entities.Order.update(order.id, {
+      status: 'paid',
+      payment_intent_id: session.payment_intent,
+      checkout_session_id: session.id,
+      stripe_event_id: event.id,
+      amount_paid: session.amount_total,
+      payment_timestamp: new Date().toISOString(),
+      status_history: [
+        ...(order.status_history || []),
+        { status: 'paid', timestamp: new Date().toISOString(), note: 'Payment confirmed via Stripe webhook' }
+      ]
+    });
+    console.log('[handleOrderPayment] Order marked PAID:', order.order_number);
+  } catch (err) {
+    console.error('[handleOrderPayment] Error updating Order:', err.message);
+  }
+}
+
 async function handleDepositPaid(base44, event) {
   const session = event.data.object;
   
@@ -115,15 +187,32 @@ async function handleDepositPaid(base44, event) {
   const shippingDetails = session.shipping_details || session.shipping || {};
   const address = shippingDetails.address || {};
   
+  // Skip if this is a DesignQuote payment (no RuglyOrder needed)
+  if (session.metadata?.service_type === 'design_quote') return;
+
   // Resolve brand
   let brand = session.metadata?.brand || 'UNKNOWN';
   if (brand === 'UNKNOWN') {
-    // Check line items for Crugly mention
-    const lineItems = session.line_items?.data || [];
-    const hasCrugly = lineItems.some(item => 
-      item.description?.toLowerCase().includes('crugly')
-    );
-    brand = hasCrugly ? 'CRUGLY' : 'RUGLY';
+    // Try to infer from Order items
+    const orderNum = session.metadata?.order_number;
+    const orderId = session.metadata?.order_id;
+    if (orderNum || orderId) {
+      try {
+        let order = null;
+        if (orderNum) {
+          const orders = await base44.asServiceRole.entities.Order.filter({ order_number: orderNum });
+          order = orders[0];
+        } else if (orderId) {
+          order = await base44.asServiceRole.entities.Order.get(orderId);
+        }
+        if (order?.items?.length > 0) {
+          const tier = order.items[0].qualityTier?.toLowerCase() || '';
+          if (tier.includes('crugly')) brand = 'CRUGLY';
+          else if (tier.includes('rugly')) brand = 'RUGLY';
+        }
+      } catch (e) { /* non-critical */ }
+    }
+    if (brand === 'UNKNOWN') brand = 'RUGLY';
   }
 
   // Resolve order_key
