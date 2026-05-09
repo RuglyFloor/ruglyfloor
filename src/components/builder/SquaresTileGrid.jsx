@@ -44,9 +44,17 @@ function toTiles(value, unit) {
   const v = parseFloat(value);
   if (isNaN(v) || v <= 0) return 1;
   if (unit === 'tiles') return Math.max(1, Math.min(MAX_TILES_PER_SIDE, Math.round(v)));
+  // Each tile = 2ft. Round to nearest even foot, then divide by 2.
   if (unit === 'feet') return Math.max(1, Math.min(MAX_TILES_PER_SIDE, Math.max(1, Math.round(v / 2))));
   if (unit === 'meters') return Math.max(1, Math.min(MAX_TILES_PER_SIDE, Math.max(1, Math.round(v / 0.6096))));
   return 1;
+}
+
+// Snap feet input to nearest even number (multiples of 2ft = 1 tile)
+function snapFeet(value) {
+  const v = parseFloat(value);
+  if (isNaN(v) || v <= 0) return 2;
+  return Math.max(2, Math.round(v / 2) * 2);
 }
 
 function fromTiles(tiles, unit) {
@@ -162,16 +170,18 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
   };
 
   const handleWidthChange = (val) => {
-    setWidthInput(val);
+    const snapped = widthUnit === 'feet' ? String(snapFeet(val)) : val;
+    setWidthInput(snapped);
     setWidthConfirmed(false);
-    const newCols = toTiles(val, widthUnit);
+    const newCols = toTiles(snapped, widthUnit);
     applyDimensions(rows, newCols);
   };
 
   const handleHeightChange = (val) => {
-    setHeightInput(val);
+    const snapped = heightUnit === 'feet' ? String(snapFeet(val)) : val;
+    setHeightInput(snapped);
     setHeightConfirmed(false);
-    const newRows = toTiles(val, heightUnit);
+    const newRows = toTiles(snapped, heightUnit);
     applyDimensions(newRows, cols);
   };
 
@@ -252,13 +262,14 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
       <SubStep visible={!!surfaceType}>
         <div className="p-4 rounded-2xl bg-white border-2" style={{ borderColor: widthConfirmed ? `${tierColor}60` : '#e5e7eb' }}>
           <label className="text-xs font-black text-gray-500 uppercase tracking-wide mb-2 block">Width</label>
-          <p className="text-xs text-gray-400 mb-3">Each tile is 24″ wide. Enter in tiles, feet, or meters.</p>
+          <p className="text-xs text-gray-400 mb-3">Each tile covers <strong>2ft × 2ft</strong>. Feet must be a multiple of 2 — we'll round for you.</p>
           <div className="flex items-center gap-2 mb-3">
             <button onClick={() => handleWidthChange(String(parseFloat(widthInput || 0) - (widthUnit === 'meters' ? 0.6096 : widthUnit === 'feet' ? 2 : 1)))}
               className="w-9 h-9 rounded-xl bg-gray-100 font-bold text-lg leading-none flex-shrink-0">−</button>
             <input
               type="number" min={0} value={widthInput}
-              onChange={e => handleWidthChange(e.target.value)}
+              onChange={e => setWidthInput(e.target.value)}
+              onBlur={e => handleWidthChange(e.target.value)}
               className="w-24 text-center font-black border-2 border-gray-200 rounded-xl py-2 text-lg focus:outline-none"
               style={{ borderColor: widthConfirmed ? tierColor : undefined }}
             />
@@ -296,13 +307,14 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
       <SubStep visible={widthConfirmed}>
         <div className="p-4 rounded-2xl bg-white border-2" style={{ borderColor: heightConfirmed ? `${tierColor}60` : '#e5e7eb' }}>
           <label className="text-xs font-black text-gray-500 uppercase tracking-wide mb-2 block">Length</label>
-          <p className="text-xs text-gray-400 mb-3">Each tile is 24″ long. Enter in tiles, feet, or meters.</p>
+          <p className="text-xs text-gray-400 mb-3">Each tile covers <strong>2ft × 2ft</strong>. Feet must be a multiple of 2 — we'll round for you.</p>
           <div className="flex items-center gap-2 mb-3">
             <button onClick={() => handleHeightChange(String(parseFloat(heightInput || 0) - (heightUnit === 'meters' ? 0.6096 : heightUnit === 'feet' ? 2 : 1)))}
               className="w-9 h-9 rounded-xl bg-gray-100 font-bold text-lg leading-none flex-shrink-0">−</button>
             <input
               type="number" min={0} value={heightInput}
-              onChange={e => handleHeightChange(e.target.value)}
+              onChange={e => setHeightInput(e.target.value)}
+              onBlur={e => handleHeightChange(e.target.value)}
               className="w-24 text-center font-black border-2 border-gray-200 rounded-xl py-2 text-lg focus:outline-none"
               style={{ borderColor: heightConfirmed ? tierColor : undefined }}
             />
