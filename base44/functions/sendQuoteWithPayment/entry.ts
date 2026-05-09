@@ -160,12 +160,25 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-    await base44.asServiceRole.integrations.Core.SendEmail({
-      to: quote.customer_email,
-      subject: `Your Custom Rugly Quote — $${quote.quoted_price.toFixed(2)} · Pay Now`,
-      body: emailBody,
-      from_name: 'Rugly Floor',
+    const resendRes = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${Deno.env.get('RESEND_API_KEY')}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'Rugly Floor <info@ruglyfloor.com>',
+        to: [quote.customer_email],
+        subject: `Your Custom Rugly Quote — $${quote.quoted_price.toFixed(2)} · Pay Now`,
+        html: emailBody,
+      }),
     });
+
+    if (!resendRes.ok) {
+      const resendErr = await resendRes.text();
+      console.error('[sendQuoteWithPayment] Resend error:', resendErr);
+      throw new Error(`Email send failed: ${resendErr}`);
+    }
 
     console.log('[sendQuoteWithPayment] Quote sent:', quote.id, 'Session:', session.id);
     return Response.json({ success: true, payment_url: session.url, session_id: session.id });
