@@ -21,57 +21,44 @@ const IMAGE_SLIDES = [
   'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/0b83ca218_29fe852dc_generated_image.png',
 ];
 
-// Each image shows for this long before cross-dissolving to next
-const SLIDE_DURATION = 1800;  // ms visible
-const MORPH_DURATION = 900;   // ms cross-dissolve overlap
+const N = IMAGE_SLIDES.length;
+// Each slide: 2.5s visible + 1s fade = 3.5s per slide
+const VISIBLE = 2.5;  // seconds fully opaque
+const FADE = 1.0;     // seconds fade in/out
+const PER_SLIDE = VISIBLE + FADE;
+const TOTAL = N * PER_SLIDE;
+
+// Build one keyframe string per slide:
+// 0% invisible → fade in → hold → fade out → 0% invisible for the rest
+function buildKeyframes() {
+  return IMAGE_SLIDES.map((_, i) => {
+    const start = (i * PER_SLIDE) / TOTAL * 100;
+    const fadeInEnd = (i * PER_SLIDE + FADE) / TOTAL * 100;
+    const fadeOutStart = ((i + 1) * PER_SLIDE - FADE) / TOTAL * 100;
+    const end = ((i + 1) * PER_SLIDE) / TOTAL * 100;
+    const name = `heroSlide${i}`;
+    return `
+      @keyframes ${name} {
+        0%              { opacity: 0; transform: scale(1); }
+        ${start.toFixed(2)}%    { opacity: 0; transform: scale(1); }
+        ${fadeInEnd.toFixed(2)}% { opacity: 1; transform: scale(1.03); }
+        ${fadeOutStart.toFixed(2)}% { opacity: 1; transform: scale(1.06); }
+        ${end.toFixed(2)}%  { opacity: 0; transform: scale(1.08); }
+        100%            { opacity: 0; transform: scale(1.08); }
+      }
+    `;
+  }).join('\n');
+}
 
 export default function HeroSlideshow() {
   const [phase, setPhase] = useState('video1');
-  const [imgIndex, setImgIndex] = useState(0);
-  const [nextIndex, setNextIndex] = useState(1);
-  const [morphing, setMorphing] = useState(false);
+  const [animKey, setAnimKey] = useState(0);
   const video1Ref = useRef(null);
   const video2Ref = useRef(null);
-  const timerRef = useRef(null);
+  const endTimerRef = useRef(null);
 
-  const handleVideo1End = () => {
-    setPhase('images');
-    setImgIndex(0);
-    setNextIndex(1);
-    setMorphing(false);
-  };
-
-  const handleVideo2End = () => {
-    setPhase('video1');
-  };
-
-  // Image morph loop
-  useEffect(() => {
-    if (phase !== 'images') return;
-
-    timerRef.current = setTimeout(function tick() {
-      // Start morph (cross-dissolve next image in)
-      setMorphing(true);
-
-      setTimeout(() => {
-        setImgIndex(prev => {
-          const next = prev + 1;
-          if (next >= IMAGE_SLIDES.length) {
-            setMorphing(false);
-            setTimeout(() => setPhase('video2'), 300);
-            return prev;
-          }
-          setNextIndex(next + 1 < IMAGE_SLIDES.length ? next + 1 : next);
-          setMorphing(false);
-          return next;
-        });
-
-        timerRef.current = setTimeout(tick, SLIDE_DURATION);
-      }, MORPH_DURATION);
-    }, SLIDE_DURATION);
-
-    return () => clearTimeout(timerRef.current);
-  }, [phase]);
+  const handleVideo1End = () => setPhase('images');
+  const handleVideo2End = () => setPhase('video1');
 
   useEffect(() => {
     if (phase === 'video1' && video1Ref.current) {
@@ -82,24 +69,21 @@ export default function HeroSlideshow() {
       video2Ref.current.currentTime = 0;
       video2Ref.current.play().catch(() => {});
     }
+    if (phase === 'images') {
+      setAnimKey(k => k + 1);
+      // After all images finish, transition to video2
+      endTimerRef.current = setTimeout(() => {
+        setPhase('video2');
+      }, TOTAL * 1000);
+    }
+    return () => clearTimeout(endTimerRef.current);
   }, [phase]);
+
+  const css = buildKeyframes();
 
   return (
     <div className="absolute inset-0 z-0 overflow-hidden">
-      <style>{`
-        @keyframes kenBurns {
-          0%   { transform: scale(1)    translate(0%, 0%); }
-          50%  { transform: scale(1.06) translate(-1%, -1%); }
-          100% { transform: scale(1)    translate(0%, 0%); }
-        }
-        .hero-img {
-          position: absolute;
-          inset: 0;
-          background-size: cover;
-          background-position: center;
-          animation: kenBurns ${(SLIDE_DURATION + MORPH_DURATION) / 1000}s ease-in-out infinite;
-        }
-      `}</style>
+      <style>{css}</style>
 
       {/* VIDEO 1 */}
       <video
@@ -112,33 +96,22 @@ export default function HeroSlideshow() {
         style={{ display: phase === 'video1' ? 'block' : 'none' }}
       />
 
-      {/* IMAGE CROSS-DISSOLVE SLIDES */}
-      {phase === 'images' && (
-        <>
-          {/* Current image */}
-          <div
-            key={`img-${imgIndex}`}
-            className="hero-img"
-            style={{
-              backgroundImage: `url(${IMAGE_SLIDES[imgIndex]})`,
-              opacity: morphing ? 0 : 1,
-              transition: `opacity ${MORPH_DURATION}ms ease-in-out`,
-            }}
-          />
-          {/* Next image dissolving in */}
-          {morphing && nextIndex < IMAGE_SLIDES.length && (
-            <div
-              key={`next-${nextIndex}`}
-              className="hero-img"
-              style={{
-                backgroundImage: `url(${IMAGE_SLIDES[nextIndex]})`,
-                opacity: morphing ? 1 : 0,
-                transition: `opacity ${MORPH_DURATION}ms ease-in-out`,
-              }}
-            />
-          )}
-        </>
-      )}
+      {/* ALL IMAGES — each running its own precisely-timed keyframe */}
+      {phase === 'images' && IMAGE_SLIDES.map((src, i) => (
+        <div
+          key={`${animKey}-${i}`}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `url(${src})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            opacity: 0,
+            willChange: 'opacity, transform',
+            animation: `heroSlide${i} ${TOTAL}s linear 1 forwards`,
+          }}
+        />
+      ))}
 
       {/* VIDEO 2 */}
       <video
