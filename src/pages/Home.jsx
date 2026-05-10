@@ -112,7 +112,7 @@ export default function Home() {
             fetchpriority="high"
             width="448" height="224" />
 
-          <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">Design Your Rug. See It Instantly.
+          <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">Your Rug. No Rules.
           </h2>
           <p className="text-lg md:text-xl text-white mb-12 max-w-3xl mx-auto">Upload a design and preview your custom rug in seconds
           </p>
