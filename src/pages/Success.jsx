@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { markCartConversion } from '../hooks/useCartAbandonment';
 import { createPageUrl } from '../utils';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, CheckCircle2, Package, Truck, Home } from 'lucide-react';
@@ -12,6 +13,11 @@ export default function Success() {
   const [orderInfo, setOrderInfo] = useState(null);
   const [quote, setQuote] = useState(null);
   const [quoteLoading, setQuoteLoading] = useState(false);
+
+  useEffect(() => {
+    // Mark conversion so abandonment hook doesn't fire
+    markCartConversion();
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);

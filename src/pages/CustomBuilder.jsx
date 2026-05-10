@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { ShoppingCart, Sparkles, RefreshCw } from 'lucide-react';
@@ -159,6 +159,35 @@ const SIZES = [
   { id: '9x12', label: "9' × 12'", measurement: "9' × 12'" },
 ];
 
+// URL preset designs — load via ?preset=NAME
+const PRESETS = {
+  gameday: {
+    tierId: 'crugly',
+    sizeId: '5x7',
+    baseColorName: 'Navy',
+    paintColorName: 'Gold',
+    designInstructions: 'Bold team logo or jersey number centered on rug',
+  },
+  bedroom: {
+    tierId: 'rugly',
+    sizeId: '5x7',
+    baseColorName: 'Beige',
+    paintColorName: 'Black',
+    designInstructions: 'Abstract brushstroke pattern, centered',
+  },
+  office: {
+    tierId: 'crugly',
+    sizeId: '4x6',
+    baseColorName: 'Gray',
+    paintColorName: 'White',
+    designInstructions: 'Company logo centered, clean minimal style',
+  },
+  gym: {
+    tierId: 'squares',
+    designInstructions: 'Bold stencil design across full tile grid',
+  },
+};
+
 export default function CustomBuilder() {
   const navigate = useNavigate();
 
@@ -176,6 +205,35 @@ export default function CustomBuilder() {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [designInstructions, setDesignInstructions] = useState('');
   const generatePreviewRef = useRef(null);
+
+  // Load preset from URL param ?preset=NAME
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const presetKey = params.get('preset');
+    if (!presetKey || !PRESETS[presetKey]) return;
+    const preset = PRESETS[presetKey];
+
+    const tierObj = QUALITY_TIERS.find(t => t.id === preset.tierId);
+    if (tierObj) setTier(tierObj);
+
+    if (preset.sizeId) {
+      const sizeObj = SIZES.find(s => s.id === preset.sizeId);
+      if (sizeObj) setSize(sizeObj);
+    }
+
+    if (preset.baseColorName) {
+      const allColors = [...BASE_COLORS_CRUGLY, ...BASE_COLORS_RUGLY, ...BASE_COLORS_RUGLY_LX];
+      const colorObj = allColors.find(c => c.name === preset.baseColorName);
+      if (colorObj) setBaseColor(colorObj);
+    }
+
+    if (preset.paintColorName) {
+      const paintObj = PAINT_COLORS.find(c => c.name === preset.paintColorName);
+      if (paintObj) setPaintColor(paintObj);
+    }
+
+    if (preset.designInstructions) setDesignInstructions(preset.designInstructions);
+  }, []);
 
   // Squares-specific state
   const [squaresGridData, setSquaresGridData] = useState(null);
@@ -263,6 +321,15 @@ export default function CustomBuilder() {
       />
 
       <div className="max-w-4xl mx-auto px-4 py-10 space-y-10">
+
+        {/* Preset banner — shown when landing from ad with ?preset= */}
+        {new URLSearchParams(window.location.search).get('preset') && tier && (
+          <div className="rounded-2xl px-5 py-3 flex items-center gap-3 text-sm font-semibold"
+            style={{ backgroundColor: `${tierColor}15`, border: `2px solid ${tierColor}`, color: tierColor }}>
+            <span className="text-lg">✨</span>
+            <span>We pre-loaded a popular design for you — tweak any step below and make it yours!</span>
+          </div>
+        )}
 
         {/* Header */}
         <div className="text-center">

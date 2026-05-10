@@ -10,6 +10,8 @@ import { createPageUrl } from '../utils';
 import SEOHead from '../components/seo/SEOHead';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+import TrustBadges from '../components/cart/TrustBadges';
+import { useCartAbandonment } from '../hooks/useCartAbandonment';
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -33,6 +35,9 @@ export default function Cart() {
   const [useGuestCheckout, setUseGuestCheckout] = useState(false);
   const [taxRate, setTaxRate] = useState(0);
   const [finalSaleAcknowledged, setFinalSaleAcknowledged] = useState(false);
+
+  // Abandonment tracking
+  useCartAbandonment(cart);
 
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem('rugly_cart') || '[]');
@@ -587,22 +592,9 @@ export default function Cart() {
                     </p>
                   )}
                   
-                  {/* Trust Signals */}
-                  <div className="mt-4 space-y-2">
-                    <div className="flex items-center justify-center gap-4 text-xs text-gray-500">
-                      <div className="flex items-center gap-1">
-                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                        </svg>
-                        <span>Secure Checkout</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <span>✓</span>
-                        <span>24hr Damage Guarantee</span>
-                      </div>
-                    </div>
-                    <p className="text-xs text-center text-gray-400">Powered by Stripe</p>
-                  </div>
+                  {/* Trust Badges */}
+                  <TrustBadges className="mt-4" />
+                  <p className="text-xs text-center text-gray-400 mt-2">Powered by Stripe</p>
                 </div>
               </div>
             </div>
