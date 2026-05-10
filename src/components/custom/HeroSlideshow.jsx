@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-// Sequence: video1 → images (fast flash) → video2 → repeat
 const VIDEO_1 = 'https://media.base44.com/videos/public/695ded1a209dda33af9a1cf6/60e0551e7_videoadrugly.mp4';
 const VIDEO_2 = 'https://media.base44.com/videos/public/695ded1a209dda33af9a1cf6/b782ef8fe_cam1.mp4';
 
@@ -22,50 +21,58 @@ const IMAGE_SLIDES = [
   'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/0b83ca218_29fe852dc_generated_image.png',
 ];
 
-// Phases: 'video1' | 'images' | 'video2'
+// Each image shows for this long before cross-dissolving to next
+const SLIDE_DURATION = 1800;  // ms visible
+const MORPH_DURATION = 900;   // ms cross-dissolve overlap
+
 export default function HeroSlideshow() {
   const [phase, setPhase] = useState('video1');
   const [imgIndex, setImgIndex] = useState(0);
-  const [flash, setFlash] = useState(false);
+  const [nextIndex, setNextIndex] = useState(1);
+  const [morphing, setMorphing] = useState(false);
   const video1Ref = useRef(null);
   const video2Ref = useRef(null);
-  const imgTimerRef = useRef(null);
+  const timerRef = useRef(null);
 
-  // When video1 ends → switch to images
   const handleVideo1End = () => {
     setPhase('images');
     setImgIndex(0);
+    setNextIndex(1);
+    setMorphing(false);
   };
 
-  // When video2 ends → restart
   const handleVideo2End = () => {
     setPhase('video1');
   };
 
-  // Image flash loop
+  // Image morph loop
   useEffect(() => {
     if (phase !== 'images') return;
 
-    imgTimerRef.current = setInterval(() => {
-      setFlash(true);
-      setTimeout(() => setFlash(false), 80);
+    timerRef.current = setTimeout(function tick() {
+      // Start morph (cross-dissolve next image in)
+      setMorphing(true);
 
-      setImgIndex(prev => {
-        const next = prev + 1;
-        if (next >= IMAGE_SLIDES.length) {
-          clearInterval(imgTimerRef.current);
-          // Small delay then go to video2
-          setTimeout(() => setPhase('video2'), 200);
-          return prev;
-        }
-        return next;
-      });
-    }, 500);
+      setTimeout(() => {
+        setImgIndex(prev => {
+          const next = prev + 1;
+          if (next >= IMAGE_SLIDES.length) {
+            setMorphing(false);
+            setTimeout(() => setPhase('video2'), 300);
+            return prev;
+          }
+          setNextIndex(next + 1 < IMAGE_SLIDES.length ? next + 1 : next);
+          setMorphing(false);
+          return next;
+        });
 
-    return () => clearInterval(imgTimerRef.current);
+        timerRef.current = setTimeout(tick, SLIDE_DURATION);
+      }, MORPH_DURATION);
+    }, SLIDE_DURATION);
+
+    return () => clearTimeout(timerRef.current);
   }, [phase]);
 
-  // Auto-play videos when phase changes
   useEffect(() => {
     if (phase === 'video1' && video1Ref.current) {
       video1Ref.current.currentTime = 0;
@@ -79,6 +86,21 @@ export default function HeroSlideshow() {
 
   return (
     <div className="absolute inset-0 z-0 overflow-hidden">
+      <style>{`
+        @keyframes kenBurns {
+          0%   { transform: scale(1)    translate(0%, 0%); }
+          50%  { transform: scale(1.06) translate(-1%, -1%); }
+          100% { transform: scale(1)    translate(0%, 0%); }
+        }
+        .hero-img {
+          position: absolute;
+          inset: 0;
+          background-size: cover;
+          background-position: center;
+          animation: kenBurns ${(SLIDE_DURATION + MORPH_DURATION) / 1000}s ease-in-out infinite;
+        }
+      `}</style>
+
       {/* VIDEO 1 */}
       <video
         ref={video1Ref}
@@ -90,16 +112,32 @@ export default function HeroSlideshow() {
         style={{ display: phase === 'video1' ? 'block' : 'none' }}
       />
 
-      {/* IMAGE FLASH SLIDES */}
+      {/* IMAGE CROSS-DISSOLVE SLIDES */}
       {phase === 'images' && (
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url(${IMAGE_SLIDES[imgIndex]})`,
-            opacity: flash ? 0.3 : 1,
-            transition: flash ? 'opacity 0.05s' : 'opacity 0.15s',
-          }}
-        />
+        <>
+          {/* Current image */}
+          <div
+            key={`img-${imgIndex}`}
+            className="hero-img"
+            style={{
+              backgroundImage: `url(${IMAGE_SLIDES[imgIndex]})`,
+              opacity: morphing ? 0 : 1,
+              transition: `opacity ${MORPH_DURATION}ms ease-in-out`,
+            }}
+          />
+          {/* Next image dissolving in */}
+          {morphing && nextIndex < IMAGE_SLIDES.length && (
+            <div
+              key={`next-${nextIndex}`}
+              className="hero-img"
+              style={{
+                backgroundImage: `url(${IMAGE_SLIDES[nextIndex]})`,
+                opacity: morphing ? 1 : 0,
+                transition: `opacity ${MORPH_DURATION}ms ease-in-out`,
+              }}
+            />
+          )}
+        </>
       )}
 
       {/* VIDEO 2 */}
