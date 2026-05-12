@@ -138,7 +138,7 @@ export default function Home() {
             <span>✦ From $79</span>
             <span>✦ Preview before you pay</span>
             <span>✦ Upload your own design</span>
-            <span>✦ Free shipping on Crugly</span>
+            <span>✦ Free shipping on Crugly & Squares</span>
             <span>✦ Local pickup available</span>
           </div>
         </div>
@@ -149,10 +149,10 @@ export default function Home() {
         <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-center gap-3 text-center">
           <Truck className="w-5 h-5 flex-shrink-0" style={{color:'#343634'}} />
           <span className="font-black text-lg tracking-wide" style={{fontFamily:'Barlow Condensed, sans-serif', color:'#343634'}}>
-            FREE SHIPPING ON ALL CRUGLY ORDERS
+            FREE SHIPPING ON ALL CRUGLY & SQUARES ORDERS
           </span>
           <span className="text-sm font-semibold" style={{color:'#1a3a2a'}}>
-            — Hand-painted custom rugs starting at $79. No shipping cost. Ever.
+            — Hand-painted custom rugs starting at $79. No shipping cost. Ever. Squares too.
           </span>
           <Link to={createPageUrl('CustomBuilder')}>
             <span className="font-black text-sm underline underline-offset-2" style={{color:'#343634'}}>Design Yours →</span>
