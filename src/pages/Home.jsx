@@ -188,26 +188,28 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-6" style={{minHeight:'300px'}}>
             {[
               {
-                num:'Step 1', title:'Upload / Design Your Rug', icon: <Upload className="w-10 h-10" />,
-                body:"Use our builder to pick your size, colors, and upload your design — or describe your vision and we'll handle it.",
+                num:'Step 1', title:'Upload Your Image, Pick Your Colors', icon: <Upload className="w-10 h-10" />,
+                body:"Upload your image, decide your colors, approve the design! We start by stenciling the outlines.",
                 color:'#4075ff',
-                images:["https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/db8fa3de2_Screenshot2026-02-20at115711.png?width=700&quality=75"]
+                video: "https://media.base44.com/videos/public/695ded1a209dda33af9a1cf6/f08cd134b_IMG_0075.MOV",
+                videoPosition: 'center 80%',
+                images:[]
               },
               {
                 num:'Step 2', title:'Deploy Your Design', icon: <Paintbrush className="w-10 h-10" />,
                 body:'We send you a digital preview before anything is painted. You approve it. Zero risk, zero surprises.',
                 color:'#24f0a0',
                 video: "https://media.base44.com/videos/public/695ded1a209dda33af9a1cf6/6bf58673f_IMG_0077.MOV",
+                videoPosition: 'center 80%',
                 images:[]
               },
               {
                 num:'Step 3', title:'Stencil, Paint & Ship', icon: <Truck className="w-10 h-10" />,
-                body:'Hand-painted in our Michigan studio. Free shipping on Crugly. Flat rate on Rugly. Or pick it up locally.',
+                body:'We ship it to your door. Enjoy!',
                 color:'#f04624',
-                images:[
-                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/6ea7a20dd_IMG_1766.jpg?width=400&quality=75",
-                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/3c3b3497d_finishedproduct.png?width=400&quality=75",
-                ]
+                video: "https://media.base44.com/videos/public/695ded1a209dda33af9a1cf6/74eafe050_CockRug.mp4",
+                videoPosition: 'center 80%',
+                images:[]
               }
             ].map(s => (
               <FlipCard
@@ -231,7 +233,7 @@ export default function Home() {
                         loop
                         playsInline
                         className="w-full h-full object-cover"
-                        style={{objectPosition: 'center 80%'}}
+                        style={{objectPosition: s.videoPosition || 'center center'}}
                       />
                     ) : (
                       <div className="w-full h-full flex">
