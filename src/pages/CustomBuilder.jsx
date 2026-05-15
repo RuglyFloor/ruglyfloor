@@ -112,39 +112,47 @@ const QUALITY_TIERS = [
     id: 'squares',
     label: 'Squares',
     tagline: 'Custom tile installation',
-    description: 'Custom-painted carpet or smooth squares. From a single runner to a full gym floor. $17.50–$25/tile + $2.50/paint color/tile.',
+    description: 'Painted carpet tiles. Runner to full gym.',
+    price_hint: '$17.50–$25/tile',
     color: '#f04624',
-    shipping: 'FREE shipping on all Squares orders',
-    eta: '14–21 business days',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/b0a28ee97_generated_image.png',
+    shipping: 'FREE shipping',
+    eta: '14–21 days',
   },
   {
     id: 'crugly',
     label: 'Crugly',
     tagline: 'Best value · Most popular',
-    description: 'Hand-painted on a quality base rug. Perfect for bedrooms, dorms, offices.',
+    description: 'Hand-painted on a quality base rug.',
+    price_hint: 'From $79',
     color: '#24f0a0',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/bb7173294_generated_image.png',
     prices: { '2x3': 79, '3x5': 119, '4x6': 149, '5x7': 189, '6x9': 239 },
     shipping: 'FREE shipping',
-    eta: '10–14 business days',
+    eta: '10–14 days',
   },
   {
     id: 'rugly',
     label: 'Rugly',
     tagline: 'Premium quality',
-    description: 'Thicker pile, richer colors, premium base rug. Living room worthy.',
+    description: 'Thicker pile, richer colors, premium base rug.',
+    price_hint: 'From $129',
     color: '#4075ff',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/4c8bb707d_generated_image.png',
     prices: { '2x3': 129, '3x5': 199, '4x6': 259, '5x7': 329, '6x9': 419, '9x12': 599 },
     shipping: '$15–$50 shipping',
-    eta: '14–21 business days',
+    eta: '14–21 days',
   },
   {
     id: 'rugly_lx',
-    label: 'Rugly LX',
+    label: 'RugLux',
     tagline: 'Luxury · Commission',
-    description: 'Top-of-line materials, artist-level detail, certificate of authenticity.',
+    description: 'Artist-level detail. Certificate of authenticity.',
+    price_hint: 'From $249',
     color: '#343634',
+    imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/e1b8a0838_generated_image.png',
     prices: { '2x3': 249, '3x5': 399, '4x6': 549, '5x7': 699, '6x9': 899, '9x12': 1299 },
-    shipping: 'Shipping quoted at completion',
+    shipping: 'Shipping quoted',
     eta: '3–6 weeks',
     depositOnly: true,
   },
@@ -350,7 +358,7 @@ export default function CustomBuilder() {
                 <button
                   key={t.id}
                   onClick={() => { setTier(t); setBaseColor(null); setSize(null); setPaintColor(null); }}
-                  className="text-left rounded-2xl border-4 w-full overflow-hidden"
+                  className="text-left rounded-2xl border-4 w-full overflow-hidden flex flex-col"
                   style={{
                     borderColor: isSelected ? t.color : '#e5e7eb',
                     backgroundColor: isSelected ? `${t.color}15` : '#ffffff',
@@ -358,35 +366,36 @@ export default function CustomBuilder() {
                     opacity: isKnockedOut ? 0.38 : 1,
                     transform: isSelected ? 'scale(1.04)' : isKnockedOut ? 'scale(0.95)' : 'scale(1)',
                     transition: 'all 0.35s cubic-bezier(0.4,0,0.2,1)',
-                    padding: isSelected ? '20px' : '16px 20px',
                     filter: isKnockedOut ? 'grayscale(60%)' : 'none',
                   }}
                 >
-                  {/* Color accent top bar */}
-                  <div style={{
-                    height: isSelected ? 5 : 3,
-                    backgroundColor: t.color,
-                    borderRadius: 3,
-                    marginBottom: 10,
-                    width: isSelected ? '100%' : '40%',
-                    transition: 'all 0.35s ease',
-                  }} />
-                  <div className="font-black text-xl mb-0.5" style={{ color: t.color }}>{t.label}</div>
-                  <div className="text-xs font-bold mb-1.5 text-gray-500">{t.tagline}</div>
-                  <div
-                    className="text-sm text-gray-600 mb-2 overflow-hidden"
-                    style={{
-                      maxHeight: isKnockedOut ? 0 : '5em',
-                      opacity: isKnockedOut ? 0 : 1,
-                      transition: 'max-height 0.3s ease, opacity 0.25s ease',
-                    }}
-                  >{t.description}</div>
-                  <div className="text-xs text-gray-500">{t.shipping} · {t.eta}</div>
-                  {t.depositOnly && isSelected && (
-                    <div className="mt-2 text-xs font-bold px-2 py-1 rounded-full inline-block" style={{ backgroundColor: `${t.color}20`, color: t.color }}>
-                      $100 deposit to start
+                  {/* Brand image */}
+                  {t.imageUrl && (
+                    <div className="w-full overflow-hidden" style={{ height: 110 }}>
+                      <img src={t.imageUrl} alt={t.label} className="w-full h-full object-cover" />
                     </div>
                   )}
+                  <div className="p-4 flex flex-col flex-1">
+                    {/* Color accent bar */}
+                    <div style={{
+                      height: 4,
+                      backgroundColor: t.color,
+                      borderRadius: 3,
+                      marginBottom: 10,
+                      width: isSelected ? '100%' : '40%',
+                      transition: 'width 0.35s ease',
+                    }} />
+                    <div className="font-black text-2xl mb-0.5 leading-tight" style={{ color: t.color, fontFamily: 'Barlow Condensed, sans-serif' }}>{t.label}</div>
+                    <div className="text-sm font-bold mb-2" style={{ color: '#6b7280' }}>{t.tagline}</div>
+                    <div className="text-base font-black mb-1" style={{ color: '#343634' }}>{t.price_hint}</div>
+                    <div className="text-sm text-gray-600 mb-3 leading-snug">{t.description}</div>
+                    <div className="text-sm font-bold mt-auto" style={{ color: t.color }}>{t.shipping} · {t.eta}</div>
+                    {t.depositOnly && isSelected && (
+                      <div className="mt-2 text-sm font-bold px-3 py-1 rounded-full inline-block" style={{ backgroundColor: `${t.color}20`, color: t.color }}>
+                        $100 deposit to start
+                      </div>
+                    )}
+                  </div>
                 </button>
               );
             })}
