@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 
 const EXAMPLES = [
@@ -8,6 +8,13 @@ const EXAMPLES = [
 ];
 
 export default function CampPromo() {
+  useEffect(() => {
+    base44.analytics.track({
+      eventName: 'camp_promo_page_view',
+      properties: { source: document.referrer || 'direct', url: window.location.href }
+    });
+  }, []);
+
   const [copied, setCopied] = useState(null);
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -17,6 +24,7 @@ export default function CampPromo() {
     navigator.clipboard.writeText(code);
     setCopied(idx);
     setTimeout(() => setCopied(null), 2000);
+    base44.analytics.track({ eventName: 'camp_promo_code_copied', properties: { code } });
   }
 
   async function handleEmailSubmit(e) {
@@ -30,6 +38,7 @@ export default function CampPromo() {
         body: `Someone at the campsite wants to stay in touch!\n\nEmail: ${email}\n\nThey're interested in a custom rug. Follow up soon! 🌈`,
       });
       setSubmitted(true);
+      base44.analytics.track({ eventName: 'camp_promo_email_submitted', properties: { success: true } });
     } catch (e) {
       console.error(e);
     }
@@ -79,7 +88,7 @@ export default function CampPromo() {
       </div>
 
       <div className="w-full max-w-sm mb-6 bg-white rounded-2xl border-2 border-indigo-200 p-5 shadow-sm text-center">
-        <a href="https://ruglyfloor.com/CustomBuilder" className="block w-full text-center bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-black text-base py-3 rounded-xl shadow hover:shadow-lg transition-all">
+        <a href="https://ruglyfloor.com/CustomBuilder" onClick={() => base44.analytics.track({ eventName: 'camp_promo_design_clicked' })} className="block w-full text-center bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-black text-base py-3 rounded-xl shadow hover:shadow-lg transition-all">
           Design My Rug ✨
         </a>
       </div>
