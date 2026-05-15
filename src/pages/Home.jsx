@@ -197,10 +197,8 @@ export default function Home() {
                 num:'Step 2', title:'Deploy Your Design', icon: <Paintbrush className="w-10 h-10" />,
                 body:'We send you a digital preview before anything is painted. You approve it. Zero risk, zero surprises.',
                 color:'#24f0a0',
-                images:[
-                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/f59403e57_IMG_1559.jpg?width=400&quality=75",
-                  "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/604e7c19a_IMG_1564.jpg?width=400&quality=75",
-                ]
+                video: "https://media.base44.com/videos/public/695ded1a209dda33af9a1cf6/6bf58673f_IMG_0077.MOV",
+                images:[]
               },
               {
                 num:'Step 3', title:'Stencil, Paint & Ship', icon: <Truck className="w-10 h-10" />,
@@ -225,11 +223,23 @@ export default function Home() {
                 }
                 backContent={
                   <div className="w-full h-full relative" style={{backgroundColor: s.color, borderRadius:'1rem', overflow:'hidden'}}>
-                    <div className="w-full h-full flex">
-                      {s.images.map((img, i) => (
-                        <img key={i} src={img} alt={s.title} className="flex-1 object-cover" style={{width:`${100/s.images.length}%`}} />
-                      ))}
-                    </div>
+                    {s.video ? (
+                      <video
+                        src={s.video}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        className="w-full h-full object-cover"
+                        style={{objectPosition: 'center 80%'}}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex">
+                        {s.images.map((img, i) => (
+                          <img key={i} src={img} alt={s.title} className="flex-1 object-cover" style={{width:`${100/s.images.length}%`}} />
+                        ))}
+                      </div>
+                    )}
                     <div className="absolute bottom-0 left-0 right-0 px-4 py-3 text-white font-bold text-sm text-center" style={{backgroundColor:`${s.color}cc`}}>
                       {s.title}
                     </div>
