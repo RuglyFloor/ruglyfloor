@@ -204,7 +204,7 @@ export default function Home() {
                 images:[]
               },
               {
-                num:'Step 3', title:'Stencil, Paint & Ship', icon: <Truck className="w-10 h-10" />,
+                num:'Step 3', title:'We Ship It To Your Door. Enjoy!', icon: <Truck className="w-10 h-10" />,
                 body:'We ship it to your door. Enjoy!',
                 color:'#f04624',
                 video: "https://media.base44.com/videos/public/695ded1a209dda33af9a1cf6/74eafe050_CockRug.mp4",
