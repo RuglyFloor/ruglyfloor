@@ -187,6 +187,22 @@ Deno.serve(async (req) => {
       console.error('Notion log failed (non-critical):', notionError.message);
     }
 
+    // === IMMEDIATE OWNER ALERT (backup — fires even before payment is confirmed) ===
+    try {
+      const itemSummary = orderItems.map(i =>
+        `• ${i.qualityLabel || i.qualityTier} — ${i.size} — Base: ${i.base_color || 'N/A'} — Paint: ${i.paint_color || 'N/A'}${i.has_second_color ? ` + ${i.second_paint_color}` : ''} — $${i.price}`
+      ).join('\n');
+      await base44.asServiceRole.integrations.Core.SendEmail({
+        to: 'contact@ruglyfloor.com',
+        from_name: 'Rugly Order System',
+        subject: `⚡ CHECKOUT STARTED: ${orderNumber} — ${customerInfo.name} — $${paymentAmount}`,
+        body: `CHECKOUT IN PROGRESS — CUSTOMER HEADING TO STRIPE\n\nOrder #: ${orderNumber}\nCustomer: ${customerInfo.name}\nEmail: ${customerInfo.email}\nPhone: ${customerInfo.phone}\nAmount: $${paymentAmount}\n\nItems:\n${itemSummary}\n\nPayment NOT yet confirmed. You will get a second email when Stripe confirms payment.\n\nView in Admin: https://ruglyfloor.com/AdminOrders`
+      });
+      console.log('Owner checkout-start alert sent');
+    } catch (alertErr) {
+      console.error('Owner alert failed (non-critical):', alertErr.message);
+    }
+
     // Create Stripe checkout session
     const originHeader = req.headers.get('origin') || req.headers.get('referer') || '';
     const origin = originHeader.startsWith('http') 

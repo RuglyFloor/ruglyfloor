@@ -101,6 +101,42 @@ async function handleCheckoutCompleted(base44, event) {
   });
 
   console.log('[Webhook] Order marked as PAID:', orderNumber);
+
+  // === NOTIFY OWNER ===
+  try {
+    const items = order.items || [];
+    const itemSummary = items.map(i =>
+      `• ${i.qualityLabel || i.qualityTier} — ${i.size} — Base: ${i.base_color || 'N/A'} — Paint: ${i.paint_color || 'N/A'}${i.has_second_color ? ` + ${i.second_paint_color}` : ''} — $${i.price}`
+    ).join('\n');
+
+    await base44.asServiceRole.integrations.Core.SendEmail({
+      to: 'contact@ruglyfloor.com',
+      from_name: 'Rugly Order System',
+      subject: `🔔 NEW ORDER PAID: ${order.order_number} — ${order.customer_name} — $${order.total_amount}`,
+      body: `NEW ORDER RECEIVED — PAYMENT CONFIRMED\n\nOrder #: ${order.order_number}\nCustomer: ${order.customer_name}\nEmail: ${order.customer_email}\nPhone: ${order.customer_phone}\nTotal: $${order.total_amount}\n\nItems:\n${itemSummary}\n\nShipping:\n${order.shipping_address?.street || ''}\n${order.shipping_address?.city || ''}, ${order.shipping_address?.state || ''} ${order.shipping_address?.zip || ''}\n\nView in Admin: https://ruglyfloor.com/AdminOrders`
+    });
+    console.log('[Webhook] Owner notification sent');
+  } catch (err) {
+    console.error('[Webhook] Owner notification FAILED:', err.message);
+  }
+
+  // === NOTIFY CUSTOMER ===
+  try {
+    const items = order.items || [];
+    const itemsList = items.map(i =>
+      `• ${i.qualityLabel || i.qualityTier} — ${i.size} — Base: ${i.base_color || 'N/A'} — Paint: ${i.paint_color || 'N/A'}${i.has_second_color ? ` + ${i.second_paint_color}` : ''} — $${i.price}`
+    ).join('\n');
+
+    await base44.asServiceRole.integrations.Core.SendEmail({
+      to: order.customer_email,
+      from_name: 'Rugly Floors',
+      subject: `Order Confirmed — Rugly Custom Rug #${order.order_number}`,
+      body: `Hi ${order.customer_name || 'Valued Customer'},\n\nThank you for your order! We're excited to bring your custom rug to life.\n\nOrder #: ${order.order_number}\nTotal: $${order.total_amount}\n\nYour Items:\n${itemsList}\n\nYour rug is being carefully crafted by hand. You'll receive updates as it progresses through production.\n\nQuestions? Call us at (517) 777-8474 or email contact@ruglyfloor.com\n\nWarm regards,\nThe Rugly Team\nCustom Hand-Painted Rugs`
+    });
+    console.log('[Webhook] Customer confirmation sent to:', order.customer_email);
+  } catch (err) {
+    console.error('[Webhook] Customer confirmation FAILED:', err.message);
+  }
 }
 
 async function handlePaymentSucceeded(base44, event) {
