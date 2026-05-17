@@ -155,10 +155,7 @@ export default function Cart() {
       return;
     }
 
-    if (customerInfo.phone && !smsConsent) {
-      alert('Please consent to receive text messages to continue');
-      return;
-    }
+    // SMS consent is optional — we encourage it but don't block checkout
 
     if (!finalSaleAcknowledged) {
       alert('Please acknowledge that custom rug orders are final sale before proceeding.');
@@ -581,7 +578,7 @@ export default function Cart() {
                     className="w-full text-white font-bold py-5 lg:py-6 text-base lg:text-lg rounded-xl transition-all"
                     style={{ backgroundColor: '#343634', border: 'none' }}
                     onClick={handleCheckout}
-                    disabled={submitting || !customerInfo.email || !customerInfo.phone || !customerInfo.name || !finalSaleAcknowledged || (customerInfo.phone && !smsConsent)}
+                    disabled={submitting || !customerInfo.email || !customerInfo.phone || !customerInfo.name || !finalSaleAcknowledged}
                   >
                     {submitting ? 'Processing...' : `Pay $${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : paymentAmount.toFixed(2)}`}
                   </Button>

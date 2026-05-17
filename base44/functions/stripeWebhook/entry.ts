@@ -57,21 +57,48 @@ Deno.serve(async (req) => {
 async function handleCheckoutCompleted(base44, event) {
   const session = event.data.object;
   const orderNumber = session.metadata?.order_number;
+  const orderId = session.metadata?.order_id;
   const serviceType = session.metadata?.service_type;
-  
-  if (!orderNumber) {
-    console.error('[Webhook] No order_number in metadata');
+
+  console.log('[Webhook] Processing checkout.session.completed — order_number:', orderNumber, 'order_id:', orderId, 'service:', serviceType);
+
+  if (!orderNumber && !orderId) {
+    console.error('[Webhook] No order_number or order_id in metadata — cannot process');
+    // Still send owner alert even without order reference
+    try {
+      await base44.asServiceRole.integrations.Core.SendEmail({
+        to: 'contact@ruglyfloor.com',
+        from_name: 'Rugly Order System',
+        subject: `⚠️ STRIPE PAYMENT RECEIVED — NO ORDER ID`,
+        body: `A Stripe payment was received but no order_number or order_id was found in the metadata.\n\nSession ID: ${session.id}\nAmount: $${(session.amount_total / 100).toFixed(2)}\nCustomer: ${session.customer_details?.email}\n\nCheck Stripe dashboard immediately.`
+      });
+    } catch(e) { console.error('Fallback alert failed:', e.message); }
     return;
   }
 
-  console.log('[Webhook] Processing checkout.session.completed for order:', orderNumber, 'Service:', serviceType);
-
   // Determine entity based on service type
   const entityName = serviceType === 'fix_my_rug' ? 'FixMyRugOrder' : 'Order';
-  const orders = await base44.asServiceRole.entities[entityName].filter({ order_number: orderNumber });
-  
+  let orders = [];
+  if (orderNumber) {
+    orders = await base44.asServiceRole.entities[entityName].filter({ order_number: orderNumber });
+  }
+  if (orders.length === 0 && orderId) {
+    try {
+      const o = await base44.asServiceRole.entities[entityName].get(orderId);
+      if (o) orders = [o];
+    } catch(e) { /* not found */ }
+  }
+
   if (orders.length === 0) {
-    console.error('[Webhook] Order not found:', orderNumber);
+    console.error('[Webhook] Order not found by order_number or order_id');
+    try {
+      await base44.asServiceRole.integrations.Core.SendEmail({
+        to: 'contact@ruglyfloor.com',
+        from_name: 'Rugly Order System',
+        subject: `⚠️ STRIPE PAYMENT — ORDER NOT FOUND IN DB`,
+        body: `Payment confirmed but order not found.\n\norder_number: ${orderNumber}\norder_id: ${orderId}\nSession: ${session.id}\nAmount: $${(session.amount_total / 100).toFixed(2)}\nCustomer: ${session.customer_details?.email}\n\nCheck admin immediately.`
+      });
+    } catch(e) { /* ignore */ }
     return;
   }
 
