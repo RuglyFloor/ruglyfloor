@@ -1,0 +1,54 @@
+{
+  "name": "CruglyDesign",
+  "type": "object",
+  "properties": {
+    "design_id": {
+      "type": "string",
+      "description": "Unique design ID (CRU-DES-YYYY-######)"
+    },
+    "order_key": {
+      "type": "string",
+      "description": "Link to RuglyOrder"
+    },
+    "customer_id": {
+      "type": "string",
+      "description": "Link to Customer"
+    },
+    "design_status": {
+      "type": "string",
+      "enum": [
+        "SUBMITTED",
+        "REVISION",
+        "APPROVED"
+      ],
+      "default": "SUBMITTED"
+    },
+    "design_assets": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Append-only array of design asset URLs"
+    },
+    "palette_tags": {
+      "type": "string"
+    },
+    "approved_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "resulting_serial_number": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional description (up to 1000 characters)",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "design_id",
+    "order_key",
+    "customer_id"
+  ]
+}

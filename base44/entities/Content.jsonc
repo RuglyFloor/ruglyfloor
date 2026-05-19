@@ -1,0 +1,33 @@
+{
+  "name": "Content",
+  "type": "object",
+  "properties": {
+    "slug": {
+      "type": "string",
+      "description": "Page identifier (e.g., 'home', 'shop', 'about')"
+    },
+    "seo_title": {
+      "type": "string",
+      "description": "SEO title"
+    },
+    "seo_description": {
+      "type": "string",
+      "description": "SEO meta description"
+    },
+    "seo_keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "SEO keywords"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional description (up to 1000 characters)",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "slug"
+  ]
+}

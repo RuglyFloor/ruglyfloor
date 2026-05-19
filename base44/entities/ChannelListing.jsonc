@@ -1,0 +1,71 @@
+{
+  "name": "ChannelListing",
+  "type": "object",
+  "properties": {
+    "product_id": {
+      "type": "string",
+      "description": "Reference to Product entity"
+    },
+    "channel": {
+      "type": "string",
+      "enum": [
+        "facebook",
+        "etsy",
+        "tiktok",
+        "shopify"
+      ],
+      "description": "Sales channel"
+    },
+    "channel_product_id": {
+      "type": "string",
+      "description": "Product ID on the channel"
+    },
+    "listing_url": {
+      "type": "string",
+      "description": "Direct link to the listing"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "active",
+        "paused",
+        "error"
+      ],
+      "default": "draft",
+      "description": "Listing status"
+    },
+    "sync_status": {
+      "type": "string",
+      "enum": [
+        "synced",
+        "pending",
+        "failed"
+      ],
+      "default": "pending",
+      "description": "Last sync status"
+    },
+    "last_synced_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last successful sync timestamp"
+    },
+    "error_message": {
+      "type": "string",
+      "description": "Error details if sync failed"
+    },
+    "channel_specific_data": {
+      "type": "object",
+      "description": "Channel-specific metadata (shipping, categories, etc.)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional description (up to 1000 characters)",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "product_id",
+    "channel"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "name": "SavedCommission",
+  "type": "object",
+  "properties": {
+    "email": {
+      "type": "string",
+      "description": "Customer email (used to retrieve saved designs)"
+    },
+    "business_name": {
+      "type": "string",
+      "description": "Business or studio name"
+    },
+    "design_name": {
+      "type": "string",
+      "description": "User-given name for this saved design"
+    },
+    "form_data": {
+      "type": "object",
+      "description": "Full commission form data snapshot"
+    },
+    "ai_preview_url": {
+      "type": "string",
+      "description": "URL of the AI-generated rug preview image"
+    },
+    "markup_notes": {
+      "type": "string",
+      "description": "Designer notes/annotations added during markup"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional description (up to 1000 characters)",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "email"
+  ]
+}

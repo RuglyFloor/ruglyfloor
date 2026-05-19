@@ -1,0 +1,66 @@
+{
+  "name": "RugInventory",
+  "type": "object",
+  "properties": {
+    "serial_number": {
+      "type": "string",
+      "description": "Unique serial (RUG-YYYY-###### or CRU-YYYY-######)"
+    },
+    "brand": {
+      "type": "string",
+      "enum": [
+        "RUGLY",
+        "CRUGLY"
+      ]
+    },
+    "linked_order_key": {
+      "type": "string"
+    },
+    "customer_id": {
+      "type": "string"
+    },
+    "color_code": {
+      "type": "string"
+    },
+    "size_code": {
+      "type": "string"
+    },
+    "materials": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "BLANK",
+        "ALLOCATED",
+        "IN_PRODUCTION",
+        "QC",
+        "FINISHED",
+        "SHIPPED"
+      ],
+      "default": "BLANK"
+    },
+    "coa_id": {
+      "type": "string"
+    },
+    "finished_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "shipped_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional description (up to 1000 characters)",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "serial_number",
+    "brand",
+    "color_code",
+    "size_code"
+  ]
+}

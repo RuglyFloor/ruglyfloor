@@ -1,0 +1,27 @@
+{
+  "name": "PricingConfig",
+  "type": "object",
+  "properties": {
+    "config_name": {
+      "type": "string",
+      "description": "Name of the pricing configuration (e.g., 'crugly_sizes', 'quality_tiers')"
+    },
+    "pricing_data": {
+      "type": "object",
+      "description": "JSON object containing the pricing structure"
+    },
+    "last_updated_by": {
+      "type": "string",
+      "description": "Email of admin who last updated"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional description (up to 1000 characters)",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "config_name",
+    "pricing_data"
+  ]
+}

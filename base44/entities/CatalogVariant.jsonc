@@ -1,0 +1,58 @@
+{
+  "name": "CatalogVariant",
+  "type": "object",
+  "properties": {
+    "catalog_id": {
+      "type": "string",
+      "description": "Reference to parent Catalog listing"
+    },
+    "size": {
+      "type": "string",
+      "enum": [
+        "2x3",
+        "3x5",
+        "4x6",
+        "5x7",
+        "7x9"
+      ],
+      "description": "Rug size"
+    },
+    "size_label": {
+      "type": "string",
+      "enum": [
+        "T",
+        "S",
+        "M",
+        "L",
+        "H"
+      ],
+      "description": "Size label (Tiny/Small/Medium/Large/Huge)"
+    },
+    "color": {
+      "type": "string",
+      "description": "Base rug color"
+    },
+    "supplier_price": {
+      "type": "number",
+      "description": "Supplier price in USD"
+    },
+    "in_stock": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this variant is in stock"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional description (up to 1000 characters)",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "catalog_id",
+    "size",
+    "size_label",
+    "color",
+    "supplier_price",
+    "in_stock"
+  ]
+}

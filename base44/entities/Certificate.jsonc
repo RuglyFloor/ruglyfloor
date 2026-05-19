@@ -1,0 +1,54 @@
+{
+  "name": "Certificate",
+  "type": "object",
+  "properties": {
+    "coa_id": {
+      "type": "string",
+      "description": "Unique COA ID (usually serial_number)"
+    },
+    "serial_number": {
+      "type": "string"
+    },
+    "order_key": {
+      "type": "string"
+    },
+    "customer_id": {
+      "type": "string"
+    },
+    "brand": {
+      "type": "string",
+      "enum": [
+        "RUGLY",
+        "CRUGLY"
+      ]
+    },
+    "color_code": {
+      "type": "string"
+    },
+    "size_code": {
+      "type": "string"
+    },
+    "date_made": {
+      "type": "string",
+      "format": "date"
+    },
+    "certificate_pdf_url": {
+      "type": "string"
+    },
+    "printed_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional description (up to 1000 characters)",
+      "maxLength": 1000
+    }
+  },
+  "required": [
+    "coa_id",
+    "serial_number",
+    "order_key",
+    "brand"
+  ]
+}
