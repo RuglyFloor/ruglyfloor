@@ -1,0 +1,84 @@
+{
+  "name": "Customer",
+  "type": "object",
+  "properties": {
+    "customer_id": {
+      "type": "string",
+      "description": "Unique customer ID (CUST-000001 format)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Customer full name"
+    },
+    "email": {
+      "type": "string",
+      "description": "Customer email"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Customer phone (required for SMS)"
+    },
+    "shipping_address_line1": {
+      "type": "string"
+    },
+    "shipping_address_line2": {
+      "type": "string"
+    },
+    "shipping_city": {
+      "type": "string"
+    },
+    "shipping_state": {
+      "type": "string"
+    },
+    "shipping_postal": {
+      "type": "string"
+    },
+    "shipping_country": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "customer_id",
+    "email",
+    "phone"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {
+      "$or": [
+        {
+          "data.email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
