@@ -73,6 +73,9 @@
           "data.email": "{{user.email}}"
         },
         {
+          "data.share_token": "{{request.query.token}}"
+        },
+        {
           "user_condition": {
             "role": "admin"
           }
