@@ -26,6 +26,14 @@ export default function ProductDetail() {
     enabled: !!productId
   });
 
+  const rugTypeColor =
+    product?.rug_type === 'Crugly' ? '#2de89a' :
+    product?.rug_type === 'Rugly'  ? '#4d7eff' :
+    product?.rug_type === 'Ruglux' ? '#3d3d3d' :
+    product?.rug_type === 'Square' ? '#e83a1a' : '#4d7eff';
+
+  const rugTypeTextColor = product?.rug_type === 'Crugly' ? '#1a1a1a' : '#ffffff';
+
   const images = product?.all_images?.filter(img => img.selected)
     .sort((a, b) => a.order - b.order)
     .map(img => img.url) || 
@@ -162,12 +170,12 @@ export default function ProductDetail() {
               )}
             </div>
 
-            <div className="text-5xl font-bold text-blue-600">
+            <div className="text-5xl font-bold" style={{ color: rugTypeColor }}>
               ${product.price}
             </div>
 
             {product.in_stock ? (
-              <Badge className="bg-green-600">In Stock</Badge>
+              <span className="inline-block text-sm font-bold px-3 py-1 rounded-full" style={{ backgroundColor: rugTypeColor, color: rugTypeTextColor }}>In Stock</span>
             ) : (
               <Badge variant="destructive">Out of Stock</Badge>
             )}
@@ -183,23 +191,23 @@ export default function ProductDetail() {
               {/* Trust Badges */}
               <div className="grid grid-cols-3 gap-3 mt-4">
                 <div className="flex flex-col items-center text-center p-3 bg-gray-50 rounded-lg">
-                  <span className="text-green-600 text-lg mb-1">✅</span>
+                  <span className="text-lg mb-1" style={{ color: rugTypeColor }}>✅</span>
                   <span className="text-xs text-gray-600 font-medium">Hand-painted in Lansing, MI</span>
                 </div>
                 <div className="flex flex-col items-center text-center p-3 bg-gray-50 rounded-lg">
-                  <span className="text-green-600 text-lg mb-1">🛡️</span>
+                  <span className="text-lg mb-1" style={{ color: rugTypeColor }}>🛡️</span>
                   <span className="text-xs text-gray-600 font-medium">Full replacement if damaged</span>
                 </div>
                 <div className="flex flex-col items-center text-center p-3 bg-gray-50 rounded-lg">
-                  <span className="text-green-600 text-lg mb-1">🔒</span>
+                  <span className="text-lg mb-1" style={{ color: rugTypeColor }}>🔒</span>
                   <span className="text-xs text-gray-600 font-medium">Secure checkout via Stripe</span>
                 </div>
               </div>
 
               {/* Shipping info */}
-              <div className="mt-3 p-3 bg-blue-50 rounded-lg flex items-center gap-2">
-                <span className="text-blue-600">🚚</span>
-                <span className="text-sm text-blue-800">
+              <div className="mt-3 p-3 rounded-lg flex items-center gap-2" style={{ backgroundColor: rugTypeColor + '22' }}>
+                <span style={{ color: rugTypeColor }}>🚚</span>
+                <span className="text-sm" style={{ color: rugTypeColor === '#4d7eff' ? '#1a3a8f' : rugTypeColor === '#2de89a' ? '#0a5c3a' : rugTypeColor === '#e83a1a' ? '#7a1a08' : '#1a1a1a' }}>
                   {product.qualityTier === 'budget' ? 'Free shipping on this rug' : 'Ships for $15 — 3 to 5 business days'}
                 </span>
               </div>
@@ -261,7 +269,7 @@ export default function ProductDetail() {
                   <ul className="space-y-3">
                     {product.features.map((feature, idx) => (
                       <li key={idx} className="flex items-start gap-3">
-                        <span className="text-blue-600 font-bold">✓</span>
+                        <span className="font-bold" style={{ color: rugTypeColor }}>✓</span>
                         <span>{feature}</span>
                       </li>
                     ))}
@@ -273,26 +281,12 @@ export default function ProductDetail() {
                 <CardContent className="pt-6">
                   <h3 className="text-xl font-bold mb-4">Features</h3>
                   <ul className="space-y-3">
-                    <li className="flex items-start gap-3">
-                      <span className="text-blue-600 font-bold">✓</span>
-                      <span>Hand-painted by professional artists</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="text-blue-600 font-bold">✓</span>
-                      <span>Premium quality materials</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="text-blue-600 font-bold">✓</span>
-                      <span>Durable and easy to clean</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="text-blue-600 font-bold">✓</span>
-                      <span>One-of-a-kind design</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="text-blue-600 font-bold">✓</span>
-                      <span>Free shipping on all orders</span>
-                    </li>
+                    {['Hand-painted by professional artists','Premium quality materials','Durable and easy to clean','One-of-a-kind design','Free shipping on all orders'].map((f, i) => (
+                      <li key={i} className="flex items-start gap-3">
+                        <span className="font-bold" style={{ color: rugTypeColor }}>✓</span>
+                        <span>{f}</span>
+                      </li>
+                    ))}
                   </ul>
                 </CardContent>
               </Card>
@@ -303,7 +297,8 @@ export default function ProductDetail() {
               <Button
               onClick={handleBuyNow}
               disabled={!product.in_stock}
-              className="w-full h-14 text-lg bg-blue-600 hover:bg-blue-700"
+              className="w-full h-14 text-lg"
+              style={{ backgroundColor: rugTypeColor, color: rugTypeTextColor }}
               >
               <ShoppingCart className="w-5 h-5 mr-2" />
               {product.in_stock ? 'Add to Cart' : 'Out of Stock'}
