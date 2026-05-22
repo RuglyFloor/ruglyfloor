@@ -37,6 +37,14 @@ export default function ProductDetail() {
   // Force color on SVG icons — global CSS overrides currentColor inheritance
   const iconStyle = { color: rugTypeColor, stroke: rugTypeColor, fill: 'none' };
 
+  // Filled checkbox-style checkmark for feature lists
+  const CheckmarkIcon = () => (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style={{flexShrink: 0, marginTop: 2}}>
+      <rect width="20" height="20" rx="5" fill={rugTypeColor} />
+      <path d="M5 10.5L8.5 14L15 7" stroke={rugTypeTextColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+
   const images = product?.all_images?.filter(img => img.selected)
     .sort((a, b) => a.order - b.order)
     .map(img => img.url) || 
@@ -167,10 +175,10 @@ export default function ProductDetail() {
             <div>
               {/* Rug Type Brand Badge */}
               {product.rug_type && (
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider mb-3"
+                <span className="inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-3"
                   style={{ backgroundColor: rugTypeColor, color: rugTypeTextColor }}>
                   {product.rug_type}
-                </div>
+                </span>
               )}
               <h1 className="text-4xl font-bold text-gray-900 mb-3">{product.name}</h1>
               {product.size && (
@@ -279,7 +287,7 @@ export default function ProductDetail() {
                   <ul className="space-y-3">
                     {product.features.map((feature, idx) => (
                       <li key={idx} className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" style={iconStyle} />
+                        <CheckmarkIcon />
                         <span>{feature}</span>
                       </li>
                     ))}
@@ -293,7 +301,7 @@ export default function ProductDetail() {
                   <ul className="space-y-3">
                     {['Hand-painted by professional artists','Premium quality materials','Durable and easy to clean','One-of-a-kind design','Free shipping on all orders'].map((f, i) => (
                       <li key={i} className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" style={iconStyle} />
+                        <CheckmarkIcon />
                         <span>{f}</span>
                       </li>
                     ))}
