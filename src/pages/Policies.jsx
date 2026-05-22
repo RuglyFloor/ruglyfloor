@@ -8,9 +8,9 @@ const RUG_TYPES = [
     name: 'Crugly',
     tagline: 'Cost Efficient, looks great, customized, free shipping, 2 or less colors',
     image: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/e8cc6b92e_Untitled-3.png',
-    bg: '#24f0a0',
-    text: '#343634',
-    accent: '#343634',
+    bg: 'hsl(157, 85%, 54%)',
+    text: '#1a1a1a',
+    accent: '#1a1a1a',
     shipping: 'FREE shipping — No minimum, no catch.',
     shippingDetail: 'Every Crugly ships completely free within the continental United States. Carefully packaged and delivered to your door.',
     delivery: '14 days estimated arrival',
@@ -25,7 +25,7 @@ const RUG_TYPES = [
     name: 'Rugly',
     tagline: 'Our signature line — quality, gorgeous, at a fair price',
     image: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/b8b504744_Untitled-2.png',
-    bg: '#4075ff',
+    bg: 'hsl(223, 100%, 63%)',
     text: '#ffffff',
     accent: '#ffffff',
     shipping: 'Flat rate shipping based on size',
@@ -42,7 +42,7 @@ const RUG_TYPES = [
     name: 'Ruglux',
     tagline: 'High end, 3-D, Unlimited',
     image: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/a92fdd3b8_Untitled-4.png',
-    bg: '#343634',
+    bg: 'hsl(120, 1%, 21%)',
     text: '#ffffff',
     accent: '#d4af37',
     shipping: 'Flat rate — $15 for Tiny, +$15 per size up',
@@ -59,7 +59,7 @@ const RUG_TYPES = [
     name: 'Rugly Square',
     tagline: 'Cover any floor, any size, your way!',
     image: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/de90dad41_Untitled-1.png',
-    bg: '#f04624',
+    bg: 'hsl(14, 87%, 55%)',
     text: '#ffffff',
     accent: '#ffffff',
     shipping: 'FREE shipping — Always.',
@@ -84,7 +84,7 @@ function RugTypeCard({ rug }) {
       </div>
 
       {/* Body */}
-      <div className="p-6" style={{ backgroundColor: rug.bg }}>
+      <div className="p-6" style={{ backgroundColor: rug.bg, background: rug.bg }}>
         <h2 className="text-3xl font-bold mb-1" style={{ color: rug.text, fontFamily: 'var(--font-heading)' }}>{rug.name}</h2>
         <p className="text-sm mb-4 opacity-80" style={{ color: rug.text }}>{rug.tagline}</p>
 
