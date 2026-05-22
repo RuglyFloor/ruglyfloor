@@ -7,3 +7,20 @@ css
 head {
   --favicon-url: url('https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/d71f153d8_RUGLYMASTERLOGO-92.png') !important;
 }
+
+/* Mobile / PWA / native shell */
+body {
+  overscroll-behavior-y: none;
+}
+
+/* Safe-area utility */
+.safe-top    { padding-top:    env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.safe-left   { padding-left:   env(safe-area-inset-left); }
+.safe-right  { padding-right:  env(safe-area-inset-right); }
+
+/* Prevent accidental text-selection on interactive UI elements */
+.no-select {
+  -webkit-user-select: none;
+  user-select: none;
+}

@@ -1,15 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from './utils';
-import { ShoppingCart, Menu, X, Facebook, Instagram, Twitter, Mail, Video, Star, Lock, ShieldCheck, Truck } from 'lucide-react';
+import { ShoppingCart, Menu, X, Facebook, Instagram, Twitter, Mail, Video, Star, Lock, ShieldCheck, Truck, Settings } from 'lucide-react';
 import ContactCards from '@/components/custom/ContactCards';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
+import { useIsMobile } from '@/hooks/use-mobile';
+import BottomTabs from '@/components/mobile/BottomTabs';
+import BackButton from '@/components/mobile/BackButton';
 
 export default function Layout({ children, currentPageName }) {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
-
   const [user, setUser] = React.useState(null);
+  const isMobile = useIsMobile();
 
   React.useEffect(() => {
     // Optional auth check for public app
@@ -43,7 +46,7 @@ export default function Layout({ children, currentPageName }) {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 safe-top safe-left safe-right">
           {/* Favicon */}
           <link rel="icon" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/d71f153d8_RUGLYMASTERLOGO-92.png" />
       <style>{`
@@ -136,14 +139,17 @@ export default function Layout({ children, currentPageName }) {
       <header className="bg-white border-b sticky top-0 z-50" style={{borderColor: 'var(--brand-blue)'}}>
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
-            <Link to={createPageUrl('Home')} className="flex items-center gap-2">
-              <img 
-                src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/938135f33_RUGLYMASTERLOGOsmall.png" 
-                alt="Rugly" 
-                className="h-12"
-                width="48" height="48"
-              />
-            </Link>
+            <div className="flex items-center gap-1">
+              {isMobile && <BackButton />}
+              <Link to={createPageUrl('Home')} className="flex items-center gap-2">
+                <img 
+                  src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/938135f33_RUGLYMASTERLOGOsmall.png" 
+                  alt="Rugly" 
+                  className="h-12"
+                  width="48" height="48"
+                />
+              </Link>
+            </div>
 
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-6">
@@ -165,6 +171,11 @@ export default function Layout({ children, currentPageName }) {
                 <Button variant="outline" size="sm" className="gap-2">
                   <ShoppingCart className="w-4 h-4" />
                   Cart
+                </Button>
+              </Link>
+              <Link to="/AccountSettings" title="Account Settings">
+                <Button variant="ghost" size="sm">
+                  <Settings className="w-4 h-4" />
                 </Button>
               </Link>
             </nav>
@@ -209,7 +220,10 @@ export default function Layout({ children, currentPageName }) {
       </header>
 
       {/* Main Content */}
-      <main>{children}</main>
+      <main className={isMobile ? 'pb-20' : ''}>{children}</main>
+
+      {/* Mobile Bottom Tabs */}
+      {isMobile && <BottomTabs />}
 
       {/* Footer */}
       <footer className="py-16 px-6 mt-20 pb-32" style={{backgroundColor: 'var(--brand-dark)', color: '#d1d5db'}}>

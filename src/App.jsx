@@ -17,6 +17,7 @@ import AdminQuotes from './pages/AdminQuotes';
 import QuoteView from './pages/QuoteView';
 import AdminNewQuote from './pages/AdminNewQuote';
 import CampPromo from './pages/CampPromo';
+import AccountSettings from './pages/AccountSettings';
 import React, { Suspense } from 'react';
 
 const { Pages, Layout, mainPage } = pagesConfig;
@@ -78,6 +79,7 @@ const AuthenticatedApp = () => {
         <Route path="/QuoteView" element={<QuoteView />} />
         <Route path="/AdminNewQuote" element={<AdminNewQuote />} />
         <Route path="/promo" element={<CampPromo />} />
+        <Route path="/AccountSettings" element={<LayoutWrapper currentPageName="AccountSettings"><AccountSettings /></LayoutWrapper>} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Suspense>
