@@ -195,7 +195,7 @@ export default function Policies() {
               <li>Ship the rug back — <strong>return shipping is the customer's responsibility.</strong></li>
               <li>Refund processed within <strong>5–7 business days</strong> of receipt and inspection.</li>
             </ol>
-            <p className="text-sm text-gray-500 mt-2">No refund will be issued until the returned item has been received and inspected at our studio.</p>
+            <p className="text-sm text-gray-500 mt-2">Upon approval, we will either ship a corrected replacement rug or issue a full refund — your choice. No refund will be issued until the returned item has been received and inspected at our studio.</p>
           </CardContent>
         </Card>
 
