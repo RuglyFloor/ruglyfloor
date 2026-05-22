@@ -58,18 +58,27 @@ export default function SquaresPreviewGenerator({ gridData, stencilDataUrl, desi
         ? `\n\nCUSTOMER INSTRUCTIONS: ${designInstructions.trim()}`
         : '';
 
+      // Build a precise text description of the grid layout row by row
+      const gridDescription = gridData.grid.map((row, r) => {
+        const rowDesc = row.map((color, c) => `(${c+1},${r+1})=${color}`).join(' ');
+        return `Row ${r+1} (top to bottom): ${rowDesc}`;
+      }).join('\n');
+
       const prompt = `You are a photorealistic product visualization artist for custom painted floor tile/square installations.
 
-REFERENCE IMAGE 1: A color-coded grid showing ${gridData.cols}×${gridData.rows} individual square tiles (each 24"×24"), with each tile painted its designated color. This is the EXACT color layout to reproduce.
+REFERENCE IMAGE 1: A color-coded pixel grid showing the EXACT tile color layout. Each pixel/cell = one 2ft×2ft tile. The grid is ${gridData.cols} tiles wide × ${gridData.rows} tiles tall. You MUST replicate this color layout exactly — do not rotate, mirror, or reinterpret it.
 
-REFERENCE IMAGE 2: A stencil/traced design that must be painted ACROSS the entire tile installation as one cohesive design spanning all tiles.
+EXACT TILE COLOR MAP (col, row) — column 1 is LEFT, row 1 is TOP:
+${gridDescription}
+
+REFERENCE IMAGE 2: A stencil/traced design that must be painted ACROSS the entire tile installation as one cohesive unified artwork spanning all tiles.
 
 YOUR TASK:
-1. Show the ${gridData.cols}×${gridData.rows} tile grid (${totalSqFt} sq ft total) installed on a floor in a realistic room setting
-2. Each tile has the EXACT color shown in Reference Image 1 — replicate every tile color precisely
+1. Show the ${gridData.cols}×${gridData.rows} tile grid (${totalSqFt} sq ft total, each tile is 2ft×2ft) installed on a floor in a realistic room setting
+2. CRITICAL: Reproduce the EXACT color of every single tile as specified in the color map above. The color arrangement must match Reference Image 1 pixel-for-pixel — same column order (left to right) and same row order (top to bottom).
 3. The stencil design from Reference Image 2 is hand-painted across the ENTIRE grid as one unified artwork — lines flow continuously across tile seams
 4. Surface type: ${surfaceDesc} squares
-5. The grid has clear tile seams/grout lines between each 24"×24" square
+5. The grid has clear tile seams/grout lines between each 2ft×2ft square
 6. Perspective: overhead-angled room view showing the tiles flat on the floor
 7. Photorealistic studio quality — no labels, no watermarks, no text${extraInstructions}`;
 

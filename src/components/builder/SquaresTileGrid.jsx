@@ -352,7 +352,7 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
       <SubStep visible={heightConfirmed}>
         <div className="p-4 rounded-2xl bg-white border-2" style={{ borderColor: gridHasNonDefault ? `${tierColor}60` : '#e5e7eb' }}>
           <label className="text-xs font-black text-gray-500 uppercase tracking-wide mb-1 block">Design Your Tiles</label>
-          <p className="text-xs text-gray-400 mb-3">Pick a color, then click or drag tiles to paint them. Use "Fill All" to set the base color for all tiles at once.</p>
+          <p className="text-xs text-gray-400 mb-3">Each tile = <strong>2ft × 2ft</strong>. Pick a color below, then click or drag tiles to paint them. Use "Fill All" to set a base color for all tiles at once.</p>
 
           {/* Color swatches */}
           <div className="flex flex-wrap gap-2 mb-3">
