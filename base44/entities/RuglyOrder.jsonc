@@ -1,0 +1,264 @@
+{
+  "name": "RuglyOrder",
+  "type": "object",
+  "properties": {
+    "order_key": {
+      "type": "string",
+      "description": "Unique order key (usually Stripe invoice ID)"
+    },
+    "brand": {
+      "type": "string",
+      "enum": [
+        "RUGLY",
+        "CRUGLY",
+        "UNKNOWN"
+      ],
+      "default": "UNKNOWN"
+    },
+    "customer_id": {
+      "type": "string",
+      "description": "Link to Customer"
+    },
+    "customer_name": {
+      "type": "string"
+    },
+    "customer_email": {
+      "type": "string"
+    },
+    "customer_phone": {
+      "type": "string"
+    },
+    "shipping_address_line1": {
+      "type": "string"
+    },
+    "shipping_address_line2": {
+      "type": "string"
+    },
+    "shipping_city": {
+      "type": "string"
+    },
+    "shipping_state": {
+      "type": "string"
+    },
+    "shipping_postal": {
+      "type": "string"
+    },
+    "shipping_country": {
+      "type": "string"
+    },
+    "deposit_amount": {
+      "type": "number"
+    },
+    "total_amount": {
+      "type": "number"
+    },
+    "balance_due": {
+      "type": "number"
+    },
+    "paid_deposit_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "paid_in_full_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "payment_stage": {
+      "type": "string",
+      "enum": [
+        "DEPOSIT_PAID",
+        "PAID_IN_FULL"
+      ],
+      "default": "DEPOSIT_PAID"
+    },
+    "order_status": {
+      "type": "string",
+      "enum": [
+        "NEW_UNREAD",
+        "CONFIRMED",
+        "ASSETS_RECEIVED",
+        "IN_DESIGN",
+        "IN_PRODUCTION",
+        "QC",
+        "FINISHED",
+        "READY_TO_SHIP",
+        "SHIPPED",
+        "DELIVERED",
+        "REVIEW_REQUESTED",
+        "ISSUE"
+      ],
+      "default": "NEW_UNREAD"
+    },
+    "alarm_state": {
+      "type": "string",
+      "enum": [
+        "SENT",
+        "ACKED",
+        "ESCALATED"
+      ],
+      "default": "SENT"
+    },
+    "acknowledged_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "tracking_number": {
+      "type": "string"
+    },
+    "carrier": {
+      "type": "string"
+    },
+    "tracking_url": {
+      "type": "string"
+    },
+    "delivered_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "review_requested": {
+      "type": "boolean",
+      "default": false
+    },
+    "review_requested_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes_internal": {
+      "type": "string"
+    },
+    "customer_images_originals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Append-only array of original image URLs"
+    },
+    "customer_images_manifest": {
+      "type": "string",
+      "description": "JSON log of each asset received"
+    },
+    "assets_status": {
+      "type": "string",
+      "enum": [
+        "MISSING",
+        "PARTIAL",
+        "COMPLETE"
+      ],
+      "default": "MISSING"
+    },
+    "image_requirement_met": {
+      "type": "boolean",
+      "default": false
+    },
+    "image_type_received": {
+      "type": "string",
+      "enum": [
+        "ROOM_PHOTO",
+        "DESIGN_REFERENCE",
+        "BOTH",
+        "UNKNOWN"
+      ],
+      "default": "UNKNOWN"
+    },
+    "assets_first_received_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "assets_last_updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "stripe_event_id": {
+      "type": "string",
+      "description": "Last processed Stripe event ID for deduplication"
+    },
+    "base_rug_required": {
+      "type": "boolean",
+      "default": false
+    },
+    "base_rug_sku": {
+      "type": "string"
+    },
+    "base_rug_supplier": {
+      "type": "string",
+      "enum": [
+        "AMAZON",
+        "WHOLESALE_VENDOR",
+        "OTHER"
+      ]
+    },
+    "base_rug_product_url": {
+      "type": "string"
+    },
+    "base_rug_size": {
+      "type": "string"
+    },
+    "base_rug_color": {
+      "type": "string"
+    },
+    "base_rug_qty": {
+      "type": "number",
+      "default": 1
+    },
+    "base_rug_order_status": {
+      "type": "string",
+      "enum": [
+        "NOT_ORDERED",
+        "ORDER_TASK_CREATED",
+        "ORDERED",
+        "DELIVERED",
+        "BACKORDERED",
+        "CANCELLED"
+      ],
+      "default": "NOT_ORDERED"
+    },
+    "base_rug_order_by": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "base_rug_eta": {
+      "type": "string",
+      "format": "date"
+    },
+    "base_rug_cost_estimate": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "order_key",
+    "brand",
+    "customer_email"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "$or": [
+        {
+          "data.customer_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.customer_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
