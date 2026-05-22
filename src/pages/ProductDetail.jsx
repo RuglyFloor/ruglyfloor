@@ -37,9 +37,9 @@ export default function ProductDetail() {
   // Inline SVG checkmark — uses style attr so global CSS class overrides can't touch it
   const CheckmarkIcon = () => (
     <span style={{display:'inline-flex', flexShrink:0, marginTop:2}}>
-      <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-        <rect width="20" height="20" rx="5" style={{fill: rugTypeColor}} />
-        <path d="M5 10.5L8.5 14L15 7" style={{stroke: rugTypeTextColor, fill:'none', strokeWidth:'2.2', strokeLinecap:'round', strokeLinejoin:'round'}}/>
+      <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style={{display:'block'}}>
+        <rect width="20" height="20" rx="5" fill={rugTypeColor} style={{fill: rugTypeColor + ' !important'}} />
+        <path d="M5 10.5L8.5 14L15 7" fill="none" stroke={rugTypeTextColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{stroke: rugTypeTextColor, fill:'none'}}/>
       </svg>
     </span>
   );
@@ -207,13 +207,26 @@ export default function ProductDetail() {
           {/* Product Details */}
           <div className="space-y-6">
             <div>
-              {/* Rug Type Brand Badge */}
-              {product.rug_type && (
-                <span className="inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-3"
-                  style={{ backgroundColor: rugTypeColor, color: rugTypeTextColor }}>
-                  {product.rug_type}
-                </span>
-              )}
+              {/* Rug Type Brand Logo Image */}
+              {product.rug_type && (() => {
+                const brandImages = {
+                  Crugly: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/874535578_Crugly.png',
+                  Ruglux: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/778093650_RugLux.png',
+                  Rugly:  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/eadd56d42_Rugly.png',
+                  Square: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/beb1872d7_Square.png',
+                };
+                const img = brandImages[product.rug_type];
+                return img ? (
+                  <div className="mb-3">
+                    <img src={img} alt={product.rug_type} style={{height:48, borderRadius:8, objectFit:'contain'}} />
+                  </div>
+                ) : (
+                  <span className="inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-3"
+                    style={{ backgroundColor: rugTypeColor, color: rugTypeTextColor }}>
+                    {product.rug_type}
+                  </span>
+                );
+              })()}
               <h1 className="text-4xl font-bold text-gray-900 mb-3">{product.name}</h1>
               {product.size && (
                 <Badge variant="outline" className="text-lg px-4 py-1">
@@ -236,9 +249,29 @@ export default function ProductDetail() {
             <Card>
               <CardContent className="pt-6">
                 <h3 className="text-xl font-bold mb-3">About This Rug</h3>
-                <p className="text-gray-700 leading-relaxed whitespace-pre-line">
-                  {product.long_description || product.description || 'This stunning hand-painted rug is a one-of-a-kind piece of functional art. Each rug is carefully crafted using premium materials and painted by skilled artists to bring unique character to your space.'}
-                </p>
+                {/* Parse description: lines starting with ✅ become branded checkmark items */}
+                {(() => {
+                  const text = product.long_description || product.description || '';
+                  if (!text) return <p style={{color:'#374151', lineHeight:'1.6'}}>This stunning hand-painted rug is a one-of-a-kind piece of functional art.</p>;
+                  const lines = text.split('\n');
+                  return lines.map((line, i) => {
+                    const cleaned = line.replace(/^✅\s*/, '');
+                    if (line.trimStart().startsWith('✅')) {
+                      return (
+                        <div key={i} style={{display:'flex', alignItems:'flex-start', gap:10, marginBottom:6}}>
+                          <span style={{display:'inline-flex', flexShrink:0, marginTop:2}}>
+                            <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                              <rect width="20" height="20" rx="5" fill={rugTypeColor}/>
+                              <path d="M5 10.5L8.5 14L15 7" fill="none" stroke={rugTypeTextColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                          </span>
+                          <span style={{color:'#374151'}}>{cleaned}</span>
+                        </div>
+                      );
+                    }
+                    return line.trim() ? <p key={i} style={{color:'#374151', lineHeight:'1.6', marginBottom:8}}>{line}</p> : <br key={i}/>;
+                  });
+                })()}
               
               {/* Trust Badges */}
               <div className="grid grid-cols-3 gap-3 mt-4">
