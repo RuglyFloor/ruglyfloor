@@ -67,6 +67,8 @@ function AdminProductsContent() {
     price: '',
     all_images: [],
     size: '5x7',
+    size_height_ft: '',
+    size_length_ft: '',
     category: 'original',
     rug_type: '',
     in_stock: true,
@@ -114,6 +116,8 @@ function AdminProductsContent() {
       price: '',
       all_images: [],
       size: '5x7',
+      size_height_ft: '',
+      size_length_ft: '',
       category: 'original',
       rug_type: '',
       in_stock: true,
@@ -147,18 +151,11 @@ function AdminProductsContent() {
     setGeneratingAI(true);
     try {
       const mainImage = selectedImages[0].url;
-      const rugSize = formData.size || '5x7';
-
-      // Parse size string to get dimensions for room scale and measurement image
-      // Handles formats like "5x7", "4x6", "8x10", "3x5", "5ft round", etc.
-      // Convention: first number = width (horizontal), second = length (vertical/depth)
-      const sizeMatch = rugSize.match(/(\d+\.?\d*)\s*[xX×]\s*(\d+\.?\d*)/);
-      const dim1 = sizeMatch ? parseFloat(sizeMatch[1]) : 5;
-      const dim2 = sizeMatch ? parseFloat(sizeMatch[2]) : 7;
-      // Always make widthFt the LARGER horizontal dimension for landscape display
-      const widthFt = Math.max(dim1, dim2);
-      const lengthFt = Math.min(dim1, dim2);
-      const widthIn = Math.round(widthFt * 12);
+      // Use explicit height/length fields if provided, otherwise fall back to parsing size string
+      // Height = top-to-bottom (vertical), Length = left-to-right (horizontal)
+      const heightFt = parseFloat(formData.size_height_ft) || 5;
+      const lengthFt = parseFloat(formData.size_length_ft) || 7;
+      const heightIn = Math.round(heightFt * 12);
       const lengthIn = Math.round(lengthFt * 12);
 
       // Determine room type: use user override or auto-select by size
@@ -187,11 +184,11 @@ function AdminProductsContent() {
       let autoRoomType = '';
       if (roomTypeSetting !== 'auto') {
         autoRoomType = roomTypeSetting;
-      } else if (widthFt <= 3 || lengthFt <= 3) {
+      } else if (lengthFt <= 3 || heightFt <= 3) {
         autoRoomType = 'entryway';
-      } else if (widthFt <= 5 || lengthFt <= 5) {
+      } else if (lengthFt <= 5 || heightFt <= 5) {
         autoRoomType = 'bedroom';
-      } else if (widthFt <= 8 || lengthFt <= 8) {
+      } else if (lengthFt <= 8 || heightFt <= 8) {
         autoRoomType = 'living room';
       } else {
         autoRoomType = 'open-plan living and dining area';
@@ -235,12 +232,12 @@ DO NOT suggest a price.`,
           prompt: `Ultra-photorealistic interior design photograph — shot with a Canon EOS R5, 24mm lens, f/2.8, ISO 400.
 
 SCENE: A real-world ${roomContext}
-The rug (${widthFt} ft wide × ${lengthFt} ft long) is placed flat on the floor as the centerpiece of the room.
+The rug (${lengthFt} ft wide left-to-right × ${heightFt} ft tall top-to-bottom) is placed flat on the floor as the centerpiece of the room.
 
 RUG FIDELITY — THIS IS THE MOST IMPORTANT RULE:
 - Reproduce this specific rug with ABSOLUTE ACCURACY. Every brushstroke, every color, every edge, every detail of the design must be an exact match to the uploaded image.
 - Do NOT simplify, stylize, blur, or abstract the rug design. It must be recognizable as the exact same rug.
-- The rug's proportions must be correct: ${widthFt}' wide × ${lengthFt}' long. The rug is ALWAYS displayed in LANDSCAPE (wider than tall). Do NOT render the rug vertically/portrait.
+- The rug's proportions must be EXACT: ${lengthFt} ft wide (left-to-right) × ${heightFt} ft tall (top-to-bottom). Aspect ratio = ${(lengthFt/heightFt).toFixed(2)}:1 width-to-height. Render accordingly — do NOT swap or flip these dimensions.
 - Show the rug in natural perspective foreshortening as it would appear on the floor from a standing eye-level view.
 
 PHOTOREALISM REQUIREMENTS:
@@ -258,13 +255,13 @@ ${aiSuggestion ? `ADDITIONAL DIRECTION: ${aiSuggestion}` : ''}`,
           prompt: `Professional product spec sheet image. Pure white background (#FFFFFF). No grey, no gradient.
 
 THE RUG — CRITICAL ORIENTATION AND FIDELITY RULES:
-1. ORIENTATION: The rug MUST be displayed in LANDSCAPE orientation — wider than tall. The horizontal width is ${widthFt} ft (${widthIn} inches). The vertical height is ${lengthFt} ft (${lengthIn} inches). The rug is ${(widthFt/lengthFt).toFixed(2)}x wider than it is tall. If the uploaded image appears portrait/vertical, ROTATE IT so it is displayed horizontally.
+1. ORIENTATION: Render the rug with EXACT dimensions — ${lengthFt} ft wide (left-to-right, horizontal) × ${heightFt} ft tall (top-to-bottom, vertical). Aspect ratio is ${(lengthFt/heightFt).toFixed(2)}:1 (width:height). Do NOT swap these values. Do NOT auto-rotate to landscape if the rug is taller than wide.
 2. DESIGN: Reproduce the rug's colors, patterns, and artwork faithfully. DO NOT repeat, tile, or duplicate any graphic elements. Do NOT render any text or words from the rug design — replace any text in the design with a solid color block matching the surrounding color.
 3. POSITION: Rug centered in the image with equal margin on all sides. Viewed flat from directly above (top-down, no perspective tilt). No wrinkles, soft drop shadow.
 
 MEASUREMENT LABELS (only 2 labels, no other text):
-- BOTTOM: A thin horizontal double-headed arrow (←→) spanning the full width of the rug, 20px below the rug. Centered text label below the arrow: "${widthFt}' wide (${widthIn}")"
-- RIGHT SIDE: A thin vertical double-headed arrow (↕) spanning the full height of the rug, 20px to the right. Text label rotated 90° clockwise: "${lengthFt}' tall (${lengthIn}")"
+- BOTTOM: A thin horizontal double-headed arrow (←→) spanning the full width of the rug, 20px below the rug. Centered text label below the arrow: "${lengthFt}' wide (${lengthIn}")"
+- RIGHT SIDE: A thin vertical double-headed arrow (↕) spanning the full height of the rug, 20px to the right. Text label rotated 90° clockwise: "${heightFt}' tall (${heightIn}")"
 - Arrow and line color: #333333. Font: Arial 13px #444444.
 - Absolutely NO other text anywhere in the image.`,
           existing_image_urls: [mainImage]
@@ -375,12 +372,19 @@ MEASUREMENT LABELS (only 2 labels, no other text):
       }
     }
     
+    // Parse existing size string into height/length fields
+    const existingSizeMatch = (product.size || '').match(/(\d+\.?\d*)\s*[xX×]\s*(\d+\.?\d*)/);
+    const existingHeight = existingSizeMatch ? existingSizeMatch[1] : '';
+    const existingLength = existingSizeMatch ? existingSizeMatch[2] : '';
+
     setFormData({
       name: product.name,
       description: product.description || '',
       price: product.price != null ? product.price.toString() : '',
       all_images: allImages,
       size: product.size || '5x7',
+      size_height_ft: existingHeight,
+      size_length_ft: existingLength,
       category: product.category || 'original',
       rug_type: product.rug_type || '',
       in_stock: product.in_stock !== undefined ? product.in_stock : true,
@@ -458,14 +462,59 @@ MEASUREMENT LABELS (only 2 labels, no other text):
                     />
                   </div>
                   <div>
-                    <Label>Size *</Label>
-                    <Input
-                      value={formData.size}
-                      onChange={(e) => setFormData(prev => ({ ...prev, size: e.target.value }))}
-                      placeholder="e.g., 8x10, 5ft Round, 3x5"
-                      required
-                    />
+                    {/* Size is auto-composed from height + length below */}
                   </div>
+                </div>
+
+                <div>
+                  <Label className="font-semibold">Size (feet) *</Label>
+                  <div className="grid grid-cols-2 gap-3 mt-1">
+                    <div>
+                      <Label className="text-xs text-gray-500">Height — top to bottom ↕</Label>
+                      <Input
+                        type="number"
+                        step="0.5"
+                        min="1"
+                        value={formData.size_height_ft}
+                        onChange={(e) => {
+                          const h = e.target.value;
+                          const l = formData.size_length_ft;
+                          setFormData(prev => ({
+                            ...prev,
+                            size_height_ft: h,
+                            size: h && l ? `${h}x${l}` : prev.size
+                          }));
+                        }}
+                        placeholder="e.g. 5"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-gray-500">Length — left to right ↔</Label>
+                      <Input
+                        type="number"
+                        step="0.5"
+                        min="1"
+                        value={formData.size_length_ft}
+                        onChange={(e) => {
+                          const l = e.target.value;
+                          const h = formData.size_height_ft;
+                          setFormData(prev => ({
+                            ...prev,
+                            size_length_ft: l,
+                            size: h && l ? `${h}x${l}` : prev.size
+                          }));
+                        }}
+                        placeholder="e.g. 7"
+                        required
+                      />
+                    </div>
+                  </div>
+                  {formData.size_height_ft && formData.size_length_ft && (
+                    <p className="text-xs text-gray-400 mt-1">
+                      Size: {formData.size_height_ft} ft tall × {formData.size_length_ft} ft wide → stored as "{formData.size_height_ft}x{formData.size_length_ft}"
+                    </p>
+                  )}
                 </div>
 
                 <div>
