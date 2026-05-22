@@ -33,18 +33,32 @@ function AdminProductsContent() {
     colorTone: 'warm',
     roomType: 'auto'
   });
-  // Shipping options per tier
-  const SHIPPING_OPTIONS = {
-    crugly: { label: 'Crugly — FREE Shipping', value: 'FREE shipping included' },
-    rugly: { label: 'Rugly — Flat Rate Shipping', value: 'Flat rate shipping (size-based)' },
-    rugly_lx: { label: 'Rugly LX — Specified Shipping', value: 'Shipping quoted at completion' }
-  };
-
-  // Return policy options per tier
-  const RETURN_OPTIONS = {
-    crugly: { label: '14-Day Shipping Damage Return (Crugly)', value: '14-day shipping damage return' },
-    rugly: { label: '30-Day Satisfaction Return (Rugly)', value: '30-day satisfaction return' },
-    rugly_lx: { label: 'Satisfaction Guarantee (Rugly LX)', value: 'Satisfaction guarantee' }
+  // Rug type defaults — matches Policies page exactly
+  const RUG_TYPE_DEFAULTS = {
+    Crugly: {
+      shipping_info: 'FREE shipping — No minimum, no catch.',
+      care_instructions: 'Machine Washable',
+      warranty: 'None',
+      return_policy: '30-Day Return Policy'
+    },
+    Rugly: {
+      shipping_info: 'Flat rate shipping based on size',
+      care_instructions: 'Shampoo with rug cleaner (wet)',
+      warranty: '5-Year Warranty',
+      return_policy: '5-Year Warranty'
+    },
+    Ruglux: {
+      shipping_info: 'Flat rate — $15 for Tiny, +$15 per size up',
+      care_instructions: 'Dry clean or professional rug cleaning only',
+      warranty: 'Lifetime Warranty',
+      return_policy: 'Lifetime Warranty'
+    },
+    Square: {
+      shipping_info: 'FREE shipping — Always.',
+      care_instructions: 'Can be mopped or hosed down',
+      warranty: 'None',
+      return_policy: '90-Day Return Policy'
+    }
   };
 
   const [formData, setFormData] = useState({
@@ -54,6 +68,7 @@ function AdminProductsContent() {
     all_images: [],
     size: '5x7',
     category: 'original',
+    rug_type: '',
     in_stock: true,
     backing: '',
     warranty: '',
@@ -100,6 +115,7 @@ function AdminProductsContent() {
       all_images: [],
       size: '5x7',
       category: 'original',
+      rug_type: '',
       in_stock: true,
       backing: '',
       warranty: '',
@@ -107,6 +123,18 @@ function AdminProductsContent() {
       return_policy: '',
       care_instructions: ''
     });
+  };
+
+  const handleRugTypeChange = (rugType) => {
+    const defaults = RUG_TYPE_DEFAULTS[rugType] || {};
+    setFormData(prev => ({
+      ...prev,
+      rug_type: rugType,
+      shipping_info: defaults.shipping_info || prev.shipping_info,
+      care_instructions: defaults.care_instructions || prev.care_instructions,
+      warranty: defaults.warranty || prev.warranty,
+      return_policy: defaults.return_policy || prev.return_policy,
+    }));
   };
 
   const handleAIGenerate = async () => {
@@ -288,8 +316,12 @@ MEASUREMENT LABELS (only 2 labels, no other text):
       return;
     }
 
-    if (!formData.backing || !formData.warranty || !formData.shipping_info || !formData.return_policy || !formData.care_instructions) {
-      alert('Please fill in all required fields: Backing, Warranty, Shipping, Return Policy, and Care Instructions');
+    if (!formData.rug_type) {
+      alert('Please select a Rug Type — this sets shipping, returns, and care instructions.');
+      return;
+    }
+    if (!formData.backing) {
+      alert('Please fill in the Backing field.');
       return;
     }
     
@@ -350,6 +382,7 @@ MEASUREMENT LABELS (only 2 labels, no other text):
       all_images: allImages,
       size: product.size || '5x7',
       category: product.category || 'original',
+      rug_type: product.rug_type || '',
       in_stock: product.in_stock !== undefined ? product.in_stock : true,
       backing: product.backing || '',
       warranty: product.warranty || '',
@@ -523,77 +556,38 @@ MEASUREMENT LABELS (only 2 labels, no other text):
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label>Backing *</Label>
-                    <Input
-                      value={formData.backing}
-                      onChange={(e) => setFormData(prev => ({ ...prev, backing: e.target.value }))}
-                      placeholder="e.g., Non-slip rubber"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label>Warranty *</Label>
-                    <Input
-                      value={formData.warranty}
-                      onChange={(e) => setFormData(prev => ({ ...prev, warranty: e.target.value }))}
-                      placeholder="e.g., 24-hour damage guarantee"
-                      required
-                    />
-                  </div>
-                </div>
-
-                {/* Shipping dropdown */}
+                {/* Rug Type — drives shipping, care, warranty, returns */}
                 <div>
-                  <Label>Shipping Policy *</Label>
-                  <Select
-                    value={Object.keys(SHIPPING_OPTIONS).find(k => SHIPPING_OPTIONS[k].value === formData.shipping_info) || ''}
-                    onValueChange={(key) => setFormData(prev => ({ ...prev, shipping_info: SHIPPING_OPTIONS[key].value }))}
-                    required
-                  >
+                  <Label>Rug Type * <span className="text-xs text-gray-400 font-normal">(sets shipping, returns & care automatically)</span></Label>
+                  <Select value={formData.rug_type} onValueChange={handleRugTypeChange} required>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select shipping type..." />
+                      <SelectValue placeholder="Select rug type..." />
                     </SelectTrigger>
                     <SelectContent>
-                      {Object.entries(SHIPPING_OPTIONS).map(([key, opt]) => (
-                        <SelectItem key={key} value={key}>{opt.label}</SelectItem>
-                      ))}
+                      <SelectItem value="Crugly">Crugly — budget-friendly, free shipping, 2 colors</SelectItem>
+                      <SelectItem value="Rugly">Rugly — signature line, flat rate shipping</SelectItem>
+                      <SelectItem value="Ruglux">Ruglux — high-end, 3D, unlimited colors</SelectItem>
+                      <SelectItem value="Square">Square — modular tiles, free shipping</SelectItem>
                     </SelectContent>
                   </Select>
-                  {formData.shipping_info && (
-                    <p className="text-xs text-gray-500 mt-1">→ {formData.shipping_info}</p>
-                  )}
                 </div>
 
-                {/* Return Policy dropdown */}
-                <div>
-                  <Label>Return Policy *</Label>
-                  <Select
-                    value={Object.keys(RETURN_OPTIONS).find(k => RETURN_OPTIONS[k].value === formData.return_policy) || ''}
-                    onValueChange={(key) => setFormData(prev => ({ ...prev, return_policy: RETURN_OPTIONS[key].value }))}
-                    required
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select return policy..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(RETURN_OPTIONS).map(([key, opt]) => (
-                        <SelectItem key={key} value={key}>{opt.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {formData.return_policy && (
-                    <p className="text-xs text-gray-500 mt-1">→ {formData.return_policy}</p>
-                  )}
-                </div>
+                {formData.rug_type && (
+                  <div className="rounded-lg border p-3 bg-gray-50 space-y-1 text-sm">
+                    <p className="font-semibold text-gray-700 mb-2">Auto-filled from Rug Type:</p>
+                    <p><span className="font-medium">Shipping:</span> {formData.shipping_info}</p>
+                    <p><span className="font-medium">Returns:</span> {formData.return_policy}</p>
+                    <p><span className="font-medium">Care:</span> {formData.care_instructions}</p>
+                    <p><span className="font-medium">Warranty:</span> {formData.warranty}</p>
+                  </div>
+                )}
 
                 <div>
-                  <Label>Care Instructions *</Label>
+                  <Label>Backing *</Label>
                   <Input
-                    value={formData.care_instructions}
-                    onChange={(e) => setFormData(prev => ({ ...prev, care_instructions: e.target.value }))}
-                    placeholder="e.g., Machine washable, air dry"
+                    value={formData.backing}
+                    onChange={(e) => setFormData(prev => ({ ...prev, backing: e.target.value }))}
+                    placeholder="e.g., Non-slip rubber"
                     required
                   />
                 </div>
@@ -666,6 +660,17 @@ MEASUREMENT LABELS (only 2 labels, no other text):
                     )}
                   </div>
                   <CardTitle className="text-lg">{product.name}</CardTitle>
+                  {product.rug_type && (
+                    <span className="inline-block text-xs font-bold uppercase tracking-wide px-2 py-0.5 rounded-full text-white mt-1"
+                      style={{
+                        backgroundColor: product.rug_type === 'Crugly' ? '#2de89a' :
+                          product.rug_type === 'Rugly' ? '#4d7eff' :
+                          product.rug_type === 'Ruglux' ? '#3d3d3d' :
+                          product.rug_type === 'Square' ? '#e83a1a' : '#888',
+                        color: product.rug_type === 'Crugly' ? '#1a1a1a' : '#ffffff'
+                      }}
+                    >{product.rug_type}</span>
+                  )}
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-3">{product.description}</p>
