@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, ShoppingCart, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShoppingCart, Loader2, CheckCircle2, Shield, Lock, Truck } from 'lucide-react';
 import SEOHead from '@/components/seo/SEOHead';
 import { createPageUrl } from '../utils';
 
@@ -162,6 +162,13 @@ export default function ProductDetail() {
           {/* Product Details */}
           <div className="space-y-6">
             <div>
+              {/* Rug Type Brand Badge */}
+              {product.rug_type && (
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-wider mb-3"
+                  style={{ backgroundColor: rugTypeColor, color: rugTypeTextColor }}>
+                  {product.rug_type}
+                </div>
+              )}
               <h1 className="text-4xl font-bold text-gray-900 mb-3">{product.name}</h1>
               {product.size && (
                 <Badge variant="outline" className="text-lg px-4 py-1">
@@ -191,24 +198,24 @@ export default function ProductDetail() {
               {/* Trust Badges */}
               <div className="grid grid-cols-3 gap-3 mt-4">
                 <div className="flex flex-col items-center text-center p-3 bg-gray-50 rounded-lg">
-                  <span className="text-lg mb-1" style={{ color: rugTypeColor }}>✅</span>
+                  <CheckCircle2 className="w-6 h-6 mb-1" style={{ color: rugTypeColor }} />
                   <span className="text-xs text-gray-600 font-medium">Hand-painted in Lansing, MI</span>
                 </div>
                 <div className="flex flex-col items-center text-center p-3 bg-gray-50 rounded-lg">
-                  <span className="text-lg mb-1" style={{ color: rugTypeColor }}>🛡️</span>
+                  <Shield className="w-6 h-6 mb-1" style={{ color: rugTypeColor }} />
                   <span className="text-xs text-gray-600 font-medium">Full replacement if damaged</span>
                 </div>
                 <div className="flex flex-col items-center text-center p-3 bg-gray-50 rounded-lg">
-                  <span className="text-lg mb-1" style={{ color: rugTypeColor }}>🔒</span>
+                  <Lock className="w-6 h-6 mb-1" style={{ color: rugTypeColor }} />
                   <span className="text-xs text-gray-600 font-medium">Secure checkout via Stripe</span>
                 </div>
               </div>
 
               {/* Shipping info */}
               <div className="mt-3 p-3 rounded-lg flex items-center gap-2" style={{ backgroundColor: rugTypeColor + '22' }}>
-                <span style={{ color: rugTypeColor }}>🚚</span>
-                <span className="text-sm" style={{ color: rugTypeColor === '#4d7eff' ? '#1a3a8f' : rugTypeColor === '#2de89a' ? '#0a5c3a' : rugTypeColor === '#e83a1a' ? '#7a1a08' : '#1a1a1a' }}>
-                  {product.qualityTier === 'budget' ? 'Free shipping on this rug' : 'Ships for $15 — 3 to 5 business days'}
+                <Truck className="w-5 h-5 flex-shrink-0" style={{ color: rugTypeColor }} />
+                <span className="text-sm font-medium" style={{ color: rugTypeColor }}>
+                  {product.shipping_info || 'Ships for $15 — 3 to 5 business days'}
                 </span>
               </div>
             </CardContent>
@@ -269,7 +276,7 @@ export default function ProductDetail() {
                   <ul className="space-y-3">
                     {product.features.map((feature, idx) => (
                       <li key={idx} className="flex items-start gap-3">
-                        <span className="font-bold" style={{ color: rugTypeColor }}>✓</span>
+                        <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: rugTypeColor }} />
                         <span>{feature}</span>
                       </li>
                     ))}
@@ -283,7 +290,7 @@ export default function ProductDetail() {
                   <ul className="space-y-3">
                     {['Hand-painted by professional artists','Premium quality materials','Durable and easy to clean','One-of-a-kind design','Free shipping on all orders'].map((f, i) => (
                       <li key={i} className="flex items-start gap-3">
-                        <span className="font-bold" style={{ color: rugTypeColor }}>✓</span>
+                        <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: rugTypeColor }} />
                         <span>{f}</span>
                       </li>
                     ))}
