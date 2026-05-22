@@ -190,17 +190,20 @@ export default function Shop() {
                       )}
                     </div>
                     <CardContent className="p-4">
-                      {product.rug_type && (
-                        <span className="inline-block text-xs font-bold uppercase tracking-wide px-2 py-1 rounded-full mb-2 text-white"
-                          style={{
-                            backgroundColor: product.rug_type === 'Crugly' ? '#2de89a' :
-                              product.rug_type === 'Rugly' ? '#4d7eff' :
-                              product.rug_type === 'Ruglux' ? '#3d3d3d' :
-                              product.rug_type === 'Square' ? '#e83a1a' : '#888',
-                            color: product.rug_type === 'Crugly' ? '#1a1a1a' : '#ffffff'
-                          }}
-                        >{product.rug_type}</span>
-                      )}
+                      {product.rug_type && (() => {
+                        const brandImages = {
+                          Crugly: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/874535578_Crugly.png',
+                          Ruglux: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/778093650_RugLux.png',
+                          Rugly:  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/eadd56d42_Rugly.png',
+                          Square: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/beb1872d7_Square.png',
+                        };
+                        const img = brandImages[product.rug_type];
+                        return img ? (
+                          <div className="mb-2">
+                            <img src={img} alt={product.rug_type} style={{height:36, objectFit:'contain', borderRadius:6}} />
+                          </div>
+                        ) : null;
+                      })()}
                       <h3 className="text-xl font-bold mb-2">{product.name}</h3>
                       <p className="text-gray-600 text-sm mb-2">{typeof product.description === 'string' ? product.description : product.description?.description || ''}</p>
                       <div className="space-y-2 mb-3">
@@ -241,17 +244,38 @@ export default function Shop() {
                           </div>
                         )}
                       </div>
-                      <div className="flex justify-between items-center pt-2 border-t">
-                        <span className="text-2xl font-bold text-blue-600">${product.price}</span>
-                      </div>
+                      {(() => {
+                        const brandColor =
+                          product.rug_type === 'Crugly' ? '#2de89a' :
+                          product.rug_type === 'Rugly'  ? '#4d7eff' :
+                          product.rug_type === 'Ruglux' ? '#3d3d3d' :
+                          product.rug_type === 'Square' ? '#e83a1a' : '#4d7eff';
+                        const textColor = product.rug_type === 'Crugly' ? '#1a1a1a' : '#ffffff';
+                        return (
+                          <div className="flex justify-between items-center pt-2 border-t">
+                            <span className="text-2xl font-bold" style={{color: brandColor}}>${product.price}</span>
+                          </div>
+                        );
+                      })()}
                     </CardContent>
                     <CardFooter className="p-4 pt-0">
-                      <Button 
-                        className="w-full bg-blue-600 hover:bg-blue-700"
-                        onClick={() => navigate(createPageUrl('ProductDetail') + `?id=${product.id}`)}
-                      >
-                        View Details
-                      </Button>
+                      {(() => {
+                        const brandColor =
+                          product.rug_type === 'Crugly' ? '#2de89a' :
+                          product.rug_type === 'Rugly'  ? '#4d7eff' :
+                          product.rug_type === 'Ruglux' ? '#3d3d3d' :
+                          product.rug_type === 'Square' ? '#e83a1a' : '#4d7eff';
+                        const textColor = product.rug_type === 'Crugly' ? '#1a1a1a' : '#ffffff';
+                        return (
+                          <Button
+                            className="w-full"
+                            style={{backgroundColor: brandColor, color: textColor}}
+                            onClick={() => navigate(createPageUrl('ProductDetail') + `?id=${product.id}`)}
+                          >
+                            View Details
+                          </Button>
+                        );
+                      })()}
                     </CardFooter>
                   </Card>
                 );
