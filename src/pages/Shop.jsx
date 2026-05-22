@@ -190,6 +190,17 @@ export default function Shop() {
                       )}
                     </div>
                     <CardContent className="p-4">
+                      {product.rug_type && (
+                        <span className="inline-block text-xs font-bold uppercase tracking-wide px-2 py-1 rounded-full mb-2 text-white"
+                          style={{
+                            backgroundColor: product.rug_type === 'Crugly' ? '#2de89a' :
+                              product.rug_type === 'Rugly' ? '#4d7eff' :
+                              product.rug_type === 'Ruglux' ? '#3d3d3d' :
+                              product.rug_type === 'Square' ? '#e83a1a' : '#888',
+                            color: product.rug_type === 'Crugly' ? '#1a1a1a' : '#ffffff'
+                          }}
+                        >{product.rug_type}</span>
+                      )}
                       <h3 className="text-xl font-bold mb-2">{product.name}</h3>
                       <p className="text-gray-600 text-sm mb-2">{typeof product.description === 'string' ? product.description : product.description?.description || ''}</p>
                       <div className="space-y-2 mb-3">

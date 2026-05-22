@@ -81,13 +81,13 @@ function RugTypeCard({ rug }) {
   };
 
   return (
-    <div className="rounded-2xl overflow-hidden shadow-lg border-2" style={{ borderColor: rug.bg }}>
+    <div className="rounded-2xl overflow-hidden shadow-lg border-2" style={{ borderColor: rug.bg, backgroundColor: rug.bg }}>
       {/* Header Image */}
       <div className="relative">
         <img src={rug.image} alt={rug.name} className="w-full object-cover" style={{ aspectRatio: '16/9' }} />
       </div>
 
-      {/* Body — inline style with cssText to bypass global !important overrides */}
+      {/* Body */}
       <div className="p-6" ref={el => { if (el) el.style.setProperty('background-color', rug.bg, 'important'); }}>
         <h2 className="text-3xl font-bold mb-1" style={{ color: rug.text, fontFamily: 'var(--font-heading)' }}>{rug.name}</h2>
         <p className="text-sm mb-4 opacity-80" style={{ color: rug.text }}>{rug.tagline}</p>
