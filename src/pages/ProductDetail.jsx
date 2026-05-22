@@ -34,6 +34,9 @@ export default function ProductDetail() {
 
   const rugTypeTextColor = product?.rug_type === 'Crugly' ? '#1a1a1a' : '#ffffff';
 
+  // Force color on SVG icons — global CSS overrides currentColor inheritance
+  const iconStyle = { color: rugTypeColor, stroke: rugTypeColor, fill: 'none' };
+
   const images = product?.all_images?.filter(img => img.selected)
     .sort((a, b) => a.order - b.order)
     .map(img => img.url) || 
@@ -198,22 +201,22 @@ export default function ProductDetail() {
               {/* Trust Badges */}
               <div className="grid grid-cols-3 gap-3 mt-4">
                 <div className="flex flex-col items-center text-center p-3 bg-gray-50 rounded-lg">
-                  <CheckCircle2 className="w-6 h-6 mb-1" style={{ color: rugTypeColor }} />
+                  <CheckCircle2 className="w-6 h-6 mb-1" style={iconStyle} />
                   <span className="text-xs text-gray-600 font-medium">Hand-painted in Lansing, MI</span>
                 </div>
                 <div className="flex flex-col items-center text-center p-3 bg-gray-50 rounded-lg">
-                  <Shield className="w-6 h-6 mb-1" style={{ color: rugTypeColor }} />
+                  <Shield className="w-6 h-6 mb-1" style={iconStyle} />
                   <span className="text-xs text-gray-600 font-medium">Full replacement if damaged</span>
                 </div>
                 <div className="flex flex-col items-center text-center p-3 bg-gray-50 rounded-lg">
-                  <Lock className="w-6 h-6 mb-1" style={{ color: rugTypeColor }} />
+                  <Lock className="w-6 h-6 mb-1" style={iconStyle} />
                   <span className="text-xs text-gray-600 font-medium">Secure checkout via Stripe</span>
                 </div>
               </div>
 
               {/* Shipping info */}
               <div className="mt-3 p-3 rounded-lg flex items-center gap-2" style={{ backgroundColor: rugTypeColor + '22' }}>
-                <Truck className="w-5 h-5 flex-shrink-0" style={{ color: rugTypeColor }} />
+                <Truck className="w-5 h-5 flex-shrink-0" style={iconStyle} />
                 <span className="text-sm font-medium" style={{ color: rugTypeColor }}>
                   {product.shipping_info || 'Ships for $15 — 3 to 5 business days'}
                 </span>
@@ -276,7 +279,7 @@ export default function ProductDetail() {
                   <ul className="space-y-3">
                     {product.features.map((feature, idx) => (
                       <li key={idx} className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: rugTypeColor }} />
+                        <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" style={iconStyle} />
                         <span>{feature}</span>
                       </li>
                     ))}
@@ -290,7 +293,7 @@ export default function ProductDetail() {
                   <ul className="space-y-3">
                     {['Hand-painted by professional artists','Premium quality materials','Durable and easy to clean','One-of-a-kind design','Free shipping on all orders'].map((f, i) => (
                       <li key={i} className="flex items-start gap-3">
-                        <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: rugTypeColor }} />
+                        <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" style={iconStyle} />
                         <span>{f}</span>
                       </li>
                     ))}
