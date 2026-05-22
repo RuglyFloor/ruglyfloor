@@ -267,13 +267,12 @@ export default function Shop() {
                           product.rug_type === 'Square' ? '#e83a1a' : '#4d7eff';
                         const textColor = product.rug_type === 'Crugly' ? '#1a1a1a' : '#ffffff';
                         return (
-                          <Button
-                            className="w-full"
-                            style={{backgroundColor: brandColor, color: textColor}}
+                          <button
+                            style={{backgroundColor: brandColor, color: textColor, width:'100%', padding:'10px 0', borderRadius:8, fontWeight:700, fontSize:15, fontFamily:'var(--font-button)', letterSpacing:'0.5px', border:'none', cursor:'pointer'}}
                             onClick={() => navigate(createPageUrl('ProductDetail') + `?id=${product.id}`)}
                           >
                             View Details
-                          </Button>
+                          </button>
                         );
                       })()}
                     </CardFooter>
