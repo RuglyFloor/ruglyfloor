@@ -1,0 +1,137 @@
+{
+  "name": "Product",
+  "type": "object",
+  "properties": {
+    "product_number": {
+      "type": "string",
+      "description": "Customer-facing product ID (P1000, P2000, etc.)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Product name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Main product description"
+    },
+    "long_description": {
+      "type": "string",
+      "description": "Detailed product description for product page"
+    },
+    "price": {
+      "type": "number",
+      "description": "Price in USD"
+    },
+    "image_url": {
+      "type": "string",
+      "description": "Main product image (deprecated - use all_images)"
+    },
+    "images": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Additional product images (deprecated - use all_images)"
+    },
+    "all_images": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "original_url": {
+            "type": "string"
+          },
+          "selected": {
+            "type": "boolean"
+          },
+          "order": {
+            "type": "number"
+          },
+          "source": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "All images with selection and crop data"
+    },
+    "size": {
+      "type": "string",
+      "description": "Rug size"
+    },
+    "material": {
+      "type": "string",
+      "description": "Material description"
+    },
+    "care_instructions": {
+      "type": "string",
+      "description": "Care and cleaning instructions"
+    },
+    "backing": {
+      "type": "string",
+      "description": "Backing type"
+    },
+    "warranty": {
+      "type": "string",
+      "description": "Warranty information"
+    },
+    "shipping_info": {
+      "type": "string",
+      "description": "Shipping details"
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of product features"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "original",
+        "custom"
+      ],
+      "default": "original",
+      "description": "Product category"
+    },
+    "rug_type": {
+      "type": "string",
+      "enum": [
+        "Crugly",
+        "Rugly",
+        "Ruglux",
+        "Square"
+      ],
+      "description": "Rug product line \u2014 determines shipping, return policy, and care instructions"
+    },
+    "in_stock": {
+      "type": "boolean",
+      "default": true
+    },
+    "seo_title": {
+      "type": "string",
+      "description": "SEO page title"
+    },
+    "seo_description": {
+      "type": "string",
+      "description": "SEO meta description"
+    },
+    "seo_keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "SEO keywords"
+    }
+  },
+  "required": [
+    "name",
+    "price"
+  ]
+}
