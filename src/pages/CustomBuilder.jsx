@@ -627,7 +627,7 @@ export default function CustomBuilder() {
         </section>
         </BuilderStep>
 
-        <StepConnector color={tierColor} active={!!imageUrl} />
+        {!isSquares && <StepConnector color={tierColor} active={!!imageUrl} />}
 
         {/* STEP 5b: Paint Color for Squares stencil */}
         {isSquares && (
