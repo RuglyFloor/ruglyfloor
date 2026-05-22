@@ -1,0 +1,122 @@
+{
+  "name": "Catalog",
+  "type": "object",
+  "properties": {
+    "option": {
+      "type": "string",
+      "description": "Product option name"
+    },
+    "active": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this listing is active and should show on site"
+    },
+    "quality_tier": {
+      "type": "string",
+      "description": "Quality tier (Crugly, Rugly, Rugly LX)"
+    },
+    "sizes_available": {
+      "type": "string",
+      "description": "Available sizes"
+    },
+    "eta": {
+      "type": "string",
+      "description": "Estimated time of arrival"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Internal notes"
+    },
+    "my_cost": {
+      "type": "number",
+      "description": "My cost in USD"
+    },
+    "retail_price_150": {
+      "type": "number",
+      "description": "Retail price (150% markup)"
+    },
+    "amazon_url": {
+      "type": "string",
+      "description": "Amazon product URL"
+    },
+    "main_image": {
+      "type": "string",
+      "description": "Main product image URL"
+    },
+    "color_material_swatch": {
+      "type": "string",
+      "description": "Color/material swatch image URL"
+    },
+    "texture_color_closeup": {
+      "type": "string",
+      "description": "Texture/color close-up image URL"
+    },
+    "interior_lifestyle_image": {
+      "type": "string",
+      "description": "Interior/lifestyle image URL"
+    },
+    "shape": {
+      "type": "string",
+      "description": "Rug shape"
+    },
+    "width_in": {
+      "type": "number",
+      "description": "Width in inches"
+    },
+    "length_in": {
+      "type": "number",
+      "description": "Length in inches"
+    },
+    "diameter_in": {
+      "type": "number",
+      "description": "Diameter in inches (for round rugs)"
+    },
+    "size_label": {
+      "type": "string",
+      "description": "Size label (T, S, M, L, H)"
+    },
+    "color": {
+      "type": "string",
+      "description": "Color name"
+    },
+    "vendor": {
+      "type": "string",
+      "description": "Supplier vendor (legacy field)"
+    },
+    "listing_name": {
+      "type": "string",
+      "description": "Product listing name (legacy field)"
+    },
+    "listing_url": {
+      "type": "string",
+      "description": "URL to supplier listing (legacy field)"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time this listing was updated"
+    }
+  },
+  "required": [
+    "option",
+    "active"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": {},
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
