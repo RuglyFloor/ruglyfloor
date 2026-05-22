@@ -68,7 +68,7 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
         <div className="relative">
           {/* Carousel Container */}
           <div 
-            className="relative h-[400px] md:h-[500px] lg:h-[600px] overflow-hidden rounded-2xl bg-gradient-to-b from-gray-100 to-white shadow-2xl"
+            className="relative h-[260px] md:h-[500px] lg:h-[600px] overflow-hidden rounded-2xl bg-gradient-to-b from-gray-100 to-white shadow-2xl"
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
           >
@@ -193,27 +193,27 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4 }}
-            className="mt-8 grid md:grid-cols-2 gap-8 items-start max-w-4xl mx-auto"
+            className="mt-6 grid md:grid-cols-2 gap-4 md:gap-8 items-start max-w-4xl mx-auto"
           >
             {/* Details */}
             <div>
-              <h3 className="text-4xl font-bold text-gray-900 mb-4">{activeProduct.name}</h3>
-              <p className="text-gray-700 text-lg leading-relaxed mb-6">
+              <h3 className="text-2xl md:text-4xl font-bold text-gray-900 mb-2 md:mb-4">{activeProduct.name}</h3>
+              <p className="text-gray-700 text-base md:text-lg leading-relaxed mb-3 md:mb-6 hidden md:block">
                 {typeof activeProduct.description === 'string'
                   ? activeProduct.description
                   : activeProduct.description?.description || 'Handcrafted custom rug design'}
               </p>
-              <div className="flex items-baseline gap-2 mb-8">
-                <span className="text-5xl font-bold text-blue-600">${activeProduct.price}</span>
+              <div className="flex items-baseline gap-2 mb-3 md:mb-8">
+                <span className="text-3xl md:text-5xl font-bold text-blue-600">${activeProduct.price}</span>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
               <Button
                 onClick={() => navigate(createPageUrl('ProductDetail') + `?id=${activeProduct.id}`)}
                 size="lg"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg py-6 shadow-lg"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg py-4 md:py-6 shadow-lg"
               >
                 View Details
               </Button>
@@ -221,7 +221,7 @@ export default function AvailableRugsHorizontalScroll({ products, handleGrabIt, 
                 variant="outline"
                 size="lg"
                 onClick={() => navigate(createPageUrl('CustomBuilder'))}
-                className="w-full border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-bold text-lg py-6"
+                className="w-full border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-bold text-lg py-4 md:py-6"
               >
                 Customize Similar
               </Button>
