@@ -46,7 +46,6 @@ export default function SquaresPreviewGenerator({ gridData, stencilDataUrl, sten
       const stencilUpload = await base44.integrations.Core.UploadFile({ file: stencilFile });
 
       const totalSqFt = gridData.cols * gridData.rows * 4;
-      const surfaceDesc = gridData.surfaceType === 'carpet' ? 'soft carpet loop pile' : 'smooth foam/vinyl';
       const extraInstructions = designInstructions?.trim()
         ? `\n\nCUSTOMER INSTRUCTIONS: ${designInstructions.trim()}`
         : '';
@@ -61,9 +60,11 @@ export default function SquaresPreviewGenerator({ gridData, stencilDataUrl, sten
         ? `${stencilPaintColorName || ''} (hex: ${stencilPaintColor})`
         : 'the color as shown in the stencil image';
 
-      const prompt = `You are a photorealistic product visualization artist for custom painted floor tile/square installations.
+      const prompt = `You are a photorealistic product visualization artist for custom painted interlocking foam floor tile installations.
 
-REFERENCE IMAGE 1: The EXACT color layout map. It shows a ${gridData.cols}-column × ${gridData.rows}-row grid. Each colored cell = one 2ft×2ft physical tile. Copy this color layout EXACTLY — every tile color, every position.
+TILE TYPE: These are EVA foam interlocking puzzle tiles — exactly 24 inches × 24 inches each (2ft × 2ft). Each tile has puzzle-piece interlocking edges on all four sides (alternating tab/slot jigsaw connectors). The outer perimeter of the full installation uses straight-edge border strips that make the edges flush and clean. The top surface of each tile is smooth and slightly textured (like dense foam/rubber). The tiles fit snugly together with visible interlocking seam lines between them.
+
+REFERENCE IMAGE 1: The EXACT color layout map. It shows a ${gridData.cols}-column × ${gridData.rows}-row grid. Each colored cell = one 24"×24" interlocking foam tile. Copy this color layout EXACTLY — every tile color, every position.
 
 EXACT TILE COLOR MAP — column 1=LEFT, row 1=TOP:
 ${gridDescription}
@@ -71,12 +72,13 @@ ${gridDescription}
 REFERENCE IMAGE 2: A stencil/logo design. Paint it across the full installation as one unified artwork in the color: ${paintColorDesc}.
 
 STRICT REQUIREMENTS:
-1. The finished floor must show exactly ${gridData.cols} complete tiles wide and ${gridData.rows} complete tiles tall — NO partial/half tiles at any edge, every tile must be whole and fully visible.
-2. Every single tile color MUST match the color map above exactly — replicate Reference Image 1 position-for-position with zero deviation.
-3. The stencil from Reference Image 2 is painted in ${paintColorDesc} across ALL tiles as one continuous unified design — the paint color must be exactly ${paintColorDesc}.
-4. Surface: ${surfaceDesc} tiles, each 2ft×2ft with clear seam lines between them.
-5. View: overhead-angled perspective of the entire floor installation, all ${totalSqFt} sq ft visible.
-6. Photorealistic, no labels, no text, no watermarks.${extraInstructions}`;
+1. Show exactly ${gridData.cols} complete tiles wide × ${gridData.rows} complete tiles tall — NO partial/half tiles at ANY edge. Every single tile must be whole and fully visible. The outer edge must be clean straight lines (border strips applied).
+2. Every tile is exactly 24"×24" — all tiles must be perfectly uniform square size, no distortion.
+3. Every tile color MUST match the color map above exactly — replicate Reference Image 1 position-for-position.
+4. The interlocking puzzle-piece seams between tiles must be clearly visible.
+5. The stencil from Reference Image 2 is painted in ${paintColorDesc} across ALL tiles as one continuous unified design.
+6. View: slightly overhead perspective of the entire installation showing all ${totalSqFt} sq ft.
+7. Photorealistic, no labels, no text, no watermarks.${extraInstructions}`;
 
       const result = await base44.integrations.Core.GenerateImage({
         prompt,
