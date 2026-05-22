@@ -245,6 +245,8 @@ export default function CustomBuilder() {
 
   // Squares-specific state
   const [squaresGridData, setSquaresGridData] = useState(null);
+  const [squaresPaintColor, setSquaresPaintColor] = useState(null);
+  const [squaresCustomPaintHex, setSquaresCustomPaintHex] = useState('#CC2200');
 
   const isSquares = tier?.id === 'squares';
   const baseColorOptions = tier?.id === 'rugly_lx' ? BASE_COLORS_RUGLY_LX : tier?.id === 'rugly' ? BASE_COLORS_RUGLY : BASE_COLORS_CRUGLY;
@@ -257,11 +259,12 @@ export default function CustomBuilder() {
   const squaresGridPainted = !!(squaresGridData && squaresGridData.grid && squaresGridData.grid.some(row => row.some(c => c !== '#F5F5F5')));
   const price = isSquares ? squaresPrice : (tier && size ? (tier.prices[size.id] || 0) : 0);
   const isComplete = isSquares
-    ? !!squaresGridData && !!imageUrl && squaresGridData.totalTiles > 0
+    ? !!squaresGridData && !!imageUrl && !!squaresPaintColor && squaresGridData.totalTiles > 0
     : !!tier && !!size && !!baseColor && !!paintColor && !!imageUrl;
   const tierColor = tier?.color || '#4075ff';
+  const squaresPaintHex = squaresPaintColor?.name === 'Custom' ? squaresCustomPaintHex : (squaresPaintColor?.hex || null);
   const canGenerate = isSquares
-    ? !!stencilDataUrl && !!squaresGridData
+    ? !!stencilDataUrl && !!squaresGridData && !!squaresPaintColor
     : !!stencilDataUrl && !!baseColor && !!paintColor;
 
 
@@ -625,8 +628,60 @@ export default function CustomBuilder() {
 
         <StepConnector color={tierColor} active={!!imageUrl} />
 
+        {/* STEP 5b: Paint Color for Squares stencil */}
+        {isSquares && (
+          <BuilderStep visible={!!imageUrl} color={tierColor} scrollOnAppear>
+          <section>
+            <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>5. Stencil Paint Color</h2>
+            <p className="text-sm text-gray-500 mb-4">What color should your design be painted in on the tiles?</p>
+            <div className="flex flex-wrap gap-3 mb-4">
+              {PAINT_COLORS.map(c => (
+                <button
+                  key={c.name}
+                  onClick={() => setSquaresPaintColor(c)}
+                  className="flex flex-col items-center gap-1 p-2 rounded-xl font-semibold transition-all"
+                  style={{
+                    border: `3px solid ${squaresPaintColor?.name === c.name ? tierColor : '#e5e7eb'}`,
+                    backgroundColor: squaresPaintColor?.name === c.name ? `${tierColor}10` : '#ffffff',
+                    minWidth: '60px',
+                  }}
+                >
+                  <svg width="28" height="36" viewBox="0 0 28 36" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
+                    <path d="M14 2 C14 2, 2 16, 2 24 C2 30.627 7.373 36 14 36 C20.627 36 26 30.627 26 24 C26 16, 14 2 14 2 Z"
+                      fill={c.hex || 'url(#sqPaintGrad)'}
+                      stroke="rgba(0,0,0,0.15)" strokeWidth="1"
+                    />
+                    {!c.hex && (
+                      <defs>
+                        <linearGradient id="sqPaintGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#f87171" />
+                          <stop offset="50%" stopColor="#4ade80" />
+                          <stop offset="100%" stopColor="#60a5fa" />
+                        </linearGradient>
+                      </defs>
+                    )}
+                    <ellipse cx="10" cy="22" rx="3" ry="2" fill="rgba(255,255,255,0.25)" transform="rotate(-20 10 22)" />
+                  </svg>
+                  <span className="text-xs text-center leading-tight">{c.name}</span>
+                </button>
+              ))}
+            </div>
+            {squaresPaintColor?.name === 'Custom' && (
+              <div className="flex items-center gap-3">
+                <label className="text-sm font-semibold">Custom color:</label>
+                <input type="color" value={squaresCustomPaintHex} onChange={e => setSquaresCustomPaintHex(e.target.value)}
+                  className="w-10 h-10 rounded cursor-pointer border border-gray-300" />
+                <span className="text-sm font-mono text-gray-600">{squaresCustomPaintHex}</span>
+              </div>
+            )}
+          </section>
+          </BuilderStep>
+        )}
+
+        <StepConnector color={tierColor} active={isSquares ? !!squaresPaintColor : !!imageUrl} />
+
         {/* STEP 6: Design Notes */}
-        <BuilderStep visible={!!imageUrl} color={tierColor} scrollOnAppear>
+        <BuilderStep visible={isSquares ? !!squaresPaintColor : !!imageUrl} color={tierColor} scrollOnAppear>
         <section>
           <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>{isSquares ? '5' : '6'}. Additional Instructions (Optional)</h2>
           <p className="text-sm text-gray-500 mb-4">These go directly to the AI preview and to our artists — be as specific as you like.</p>
@@ -640,10 +695,10 @@ export default function CustomBuilder() {
         </section>
         </BuilderStep>
 
-        <StepConnector color={tierColor} active={!!imageUrl} />
+        <StepConnector color={tierColor} active={isSquares ? !!squaresPaintColor : !!imageUrl} />
 
         {/* GENERATE BUTTON */}
-        <BuilderStep visible={!!imageUrl} color={tierColor}>
+        <BuilderStep visible={isSquares ? !!squaresPaintColor : !!imageUrl} color={tierColor}>
         <section>
           <button
             onClick={() => generatePreviewRef.current?.()}
@@ -674,6 +729,8 @@ export default function CustomBuilder() {
             <SquaresPreviewGenerator
               gridData={squaresGridData}
               stencilDataUrl={stencilDataUrl}
+              stencilPaintColor={squaresPaintHex}
+              stencilPaintColorName={squaresPaintColor?.name}
               designInstructions={designInstructions}
               tierColor={tierColor}
               generateRef={generatePreviewRef}
@@ -744,6 +801,7 @@ export default function CustomBuilder() {
             <>
               {(!squaresGridData || squaresGridData.totalTiles === 0) && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Grid</span>}
               {!imageUrl && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Design</span>}
+              {imageUrl && !squaresPaintColor && <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-500">Paint Color</span>}
             </>
           ) : (
             <>

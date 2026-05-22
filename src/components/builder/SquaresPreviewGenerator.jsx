@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Sparkles, RefreshCw } from 'lucide-react';
 
-export default function SquaresPreviewGenerator({ gridData, stencilDataUrl, designInstructions, tierColor, generateRef, onPreviewGenerated }) {
+export default function SquaresPreviewGenerator({ gridData, stencilDataUrl, stencilPaintColor, stencilPaintColorName, designInstructions, tierColor, generateRef, onPreviewGenerated }) {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -57,6 +57,10 @@ export default function SquaresPreviewGenerator({ gridData, stencilDataUrl, desi
         return `Row ${r+1} (top to bottom): ${rowDesc}`;
       }).join('\n');
 
+      const paintColorDesc = stencilPaintColor
+        ? `${stencilPaintColorName || ''} (hex: ${stencilPaintColor})`
+        : 'the color as shown in the stencil image';
+
       const prompt = `You are a photorealistic product visualization artist for custom painted floor tile/square installations.
 
 REFERENCE IMAGE 1: The EXACT color layout map. It shows a ${gridData.cols}-column × ${gridData.rows}-row grid. Each colored cell = one 2ft×2ft physical tile. Copy this color layout EXACTLY — every tile color, every position.
@@ -64,12 +68,12 @@ REFERENCE IMAGE 1: The EXACT color layout map. It shows a ${gridData.cols}-colum
 EXACT TILE COLOR MAP — column 1=LEFT, row 1=TOP:
 ${gridDescription}
 
-REFERENCE IMAGE 2: A stencil/logo design painted across the full installation as one unified artwork.
+REFERENCE IMAGE 2: A stencil/logo design. Paint it across the full installation as one unified artwork in the color: ${paintColorDesc}.
 
 STRICT REQUIREMENTS:
 1. The finished floor must show exactly ${gridData.cols} complete tiles wide and ${gridData.rows} complete tiles tall — NO partial/half tiles at any edge, every tile must be whole and fully visible.
 2. Every single tile color MUST match the color map above exactly — replicate Reference Image 1 position-for-position with zero deviation.
-3. The stencil from Reference Image 2 is painted across ALL tiles as one continuous unified design.
+3. The stencil from Reference Image 2 is painted in ${paintColorDesc} across ALL tiles as one continuous unified design — the paint color must be exactly ${paintColorDesc}.
 4. Surface: ${surfaceDesc} tiles, each 2ft×2ft with clear seam lines between them.
 5. View: overhead-angled perspective of the entire floor installation, all ${totalSqFt} sq ft visible.
 6. Photorealistic, no labels, no text, no watermarks.${extraInstructions}`;
