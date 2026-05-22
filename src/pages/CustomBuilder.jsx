@@ -449,7 +449,7 @@ export default function CustomBuilder() {
         </section>
         </BuilderStep>
 
-        <StepConnector color={tierColor} active={isSquares ? !!(squaresGridData?.surfaceType) : !!size} />
+        {!isSquares && <StepConnector color={tierColor} active={!!size} />}
 
         {/* STEP 3: Base Color (hidden for Squares — colors are per-tile in the grid) */}
         {!isSquares && <BuilderStep visible={!!size} color={tierColor} scrollOnAppear><section>
@@ -499,7 +499,7 @@ export default function CustomBuilder() {
           </div>
         </section></BuilderStep>}
 
-        <StepConnector color={tierColor} active={isSquares ? !!squaresGridData : !!baseColor} />
+        {!isSquares && <StepConnector color={tierColor} active={!!baseColor} />}
 
         {!isSquares && <BuilderStep visible={!!baseColor} color={tierColor} scrollOnAppear><section>
           <h2 className="text-2xl font-black mb-1" style={{ color: '#343634' }}>4. Paint Color</h2>
@@ -606,7 +606,8 @@ export default function CustomBuilder() {
           )}
         </section></BuilderStep>}
 
-        <StepConnector color={tierColor} active={isSquares ? !!squaresGridData : !!paintColor} />
+        {!isSquares && <StepConnector color={tierColor} active={!!paintColor} />}
+        {isSquares && <StepConnector color={tierColor} active={!!(squaresGridData?.totalTiles > 0)} />}
 
         {/* STEP 5: Upload Design */}
         <BuilderStep visible={isSquares ? !!squaresGridData : !!paintColor} color={tierColor} scrollOnAppear>
