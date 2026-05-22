@@ -13,9 +13,10 @@ export default function SquaresPreviewGenerator({ gridData, stencilDataUrl, desi
     setError(null);
 
     try {
-      // Render the grid to a canvas and upload it
+      // Render the grid to a canvas and upload it — use large tiles so AI can read colors clearly
       const canvas = document.createElement('canvas');
-      const TILE_SIZE = 60;
+      const TILE_SIZE = 80;
+      const BORDER = 3; // thick black border between tiles for clarity
       canvas.width = gridData.cols * TILE_SIZE;
       canvas.height = gridData.rows * TILE_SIZE;
       const ctx = canvas.getContext('2d');
@@ -23,21 +24,13 @@ export default function SquaresPreviewGenerator({ gridData, stencilDataUrl, desi
       // Draw colored tiles
       gridData.grid.forEach((row, r) => {
         row.forEach((color, c) => {
+          // Fill full tile
           ctx.fillStyle = color;
           ctx.fillRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-          // Draw tile border
-          ctx.strokeStyle = 'rgba(0,0,0,0.15)';
-          ctx.lineWidth = 1;
-          ctx.strokeRect(c * TILE_SIZE + 0.5, r * TILE_SIZE + 0.5, TILE_SIZE - 1, TILE_SIZE - 1);
-          // Add texture hint for carpet
-          if (gridData.surfaceType === 'carpet') {
-            ctx.fillStyle = 'rgba(255,255,255,0.06)';
-            for (let i = 0; i < 6; i++) {
-              const tx = c * TILE_SIZE + (i % 3) * 20 + 5;
-              const ty = r * TILE_SIZE + Math.floor(i / 3) * 25 + 10;
-              ctx.fillRect(tx, ty, 8, 3);
-            }
-          }
+          // Draw thick black grid lines so AI understands tile boundaries
+          ctx.strokeStyle = '#000000';
+          ctx.lineWidth = BORDER;
+          ctx.strokeRect(c * TILE_SIZE + BORDER/2, r * TILE_SIZE + BORDER/2, TILE_SIZE - BORDER, TILE_SIZE - BORDER);
         });
       });
 
@@ -66,21 +59,20 @@ export default function SquaresPreviewGenerator({ gridData, stencilDataUrl, desi
 
       const prompt = `You are a photorealistic product visualization artist for custom painted floor tile/square installations.
 
-REFERENCE IMAGE 1: A color-coded pixel grid showing the EXACT tile color layout. Each pixel/cell = one 2ft×2ft tile. The grid is ${gridData.cols} tiles wide × ${gridData.rows} tiles tall. You MUST replicate this color layout exactly — do not rotate, mirror, or reinterpret it.
+REFERENCE IMAGE 1: The EXACT color layout map. It shows a ${gridData.cols}-column × ${gridData.rows}-row grid. Each colored cell = one 2ft×2ft physical tile. Copy this color layout EXACTLY — every tile color, every position.
 
-EXACT TILE COLOR MAP (col, row) — column 1 is LEFT, row 1 is TOP:
+EXACT TILE COLOR MAP — column 1=LEFT, row 1=TOP:
 ${gridDescription}
 
-REFERENCE IMAGE 2: A stencil/traced design that must be painted ACROSS the entire tile installation as one cohesive unified artwork spanning all tiles.
+REFERENCE IMAGE 2: A stencil/logo design painted across the full installation as one unified artwork.
 
-YOUR TASK:
-1. Show the ${gridData.cols}×${gridData.rows} tile grid (${totalSqFt} sq ft total, each tile is 2ft×2ft) installed on a floor in a realistic room setting
-2. CRITICAL: Reproduce the EXACT color of every single tile as specified in the color map above. The color arrangement must match Reference Image 1 pixel-for-pixel — same column order (left to right) and same row order (top to bottom).
-3. The stencil design from Reference Image 2 is hand-painted across the ENTIRE grid as one unified artwork — lines flow continuously across tile seams
-4. Surface type: ${surfaceDesc} squares
-5. The grid has clear tile seams/grout lines between each 2ft×2ft square
-6. Perspective: overhead-angled room view showing the tiles flat on the floor
-7. Photorealistic studio quality — no labels, no watermarks, no text${extraInstructions}`;
+STRICT REQUIREMENTS:
+1. The finished floor must show exactly ${gridData.cols} complete tiles wide and ${gridData.rows} complete tiles tall — NO partial/half tiles at any edge, every tile must be whole and fully visible.
+2. Every single tile color MUST match the color map above exactly — replicate Reference Image 1 position-for-position with zero deviation.
+3. The stencil from Reference Image 2 is painted across ALL tiles as one continuous unified design.
+4. Surface: ${surfaceDesc} tiles, each 2ft×2ft with clear seam lines between them.
+5. View: overhead-angled perspective of the entire floor installation, all ${totalSqFt} sq ft visible.
+6. Photorealistic, no labels, no text, no watermarks.${extraInstructions}`;
 
       const result = await base44.integrations.Core.GenerateImage({
         prompt,
