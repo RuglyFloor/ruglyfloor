@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, ShoppingCart, Loader2, CheckCircle2, Shield, Lock, Truck } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShoppingCart, Loader2 } from 'lucide-react';
 import SEOHead from '@/components/seo/SEOHead';
 import { createPageUrl } from '../utils';
 
@@ -34,15 +34,49 @@ export default function ProductDetail() {
 
   const rugTypeTextColor = product?.rug_type === 'Crugly' ? '#1a1a1a' : '#ffffff';
 
-  // Force color on SVG icons — global CSS overrides currentColor inheritance
-  const iconStyle = { color: rugTypeColor, stroke: rugTypeColor, fill: 'none' };
-
-  // Filled checkbox-style checkmark for feature lists
+  // Inline SVG checkmark — uses style attr so global CSS class overrides can't touch it
   const CheckmarkIcon = () => (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style={{flexShrink: 0, marginTop: 2}}>
-      <rect width="20" height="20" rx="5" fill={rugTypeColor} />
-      <path d="M5 10.5L8.5 14L15 7" stroke={rugTypeTextColor} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
+    <span style={{display:'inline-flex', flexShrink:0, marginTop:2}}>
+      <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <rect width="20" height="20" rx="5" style={{fill: rugTypeColor}} />
+        <path d="M5 10.5L8.5 14L15 7" style={{stroke: rugTypeTextColor, fill:'none', strokeWidth:'2.2', strokeLinecap:'round', strokeLinejoin:'round'}}/>
+      </svg>
+    </span>
+  );
+
+  // Inline SVG icons for trust badges — bypasses global CSS color overrides
+  const iconStyle = { color: rugTypeColor, stroke: rugTypeColor, fill: 'none' };
+  const PaintIcon = () => (
+    <span style={{display:'inline-flex'}}>
+      <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" style={{fill:'none', stroke: rugTypeColor, strokeWidth:'2'}}/>
+        <path d="M8 12l3 3 5-5" style={{fill:'none', stroke: rugTypeColor, strokeWidth:'2', strokeLinecap:'round', strokeLinejoin:'round'}}/>
+      </svg>
+    </span>
+  );
+  const ShieldIcon = () => (
+    <span style={{display:'inline-flex'}}>
+      <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 3L4 7v5c0 4.4 3.4 8.5 8 9.5 4.6-1 8-5.1 8-9.5V7L12 3z" style={{fill:'none', stroke: rugTypeColor, strokeWidth:'2', strokeLinecap:'round', strokeLinejoin:'round'}}/>
+      </svg>
+    </span>
+  );
+  const LockIcon = () => (
+    <span style={{display:'inline-flex'}}>
+      <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <rect x="5" y="11" width="14" height="10" rx="2" style={{fill:'none', stroke: rugTypeColor, strokeWidth:'2'}}/>
+        <path d="M8 11V7a4 4 0 0 1 8 0v4" style={{fill:'none', stroke: rugTypeColor, strokeWidth:'2', strokeLinecap:'round'}}/>
+      </svg>
+    </span>
+  );
+  const TruckIcon = () => (
+    <span style={{display:'inline-flex', flexShrink:0}}>
+      <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z" style={{fill:'none', stroke: rugTypeColor, strokeWidth:'2', strokeLinecap:'round', strokeLinejoin:'round'}}/>
+        <circle cx="5.5" cy="18.5" r="2.5" style={{fill:'none', stroke: rugTypeColor, strokeWidth:'2'}}/>
+        <circle cx="18.5" cy="18.5" r="2.5" style={{fill:'none', stroke: rugTypeColor, strokeWidth:'2'}}/>
+      </svg>
+    </span>
   );
 
   const images = product?.all_images?.filter(img => img.selected)
@@ -209,22 +243,22 @@ export default function ProductDetail() {
               {/* Trust Badges */}
               <div className="grid grid-cols-3 gap-3 mt-4">
                 <div className="flex flex-col items-center text-center p-3 bg-gray-50 rounded-lg">
-                  <CheckCircle2 className="w-6 h-6 mb-1" style={iconStyle} />
-                  <span className="text-xs text-gray-600 font-medium">Hand-painted in Lansing, MI</span>
+                  <div className="mb-1"><PaintIcon /></div>
+                  <span className="text-xs font-medium" style={{color:'#4b5563'}}>Hand-painted in Lansing, MI</span>
                 </div>
                 <div className="flex flex-col items-center text-center p-3 bg-gray-50 rounded-lg">
-                  <Shield className="w-6 h-6 mb-1" style={iconStyle} />
-                  <span className="text-xs text-gray-600 font-medium">Full replacement if damaged</span>
+                  <div className="mb-1"><ShieldIcon /></div>
+                  <span className="text-xs font-medium" style={{color:'#4b5563'}}>Full replacement if damaged</span>
                 </div>
                 <div className="flex flex-col items-center text-center p-3 bg-gray-50 rounded-lg">
-                  <Lock className="w-6 h-6 mb-1" style={iconStyle} />
-                  <span className="text-xs text-gray-600 font-medium">Secure checkout via Stripe</span>
+                  <div className="mb-1"><LockIcon /></div>
+                  <span className="text-xs font-medium" style={{color:'#4b5563'}}>Secure checkout via Stripe</span>
                 </div>
               </div>
 
               {/* Shipping info */}
               <div className="mt-3 p-3 rounded-lg flex items-center gap-2" style={{ backgroundColor: rugTypeColor + '22' }}>
-                <Truck className="w-5 h-5 flex-shrink-0" style={iconStyle} />
+                <TruckIcon />
                 <span className="text-sm font-medium" style={{ color: rugTypeColor }}>
                   {product.shipping_info || 'Ships for $15 — 3 to 5 business days'}
                 </span>
