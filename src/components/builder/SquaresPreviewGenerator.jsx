@@ -60,24 +60,26 @@ export default function SquaresPreviewGenerator({ gridData, stencilDataUrl, sten
         ? `${stencilPaintColorName || ''} (hex: ${stencilPaintColor})`
         : 'the color as shown in the stencil image';
 
-      const prompt = `You are a photorealistic product visualization artist for custom painted interlocking foam floor tile installations.
+      const prompt = `You are a photorealistic interior lifestyle photographer specializing in custom interlocking foam floor tile installations.
 
-TILE TYPE: These are EVA foam interlocking puzzle tiles — exactly 24 inches × 24 inches each (2ft × 2ft). Each tile has puzzle-piece interlocking edges on all four sides (alternating tab/slot jigsaw connectors). The outer perimeter of the full installation uses straight-edge border strips that make the edges flush and clean. The top surface of each tile is smooth and slightly textured (like dense foam/rubber). The tiles fit snugly together with visible interlocking seam lines between them.
+STYLE REFERENCE: Render this exactly like a real room lifestyle photo — the interlocking foam tiles are laid out on a hardwood or light floor inside a bright, modern room. The tiles sit flat on the floor with their characteristic puzzle-piece interlocking edges clearly visible between each tile. The seams show the raised/recessed jigsaw connector profile. The tile surface has a subtle dense foam texture (slightly matte, not shiny). This is the same style as the reference image of navy and cream interlocking foam tiles in a living room.
 
-REFERENCE IMAGE 1: The EXACT color layout map. It shows a ${gridData.cols}-column × ${gridData.rows}-row grid. Each colored cell = one 24"×24" interlocking foam tile. Copy this color layout EXACTLY — every tile color, every position.
+TILE SPECS: EVA foam interlocking puzzle tiles, exactly 24"×24" each. Puzzle-piece tab-and-slot edges interlock between all adjacent tiles. Outer perimeter edges are clean straight lines (border strips). Total installation: ${gridData.cols} tiles wide × ${gridData.rows} tiles tall = ${totalSqFt} sq ft.
+
+REFERENCE IMAGE 1: The EXACT color layout map — ${gridData.cols} columns × ${gridData.rows} rows. Each cell = one 24"×24" tile. Replicate this color pattern EXACTLY.
 
 EXACT TILE COLOR MAP — column 1=LEFT, row 1=TOP:
 ${gridDescription}
 
-REFERENCE IMAGE 2: A stencil/logo design. Paint it across the full installation as one unified artwork in the color: ${paintColorDesc}.
+REFERENCE IMAGE 2: A stencil/logo. Paint it across the full installation as one unified continuous artwork in the color: ${paintColorDesc}.
 
 STRICT REQUIREMENTS:
-1. Show exactly ${gridData.cols} complete tiles wide × ${gridData.rows} complete tiles tall — NO partial/half tiles at ANY edge. Every single tile must be whole and fully visible. The outer edge must be clean straight lines (border strips applied).
-2. Every tile is exactly 24"×24" — all tiles must be perfectly uniform square size, no distortion.
-3. Every tile color MUST match the color map above exactly — replicate Reference Image 1 position-for-position.
-4. The interlocking puzzle-piece seams between tiles must be clearly visible.
-5. The stencil from Reference Image 2 is painted in ${paintColorDesc} across ALL tiles as one continuous unified design.
-6. View: slightly overhead perspective of the entire installation showing all ${totalSqFt} sq ft.
+1. Exactly ${gridData.cols} complete tiles wide × ${gridData.rows} complete tiles tall — ZERO partial tiles at any edge.
+2. All tiles perfectly uniform 24"×24" squares, consistent perspective grid, no distortion.
+3. Every tile color matches the color map exactly — position-for-position, zero deviation.
+4. Interlocking puzzle-piece seam profile clearly visible between every tile.
+5. Stencil painted in ${paintColorDesc} continuously across all tiles as one artwork.
+6. Room lifestyle setting: bright modern interior, slight overhead-angled perspective showing the full floor installation.
 7. Photorealistic, no labels, no text, no watermarks.${extraInstructions}`;
 
       const result = await base44.integrations.Core.GenerateImage({
