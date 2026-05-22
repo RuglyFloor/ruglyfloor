@@ -1,0 +1,195 @@
+{
+  "name": "Order",
+  "type": "object",
+  "properties": {
+    "order_number": {
+      "type": "string",
+      "description": "Unique order number"
+    },
+    "customer_number": {
+      "type": "string",
+      "description": "Customer number (CN prefix)"
+    },
+    "customer_name": {
+      "type": "string"
+    },
+    "customer_email": {
+      "type": "string"
+    },
+    "customer_phone": {
+      "type": "string"
+    },
+    "shipping_address": {
+      "type": "object",
+      "properties": {
+        "street": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "zip": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "product_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "size": {
+            "type": "string"
+          },
+          "qualityLabel": {
+            "type": "string"
+          },
+          "base_color": {
+            "type": "string"
+          },
+          "paint_color": {
+            "type": "string"
+          },
+          "second_paint_color": {
+            "type": "string"
+          },
+          "image_url": {
+            "type": "string"
+          },
+          "preview_url": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number"
+          },
+          "design_instructions": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "total_amount": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending_payment",
+        "paid",
+        "in_production",
+        "shipped",
+        "cancelled",
+        "refunded"
+      ],
+      "default": "pending_payment"
+    },
+    "payment_intent_id": {
+      "type": "string",
+      "description": "Stripe payment intent ID"
+    },
+    "checkout_session_id": {
+      "type": "string",
+      "description": "Stripe checkout session ID"
+    },
+    "stripe_event_id": {
+      "type": "string",
+      "description": "Last processed Stripe event ID (for idempotency)"
+    },
+    "amount_paid": {
+      "type": "number",
+      "description": "Amount paid in cents"
+    },
+    "currency": {
+      "type": "string",
+      "default": "usd"
+    },
+    "payment_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When payment was confirmed"
+    },
+    "tracking_number": {
+      "type": "string"
+    },
+    "tracking_url": {
+      "type": "string"
+    },
+    "estimated_completion": {
+      "type": "string",
+      "format": "date"
+    },
+    "status_history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "customer_email",
+    "items",
+    "total_amount"
+  ],
+  "rls": {
+    "create": {},
+    "read": {
+      "$or": [
+        {
+          "data.customer_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "data.customer_email": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
