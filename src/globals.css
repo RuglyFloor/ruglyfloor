@@ -24,3 +24,14 @@ body {
   -webkit-user-select: none;
   user-select: none;
 }
+
+/* Icon-only buttons and navigation items */
+button[class*="icon"],
+[role="button"][class*="icon"],
+a[class*="icon"],
+button:has(> svg:only-child),
+[role="button"]:has(> svg:only-child),
+a:has(> svg:only-child) {
+  -webkit-user-select: none;
+  user-select: none;
+}

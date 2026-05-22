@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -69,17 +70,51 @@ export default function Cart() {
     setTaxRate(rate);
   }, [customerInfo.state]);
 
+  const removeItemMutation = useMutation({
+    mutationFn: (index) => {
+      return Promise.resolve(index);
+    },
+    onMutate: async (index) => {
+      const newCart = cart.filter((_, i) => i !== index);
+      setCart(newCart);
+      localStorage.setItem('rugly_cart', JSON.stringify(newCart));
+      return { previousCart: cart };
+    },
+    onError: (_err, _index, context) => {
+      if (context?.previousCart) {
+        setCart(context.previousCart);
+        localStorage.setItem('rugly_cart', JSON.stringify(context.previousCart));
+      }
+    }
+  });
+
+  const saveForLaterMutation = useMutation({
+    mutationFn: (index) => {
+      return Promise.resolve(index);
+    },
+    onMutate: async (index) => {
+      const savedItems = JSON.parse(localStorage.getItem('rugly_saved') || '[]');
+      savedItems.push(cart[index]);
+      localStorage.setItem('rugly_saved', JSON.stringify(savedItems));
+      const newCart = cart.filter((_, i) => i !== index);
+      setCart(newCart);
+      localStorage.setItem('rugly_cart', JSON.stringify(newCart));
+      return { previousCart: cart, previousSaved: savedItems.slice(0, -1) };
+    },
+    onError: (_err, _index, context) => {
+      if (context?.previousCart) {
+        setCart(context.previousCart);
+        localStorage.setItem('rugly_cart', JSON.stringify(context.previousCart));
+      }
+    }
+  });
+
   const removeItem = (index) => {
-    const newCart = cart.filter((_, i) => i !== index);
-    setCart(newCart);
-    localStorage.setItem('rugly_cart', JSON.stringify(newCart));
+    removeItemMutation.mutate(index);
   };
 
   const saveForLater = (index) => {
-    const savedItems = JSON.parse(localStorage.getItem('rugly_saved') || '[]');
-    savedItems.push(cart[index]);
-    localStorage.setItem('rugly_saved', JSON.stringify(savedItems));
-    removeItem(index);
+    saveForLaterMutation.mutate(index);
   };
 
   const subtotal = cart.reduce((sum, item) => sum + item.price, 0);

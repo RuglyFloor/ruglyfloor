@@ -1,5 +1,5 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useRef, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -99,8 +99,11 @@ function ProductStructuredData({ products }) {
 
 export default function Shop() {
   const navigate = useNavigate();
-  
-  const { data: products = [], isLoading } = useQuery({
+  const queryClient = useQueryClient();
+  const touchStartRef = useRef(0);
+  const [isPulling, setIsPulling] = useState(false);
+
+  const { data: products = [], isLoading, refetch } = useQuery({
     queryKey: ['products'],
     queryFn: async () => {
       const controller = new AbortController();
@@ -119,10 +122,30 @@ export default function Shop() {
     retry: 1
   });
 
+  const handleTouchStart = (e) => {
+    touchStartRef.current = e.touches[0].clientY;
+  };
+
+  const handleTouchMove = (e) => {
+    if (window.scrollY === 0) {
+      const diff = e.touches[0].clientY - touchStartRef.current;
+      if (diff > 50) {
+        setIsPulling(true);
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (isPulling) {
+      refetch();
+      setIsPulling(false);
+    }
+  };
+
 
 
   return (
-    <div className="min-h-screen py-12 px-6">
+    <div className="min-h-screen py-12 px-6" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
       {products.length > 0 && <ProductStructuredData products={products} />}
       <SEOHead
         title="Hand-Painted Rugs for Sale | Original Custom Area Rugs & Floor Art"

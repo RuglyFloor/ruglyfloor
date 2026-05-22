@@ -1,5 +1,5 @@
-import React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import React, { useRef, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -20,12 +20,15 @@ const statusColors = {
 };
 
 export default function Orders() {
+  const touchStartRef = useRef(0);
+  const [isPulling, setIsPulling] = useState(false);
+
   const { data: user } = useQuery({
     queryKey: ['user'],
     queryFn: () => base44.auth.me()
   });
 
-  const { data: orders = [], isLoading } = useQuery({
+  const { data: orders = [], isLoading, refetch } = useQuery({
     queryKey: ['orders', user?.email],
     queryFn: () => {
       if (user?.role === 'admin') {
@@ -37,8 +40,28 @@ export default function Orders() {
     initialData: []
   });
 
+  const handleTouchStart = (e) => {
+    touchStartRef.current = e.touches[0].clientY;
+  };
+
+  const handleTouchMove = (e) => {
+    if (window.scrollY === 0) {
+      const diff = e.touches[0].clientY - touchStartRef.current;
+      if (diff > 50) {
+        setIsPulling(true);
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (isPulling) {
+      refetch();
+      setIsPulling(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen py-12 px-6">
+    <div className="min-h-screen py-12 px-6" onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
       <SEOHead
         title="Rugly Floors - My Orders"
         description="Track your custom rug orders and view order history."

@@ -18,7 +18,8 @@ import QuoteView from './pages/QuoteView';
 import AdminNewQuote from './pages/AdminNewQuote';
 import CampPromo from './pages/CampPromo';
 import AccountSettings from './pages/AccountSettings';
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -52,47 +53,81 @@ const AuthenticatedApp = () => {
 
   return (
     <Suspense fallback={<LoadingSpinner />}>
-      <Routes>
-        <Route path="/" element={
-          <LayoutWrapper currentPageName={mainPageKey}>
-            <MainPage />
-          </LayoutWrapper>
-        } />
-        {Object.entries(Pages).map(([path, Page]) => (
-          <Route
-            key={path}
-            path={`/${path}`}
-            element={
-              <LayoutWrapper currentPageName={path}>
-                <Page />
+      <AnimatePresence mode="wait">
+        <motion.div
+          key="route"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.2 }}
+        >
+          <Routes>
+            <Route path="/" element={
+              <LayoutWrapper currentPageName={mainPageKey}>
+                <MainPage />
               </LayoutWrapper>
-            }
-          />
-        ))}
-        <Route path="/DesignProposal" element={<LayoutWrapper currentPageName="DesignProposal"><DesignProposal /></LayoutWrapper>} />
-        <Route path="/Visualizer" element={<Visualizer />} />
-        <Route path="/VisualizerShare" element={<VisualizerShare />} />
-        <Route path="/AdminVisualizer" element={<AdminVisualizer />} />
-        <Route path="/BookConsultation" element={<BookConsultation />} />
-        <Route path="/AdminConsultations" element={<AdminConsultations />} />
-        <Route path="/AdminQuotes" element={<LayoutWrapper currentPageName="AdminQuotes"><AdminQuotes /></LayoutWrapper>} />
-        <Route path="/QuoteView" element={<QuoteView />} />
-        <Route path="/AdminNewQuote" element={<AdminNewQuote />} />
-        <Route path="/promo" element={<CampPromo />} />
-        <Route path="/AccountSettings" element={<LayoutWrapper currentPageName="AccountSettings"><AccountSettings /></LayoutWrapper>} />
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
+            } />
+            {Object.entries(Pages).map(([path, Page]) => (
+              <Route
+                key={path}
+                path={`/${path}`}
+                element={
+                  <LayoutWrapper currentPageName={path}>
+                    <Page />
+                  </LayoutWrapper>
+                }
+              />
+            ))}
+            <Route path="/DesignProposal" element={<LayoutWrapper currentPageName="DesignProposal"><DesignProposal /></LayoutWrapper>} />
+            <Route path="/Visualizer" element={<Visualizer />} />
+            <Route path="/VisualizerShare" element={<VisualizerShare />} />
+            <Route path="/AdminVisualizer" element={<AdminVisualizer />} />
+            <Route path="/BookConsultation" element={<BookConsultation />} />
+            <Route path="/AdminConsultations" element={<AdminConsultations />} />
+            <Route path="/AdminQuotes" element={<LayoutWrapper currentPageName="AdminQuotes"><AdminQuotes /></LayoutWrapper>} />
+            <Route path="/QuoteView" element={<QuoteView />} />
+            <Route path="/AdminNewQuote" element={<AdminNewQuote />} />
+            <Route path="/promo" element={<CampPromo />} />
+            <Route path="/AccountSettings" element={<LayoutWrapper currentPageName="AccountSettings"><AccountSettings /></LayoutWrapper>} />
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
+        </motion.div>
+      </AnimatePresence>
     </Suspense>
   );
 };
 
 function App() {
+  // Dark mode preference
+  useEffect(() => {
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e) => {
+      if (e.matches) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
         <Router>
           <NavigationTracker />
-          <AuthenticatedApp />
+          <AnimatePresence mode="wait">
+            <AuthenticatedApp />
+          </AnimatePresence>
         </Router>
         <Toaster />
       </QueryClientProvider>
