@@ -7,8 +7,8 @@ const RUG_TYPES = [
     id: 'crugly',
     name: 'Crugly',
     tagline: 'Cost Efficient, looks great, customized, free shipping, 2 or less colors',
-    image: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/e8cc6b92e_Untitled-3.png',
-    bg: 'hsl(157, 85%, 54%)',
+    image: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/7d3891f92_Untitled-May062026at104002-2.png',
+    bg: '#2de89a',
     text: '#1a1a1a',
     accent: '#1a1a1a',
     shipping: 'FREE shipping — No minimum, no catch.',
@@ -24,8 +24,8 @@ const RUG_TYPES = [
     id: 'rugly',
     name: 'Rugly',
     tagline: 'Our signature line — quality, gorgeous, at a fair price',
-    image: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/b8b504744_Untitled-2.png',
-    bg: 'hsl(223, 100%, 63%)',
+    image: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/769d5b14a_Untitled-May062026at104002-3.png',
+    bg: '#4d7eff',
     text: '#ffffff',
     accent: '#ffffff',
     shipping: 'Flat rate shipping based on size',
@@ -41,8 +41,8 @@ const RUG_TYPES = [
     id: 'ruglux',
     name: 'Ruglux',
     tagline: 'High end, 3-D, Unlimited',
-    image: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/a92fdd3b8_Untitled-4.png',
-    bg: 'hsl(120, 1%, 21%)',
+    image: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/e90a20ec4_Untitled-May062026at104002-1.png',
+    bg: '#3d3d3d',
     text: '#ffffff',
     accent: '#d4af37',
     shipping: 'Flat rate — $15 for Tiny, +$15 per size up',
@@ -58,8 +58,8 @@ const RUG_TYPES = [
     id: 'square',
     name: 'Rugly Square',
     tagline: 'Cover any floor, any size, your way!',
-    image: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/de90dad41_Untitled-1.png',
-    bg: 'hsl(14, 87%, 55%)',
+    image: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/2d999a545_Untitled-May062026at104002-4.png',
+    bg: '#e83a1a',
     text: '#ffffff',
     accent: '#ffffff',
     shipping: 'FREE shipping — Always.',
@@ -75,16 +75,20 @@ const RUG_TYPES = [
 
 function RugTypeCard({ rug }) {
   const [open, setOpen] = useState(false);
+  const bodyStyle = {
+    backgroundColor: `${rug.bg} !important`,
+    background: rug.bg,
+  };
 
   return (
     <div className="rounded-2xl overflow-hidden shadow-lg border-2" style={{ borderColor: rug.bg }}>
       {/* Header Image */}
       <div className="relative">
-        <img src={rug.image} alt={rug.name} className="w-full h-48 object-cover" />
+        <img src={rug.image} alt={rug.name} className="w-full object-cover" style={{ aspectRatio: '16/9' }} />
       </div>
 
-      {/* Body */}
-      <div className="p-6" style={{ backgroundColor: rug.bg, background: rug.bg }}>
+      {/* Body — inline style with cssText to bypass global !important overrides */}
+      <div className="p-6" ref={el => { if (el) el.style.setProperty('background-color', rug.bg, 'important'); }}>
         <h2 className="text-3xl font-bold mb-1" style={{ color: rug.text, fontFamily: 'var(--font-heading)' }}>{rug.name}</h2>
         <p className="text-sm mb-4 opacity-80" style={{ color: rug.text }}>{rug.tagline}</p>
 
