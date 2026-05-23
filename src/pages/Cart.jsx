@@ -215,16 +215,22 @@ export default function Cart() {
 
     // GA4 begin_checkout event
     if (typeof window.gtag === 'function') {
+      const checkoutValue = couponValidation?.valid ? couponValidation.final_amount : paymentAmount;
+      const checkoutItems = cart.map((item, i) => ({
+        item_id: String(item.qualityTier || `item_${i}`),
+        item_name: String(item.name || 'Custom Rug'),
+        price: Number(item.price) || 0,
+        quantity: 1,
+      }));
+      console.log('[GA4] Firing begin_checkout', { value: checkoutValue, items: checkoutItems });
       window.gtag('event', 'begin_checkout', {
         currency: 'USD',
-        value: couponValidation?.valid ? couponValidation.final_amount : paymentAmount,
-        items: cart.map((item, i) => ({
-          item_id: item.qualityTier || `item_${i}`,
-          item_name: item.name || 'Custom Rug',
-          price: item.price,
-          quantity: 1,
-        })),
+        value: checkoutValue,
+        items: checkoutItems,
+        send_to: 'G-6DSQKNVFMB',
       });
+    } else {
+      console.warn('[GA4] gtag not available — begin_checkout NOT sent');
     }
 
     setSubmitting(true);

@@ -24,42 +24,54 @@ export default function Success() {
     const sid = params.get('session_id');
     const qid = params.get('quote_id');
 
+    const fireGA4Purchase = (transactionId, value, items) => {
+      // Deduplicate: only fire once per transaction_id per session
+      const firedKey = `ga4_purchase_fired_${transactionId}`;
+      if (sessionStorage.getItem(firedKey)) return;
+      sessionStorage.setItem(firedKey, '1');
+
+      console.log('[GA4] Firing purchase event', { transactionId, value, items });
+
+      if (typeof window.gtag !== 'function') {
+        console.warn('[GA4] gtag not available — purchase event NOT sent');
+        return;
+      }
+      window.gtag('event', 'purchase', {
+        transaction_id: transactionId,
+        value: Number(value) || 0,
+        currency: 'USD',
+        items: items,
+        send_to: 'G-6DSQKNVFMB',
+      });
+      if (typeof window.fbq === 'function') {
+        window.fbq('track', 'Purchase', { value: Number(value) || 0, currency: 'USD' });
+      }
+    };
+
     if (sid) {
       setSessionId(sid);
       base44.functions.invoke('getOrderInfoForReview', { session_id: sid })
         .then(res => {
           if (res.data) {
             setOrderInfo(res.data);
-            // GA4 standard purchase event
-            if (typeof window.gtag === 'function') {
-              const items = (res.data.items || []).map((item, i) => ({
-                item_id: item.product_id || item.qualityTier || `item_${i}`,
-                item_name: item.name || item.qualityLabel || 'Custom Rug',
-                price: item.price || 0,
-                quantity: 1,
-              }));
-              window.gtag('event', 'purchase', {
-                transaction_id: res.data.order_id || sid,
-                value: res.data.total_amount || res.data.amount_paid || 0,
-                currency: 'USD',
-                items: items.length > 0 ? items : [{
-                  item_id: 'custom_rug',
-                  item_name: 'Custom Rug',
-                  price: res.data.total_amount || 0,
+            const rawItems = Array.isArray(res.data.items) ? res.data.items : [];
+            const gaItems = rawItems.length > 0
+              ? rawItems.map((item, i) => ({
+                  item_id: String(item.product_id || item.qualityTier || `item_${i}`),
+                  item_name: String(item.name || item.qualityLabel || 'Custom Rug'),
+                  price: Number(item.price) || 0,
                   quantity: 1,
-                }],
-              });
-              // Meta Pixel Purchase
-              if (typeof window.fbq === 'function') {
-                window.fbq('track', 'Purchase', {
-                  value: res.data.total_amount || 0,
-                  currency: 'USD',
-                });
-              }
-            }
+                }))
+              : [{ item_id: 'custom_rug', item_name: 'Custom Rug', price: Number(res.data.total_amount) || 0, quantity: 1 }];
+
+            fireGA4Purchase(
+              res.data.order_id || sid,
+              res.data.total_amount || res.data.amount_paid || 0,
+              gaItems
+            );
           }
         })
-        .catch(() => {});
+        .catch(err => console.error('[GA4] getOrderInfoForReview failed:', err));
     }
 
     if (qid) {
@@ -68,22 +80,15 @@ export default function Success() {
         .then(data => {
           setQuote(data);
           setQuoteLoading(false);
-          // GA4 purchase for quote payments
-          if (typeof window.gtag === 'function' && data.quoted_price > 0) {
-            window.gtag('event', 'purchase', {
-              transaction_id: qid,
-              value: data.quoted_price,
-              currency: 'USD',
-              items: [{
-                item_id: data.tier_id || 'custom_quote',
-                item_name: `${data.tier_label} Custom Rug`,
-                price: data.quoted_price,
-                quantity: 1,
-              }],
-            });
+          if (data.quoted_price > 0) {
+            fireGA4Purchase(
+              qid,
+              data.quoted_price,
+              [{ item_id: String(data.tier_id || 'custom_quote'), item_name: `${data.tier_label || 'Custom'} Custom Rug`, price: Number(data.quoted_price), quantity: 1 }]
+            );
           }
         })
-        .catch(() => setQuoteLoading(false));
+        .catch(err => { console.error('[GA4] DesignQuote fetch failed:', err); setQuoteLoading(false); });
     }
   }, []);
 
