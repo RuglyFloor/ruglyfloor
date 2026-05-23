@@ -455,7 +455,17 @@ export default function CustomBuilder() {
                 {availableSizes.map(s => (
                   <button
                     key={s.id}
-                    onClick={() => setSize(s)}
+                    onClick={() => {
+                    setSize(s);
+                    if (typeof window.gtag === 'function') {
+                      window.gtag('event', 'builder_size_selected', {
+                        size_id: s.id,
+                        size_label: s.label,
+                        tier_id: tier?.id,
+                        price: tier?.prices?.[s.id] || 0,
+                      });
+                    }
+                  }}
                     className="px-5 py-3 rounded-xl font-bold transition-all"
                     style={{
                       border: `3px solid ${size?.id === s.id ? tierColor : '#e5e7eb'}`,
@@ -486,7 +496,13 @@ export default function CustomBuilder() {
               return (
                 <button
                   key={c.name}
-                  onClick={() => { setBaseColor(c); if (c.availableSizes && size && !c.availableSizes.includes(size.id)) setSize(null); }}
+                  onClick={() => {
+                    setBaseColor(c);
+                    if (c.availableSizes && size && !c.availableSizes.includes(size.id)) setSize(null);
+                    if (typeof window.gtag === 'function') {
+                      window.gtag('event', 'builder_base_color_selected', { color_name: c.name, tier_id: tier?.id });
+                    }
+                  }}
                   className="flex flex-col items-center gap-2 p-2 rounded-xl font-semibold transition-all"
                   style={{
                     border: `3px solid ${baseColor?.name === c.name ? tierColor : '#e5e7eb'}`,
@@ -532,7 +548,12 @@ export default function CustomBuilder() {
             {PAINT_COLORS.map(c => (
               <button
                 key={c.name}
-                onClick={() => setPaintColor(c)}
+                onClick={() => {
+                  setPaintColor(c);
+                  if (typeof window.gtag === 'function') {
+                    window.gtag('event', 'builder_paint_color_selected', { color_name: c.name, tier_id: tier?.id });
+                  }
+                }}
                 className="flex flex-col items-center gap-1 p-2 rounded-xl font-semibold transition-all"
                 style={{
                   border: `3px solid ${paintColor?.name === c.name ? tierColor : '#e5e7eb'}`,
@@ -644,7 +665,12 @@ export default function CustomBuilder() {
           </p>
           <DesignUploader
             tierColor={tierColor}
-            onImageReady={(url) => { setImageUrl(url); }}
+            onImageReady={(url) => {
+              setImageUrl(url);
+              if (typeof window.gtag === 'function') {
+                window.gtag('event', 'builder_design_uploaded', { tier_id: tier?.id });
+              }
+            }}
             onProcessedImageReady={(dataUrl, mode) => { setStencilDataUrl(dataUrl); setStencilMode(mode); setPreviewUrl(null); }}
             onClear={() => { setImageUrl(null); setStencilDataUrl(null); setStencilMode(null); setPreviewUrl(null); }}
           />
@@ -767,7 +793,12 @@ export default function CustomBuilder() {
               tier={tier}
               sizeObj={size}
               BASE_COLORS={BASE_COLORS}
-              onPreviewGenerated={setPreviewUrl}
+              onPreviewGenerated={(url) => {
+              setPreviewUrl(url);
+              if (typeof window.gtag === 'function') {
+                window.gtag('event', 'builder_preview_generated', { tier_id: tier?.id, size_id: size?.id });
+              }
+            }}
               designInstructions={designInstructions}
               generateRef={generatePreviewRef}
             />

@@ -18,6 +18,7 @@ import QuoteView from './pages/QuoteView';
 import AdminNewQuote from './pages/AdminNewQuote';
 import CampPromo from './pages/CampPromo';
 import AccountSettings from './pages/AccountSettings';
+import AdminBuilderAnalytics from './pages/AdminBuilderAnalytics';
 import React, { Suspense, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -89,6 +90,7 @@ const AuthenticatedApp = () => {
             <Route path="/AdminNewQuote" element={<AdminNewQuote />} />
             <Route path="/promo" element={<CampPromo />} />
             <Route path="/AccountSettings" element={<LayoutWrapper currentPageName="AccountSettings"><AccountSettings /></LayoutWrapper>} />
+            <Route path="/AdminBuilderAnalytics" element={<LayoutWrapper currentPageName="AdminBuilderAnalytics"><AdminBuilderAnalytics /></LayoutWrapper>} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </motion.div>
