@@ -327,6 +327,47 @@ export default function Cart() {
           <p className="text-gray-600 text-base lg:text-lg">Review and checkout</p>
         </div>
 
+        {/* Transparent pricing banner */}
+        <div className="mb-6 rounded-xl border-2 border-gray-200 bg-gray-50 px-5 py-4 flex flex-wrap gap-6 items-center justify-center text-sm">
+          <div className="flex items-center gap-2">
+            <span className="text-lg">🧾</span>
+            <div>
+              <div className="font-bold text-gray-800">Subtotal</div>
+              <div className="text-gray-600">${subtotal.toFixed(2)}</div>
+            </div>
+          </div>
+          <div className="text-gray-300 hidden sm:block">+</div>
+          <div className="flex items-center gap-2">
+            <span className="text-lg">🚚</span>
+            <div>
+              <div className="font-bold text-gray-800">Shipping</div>
+              <div className={shippingCost === 0 ? 'text-green-600 font-bold' : 'text-gray-600'}>
+                {shippingCost === 0 ? 'FREE' : `$${shippingCost.toFixed(2)}`}
+              </div>
+            </div>
+          </div>
+          <div className="text-gray-300 hidden sm:block">+</div>
+          <div className="flex items-center gap-2">
+            <span className="text-lg">🏛️</span>
+            <div>
+              <div className="font-bold text-gray-800">Tax</div>
+              <div className="text-gray-600">
+                {taxRate > 0 ? `$${taxAmount.toFixed(2)} (${(taxRate * 100).toFixed(1)}%)` : 'Enter state below'}
+              </div>
+            </div>
+          </div>
+          <div className="text-gray-300 hidden sm:block">=</div>
+          <div className="flex items-center gap-2">
+            <span className="text-lg">💳</span>
+            <div>
+              <div className="font-bold text-gray-800">{hasUpfrontPaymentItems ? 'Total' : 'Deposit Due'}</div>
+              <div className="text-xl font-black" style={{ color: '#343634' }}>
+                ${couponValidation?.valid ? couponValidation.final_amount.toFixed(2) : paymentAmount.toFixed(2)}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="grid lg:grid-cols-3 gap-4 lg:gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4 lg:space-y-6">

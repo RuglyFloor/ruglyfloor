@@ -755,10 +755,13 @@ export default function CustomBuilder() {
               <div className="text-lg font-black mb-1" style={{ color: tierColor, fontFamily: 'Barlow Condensed, sans-serif' }}>
                 ✓ {isSquares ? 'Your tile order is ready!' : 'Your rug is ready to order!'}
               </div>
-              <div className="text-sm text-gray-500 mb-4">
+              <div className="text-sm text-gray-500 mb-1">
                 {isSquares
-                  ? `${squaresGridData.totalTiles} tiles · ${squaresGridData.totalSqFt} sq ft · $${price} · ${tier.shipping}`
-                  : `${tier.label} · ${size.label} · $${price} · ${tier.shipping}`}
+                  ? `${squaresGridData.totalTiles} tiles · ${squaresGridData.totalSqFt} sq ft · $${price}`
+                  : `${tier.label} · ${size.label} · $${price}`}
+              </div>
+              <div className="text-xs font-semibold mb-4" style={{ color: tier?.id === 'crugly' || tier?.id === 'squares' ? '#16a34a' : '#6b7280' }}>
+                {tier.shipping} · tax calculated at checkout
               </div>
               <button
                 onClick={handleAddToCart}
@@ -789,6 +792,9 @@ export default function CustomBuilder() {
                 {isSquares
                   ? `${squaresGridData?.totalTiles || 0} tiles · ${squaresGridData?.totalSqFt || 0} sq ft`
                   : `${tier.label} · ${size.label}${tier.depositOnly ? ' · $100 deposit' : ''}`}
+              </div>
+              <div className="text-xs font-semibold mt-0.5" style={{ color: tier?.id === 'rugly' || tier?.id === 'rugly_lx' ? '#6b7280' : '#16a34a' }}>
+                {tier?.id === 'crugly' || tier?.id === 'squares' ? '✓ FREE shipping' : tier?.id === 'rugly' ? '+ $15 shipping' : '+ shipping quoted'} · tax may apply
               </div>
             </div>
           ) : (
