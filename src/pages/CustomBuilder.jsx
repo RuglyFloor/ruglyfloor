@@ -310,6 +310,21 @@ export default function CustomBuilder() {
     const cart = JSON.parse(localStorage.getItem('rugly_cart') || '[]');
     cart.push(cartItem);
     localStorage.setItem('rugly_cart', JSON.stringify(cart));
+
+    // GA4 add_to_cart event
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'add_to_cart', {
+        currency: 'USD',
+        value: cartItem.price,
+        items: [{
+          item_id: cartItem.qualityTier,
+          item_name: cartItem.name,
+          price: cartItem.price,
+          quantity: 1,
+        }],
+      });
+    }
+
     navigate(createPageUrl('Cart'));
   };
 
@@ -360,7 +375,16 @@ export default function CustomBuilder() {
               return (
                 <button
                   key={t.id}
-                  onClick={() => { setTier(t); setBaseColor(null); setSize(null); setPaintColor(null); }}
+                  onClick={() => {
+                    setTier(t); setBaseColor(null); setSize(null); setPaintColor(null);
+                    if (typeof window.gtag === 'function') {
+                      window.gtag('event', 'view_item', {
+                        currency: 'USD',
+                        value: parseFloat(t.price_hint?.replace(/[^0-9.]/g, '')) || 0,
+                        items: [{ item_id: t.id, item_name: t.label, price: parseFloat(t.price_hint?.replace(/[^0-9.]/g, '')) || 0, quantity: 1 }],
+                      });
+                    }
+                  }}
                   className="text-left rounded-2xl border-4 w-full overflow-hidden flex flex-col"
                   style={{
                     borderColor: isSelected ? t.color : '#e5e7eb',

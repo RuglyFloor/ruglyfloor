@@ -27,14 +27,62 @@ export default function Success() {
     if (sid) {
       setSessionId(sid);
       base44.functions.invoke('getOrderInfoForReview', { session_id: sid })
-        .then(res => { if (res.data) setOrderInfo(res.data); })
+        .then(res => {
+          if (res.data) {
+            setOrderInfo(res.data);
+            // GA4 standard purchase event
+            if (typeof window.gtag === 'function') {
+              const items = (res.data.items || []).map((item, i) => ({
+                item_id: item.product_id || item.qualityTier || `item_${i}`,
+                item_name: item.name || item.qualityLabel || 'Custom Rug',
+                price: item.price || 0,
+                quantity: 1,
+              }));
+              window.gtag('event', 'purchase', {
+                transaction_id: res.data.order_id || sid,
+                value: res.data.total_amount || res.data.amount_paid || 0,
+                currency: 'USD',
+                items: items.length > 0 ? items : [{
+                  item_id: 'custom_rug',
+                  item_name: 'Custom Rug',
+                  price: res.data.total_amount || 0,
+                  quantity: 1,
+                }],
+              });
+              // Meta Pixel Purchase
+              if (typeof window.fbq === 'function') {
+                window.fbq('track', 'Purchase', {
+                  value: res.data.total_amount || 0,
+                  currency: 'USD',
+                });
+              }
+            }
+          }
+        })
         .catch(() => {});
     }
 
     if (qid) {
       setQuoteLoading(true);
       base44.entities.DesignQuote.get(qid)
-        .then(data => { setQuote(data); setQuoteLoading(false); })
+        .then(data => {
+          setQuote(data);
+          setQuoteLoading(false);
+          // GA4 purchase for quote payments
+          if (typeof window.gtag === 'function' && data.quoted_price > 0) {
+            window.gtag('event', 'purchase', {
+              transaction_id: qid,
+              value: data.quoted_price,
+              currency: 'USD',
+              items: [{
+                item_id: data.tier_id || 'custom_quote',
+                item_name: `${data.tier_label} Custom Rug`,
+                price: data.quoted_price,
+                quantity: 1,
+              }],
+            });
+          }
+        })
         .catch(() => setQuoteLoading(false));
     }
   }, []);

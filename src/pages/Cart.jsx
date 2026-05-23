@@ -213,6 +213,20 @@ export default function Cart() {
       // Cross-origin iframe — not our preview, let it proceed
     }
 
+    // GA4 begin_checkout event
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'begin_checkout', {
+        currency: 'USD',
+        value: couponValidation?.valid ? couponValidation.final_amount : paymentAmount,
+        items: cart.map((item, i) => ({
+          item_id: item.qualityTier || `item_${i}`,
+          item_name: item.name || 'Custom Rug',
+          price: item.price,
+          quantity: 1,
+        })),
+      });
+    }
+
     setSubmitting(true);
     try {
       const response = await base44.functions.invoke('createCheckout', { 
