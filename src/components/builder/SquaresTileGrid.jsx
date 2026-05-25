@@ -252,22 +252,69 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
 
       {/* SURFACE TYPE */}
       <div>
-        <p className="text-sm font-semibold mb-2 text-gray-600">Surface Type</p>
-        <div className="flex gap-3">
-          {['carpet', 'smooth'].map(type => (
-            <button
-              key={type}
-              onClick={() => { setSurfaceType(type); setWidthConfirmed(false); setHeightConfirmed(false); }}
-              className="px-5 py-2 rounded-xl font-bold capitalize transition-all text-sm"
-              style={{
-                border: `3px solid ${surfaceType === type ? tierColor : '#e5e7eb'}`,
-                backgroundColor: surfaceType === type ? `${tierColor}15` : '#fff',
-                color: surfaceType === type ? tierColor : '#343634',
-              }}
-            >
-              {type === 'carpet' ? '🧶 Carpet Squares' : '🪟 Smooth Squares'}
-            </button>
-          ))}
+        <p className="text-sm font-semibold mb-3 text-gray-600">Choose Your Surface Type</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          {/* CARPET SQUARES */}
+          <button
+            onClick={() => { setSurfaceType('carpet'); setWidthConfirmed(false); setHeightConfirmed(false); }}
+            className="text-left rounded-2xl overflow-hidden border-3 transition-all"
+            style={{
+              border: `3px solid ${surfaceType === 'carpet' ? tierColor : '#e5e7eb'}`,
+              boxShadow: surfaceType === 'carpet' ? `0 0 0 3px ${tierColor}40` : undefined,
+            }}
+          >
+            {/* Image strip */}
+            <div className="grid grid-cols-3 h-28 overflow-hidden">
+              <img src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/3b58c9848_Screenshot2026-05-25at135100.png" alt="Carpet tiles blue" className="w-full h-full object-cover" />
+              <img src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/eba8a7f1b_Screenshot2026-05-25at135230.png" alt="Carpet tiles purple" className="w-full h-full object-cover" />
+              <img src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/a2e3f8b30_Screenshot2026-05-25at135327.png" alt="Carpet tiles green" className="w-full h-full object-cover" />
+            </div>
+            <div className="p-4 bg-white">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-black text-base" style={{ color: '#343634' }}>🧶 Carpet Squares</span>
+                {surfaceType === 'carpet' && <span className="text-xs font-bold px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: tierColor }}>✓ Selected</span>}
+              </div>
+              <ul className="text-xs text-gray-600 space-y-1">
+                <li>✅ Soft, plush feel underfoot</li>
+                <li>✅ Great for bedrooms & living rooms</li>
+                <li>✅ Sound-absorbing & cozy</li>
+                <li>✅ Mix & match colors for custom patterns</li>
+                <li>✅ Easy interlocking — no tools needed</li>
+              </ul>
+            </div>
+          </button>
+
+          {/* SMOOTH SQUARES */}
+          <button
+            onClick={() => { setSurfaceType('smooth'); setWidthConfirmed(false); setHeightConfirmed(false); }}
+            className="text-left rounded-2xl overflow-hidden transition-all"
+            style={{
+              border: `3px solid ${surfaceType === 'smooth' ? tierColor : '#e5e7eb'}`,
+              boxShadow: surfaceType === 'smooth' ? `0 0 0 3px ${tierColor}40` : undefined,
+            }}
+          >
+            {/* Image strip — using the previous foam mat images */}
+            <div className="grid grid-cols-3 h-28 overflow-hidden">
+              <img src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/4e2d28a91_Screenshot2026-05-25at133841.png" alt="Smooth foam tiles multicolor" className="w-full h-full object-cover" />
+              <img src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/d839bdf11_Screenshot2026-05-25at133841.png" alt="Smooth foam tiles red black" className="w-full h-full object-cover" />
+              <img src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/dc2935489_Screenshot2026-05-25at134100.png" alt="Smooth foam tiles gray" className="w-full h-full object-cover" />
+            </div>
+            <div className="p-4 bg-white">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-black text-base" style={{ color: '#343634' }}>🏋️ Smooth Squares</span>
+                {surfaceType === 'smooth' && <span className="text-xs font-bold px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: tierColor }}>✓ Selected</span>}
+              </div>
+              <ul className="text-xs text-gray-600 space-y-1">
+                <li>✅ Durable EVA foam — 0.51″ thick</li>
+                <li>✅ Perfect for gyms, garages & playrooms</li>
+                <li>✅ Waterproof & easy to wipe clean</li>
+                <li>✅ Anti-fatigue & impact-absorbing</li>
+                <li>✅ Easy interlocking — no tools needed</li>
+              </ul>
+            </div>
+          </button>
+
         </div>
       </div>
 
