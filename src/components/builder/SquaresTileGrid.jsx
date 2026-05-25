@@ -272,15 +272,13 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
             </div>
             <div className="p-4 bg-white">
               <div className="flex items-center justify-between mb-2">
-                <span className="font-black text-base" style={{ color: '#343634' }}>🧶 Carpet Squares</span>
+                <span className="font-black text-base" style={{ color: '#343634' }}>Carpet Squares</span>
                 {surfaceType === 'carpet' && <span className="text-xs font-bold px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: tierColor }}>✓ Selected</span>}
               </div>
               <ul className="text-xs text-gray-600 space-y-1">
-                <li>✅ Soft, plush feel underfoot</li>
-                <li>✅ Great for bedrooms & living rooms</li>
-                <li>✅ Sound-absorbing & cozy</li>
-                <li>✅ Mix & match colors for custom patterns</li>
-                <li>✅ Easy interlocking — no tools needed</li>
+                {['Soft, plush feel underfoot','Great for bedrooms & living rooms','Sound-absorbing & cozy','Mix & match colors for custom patterns','Easy interlocking — no tools needed'].map(f => (
+                  <li key={f} className="flex items-center gap-1.5"><span className="inline-flex items-center justify-center w-4 h-4 rounded text-white text-xs font-black flex-shrink-0" style={{backgroundColor:'#24f0a0',color:'#1a1a1a'}}>✓</span>{f}</li>
+                ))}
               </ul>
             </div>
           </button>
@@ -294,23 +292,21 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
               boxShadow: surfaceType === 'smooth' ? `0 0 0 3px ${tierColor}40` : undefined,
             }}
           >
-            {/* Image strip — using the previous foam mat images */}
+            {/* Image strip */}
             <div className="grid grid-cols-3 h-28 overflow-hidden">
+              <img src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/08c3215d7_Screenshot2026-05-25at135809.png" alt="Smooth foam tiles red black stack" className="w-full h-full object-cover" />
               <img src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/4e2d28a91_Screenshot2026-05-25at133841.png" alt="Smooth foam tiles multicolor" className="w-full h-full object-cover" />
-              <img src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/d839bdf11_Screenshot2026-05-25at133841.png" alt="Smooth foam tiles red black" className="w-full h-full object-cover" />
               <img src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/dc2935489_Screenshot2026-05-25at134100.png" alt="Smooth foam tiles gray" className="w-full h-full object-cover" />
             </div>
             <div className="p-4 bg-white">
               <div className="flex items-center justify-between mb-2">
-                <span className="font-black text-base" style={{ color: '#343634' }}>🏋️ Smooth Squares</span>
+                <span className="font-black text-base" style={{ color: '#343634' }}>Smooth Squares</span>
                 {surfaceType === 'smooth' && <span className="text-xs font-bold px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: tierColor }}>✓ Selected</span>}
               </div>
               <ul className="text-xs text-gray-600 space-y-1">
-                <li>✅ Durable EVA foam — 0.51″ thick</li>
-                <li>✅ Perfect for gyms, garages & playrooms</li>
-                <li>✅ Waterproof & easy to wipe clean</li>
-                <li>✅ Anti-fatigue & impact-absorbing</li>
-                <li>✅ Easy interlocking — no tools needed</li>
+                {['Durable EVA foam — 0.51″ thick','Perfect for gyms, garages & playrooms','Waterproof & easy to wipe clean','Anti-fatigue & impact-absorbing','Easy interlocking — no tools needed'].map(f => (
+                  <li key={f} className="flex items-center gap-1.5"><span className="inline-flex items-center justify-center w-4 h-4 rounded text-white text-xs font-black flex-shrink-0" style={{backgroundColor:'#24f0a0',color:'#1a1a1a'}}>✓</span>{f}</li>
+                ))}
               </ul>
             </div>
           </button>
