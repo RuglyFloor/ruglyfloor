@@ -38,6 +38,19 @@ const DEFAULT_COLORS = [
   { name: 'Gray', hex: '#A0A0A0' },
 ];
 
+// Physical foam tile base colors available to order
+const BASE_TILE_COLORS = [
+  { name: 'Green', hex: '#5DBB63' },
+  { name: 'Yellow', hex: '#F5C518' },
+  { name: 'Red', hex: '#D42B2B' },
+  { name: 'Blue', hex: '#2B6DD4' },
+  { name: 'Orange', hex: '#E87722' },
+  { name: 'Purple', hex: '#7B3FB5' },
+  { name: 'Gray', hex: '#6B6B6B' },
+  { name: 'Black', hex: '#1A1A1A' },
+  { name: 'Red/Black', hex: '#8B1A1A', secondary: '#1A1A1A' },
+];
+
 const UNITS = ['tiles', 'feet', 'meters'];
 
 function toTiles(value, unit) {
@@ -138,6 +151,7 @@ function MiniConnector({ active, color }) {
 
 export default function SquaresTileGrid({ tierColor, onChange }) {
   const [surfaceType, setSurfaceType] = useState(null);
+  const [baseTileColor, setBaseTileColor] = useState(null);
   const [cols, setCols] = useState(4);
   const [rows, setRows] = useState(4);
   const [widthInput, setWidthInput] = useState('8');
@@ -215,8 +229,8 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
   };
 
   useEffect(() => {
-    if (onChange) onChange(designConfirmed ? { grid, rows, cols, surfaceType, totalSqFt, totalTiles, numPaintColors, price } : null);
-  }, [grid, rows, cols, surfaceType, totalSqFt, totalTiles, numPaintColors, price, designConfirmed]);
+    if (onChange) onChange(designConfirmed ? { grid, rows, cols, surfaceType, baseTileColor: baseTileColor?.name, totalSqFt, totalTiles, numPaintColors, price } : null);
+  }, [grid, rows, cols, surfaceType, baseTileColor, totalSqFt, totalTiles, numPaintColors, price, designConfirmed]);
 
   const fillAll = (color) => {
     const c = color ?? activeColor;
@@ -257,9 +271,44 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
         </div>
       </div>
 
-      {/* WIDTH */}
+      {/* BASE TILE COLOR */}
       <MiniConnector active={!!surfaceType} color={tierColor} />
       <SubStep visible={!!surfaceType}>
+        <div className="p-4 rounded-2xl bg-white border-2" style={{ borderColor: baseTileColor ? `${tierColor}60` : '#e5e7eb' }}>
+          <label className="text-xs font-black text-gray-500 uppercase tracking-wide mb-1 block">Base Tile Color</label>
+          <p className="text-xs text-gray-400 mb-3">Choose the physical foam tile color. This is the color of the tiles before any painting.</p>
+          <div className="flex flex-wrap gap-3">
+            {BASE_TILE_COLORS.map(c => (
+              <button
+                key={c.name}
+                onClick={() => setBaseTileColor(c)}
+                title={c.name}
+                className="flex flex-col items-center gap-1 transition-all"
+              >
+                <div
+                  className="w-10 h-10 rounded-xl border-2 transition-all flex-shrink-0"
+                  style={{
+                    background: c.secondary
+                      ? `linear-gradient(135deg, ${c.hex} 50%, ${c.secondary} 50%)`
+                      : c.hex,
+                    borderColor: baseTileColor?.name === c.name ? tierColor : '#e5e7eb',
+                    transform: baseTileColor?.name === c.name ? 'scale(1.2)' : 'scale(1)',
+                    boxShadow: baseTileColor?.name === c.name ? `0 0 0 2px white, 0 0 0 4px ${tierColor}` : undefined,
+                  }}
+                />
+                <span className="text-xs font-semibold text-gray-600" style={{ color: baseTileColor?.name === c.name ? tierColor : undefined }}>{c.name}</span>
+              </button>
+            ))}
+          </div>
+          {baseTileColor && (
+            <div className="mt-3 text-sm font-bold" style={{ color: tierColor }}>✓ {baseTileColor.name} selected</div>
+          )}
+        </div>
+      </SubStep>
+
+      {/* WIDTH */}
+      <MiniConnector active={!!baseTileColor} color={tierColor} />
+      <SubStep visible={!!baseTileColor}>
         <div className="p-4 rounded-2xl bg-white border-2" style={{ borderColor: widthConfirmed ? `${tierColor}60` : '#e5e7eb' }}>
           <label className="text-xs font-black text-gray-500 uppercase tracking-wide mb-2 block">Width</label>
           <p className="text-xs text-gray-400 mb-3">Each tile covers <strong>2ft × 2ft</strong>. Feet must be a multiple of 2 — we'll round for you.</p>
