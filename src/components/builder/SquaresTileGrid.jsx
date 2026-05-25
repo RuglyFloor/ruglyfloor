@@ -276,7 +276,7 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
               </div>
               <ul className="text-xs text-gray-600 space-y-1">
                 {['Soft, plush feel underfoot','Great for bedrooms & living rooms','Sound-absorbing & cozy','Mix & match colors for custom patterns','Easy interlocking — no tools needed'].map(f => (
-                  <li key={f} className="flex items-center gap-1.5"><span className="inline-flex items-center justify-center w-4 h-4 rounded text-white text-xs font-black flex-shrink-0" style={{backgroundColor:'#24f0a0',color:'#1a1a1a'}}>✓</span>{f}</li>
+                  <li key={f} className="flex items-center gap-1.5"><span className="inline-flex items-center justify-center w-4 h-4 rounded text-white text-xs font-black flex-shrink-0" style={{backgroundColor:'#f04624',color:'#fff'}}>✓</span>{f}</li>
                 ))}
               </ul>
             </div>
@@ -304,7 +304,7 @@ export default function SquaresTileGrid({ tierColor, onChange }) {
               </div>
               <ul className="text-xs text-gray-600 space-y-1">
                 {['Durable EVA foam — 0.51″ thick','Perfect for gyms, garages & playrooms','Waterproof & easy to wipe clean','Anti-fatigue & impact-absorbing','Easy interlocking — no tools needed'].map(f => (
-                  <li key={f} className="flex items-center gap-1.5"><span className="inline-flex items-center justify-center w-4 h-4 rounded text-white text-xs font-black flex-shrink-0" style={{backgroundColor:'#24f0a0',color:'#1a1a1a'}}>✓</span>{f}</li>
+                  <li key={f} className="flex items-center gap-1.5"><span className="inline-flex items-center justify-center w-4 h-4 rounded text-white text-xs font-black flex-shrink-0" style={{backgroundColor:'#f04624',color:'#fff'}}>✓</span>{f}</li>
                 ))}
               </ul>
             </div>
