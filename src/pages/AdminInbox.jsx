@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mail, MailOpen, Archive, Reply, Phone, Clock, Trash2, Settings, Save } from 'lucide-react';
+import { Mail, MailOpen, Archive, Reply, Phone, Clock, Trash2, Settings, Save, MessageSquare } from 'lucide-react';
 import AdminProtected from '@/components/AdminProtected';
 import { format } from 'date-fns';
 
@@ -199,11 +199,63 @@ function ReplyComposer({ selectedMessage, onSent }) {
   );
 }
 
+function SMSComposer({ selectedMessage, onSent }) {
+  const [smsText, setSmsText] = useState('');
+  const [sending, setSending] = useState(false);
+
+  const phone = selectedMessage?.from_phone;
+
+  if (!phone) {
+    return (
+      <div className="text-sm text-gray-500 bg-gray-50 rounded-lg p-4 text-center">
+        No phone number on file for this contact. SMS unavailable.
+      </div>
+    );
+  }
+
+  const handleSend = async () => {
+    if (!smsText.trim()) return;
+    setSending(true);
+    try {
+      await base44.functions.invoke('sendSMS', { to: phone, message: smsText });
+      setSmsText('');
+      onSent();
+    } catch (error) {
+      alert('Failed to send SMS: ' + error.message);
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="text-sm text-gray-500">
+        <span className="font-medium">To:</span> {phone}
+      </div>
+      <textarea
+        value={smsText}
+        onChange={e => setSmsText(e.target.value)}
+        placeholder="Type your text message... (max 1600 characters)"
+        rows={5}
+        maxLength={1600}
+        className="w-full border rounded-md px-3 py-2 text-sm resize-y focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
+      <div className="flex justify-between items-center">
+        <span className="text-xs text-gray-400">{smsText.length}/1600</span>
+        <Button onClick={handleSend} disabled={sending || !smsText.trim()}>
+          {sending ? 'Sending...' : 'Send SMS via Quo'}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 function AdminInboxContent() {
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [filter, setFilter] = useState('unread');
   const [adminNotes, setAdminNotes] = useState('');
   const [replyOpen, setReplyOpen] = useState(false);
+  const [smsOpen, setSmsOpen] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -245,6 +297,12 @@ function AdminInboxContent() {
     updateMessageMutation.mutate({ id: selectedMessage.id, data: { replied: true, status: 'read' } });
     setReplyOpen(false);
     alert('Reply sent!');
+  };
+
+  const handleSmsSent = () => {
+    updateMessageMutation.mutate({ id: selectedMessage.id, data: { replied: true, status: 'read' } });
+    setSmsOpen(false);
+    alert('SMS sent!');
   };
 
   const unreadCount = messages.filter(m => m.status === 'unread').length;
@@ -355,19 +413,35 @@ function AdminInboxContent() {
                 </div>
 
                 {/* Reply Dialog */}
-                <Dialog open={replyOpen} onOpenChange={setReplyOpen}>
-                  <DialogTrigger asChild>
-                    <Button className="w-full">
-                      <Reply className="w-4 h-4 mr-2" />Reply
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-2xl">
-                    <DialogHeader>
-                      <DialogTitle>Reply to {selectedMessage.from_name || selectedMessage.from_email}</DialogTitle>
-                    </DialogHeader>
-                    <ReplyComposer selectedMessage={selectedMessage} onSent={handleReplySent} />
-                  </DialogContent>
-                </Dialog>
+                <div className="grid grid-cols-2 gap-2">
+                  <Dialog open={replyOpen} onOpenChange={setReplyOpen}>
+                    <DialogTrigger asChild>
+                      <Button className="w-full">
+                        <Reply className="w-4 h-4 mr-2" />Email Reply
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>Reply to {selectedMessage.from_name || selectedMessage.from_email}</DialogTitle>
+                      </DialogHeader>
+                      <ReplyComposer selectedMessage={selectedMessage} onSent={handleReplySent} />
+                    </DialogContent>
+                  </Dialog>
+
+                  <Dialog open={smsOpen} onOpenChange={setSmsOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" className="w-full">
+                        <MessageSquare className="w-4 h-4 mr-2" />Send SMS
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Text {selectedMessage.from_name || selectedMessage.from_phone}</DialogTitle>
+                      </DialogHeader>
+                      <SMSComposer selectedMessage={selectedMessage} onSent={handleSmsSent} />
+                    </DialogContent>
+                  </Dialog>
+                </div>
 
                 <div className="text-xs text-gray-500 pt-4 border-t">
                   Received: {format(new Date(selectedMessage.created_date), 'PPpp')}
