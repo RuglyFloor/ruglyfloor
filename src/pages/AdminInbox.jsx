@@ -20,11 +20,11 @@ const SENDER_IDENTITIES = [
 ];
 
 const FONTS = [
-  { label: 'Roboto (Default)', value: 'Roboto, sans-serif' },
+  { label: 'Barlow Condensed (Brand)', value: "'Barlow Condensed', sans-serif" },
+  { label: 'Roboto (Body)', value: "'Roboto', sans-serif" },
+  { label: 'Big Shoulders Stencil (Button)', value: "'Big Shoulders Stencil Display', sans-serif" },
   { label: 'Georgia (Serif)', value: 'Georgia, serif' },
   { label: 'Arial', value: 'Arial, sans-serif' },
-  { label: 'Courier New (Mono)', value: 'Courier New, monospace' },
-  { label: 'Barlow Condensed (Brand)', value: "'Barlow Condensed', sans-serif" },
 ];
 
 const DEFAULT_SIGNATURES = {
@@ -84,7 +84,7 @@ function SignatureManager({ signatures, setSignatures }) {
 function ReplyComposer({ selectedMessage, onSent }) {
   const [replyText, setReplyText] = useState('');
   const [sender, setSender] = useState(SENDER_IDENTITIES[0].value);
-  const [font, setFont] = useState(FONTS[0].value);
+  const [font, setFont] = useState("'Barlow Condensed', sans-serif");
   const [signatures, setSignatures] = useState(() => {
     try {
       return JSON.parse(localStorage.getItem('rugly_inbox_signatures') || '{}');
