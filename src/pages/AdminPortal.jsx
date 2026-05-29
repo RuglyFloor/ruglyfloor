@@ -88,6 +88,13 @@ export default function AdminPortal() {
       page: 'AdminQuotes',
       color: 'bg-purple-500'
     },
+    {
+      title: 'Inbox',
+      icon: Mail,
+      description: 'View and respond to customer messages',
+      page: 'AdminInbox',
+      color: 'bg-teal-500'
+    },
   ];
 
   return (
