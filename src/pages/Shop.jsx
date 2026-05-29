@@ -187,7 +187,7 @@ export default function Shop() {
                   : [product.image_url, ...(product.images || [])].filter(Boolean);
                 
                 return (
-                  <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <Card className="overflow-hidden hover:shadow-lg transition-shadow" style={{backgroundColor:'#ffffff', color:'#343634'}}>
                     <div className="aspect-square bg-gray-100 relative">
                       {allImages.length > 0 && (
                         <>
@@ -212,7 +212,7 @@ export default function Shop() {
                         </>
                       )}
                     </div>
-                    <CardContent className="p-4">
+                    <CardContent className="p-4" style={{backgroundColor:'#ffffff', color:'#343634'}}>
                       {product.rug_type && (() => {
                         const brandImages = {
                           Crugly: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/874535578_Crugly.png',
