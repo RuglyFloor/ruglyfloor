@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Upload, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Upload, X, ChevronLeft, ChevronRight, Crop, RotateCw, ZoomIn } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import Cropper from 'react-easy-crop';
 
 const MODES = [
-  { id: 'edges', label: 'Edges' },
-  { id: 'thin', label: 'Thin' },
   { id: 'threshold', label: 'Threshold' },
   { id: 'adaptive', label: 'Adaptive' },
   { id: 'color', label: 'Color' },
@@ -34,7 +33,6 @@ function applyFilter(imageData, mode, threshold) {
   }
 
   if (mode === 'adaptive') {
-    // Simple local threshold
     const t = threshold * 255;
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
@@ -57,47 +55,67 @@ function applyFilter(imageData, mode, threshold) {
     return new ImageData(out, width, height);
   }
 
-  // edges / thin — Sobel edge detection
-  const gray = new Float32Array(width * height);
-  for (let i = 0; i < data.length; i += 4) {
-    gray[i / 4] = getGray(i);
-  }
-
-  const sobelX = [-1, 0, 1, -2, 0, 2, -1, 0, 1];
-  const sobelY = [-1, -2, -1, 0, 0, 0, 1, 2, 1];
-  const t = (1 - threshold) * 80 + 10;
-
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x++) {
-      let gx = 0, gy = 0;
-      for (let ky = -1; ky <= 1; ky++) {
-        for (let kx = -1; kx <= 1; kx++) {
-          const ny = Math.min(height - 1, Math.max(0, y + ky));
-          const nx = Math.min(width - 1, Math.max(0, x + kx));
-          const ki = (ky + 1) * 3 + (kx + 1);
-          const g = gray[ny * width + nx];
-          gx += sobelX[ki] * g;
-          gy += sobelY[ki] * g;
-        }
-      }
-      const mag = Math.sqrt(gx * gx + gy * gy);
-      const i = (y * width + x) * 4;
-      // White background, dark edges
-      const v = mag > t ? 0 : 255;
-      out[i] = out[i + 1] = out[i + 2] = v;
-      // For thin mode, reduce edge thickness by requiring stronger signal
-      if (mode === 'thin') {
-        out[i] = out[i + 1] = out[i + 2] = mag > t * 1.5 ? 0 : 255;
-      }
-      out[i + 3] = 255;
-    }
-  }
   return new ImageData(out, width, height);
 }
 
+// Returns a cropped image blob URL from the original image and pixel crop area
+async function getCroppedImg(imageSrc, pixelCrop, rotation = 0) {
+  const image = await new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = imageSrc;
+  });
+
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  const maxSize = Math.max(image.width, image.height);
+  const safeArea = 2 * ((maxSize / 2) * Math.sqrt(2));
+
+  canvas.width = safeArea;
+  canvas.height = safeArea;
+
+  ctx.translate(safeArea / 2, safeArea / 2);
+  ctx.rotate((rotation * Math.PI) / 180);
+  ctx.translate(-safeArea / 2, -safeArea / 2);
+
+  ctx.drawImage(
+    image,
+    safeArea / 2 - image.width / 2,
+    safeArea / 2 - image.height / 2
+  );
+
+  const data = ctx.getImageData(0, 0, safeArea, safeArea);
+
+  canvas.width = pixelCrop.width;
+  canvas.height = pixelCrop.height;
+
+  ctx.putImageData(
+    data,
+    Math.round(0 - safeArea / 2 + image.width / 2 - pixelCrop.x),
+    Math.round(0 - safeArea / 2 + image.height / 2 - pixelCrop.y)
+  );
+
+  return new Promise((resolve) => {
+    canvas.toBlob((blob) => {
+      resolve(URL.createObjectURL(blob));
+    }, 'image/png');
+  });
+}
+
 export default function DesignUploader({ onImageReady, onProcessedImageReady, onClear, tierColor = '#4075ff' }) {
-  const [localImage, setLocalImage] = useState(null);
-  const [mode, setMode] = useState('edges');
+  const [rawImage, setRawImage] = useState(null);       // original file dataUrl before crop
+  const [localImage, setLocalImage] = useState(null);   // after crop applied
+  const [showCropper, setShowCropper] = useState(false);
+
+  // Crop state
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+
+  const [mode, setMode] = useState('threshold');
   const [threshold, setThreshold] = useState(0.5);
   const [dividerX, setDividerX] = useState(0.5);
   const [isDragging, setIsDragging] = useState(false);
@@ -110,7 +128,6 @@ export default function DesignUploader({ onImageReady, onProcessedImageReady, on
   const resultCanvasRef = useRef(null);
   const imgRef = useRef(null);
 
-  // Process the image with current mode/threshold
   const processImage = useCallback(() => {
     if (!imgRef.current || !originalCanvasRef.current || !resultCanvasRef.current) return;
     const img = imgRef.current;
@@ -118,13 +135,11 @@ export default function DesignUploader({ onImageReady, onProcessedImageReady, on
     const h = img.naturalHeight || img.height;
     if (!w || !h) return;
 
-    // Draw original
     const origCtx = originalCanvasRef.current.getContext('2d');
     originalCanvasRef.current.width = w;
     originalCanvasRef.current.height = h;
     origCtx.drawImage(img, 0, 0, w, h);
 
-    // Process result
     const resCtx = resultCanvasRef.current.getContext('2d');
     resultCanvasRef.current.width = w;
     resultCanvasRef.current.height = h;
@@ -140,31 +155,40 @@ export default function DesignUploader({ onImageReady, onProcessedImageReady, on
   }, [mode, threshold]);
 
   useEffect(() => {
-    if (localImage) {
-      processImage();
-    }
+    if (localImage) processImage();
   }, [localImage, mode, threshold, processImage]);
 
-  // Notify parent whenever processed canvas changes (pass dataUrl for later upload)
   useEffect(() => {
     if (processedCanvas && onProcessedImageReady) {
       onProcessedImageReady(processedCanvas.toDataURL('image/png'), mode);
     }
   }, [processedCanvas, mode]);
 
-  const handleFile = async (file) => {
+  const handleFile = (file) => {
     if (!file) return;
-    // Show local preview immediately
     const reader = new FileReader();
     reader.onload = (e) => {
-      setLocalImage({ dataUrl: e.target.result });
-      setDividerX(0.5);
+      setRawImage(e.target.result);
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+      setRotation(0);
+      setShowCropper(true);
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleCropConfirm = async () => {
+    if (!rawImage || !croppedAreaPixels) return;
+    const croppedUrl = await getCroppedImg(rawImage, croppedAreaPixels, rotation);
+    setLocalImage({ dataUrl: croppedUrl });
+    setShowCropper(false);
+    setDividerX(0.5);
 
     // Upload original in background
     setUploading(true);
     try {
+      const blob = await fetch(croppedUrl).then(r => r.blob());
+      const file = new File([blob], 'design.png', { type: 'image/png' });
       const result = await base44.integrations.Core.UploadFile({ file });
       if (onImageReady) onImageReady(result.file_url);
     } catch (err) {
@@ -176,6 +200,24 @@ export default function DesignUploader({ onImageReady, onProcessedImageReady, on
     }
   };
 
+  const handleCropSkip = () => {
+    // Use raw image as-is
+    setLocalImage({ dataUrl: rawImage });
+    setShowCropper(false);
+    setDividerX(0.5);
+
+    setUploading(true);
+    fetch(rawImage)
+      .then(r => r.blob())
+      .then(blob => {
+        const file = new File([blob], 'design.png', { type: 'image/png' });
+        return base44.integrations.Core.UploadFile({ file });
+      })
+      .then(result => { if (onImageReady) onImageReady(result.file_url); })
+      .catch(err => { console.error('Upload error:', err); alert('Upload failed.'); setLocalImage(null); })
+      .finally(() => setUploading(false));
+  };
+
   const handleDrop = (e) => {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
@@ -184,15 +226,22 @@ export default function DesignUploader({ onImageReady, onProcessedImageReady, on
 
   const handleClear = () => {
     setLocalImage(null);
+    setRawImage(null);
     setProcessedCanvas(null);
+    setShowCropper(false);
     if (onClear) onClear();
   };
 
-  // Divider drag logic
-  const startDrag = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
+  const handleReCrop = () => {
+    if (!rawImage) return;
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setRotation(0);
+    setShowCropper(true);
   };
+
+  // Divider drag logic
+  const startDrag = (e) => { e.preventDefault(); setIsDragging(true); };
 
   useEffect(() => {
     const onMove = (e) => {
@@ -215,6 +264,82 @@ export default function DesignUploader({ onImageReady, onProcessedImageReady, on
     };
   }, [isDragging]);
 
+  // ── Crop UI ──────────────────────────────────────────────────────────────────
+  if (showCropper && rawImage) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="font-black text-lg" style={{ color: tierColor, fontFamily: 'Barlow Condensed, sans-serif' }}>
+            Crop &amp; Adjust Your Image
+          </h3>
+          <button onClick={handleCropSkip} className="text-sm text-gray-400 underline">Skip</button>
+        </div>
+
+        {/* Cropper canvas */}
+        <div className="relative rounded-2xl overflow-hidden border-4" style={{ borderColor: tierColor, height: 320, backgroundColor: '#111' }}>
+          <Cropper
+            image={rawImage}
+            crop={crop}
+            zoom={zoom}
+            rotation={rotation}
+            aspect={undefined}
+            onCropChange={setCrop}
+            onZoomChange={setZoom}
+            onCropComplete={(_, pixels) => setCroppedAreaPixels(pixels)}
+          />
+        </div>
+
+        {/* Controls */}
+        <div className="space-y-3">
+          {/* Zoom */}
+          <div className="flex items-center gap-3">
+            <ZoomIn className="w-4 h-4 text-gray-400 flex-shrink-0" />
+            <span className="text-xs font-semibold text-gray-500 w-10">Zoom</span>
+            <input
+              type="range" min={1} max={3} step={0.01}
+              value={zoom}
+              onChange={(e) => setZoom(parseFloat(e.target.value))}
+              className="flex-1 h-2 rounded-full appearance-none cursor-pointer"
+              style={{ accentColor: tierColor }}
+            />
+            <span className="text-xs text-gray-400 w-10">{zoom.toFixed(1)}×</span>
+          </div>
+
+          {/* Rotation */}
+          <div className="flex items-center gap-3">
+            <RotateCw className="w-4 h-4 text-gray-400 flex-shrink-0" />
+            <span className="text-xs font-semibold text-gray-500 w-10">Rotate</span>
+            <input
+              type="range" min={-180} max={180} step={1}
+              value={rotation}
+              onChange={(e) => setRotation(parseInt(e.target.value))}
+              className="flex-1 h-2 rounded-full appearance-none cursor-pointer"
+              style={{ accentColor: tierColor }}
+            />
+            <span className="text-xs text-gray-400 w-10">{rotation}°</span>
+          </div>
+        </div>
+
+        <div className="flex gap-3">
+          <button
+            onClick={handleClear}
+            className="flex-1 py-3 rounded-xl border-2 border-gray-200 text-gray-500 font-bold text-sm hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleCropConfirm}
+            className="flex-1 py-3 rounded-xl font-black text-white text-sm"
+            style={{ backgroundColor: tierColor }}
+          >
+            <Crop className="w-4 h-4 inline mr-1" /> Apply Crop
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Upload UI ─────────────────────────────────────────────────────────────────
   if (!localImage) {
     return (
       <div>
@@ -240,9 +365,10 @@ export default function DesignUploader({ onImageReady, onProcessedImageReady, on
     );
   }
 
+  // ── Filter / Preview UI ───────────────────────────────────────────────────────
   return (
     <div className="space-y-3">
-      {/* Mode tabs */}
+      {/* Mode tabs + controls */}
       <div className="flex items-center gap-1 flex-wrap">
         {MODES.map(m => (
           <button
@@ -258,7 +384,16 @@ export default function DesignUploader({ onImageReady, onProcessedImageReady, on
             {m.label}
           </button>
         ))}
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2">
+          {rawImage && (
+            <button
+              onClick={handleReCrop}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold border-2 transition-all"
+              style={{ borderColor: tierColor, color: tierColor, backgroundColor: `${tierColor}10` }}
+            >
+              <Crop className="w-4 h-4" /> Re-crop
+            </button>
+          )}
           <button
             onClick={handleClear}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold border-2 border-red-200 text-red-500 bg-white hover:bg-red-50 transition-all"
@@ -289,7 +424,6 @@ export default function DesignUploader({ onImageReady, onProcessedImageReady, on
         className="relative rounded-2xl overflow-hidden border-4 select-none"
         style={{ borderColor: tierColor, cursor: isDragging ? 'ew-resize' : 'default', minHeight: '240px', backgroundColor: '#f3f4f6' }}
       >
-        {/* Upload progress overlay */}
         {uploading && (
           <div className="absolute inset-0 bg-black/40 z-20 flex flex-col items-center justify-center gap-3">
             <div className="w-10 h-10 rounded-full border-4 border-white/30 border-t-white animate-spin" />
@@ -297,28 +431,17 @@ export default function DesignUploader({ onImageReady, onProcessedImageReady, on
           </div>
         )}
 
-        {/* Hidden img for processing */}
-        <img
-          ref={imgRef}
-          src={localImage.dataUrl}
-          alt=""
-          className="hidden"
-          onLoad={processImage}
-        />
-
-        {/* Hidden canvases for processing */}
+        <img ref={imgRef} src={localImage.dataUrl} alt="" className="hidden" onLoad={processImage} />
         <canvas ref={originalCanvasRef} className="hidden" />
         <canvas ref={resultCanvasRef} className="hidden" />
 
-        {/* Original side (left) */}
+        {/* Original side */}
         <div className="absolute inset-0" style={{ clipPath: `inset(0 ${Math.round((1 - dividerX) * 100)}% 0 0)` }}>
           <img src={localImage.dataUrl} alt="Original" className="w-full h-full object-contain" />
-          <div className="absolute top-2 left-2 bg-black/60 text-white text-xs font-bold px-2 py-1 rounded">
-            ORIGINAL
-          </div>
+          <div className="absolute top-2 left-2 bg-black/60 text-white text-xs font-bold px-2 py-1 rounded">ORIGINAL</div>
         </div>
 
-        {/* Result side (right) - canvas processed */}
+        {/* Result side */}
         <div className="absolute inset-0" style={{ clipPath: `inset(0 0 0 ${Math.round(dividerX * 100)}%)` }}>
           {processedCanvas ? (
             <img
@@ -330,12 +453,10 @@ export default function DesignUploader({ onImageReady, onProcessedImageReady, on
           ) : (
             <img src={localImage.dataUrl} alt="Result" className="w-full h-full object-contain" />
           )}
-          <div className="absolute top-2 right-2 bg-black/60 text-white text-xs font-bold px-2 py-1 rounded">
-            RESULT
-          </div>
+          <div className="absolute top-2 right-2 bg-black/60 text-white text-xs font-bold px-2 py-1 rounded">RESULT</div>
         </div>
 
-        {/* Divider line + handle */}
+        {/* Divider */}
         <div
           className="absolute top-0 bottom-0 z-10 flex flex-col items-center justify-center"
           style={{ left: `calc(${dividerX * 100}% - 20px)`, width: '40px', cursor: 'ew-resize' }}
@@ -343,10 +464,7 @@ export default function DesignUploader({ onImageReady, onProcessedImageReady, on
           onTouchStart={startDrag}
         >
           <div className="w-0.5 h-full absolute" style={{ backgroundColor: tierColor, left: '50%', transform: 'translateX(-50%)' }} />
-          <div
-            className="w-9 h-9 rounded-full flex items-center justify-center shadow-lg z-10 border-2"
-            style={{ backgroundColor: '#fff', borderColor: tierColor }}
-          >
+          <div className="w-9 h-9 rounded-full flex items-center justify-center shadow-lg z-10 border-2" style={{ backgroundColor: '#fff', borderColor: tierColor }}>
             <ChevronLeft className="w-3 h-3" style={{ color: tierColor }} />
             <ChevronRight className="w-3 h-3" style={{ color: tierColor }} />
           </div>
