@@ -127,6 +127,74 @@ export default function About() {
             </motion.div>
           </motion.div>
 
+          {/* RBHensley.com Cross-Promo */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="mt-16 rounded-3xl overflow-hidden shadow-2xl"
+            style={{ border: '3px solid var(--brand-cyan)' }}
+          >
+            <div className="grid lg:grid-cols-2">
+              {/* Left — dark brand side */}
+              <div className="p-10 md:p-14 flex flex-col justify-center" style={{ backgroundColor: 'var(--brand-dark)' }}>
+                <div className="inline-block px-4 py-2 rounded-full mb-6 self-start" style={{ backgroundColor: 'rgba(36,240,160,0.15)', border: '1px solid rgba(36,240,160,0.4)' }}>
+                  <span className="text-sm font-semibold" style={{ color: 'var(--brand-cyan)' }}>The Artist Behind the Rugs</span>
+                </div>
+                <h3 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: 'var(--font-heading)' }}>
+                  Fine Art by<br />
+                  <span style={{ color: 'var(--brand-cyan)' }}>Ryan B. Hensley</span>
+                </h3>
+                <p className="text-gray-300 text-lg leading-relaxed mb-8" style={{ fontFamily: 'var(--font-body)' }}>
+                  Before the rugs, there was the canvas. Ryan's fine art practice spans large-scale painting, mixed media, and conceptual work rooted in his time at the School of the Art Institute of Chicago. Rugly is the floor — rbhensley.com is the wall.
+                </p>
+                <p className="text-gray-400 mb-8" style={{ fontFamily: 'var(--font-body)' }}>
+                  Explore original paintings, prints, and commissions from the same artist whose vision lives in every hand-painted rug.
+                </p>
+                <a
+                  href="https://www.rbhensley.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-3 self-start px-8 py-4 rounded-xl font-bold text-gray-900 text-lg transition-all hover:scale-105 hover:shadow-xl"
+                  style={{ backgroundColor: 'var(--brand-cyan)', fontFamily: 'var(--font-button)' }}
+                >
+                  Visit rbhensley.com
+                  <ArrowRight className="w-5 h-5" />
+                </a>
+              </div>
+
+              {/* Right — art preview collage */}
+              <div className="relative min-h-64 lg:min-h-0" style={{ backgroundColor: '#1a1a1a' }}>
+                <div className="absolute inset-0 flex items-center justify-center p-8">
+                  <div className="text-center">
+                    <div className="w-24 h-24 rounded-full mx-auto mb-6 flex items-center justify-center text-4xl shadow-2xl" style={{ backgroundColor: 'var(--brand-cyan)' }}>
+                      🎨
+                    </div>
+                    <p className="text-white text-2xl font-bold mb-2" style={{ fontFamily: 'var(--font-heading)' }}>Fine Art · Prints · Commissions</p>
+                    <p className="text-gray-400 text-base mb-6">Original work from the studio</p>
+                    <div className="grid grid-cols-3 gap-3 max-w-xs mx-auto">
+                      {['Large-Scale Paintings', 'Mixed Media', 'Art Prints', 'Commissions', 'Chicago SAIC Alumni', 'Michigan Based'].map((tag) => (
+                        <div key={tag} className="px-2 py-1 rounded-lg text-xs font-semibold text-center" style={{ backgroundColor: 'rgba(36,240,160,0.12)', color: 'var(--brand-cyan)', border: '1px solid rgba(36,240,160,0.25)' }}>
+                          {tag}
+                        </div>
+                      ))}
+                    </div>
+                    <a
+                      href="https://www.rbhensley.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-8 inline-block text-sm underline"
+                      style={{ color: 'var(--brand-cyan)' }}
+                    >
+                      rbhensley.com →
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
           {/* Featured Work */}
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
