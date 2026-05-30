@@ -62,46 +62,57 @@ function applyFilter(imageData, mode, threshold) {
 async function getCroppedImg(imageSrc, pixelCrop, rotation = 0) {
   const image = await new Promise((resolve, reject) => {
     const img = new Image();
+    img.crossOrigin = 'anonymous';
     img.onload = () => resolve(img);
     img.onerror = reject;
     img.src = imageSrc;
   });
 
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
+  // Step 1: draw the rotated image onto a large safe canvas
+  const rotRad = (rotation * Math.PI) / 180;
+  const { width: bBoxWidth, height: bBoxHeight } = getRotatedBoundingBox(image.width, image.height, rotRad);
 
-  const maxSize = Math.max(image.width, image.height);
-  const safeArea = 2 * ((maxSize / 2) * Math.sqrt(2));
+  const rotCanvas = document.createElement('canvas');
+  rotCanvas.width = bBoxWidth;
+  rotCanvas.height = bBoxHeight;
+  const rotCtx = rotCanvas.getContext('2d');
 
-  canvas.width = safeArea;
-  canvas.height = safeArea;
+  rotCtx.translate(bBoxWidth / 2, bBoxHeight / 2);
+  rotCtx.rotate(rotRad);
+  rotCtx.drawImage(image, -image.width / 2, -image.height / 2);
 
-  ctx.translate(safeArea / 2, safeArea / 2);
-  ctx.rotate((rotation * Math.PI) / 180);
-  ctx.translate(-safeArea / 2, -safeArea / 2);
+  // Step 2: crop out the selected region
+  const cropCanvas = document.createElement('canvas');
+  cropCanvas.width = pixelCrop.width;
+  cropCanvas.height = pixelCrop.height;
+  const cropCtx = cropCanvas.getContext('2d');
 
-  ctx.drawImage(
-    image,
-    safeArea / 2 - image.width / 2,
-    safeArea / 2 - image.height / 2
-  );
-
-  const data = ctx.getImageData(0, 0, safeArea, safeArea);
-
-  canvas.width = pixelCrop.width;
-  canvas.height = pixelCrop.height;
-
-  ctx.putImageData(
-    data,
-    Math.round(0 - safeArea / 2 + image.width / 2 - pixelCrop.x),
-    Math.round(0 - safeArea / 2 + image.height / 2 - pixelCrop.y)
+  cropCtx.drawImage(
+    rotCanvas,
+    pixelCrop.x,
+    pixelCrop.y,
+    pixelCrop.width,
+    pixelCrop.height,
+    0,
+    0,
+    pixelCrop.width,
+    pixelCrop.height
   );
 
   return new Promise((resolve) => {
-    canvas.toBlob((blob) => {
+    cropCanvas.toBlob((blob) => {
       resolve(URL.createObjectURL(blob));
     }, 'image/png');
   });
+}
+
+function getRotatedBoundingBox(width, height, rotRad) {
+  const sin = Math.abs(Math.sin(rotRad));
+  const cos = Math.abs(Math.cos(rotRad));
+  return {
+    width: Math.round(width * cos + height * sin),
+    height: Math.round(width * sin + height * cos),
+  };
 }
 
 export default function DesignUploader({ onImageReady, onProcessedImageReady, onClear, tierColor = '#4075ff' }) {
