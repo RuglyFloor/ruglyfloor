@@ -42,7 +42,7 @@ export default function AdminPortal() {
   React.useEffect(() => {
     const fetchOrderCount = async () => {
       try {
-        const orders = await base44.entities.Order.filter({ payment_status: 'paid' });
+        const orders = await base44.entities.Order.filter({ status: 'paid' });
         setOrderCount(orders.length);
       } catch (error) {
         console.error('Failed to fetch order count:', error);

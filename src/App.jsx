@@ -19,6 +19,7 @@ import AdminNewQuote from './pages/AdminNewQuote';
 import CampPromo from './pages/CampPromo';
 import AccountSettings from './pages/AccountSettings';
 import AdminBuilderAnalytics from './pages/AdminBuilderAnalytics';
+// AdminDashboard removed — superseded by AdminPortal
 import React, { Suspense, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 

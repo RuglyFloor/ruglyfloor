@@ -39,11 +39,11 @@ export default function AdminDashboard() {
   }
 
   const totalRevenue = orders?.reduce((sum, order) => 
-    order.payment_status === 'paid' ? sum + order.total_amount : sum, 0
+    order.status === 'paid' || order.status === 'in_production' || order.status === 'shipped' ? sum + (order.total_amount || 0) : sum, 0
   ) || 0;
 
-  const pendingOrders = orders?.filter(o => o.status === 'pending' || o.status === 'rug_ordered').length || 0;
-  const completedOrders = orders?.filter(o => o.status === 'completed').length || 0;
+  const pendingOrders = orders?.filter(o => o.status === 'pending_payment').length || 0;
+  const completedOrders = orders?.filter(o => o.status === 'shipped').length || 0;
   const availableProducts = products?.filter(p => p.in_stock).length || 0;
 
   return (

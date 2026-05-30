@@ -2,7 +2,6 @@ import React from 'react';
 import __Layout from './Layout.jsx';
 
 const About = React.lazy(() => import('./pages/About'));
-const AdminDashboard = React.lazy(() => import('./pages/AdminDashboard'));
 const AdminInbox = React.lazy(() => import('./pages/AdminInbox'));
 const AdminLogin = React.lazy(() => import('./pages/AdminLogin'));
 const AdminMarketing = React.lazy(() => import('./pages/AdminMarketing'));
@@ -34,7 +33,6 @@ const TrackOrder = React.lazy(() => import('./pages/TrackOrder'));
 
 export const PAGES = {
     "About": About,
-    "AdminDashboard": AdminDashboard,
     "AdminInbox": AdminInbox,
     "AdminLogin": AdminLogin,
     "AdminMarketing": AdminMarketing,

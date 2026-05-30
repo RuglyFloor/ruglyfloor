@@ -10,13 +10,12 @@ import { format } from 'date-fns';
 import SEOHead from '../components/seo/SEOHead';
 
 const statusColors = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  rug_ordered: 'bg-blue-100 text-blue-800',
+  pending_payment: 'bg-yellow-100 text-yellow-800',
+  paid: 'bg-green-100 text-green-800',
   in_production: 'bg-purple-100 text-purple-800',
-  painting: 'bg-indigo-100 text-indigo-800',
-  shipped: 'bg-green-100 text-green-800',
-  completed: 'bg-gray-100 text-gray-800',
-  cancelled: 'bg-red-100 text-red-800'
+  shipped: 'bg-blue-100 text-blue-800',
+  cancelled: 'bg-red-100 text-red-800',
+  refunded: 'bg-gray-100 text-gray-800'
 };
 
 export default function Orders() {
