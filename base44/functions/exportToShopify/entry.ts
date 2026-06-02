@@ -13,35 +13,14 @@ Deno.serve(async (req) => {
     const product = products[0];
 
     const shopDomain = (Deno.env.get('SHOPIFY_SHOP_DOMAIN') || '').replace(/^https?:\/\//, '').replace(/\/$/, '');
-    const clientId = Deno.env.get('SHOPIFY_CLIENT_ID');
-    const clientSecret = Deno.env.get('SHOPIFY_CLIENT_SECRET');
+    const accessToken = Deno.env.get('SHOPIFY_ACCESS_TOKEN');
 
-    if (!shopDomain || !clientId || !clientSecret) {
+    if (!shopDomain || !accessToken) {
       return Response.json({
         error: 'Shopify credentials not configured',
-        details: 'Set SHOPIFY_SHOP_DOMAIN, SHOPIFY_CLIENT_ID, and SHOPIFY_CLIENT_SECRET secrets'
+        details: 'Set SHOPIFY_SHOP_DOMAIN and SHOPIFY_ACCESS_TOKEN secrets'
       }, { status: 400 });
     }
-
-    // Exchange Client ID & Secret for a fresh Access Token using Client Credentials Grant
-    const tokenResponse = await fetch(`https://${shopDomain}/admin/oauth/access_token`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        client_id: clientId,
-        client_secret: clientSecret,
-        grant_type: 'client_credentials'
-      })
-    });
-
-    const tokenData = await tokenResponse.json();
-    console.log('Token exchange response:', tokenResponse.status, JSON.stringify(tokenData));
-
-    if (!tokenResponse.ok) {
-      return Response.json({ error: 'Shopify token exchange failed', details: tokenData }, { status: tokenResponse.status });
-    }
-
-    const accessToken = tokenData.access_token;
 
     // Format product for Shopify
     const shopifyProduct = {
