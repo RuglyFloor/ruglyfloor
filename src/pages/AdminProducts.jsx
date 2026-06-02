@@ -451,20 +451,20 @@ MEASUREMENT LABELS (only 2 labels, no other text):
               <RefreshCw className={`w-4 h-4 ${syncingShopify === 'all' ? 'animate-spin' : ''}`} />
               {syncingShopify === 'all' ? 'Syncing...' : 'Sync All to Shopify'}
             </Button>
-          <Dialog open={isAddingProduct || editingProduct !== null} onOpenChange={(open) => {
-            if (!open) {
-              setIsAddingProduct(false);
-              setEditingProduct(null);
-              resetForm();
-            }
-          }}>
-            <DialogTrigger asChild>
-              <Button onClick={() => setIsAddingProduct(true)} className="gap-2">
-                <Plus className="w-4 h-4" />
-                Add New Product
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <Dialog open={isAddingProduct || editingProduct !== null} onOpenChange={(open) => {
+              if (!open) {
+                setIsAddingProduct(false);
+                setEditingProduct(null);
+                resetForm();
+              }
+            }}>
+              <DialogTrigger asChild>
+                <Button onClick={() => setIsAddingProduct(true)} className="gap-2">
+                  <Plus className="w-4 h-4" />
+                  Add New Product
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>{editingProduct ? 'Edit Product' : 'Add New Product'}</DialogTitle>
               </DialogHeader>
@@ -708,7 +708,7 @@ MEASUREMENT LABELS (only 2 labels, no other text):
                 </div>
               </form>
             </DialogContent>
-          </Dialog>
+            </Dialog>
           </div>
         </div>
 

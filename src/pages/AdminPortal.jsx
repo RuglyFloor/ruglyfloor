@@ -51,6 +51,31 @@ export default function AdminPortal() {
     fetchOrderCount();
   }, []);
 
+  const [syncingShopify, setSyncingShopify] = React.useState(false);
+  const [shopifyResult, setShopifyResult] = React.useState(null);
+
+  const handleSyncShopify = async () => {
+    setSyncingShopify(true);
+    setShopifyResult(null);
+    try {
+      const products = await base44.entities.Product.list();
+      let success = 0, failed = 0;
+      for (const product of products) {
+        try {
+          await base44.functions.invoke('exportToShopify', { product_id: product.id });
+          success++;
+        } catch {
+          failed++;
+        }
+      }
+      setShopifyResult({ synced: success, failed });
+    } catch (error) {
+      setShopifyResult({ error: error.message });
+    } finally {
+      setSyncingShopify(false);
+    }
+  };
+
   const adminSections = [
     {
       title: 'Products',
@@ -108,6 +133,26 @@ export default function AdminPortal() {
           <Button variant="outline" onClick={handleLogout}>
             <LogOut className="w-4 h-4 mr-2" />
             Logout
+          </Button>
+        </div>
+
+        {/* Shopify Sync */}
+        <div className="mb-4 p-4 bg-white rounded-xl border flex items-center gap-4">
+          <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center flex-shrink-0">
+            <Package className="w-5 h-5 text-white" />
+          </div>
+          <div className="flex-1">
+            <p className="font-semibold text-gray-800">Shopify</p>
+            {shopifyResult && !shopifyResult.error && (
+              <p className="text-sm text-green-600">✓ Synced {shopifyResult.synced} products{shopifyResult.failed > 0 ? `, ${shopifyResult.failed} failed` : ''}</p>
+            )}
+            {shopifyResult?.error && (
+              <p className="text-sm text-red-500">Error: {shopifyResult.error}</p>
+            )}
+            {!shopifyResult && <p className="text-sm text-gray-500">Sync all products to your Shopify store</p>}
+          </div>
+          <Button onClick={handleSyncShopify} disabled={syncingShopify} variant="outline" size="sm">
+            {syncingShopify ? 'Syncing...' : 'Sync Now'}
           </Button>
         </div>
 
