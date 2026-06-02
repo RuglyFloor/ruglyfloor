@@ -1,26 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
-// Fetch a short-lived access token using client credentials grant
-async function getShopifyAccessToken(shop, clientId, clientSecret) {
-  const res = await fetch(`https://${shop}/admin/oauth/access_token`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      grant_type: 'client_credentials',
-      client_id: clientId,
-      client_secret: clientSecret
-    })
-  });
-
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Failed to get Shopify access token: ${err}`);
-  }
-
-  const data = await res.json();
-  return data.access_token;
-}
-
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -34,18 +13,14 @@ Deno.serve(async (req) => {
     const product = products[0];
 
     let shopDomain = (Deno.env.get('SHOPIFY_SHOP_DOMAIN') || '').replace(/^https?:\/\//, '').replace(/\/$/, '');
-    const clientId = Deno.env.get('SHOPIFY_CLIENT_ID');
-    const clientSecret = Deno.env.get('SHOPIFY_CLIENT_SECRET');
+    const accessToken = Deno.env.get('SHOPIFY_ACCESS_TOKEN');
 
-    if (!shopDomain || !clientId || !clientSecret) {
+    if (!shopDomain || !accessToken) {
       return Response.json({
         error: 'Shopify credentials not configured',
-        details: 'Set SHOPIFY_SHOP_DOMAIN, SHOPIFY_CLIENT_ID, and SHOPIFY_CLIENT_SECRET secrets'
+        details: 'Set SHOPIFY_SHOP_DOMAIN and SHOPIFY_ACCESS_TOKEN secrets'
       }, { status: 400 });
     }
-
-    // Get a fresh access token
-    const accessToken = await getShopifyAccessToken(shopDomain, clientId, clientSecret);
 
     // Format product for Shopify
     const shopifyProduct = {
