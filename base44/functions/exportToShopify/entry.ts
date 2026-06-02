@@ -12,15 +12,36 @@ Deno.serve(async (req) => {
 
     const product = products[0];
 
-    let shopDomain = (Deno.env.get('SHOPIFY_SHOP_DOMAIN') || '').replace(/^https?:\/\//, '').replace(/\/$/, '');
-    const accessToken = Deno.env.get('SHOPIFY_ACCESS_TOKEN');
+    const shopDomain = (Deno.env.get('SHOPIFY_SHOP_DOMAIN') || '').replace(/^https?:\/\//, '').replace(/\/$/, '');
+    const clientId = Deno.env.get('SHOPIFY_CLIENT_ID');
+    const clientSecret = Deno.env.get('SHOPIFY_CLIENT_SECRET');
 
-    if (!shopDomain || !accessToken) {
+    if (!shopDomain || !clientId || !clientSecret) {
       return Response.json({
         error: 'Shopify credentials not configured',
-        details: 'Set SHOPIFY_SHOP_DOMAIN and SHOPIFY_ACCESS_TOKEN secrets'
+        details: 'Set SHOPIFY_SHOP_DOMAIN, SHOPIFY_CLIENT_ID, and SHOPIFY_CLIENT_SECRET secrets'
       }, { status: 400 });
     }
+
+    // Exchange Client ID & Secret for a fresh Access Token using Client Credentials Grant
+    const tokenResponse = await fetch(`https://${shopDomain}/admin/oauth/access_token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        client_id: clientId,
+        client_secret: clientSecret,
+        grant_type: 'client_credentials'
+      })
+    });
+
+    const tokenData = await tokenResponse.json();
+    console.log('Token exchange response:', tokenResponse.status, JSON.stringify(tokenData));
+
+    if (!tokenResponse.ok) {
+      return Response.json({ error: 'Shopify token exchange failed', details: tokenData }, { status: tokenResponse.status });
+    }
+
+    const accessToken = tokenData.access_token;
 
     // Format product for Shopify
     const shopifyProduct = {
@@ -30,47 +51,27 @@ Deno.serve(async (req) => {
         vendor: 'Rugly',
         product_type: 'Rug',
         tags: ['custom rug', 'hand painted', product.category].filter(Boolean).join(', '),
-        images: (product.all_images || []).map(img => ({
+        images: (product.all_images || []).filter(img => img.selected !== false).map(img => ({
           src: img.url || img.original_url
         })),
-        variants: [
-          {
-            sku: product.product_number,
-            price: product.price.toString(),
-            inventory_quantity: product.in_stock ? 1 : 0,
-            inventory_management: 'shopify',
-            weight: 3,
-            weight_unit: 'lb'
-          }
-        ],
+        variants: [{
+          sku: product.product_number,
+          price: product.price.toString(),
+          inventory_quantity: product.in_stock ? 1 : 0,
+          inventory_management: 'shopify',
+          weight: 3,
+          weight_unit: 'lb'
+        }],
         metafields: [
-          {
-            namespace: 'custom',
-            key: 'material',
-            value: product.material || '',
-            type: 'single_line_text_field'
-          },
-          {
-            namespace: 'custom',
-            key: 'size',
-            value: product.size || '',
-            type: 'single_line_text_field'
-          },
-          {
-            namespace: 'custom',
-            key: 'care_instructions',
-            value: product.care_instructions || '',
-            type: 'multi_line_text_field'
-          }
+          { namespace: 'custom', key: 'material', value: product.material || '', type: 'single_line_text_field' },
+          { namespace: 'custom', key: 'size', value: product.size || '', type: 'single_line_text_field' },
+          { namespace: 'custom', key: 'care_instructions', value: product.care_instructions || '', type: 'multi_line_text_field' }
         ]
       }
     };
 
     // Check if product already exists on Shopify
-    const existingListings = await base44.asServiceRole.entities.ChannelListing.filter({
-      product_id: product_id,
-      channel: 'shopify'
-    });
+    const existingListings = await base44.asServiceRole.entities.ChannelListing.filter({ product_id, channel: 'shopify' });
 
     let endpoint;
     let method;
@@ -98,23 +99,17 @@ Deno.serve(async (req) => {
 
     if (!response.ok) {
       console.error('Shopify export error:', result);
-
       if (existingListings && existingListings.length > 0) {
         await base44.asServiceRole.entities.ChannelListing.update(existingListings[0].id, {
           sync_status: 'failed',
-          error_message: result.errors || JSON.stringify(result)
+          error_message: JSON.stringify(result.errors || result)
         });
       }
-
-      return Response.json({
-        error: 'Shopify export failed',
-        details: result
-      }, { status: response.status });
+      return Response.json({ error: 'Shopify export failed', details: result }, { status: response.status });
     }
 
     const shopifyProductId = result.product.id;
-    const handle = result.product.handle;
-    const listingUrl = `https://${shopDomain}/products/${handle}`;
+    const listingUrl = `https://${shopDomain}/products/${result.product.handle}`;
 
     if (existingListings && existingListings.length > 0) {
       await base44.asServiceRole.entities.ChannelListing.update(existingListings[0].id, {
@@ -127,7 +122,7 @@ Deno.serve(async (req) => {
       });
     } else {
       await base44.asServiceRole.entities.ChannelListing.create({
-        product_id: product_id,
+        product_id,
         channel: 'shopify',
         channel_product_id: shopifyProductId.toString(),
         listing_url: listingUrl,
@@ -137,18 +132,10 @@ Deno.serve(async (req) => {
       });
     }
 
-    return Response.json({
-      success: true,
-      message: 'Product exported to Shopify successfully',
-      product_id: shopifyProductId,
-      listing_url: listingUrl
-    });
+    return Response.json({ success: true, product_id: shopifyProductId, listing_url: listingUrl });
 
   } catch (error) {
     console.error('Export to Shopify error:', error);
-    return Response.json({
-      error: error.message,
-      stack: error.stack
-    }, { status: 500 });
+    return Response.json({ error: error.message }, { status: 500 });
   }
 });
