@@ -1,4 +1,25 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+
+// Fetch a short-lived access token using client credentials grant
+async function getShopifyAccessToken(shop, clientId, clientSecret) {
+  const res = await fetch(`https://${shop}/admin/oauth/access_token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'client_credentials',
+      client_id: clientId,
+      client_secret: clientSecret
+    })
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Failed to get Shopify access token: ${err}`);
+  }
+
+  const data = await res.json();
+  return data.access_token;
+}
 
 Deno.serve(async (req) => {
   try {
@@ -12,17 +33,19 @@ Deno.serve(async (req) => {
 
     const product = products[0];
 
-    let shopDomain = Deno.env.get('SHOPIFY_SHOP_DOMAIN') || '';
-    // Strip any protocol prefix so we can build the URL cleanly
-    shopDomain = shopDomain.replace(/^https?:\/\//, '').replace(/\/$/, '');
-    const accessToken = Deno.env.get('SHOPIFY_ACCESS_TOKEN');
+    let shopDomain = (Deno.env.get('SHOPIFY_SHOP_DOMAIN') || '').replace(/^https?:\/\//, '').replace(/\/$/, '');
+    const clientId = Deno.env.get('SHOPIFY_CLIENT_ID');
+    const clientSecret = Deno.env.get('SHOPIFY_CLIENT_SECRET');
 
-    if (!shopDomain || !accessToken) {
-      return Response.json({ 
+    if (!shopDomain || !clientId || !clientSecret) {
+      return Response.json({
         error: 'Shopify credentials not configured',
-        details: 'Set SHOPIFY_SHOP_DOMAIN and SHOPIFY_ACCESS_TOKEN secrets'
+        details: 'Set SHOPIFY_SHOP_DOMAIN, SHOPIFY_CLIENT_ID, and SHOPIFY_CLIENT_SECRET secrets'
       }, { status: 400 });
     }
+
+    // Get a fresh access token
+    const accessToken = await getShopifyAccessToken(shopDomain, clientId, clientSecret);
 
     // Format product for Shopify
     const shopifyProduct = {
@@ -68,30 +91,27 @@ Deno.serve(async (req) => {
       }
     };
 
-    // Check if product exists on Shopify
+    // Check if product already exists on Shopify
     const existingListings = await base44.asServiceRole.entities.ChannelListing.filter({
       product_id: product_id,
       channel: 'shopify'
     });
 
-    let response;
     let endpoint;
     let method;
 
     if (existingListings && existingListings.length > 0 && existingListings[0].channel_product_id) {
-      // Update existing product
       const shopifyProductId = existingListings[0].channel_product_id;
       endpoint = `https://${shopDomain}/admin/api/2024-01/products/${shopifyProductId}.json`;
       method = 'PUT';
       shopifyProduct.product.id = shopifyProductId;
     } else {
-      // Create new product
       endpoint = `https://${shopDomain}/admin/api/2024-01/products.json`;
       method = 'POST';
     }
 
-    response = await fetch(endpoint, {
-      method: method,
+    const response = await fetch(endpoint, {
+      method,
       headers: {
         'Content-Type': 'application/json',
         'X-Shopify-Access-Token': accessToken
@@ -103,7 +123,7 @@ Deno.serve(async (req) => {
 
     if (!response.ok) {
       console.error('Shopify export error:', result);
-      
+
       if (existingListings && existingListings.length > 0) {
         await base44.asServiceRole.entities.ChannelListing.update(existingListings[0].id, {
           sync_status: 'failed',
@@ -111,7 +131,7 @@ Deno.serve(async (req) => {
         });
       }
 
-      return Response.json({ 
+      return Response.json({
         error: 'Shopify export failed',
         details: result
       }, { status: response.status });
@@ -121,7 +141,6 @@ Deno.serve(async (req) => {
     const handle = result.product.handle;
     const listingUrl = `https://${shopDomain}/products/${handle}`;
 
-    // Update/create channel listing
     if (existingListings && existingListings.length > 0) {
       await base44.asServiceRole.entities.ChannelListing.update(existingListings[0].id, {
         channel_product_id: shopifyProductId.toString(),
@@ -143,7 +162,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    return Response.json({ 
+    return Response.json({
       success: true,
       message: 'Product exported to Shopify successfully',
       product_id: shopifyProductId,
@@ -152,7 +171,7 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     console.error('Export to Shopify error:', error);
-    return Response.json({ 
+    return Response.json({
       error: error.message,
       stack: error.stack
     }, { status: 500 });
