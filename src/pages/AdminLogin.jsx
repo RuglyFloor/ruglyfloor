@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Lock } from 'lucide-react';
 import { createPageUrl } from '../utils';
 
-const ADMIN_PASSWORD = 'rugly2026'; // Change this to your secure password
+const ADMIN_PASSWORD = 'rugly2026ihatemybabydady'; // Change this to your secure password
 
 export default function AdminLogin() {
   const navigate = useNavigate();
