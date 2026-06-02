@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Package, Plus, Edit, Trash2 } from 'lucide-react';
+import { Package, Plus, Edit, Trash2, RefreshCw, Upload } from 'lucide-react';
 import AdminProtected from '../components/AdminProtected';
 import ImageManager from '../components/admin/ImageManager';
 
@@ -25,6 +25,7 @@ function AdminProductsContent() {
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [syncingShopify, setSyncingShopify] = useState(null); // product id or 'all'
   const [generatingAI, setGeneratingAI] = useState(false);
   const [aiSuggestion, setAiSuggestion] = useState('');
   const [aiSettings, setAiSettings] = useState({
@@ -403,6 +404,35 @@ MEASUREMENT LABELS (only 2 labels, no other text):
     });
   };
 
+  const handleSyncToShopify = async (product) => {
+    setSyncingShopify(product.id);
+    try {
+      const response = await base44.functions.invoke('exportToShopify', { product_id: product.id });
+      alert(`✅ "${product.name}" synced to Shopify!\n${response.data.listing_url || ''}`);
+    } catch (error) {
+      alert('❌ Shopify sync failed: ' + error.message);
+    } finally {
+      setSyncingShopify(null);
+    }
+  };
+
+  const handleSyncAllToShopify = async () => {
+    if (!products || products.length === 0) return;
+    if (!confirm(`Sync all ${products.length} products to Shopify?`)) return;
+    setSyncingShopify('all');
+    let success = 0, failed = 0;
+    for (const product of products) {
+      try {
+        await base44.functions.invoke('exportToShopify', { product_id: product.id });
+        success++;
+      } catch {
+        failed++;
+      }
+    }
+    setSyncingShopify(null);
+    alert(`Shopify sync complete!\n✅ ${success} synced${failed > 0 ? `\n❌ ${failed} failed` : ''}`);
+  };
+
   return (
     <div className="min-h-screen py-12 px-6 bg-gray-50">
       <div className="max-w-7xl mx-auto">
@@ -411,6 +441,16 @@ MEASUREMENT LABELS (only 2 labels, no other text):
             <h1 className="text-4xl font-bold mb-2">Product Management</h1>
             <p className="text-gray-600">Manage your original Rugly inventory</p>
           </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={handleSyncAllToShopify}
+              disabled={syncingShopify === 'all'}
+              className="gap-2"
+            >
+              <RefreshCw className={`w-4 h-4 ${syncingShopify === 'all' ? 'animate-spin' : ''}`} />
+              {syncingShopify === 'all' ? 'Syncing...' : 'Sync All to Shopify'}
+            </Button>
           <Dialog open={isAddingProduct || editingProduct !== null} onOpenChange={(open) => {
             if (!open) {
               setIsAddingProduct(false);
@@ -669,6 +709,7 @@ MEASUREMENT LABELS (only 2 labels, no other text):
               </form>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
 
         {isLoading ? (
@@ -727,7 +768,7 @@ MEASUREMENT LABELS (only 2 labels, no other text):
                     <span className="text-2xl font-bold text-blue-600">${product.price}</span>
                     <span className="text-sm text-gray-500">{product.size}</span>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap">
                     <Button
                       variant="outline"
                       size="sm"
@@ -744,6 +785,18 @@ MEASUREMENT LABELS (only 2 labels, no other text):
                       className="flex-1"
                     >
                       {product.in_stock ? 'Mark Sold' : 'Mark Available'}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleSyncToShopify(product)}
+                      disabled={syncingShopify === product.id}
+                      className="gap-1 text-green-700 border-green-300 hover:bg-green-50"
+                      title="Sync to Shopify"
+                    >
+                      {syncingShopify === product.id
+                        ? <RefreshCw className="w-3 h-3 animate-spin" />
+                        : <Upload className="w-3 h-3" />}
                     </Button>
                     <Button
                       variant="outline"
