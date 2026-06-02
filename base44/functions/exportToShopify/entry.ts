@@ -12,7 +12,9 @@ Deno.serve(async (req) => {
 
     const product = products[0];
 
-    const shopDomain = Deno.env.get('SHOPIFY_SHOP_DOMAIN');
+    let shopDomain = Deno.env.get('SHOPIFY_SHOP_DOMAIN') || '';
+    // Strip any protocol prefix so we can build the URL cleanly
+    shopDomain = shopDomain.replace(/^https?:\/\//, '').replace(/\/$/, '');
     const accessToken = Deno.env.get('SHOPIFY_ACCESS_TOKEN');
 
     if (!shopDomain || !accessToken) {
