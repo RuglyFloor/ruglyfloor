@@ -336,6 +336,7 @@ export default function CustomBuilder() {
     paintColorHex: paintHex,
     hasSecondColor,
     secondPaintColorHex: hasSecondColor ? secondHex : null,
+    baseColorHex: baseColor?.hex || null,
   };
 
   return (

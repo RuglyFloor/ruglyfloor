@@ -9,7 +9,7 @@ export default function RugPreviewGenerator({ config, tier, sizeObj, BASE_COLORS
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const baseColorHex = BASE_COLORS.find(c => c.name === config.baseColor)?.hex || '#ffffff';
+  const baseColorHex = config.baseColorHex || BASE_COLORS.find(c => c.name === config.baseColor)?.hex || '#ffffff';
   const paintColorHex = config.paintColorHex || '#000000';
   const secondPaintColorHex = config.hasSecondColor ? (config.secondPaintColorHex || null) : null;
   const tierColor = tier?.color || '#4075ff';
@@ -20,66 +20,54 @@ export default function RugPreviewGenerator({ config, tier, sizeObj, BASE_COLORS
     setError(null);
 
     try {
-      // Upload the stencil dataUrl to get a public URL for the AI
-      const res = await fetch(config.stencilDataUrl);
-      const blob = await res.blob();
-      const stencilFile = new File([blob], 'stencil.png', { type: 'image/png' });
-      const uploadResult = await base44.integrations.Core.UploadFile({ file: stencilFile });
-      const stencilUrl = uploadResult.file_url;
-
       const colorDescription = secondPaintColorHex
-        ? `primary paint color ${paintColorHex} and secondary paint color ${secondPaintColorHex}`
-        : `paint color ${paintColorHex}`;
+        ? `${paintColorHex} (primary) and ${secondPaintColorHex} (secondary)`
+        : paintColorHex;
 
       const extraInstructions = designInstructions?.trim()
-        ? `\n\nADDITIONAL CUSTOMER INSTRUCTIONS (follow exactly): ${designInstructions.trim()}`
+        ? `\n\nADDITIONAL INSTRUCTIONS FROM CUSTOMER (follow exactly): ${designInstructions.trim()}`
         : '';
 
       const sizeScaleMap = {
-        '2x3': 'small accent rug — about the size of a doormat, roughly 1/6 the visible floor area',
-        '3x5': 'small area rug — covers roughly 1/4 of a typical room\'s visible floor area',
-        '4x6': 'medium area rug — covers roughly 1/3 of the visible floor area, fits under a coffee table',
-        '5x7': 'large area rug — covers roughly 1/2 the visible floor area, anchors a full seating area',
-        '6x9': 'extra-large area rug — covers roughly 2/3 of the visible floor area, extends under sofa legs',
+        '2x3': 'small accent rug — doormat-sized, roughly 1/6 of the visible floor area',
+        '3x5': 'small area rug — covers roughly 1/4 of a typical room\'s visible floor',
+        '4x6': 'medium area rug — covers roughly 1/3 of the visible floor, fits under a coffee table',
+        '5x7': 'large area rug — covers roughly 1/2 the visible floor, anchors a full seating area',
+        '6x9': 'extra-large area rug — covers roughly 2/3 of the visible floor, extends under sofa legs',
       };
       const sizeGuide = sizeScaleMap[sizeObj?.id] || `${sizeObj?.measurement || ''} rug`;
 
-      const prompt = `You are a photorealistic rug visualization artist. Your job: composite the customer's stencil design onto the rug in the room photo with pixel-perfect accuracy.
+      // Build reference image list: room scene + original customer image (best fidelity)
+      // Also upload stencil as a supplementary shape reference
+      const referenceUrls = [RUG_ROOM_IMAGE];
+      if (config.imageUrl) {
+        referenceUrls.push(config.imageUrl);
+      } else {
+        // Fallback: upload stencil if no original image URL
+        const res = await fetch(config.stencilDataUrl);
+        const blob = await res.blob();
+        const stencilFile = new File([blob], 'stencil.png', { type: 'image/png' });
+        const uploadResult = await base44.integrations.Core.UploadFile({ file: stencilFile });
+        referenceUrls.push(uploadResult.file_url);
+      }
 
-STEP 1 — STENCIL FIDELITY (highest priority):
-The second reference image is the STENCIL/TRACE of the customer's design (${config.stencilMode || 'edge-detected'} filter). This is the EXACT pattern to paint — every line, shape, and silhouette in the stencil must appear on the rug with zero deviation. Treat it as a blueprint.
-- Copy EVERY shape, line, and silhouette from the stencil EXACTLY as-is onto the rug surface.
-- Do NOT simplify, smooth, stylize, or re-interpret the design. Mirror it exactly.
-- The painted design on the rug must be IDENTICAL in composition to the stencil image.
+      const prompt = `Photorealistic interior design photo. Place a custom hand-painted area rug on the floor of the room shown in image 1 (keep all room elements — furniture, walls, floor — exactly as they appear).
 
-STEP 2 — COLOR (critical, exact hex values):
-- Rug base / background: fill the entire rug field with EXACTLY hex ${baseColorHex} (${config.baseColor}). No variation.
-- Primary paint color: all stenciled design elements painted in EXACTLY hex ${paintColorHex}.${secondPaintColorHex ? `\n- Secondary paint color: secondary stencil elements painted in EXACTLY hex ${secondPaintColorHex}.` : ''}
-- No blending, no approximation — match hex values precisely.
+THE RUG DESIGN:
+- The rug design comes from image 2 (the customer's uploaded artwork/photo). Reproduce that design AS-IS on the rug surface — same subject, same composition, same proportions. Do NOT invent or replace the design.
+- Paint the design in ${colorDescription} on a solid ${config.baseColor} (${baseColorHex}) background.
+- The design should look hand-painted with subtle brush texture, not digitally printed.${secondPaintColorHex ? `\n- Use ${paintColorHex} for the main design elements and ${secondPaintColorHex} for secondary/accent elements.` : ''}
 
-STEP 3 — RUG SIZE & ROOM SCALE (critical):
-The rug is a ${sizeObj?.measurement || ''} (${sizeGuide}).
-- The rug must occupy exactly this proportion of the floor in the room scene.
-- A 2x3 rug looks like a doormat. A 5x7 rug fills most of the seating area. Scale accordingly.
-- Show the correct aspect ratio: width-to-length ratio must match ${sizeObj?.measurement || ''}.
-- The rug lies flat on the floor with correct perspective foreshortening (slight overhead angle).
+RUG SIZE & PLACEMENT:
+- Rug size: ${sizeObj?.measurement || ''} (${sizeGuide})
+- Lies flat on the floor in correct perspective, occupying the appropriate proportion of the room floor
+- Subtle drop shadow around rug edges
 
-STEP 4 — PAINTING STYLE:
-- The design looks hand-painted with subtle brush texture — not digitally printed.
-- Paint strokes follow the outlines of the stencil shapes.
-
-STEP 5 — BACKGROUND (unchanged):
-- Keep every element outside the rug (sofa, guitar, bookshelf, floor, walls) EXACTLY as in the reference room photo.
-- Only the rug changes.
-
-STEP 6 — CLEAN OUTPUT:
-- Zero text, labels, watermarks, template codes, dashed borders, or annotations anywhere in the image.
-
-Final: a photorealistic room with a correctly-scaled ${sizeObj?.measurement || ''} ${tier?.label || ''} rug, showing the stencil design painted exactly in ${colorDescription} on a ${config.baseColor} (${baseColorHex}) base.${extraInstructions}`;
+OUTPUT: A single photorealistic room photo with the designed rug clearly visible. No text, labels, watermarks, or borders.${extraInstructions}`;
 
       const result = await base44.integrations.Core.GenerateImage({
         prompt,
-        existing_image_urls: [RUG_ROOM_IMAGE, stencilUrl],
+        existing_image_urls: referenceUrls,
       });
 
       setPreviewUrl(result.url);
