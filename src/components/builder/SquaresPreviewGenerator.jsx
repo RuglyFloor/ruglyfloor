@@ -50,41 +50,20 @@ export default function SquaresPreviewGenerator({ gridData, stencilDataUrl, sten
         ? `\n\nCUSTOMER INSTRUCTIONS: ${designInstructions.trim()}`
         : '';
 
-      // Build unique color list with names for clearer AI instructions
-      const uniqueColors = [];
-      const seenColors = new Set();
-      gridData.grid.forEach(row => row.forEach(hex => {
-        if (!seenColors.has(hex)) {
-          seenColors.add(hex);
-          uniqueColors.push(hex);
-        }
-      }));
-
-      // Build column-by-column description (since columns are the dominant pattern)
-      const colDescriptions = Array.from({ length: gridData.cols }, (_, c) => {
-        const colColors = gridData.grid.map(row => row[c]);
-        // Check if all same color
-        const allSame = colColors.every(cc => cc === colColors[0]);
-        if (allSame) return `Column ${c+1} (from left): ALL tiles = ${colColors[0]}`;
-        return `Column ${c+1} (from left): ${colColors.map((cc, r) => `row${r+1}=${cc}`).join(', ')}`;
-      }).join('\n');
-
-      const paintColorDesc = stencilPaintColor
-        ? `${stencilPaintColorName || ''} (hex ${stencilPaintColor})`
-        : 'as shown in the stencil';
+      const paintColorDesc = stencilPaintColorName || 'white';
 
       const prompt = `Photorealistic room photo showing custom interlocking foam floor tiles on a hardwood floor, modern interior, slight overhead angle showing all tiles.
 
 TILE GRID: ${gridData.cols} columns wide × ${gridData.rows} rows tall. Each tile is 24"×24" foam with visible puzzle-piece interlocking seams.
 
-CRITICAL — EXACT TILE COLORS (follow pixel-perfectly, left-to-right, top-to-bottom):
-${colDescriptions}
-
-The reference image shows the exact color grid — match it exactly. Column 1 is the LEFTMOST column, column ${gridData.cols} is the RIGHTMOST. Do not reorder or swap colors.
+CRITICAL — TILE COLORS: Reference image 1 shows the EXACT color layout. Copy every tile's color position-for-position exactly as shown in that image. Do not change, reorder, or swap any colors.
 
 STENCIL DESIGN: Paint the artwork from reference image 2 continuously across all tiles in ${paintColorDesc}. The design spans the whole installation as one unified image.
 
-OUTPUT RULES: Photorealistic only. No text, labels, borders, or watermarks. Exactly ${gridData.cols}×${gridData.rows} complete tiles — no partial tiles.${extraInstructions}`;
+ABSOLUTE RULES — VIOLATIONS WILL REJECT THE IMAGE:
+- ZERO text, letters, numbers, hex codes, labels, or writing of any kind anywhere in the image
+- No watermarks, borders, annotations, or overlays
+- Exactly ${gridData.cols}×${gridData.rows} complete tiles — no partial tiles${extraInstructions}`;
 
       const result = await base44.integrations.Core.GenerateImage({
         prompt,
