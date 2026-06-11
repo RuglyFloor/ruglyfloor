@@ -51,12 +51,16 @@ export default function RugPreviewGenerator({ config, tier, sizeObj, BASE_COLORS
         referenceUrls.push(uploadResult.file_url);
       }
 
+      const isCrugly = tier?.id === 'crugly' || tier?.label?.toLowerCase().includes('crugly');
+      const designStyle = isCrugly
+        ? `CRITICAL — 2-TONE ONLY: This is a Crugly stencil-paint rug. The entire design must be STRICTLY 2 colors only: solid ${config.baseColor} (${baseColorHex}) base and solid ${colorDescription} paint. NO gradients, NO shading, NO shadows within the design, NO mid-tones, NO anti-aliasing. Every pixel of the design is either fully the base color or fully the paint color — like a clean screen print or stencil. Flat and graphic.`
+        : `Paint the design in ${colorDescription} on a solid ${config.baseColor} (${baseColorHex}) background. The design should look hand-painted with subtle brush texture, not digitally printed.${secondPaintColorHex ? ` Use ${paintColorHex} for the main elements and ${secondPaintColorHex} for accents.` : ''}`;
+
       const prompt = `Photorealistic interior design photo. Place a custom hand-painted area rug on the floor of the room shown in image 1 (keep all room elements — furniture, walls, floor — exactly as they appear).
 
 THE RUG DESIGN:
 - The rug design comes from image 2 (the customer's uploaded artwork/photo). Reproduce that design AS-IS on the rug surface — same subject, same composition, same proportions. Do NOT invent or replace the design.
-- Paint the design in ${colorDescription} on a solid ${config.baseColor} (${baseColorHex}) background.
-- The design should look hand-painted with subtle brush texture, not digitally printed.${secondPaintColorHex ? `\n- Use ${paintColorHex} for the main design elements and ${secondPaintColorHex} for secondary/accent elements.` : ''}
+- ${designStyle}
 
 RUG SIZE & PLACEMENT:
 - Rug size: ${sizeObj?.measurement || ''} (${sizeGuide})
