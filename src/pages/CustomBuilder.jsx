@@ -115,7 +115,7 @@ const QUALITY_TIERS = [
   description: 'Painted carpet tiles. Runner to full gym.',
   price_hint: '$17.50–$25/tile',
   color: '#f04624',
-  imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/0ff4b06b4_Untitled-4.png',
+  imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/7bccb12fa_Square.png',
   shipping: 'FREE shipping',
   eta: '14–21 days'
 },
@@ -126,7 +126,7 @@ const QUALITY_TIERS = [
   description: 'Hand-painted on a quality base rug. 2 or less colors.',
   price_hint: 'From $79',
   color: '#24f0a0',
-  imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/6b6b41f6d_Untitled-1.png',
+  imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/ba9a4284f_Crugly.png',
   prices: { '2x3': 79, '3x5': 119, '4x6': 149, '5x7': 189, '6x9': 239 },
   shipping: 'FREE shipping',
   eta: '10–14 days'
@@ -138,7 +138,7 @@ const QUALITY_TIERS = [
   description: 'Thicker pile, richer colors, premium base rug.',
   price_hint: 'From $129',
   color: '#4075ff',
-  imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/431ce15da_Untitled-2.png',
+  imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/478c4f2ff_Rugly.png',
   prices: { '2x3': 129, '3x5': 199, '4x6': 259, '5x7': 329, '6x9': 419, '9x12': 599 },
   shipping: '$15–$50 shipping',
   eta: '14–21 days'
@@ -150,7 +150,7 @@ const QUALITY_TIERS = [
   description: 'Artist-level detail. Certificate of authenticity.',
   price_hint: 'From $249',
   color: '#343634',
-  imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/3440cbafc_Untitled-3.png',
+  imageUrl: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/4aeb4ae1e_RugLux.png',
   prices: { '2x3': 249, '3x5': 399, '4x6': 549, '5x7': 699, '6x9': 899, '9x12': 1299 },
   shipping: 'Shipping quoted',
   eta: '3–6 weeks',
