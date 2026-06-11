@@ -51,10 +51,17 @@ export default function SquaresPreviewGenerator({ gridData, stencilDataUrl, sten
         : '';
 
       const paintColorDesc = stencilPaintColorName || 'white';
+      const isCarpet = gridData.surfaceType === 'carpet';
+      const tileDesc = isCarpet
+        ? 'soft plush carpet squares with a short-pile textile surface and visible seams between tiles'
+        : 'smooth flat EVA foam tiles with a matte surface and visible puzzle-piece interlocking seams';
+      const floorDesc = isCarpet
+        ? 'in a cozy living room on a hardwood floor'
+        : 'in a gym or modern room on a concrete or hardwood floor';
 
-      const prompt = `Photorealistic room photo showing custom interlocking foam floor tiles on a hardwood floor, modern interior, slight overhead angle showing all tiles.
+      const prompt = `Photorealistic room photo showing custom interlocking ${tileDesc} laid out ${floorDesc}, slight overhead angle showing all tiles.
 
-TILE GRID: ${gridData.cols} columns wide × ${gridData.rows} rows tall. Each tile is 24"×24" foam with visible puzzle-piece interlocking seams.
+TILE GRID: ${gridData.cols} columns wide × ${gridData.rows} rows tall. Each tile is 24"×24".
 
 CRITICAL — TILE COLORS: Reference image 1 shows the EXACT color layout. Copy every tile's color position-for-position exactly as shown in that image. Do not change, reorder, or swap any colors.
 
