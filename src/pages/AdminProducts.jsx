@@ -305,40 +305,54 @@ MEASUREMENT LABELS (only 2 labels, no other text):
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
+  const buildSaveData = (requireAll = true) => {
     const selectedImages = formData.all_images.filter(img => img.selected);
-    if (selectedImages.length === 0) {
+    if (requireAll && selectedImages.length === 0) {
       alert('Please select at least one image to display');
-      return;
+      return null;
     }
-
-    if (!formData.rug_type) {
+    if (requireAll && !formData.rug_type) {
       alert('Please select a Rug Type — this sets shipping, returns, and care instructions.');
-      return;
+      return null;
     }
-    if (!formData.backing) {
+    if (requireAll && !formData.backing) {
       alert('Please fill in the Backing field.');
-      return;
+      return null;
     }
-    
-    // Set backward compatibility fields
     const mainImage = selectedImages[0];
     const additionalImages = selectedImages.slice(1).map(img => img.url);
-    
-    const data = {
+    return {
       ...formData,
-      price: parseFloat(formData.price),
-      image_url: mainImage.url,
+      price: parseFloat(formData.price) || 0,
+      image_url: mainImage?.url || '',
       images: additionalImages,
-      return_policy: formData.return_policy
     };
+  };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const data = buildSaveData(true);
+    if (!data) return;
     if (editingProduct) {
       updateProductMutation.mutate({ id: editingProduct.id, data });
     } else {
       createProductMutation.mutate(data);
+    }
+  };
+
+  const handleSaveDraft = (e) => {
+    e.preventDefault();
+    if (!formData.name) {
+      alert('Please enter a product name before saving as draft.');
+      return;
+    }
+    const data = buildSaveData(false);
+    if (!data) return;
+    const draftData = { ...data, in_stock: false };
+    if (editingProduct) {
+      updateProductMutation.mutate({ id: editingProduct.id, data: draftData });
+    } else {
+      createProductMutation.mutate(draftData);
     }
   };
 
@@ -562,7 +576,8 @@ MEASUREMENT LABELS (only 2 labels, no other text):
                   <ImageManager
                     images={formData.all_images}
                     onChange={(images) => setFormData(prev => ({ ...prev, all_images: images }))}
-                    onGenerateAI={generatingAI ? null : handleAIGenerate}
+                    onGenerateAI={handleAIGenerate}
+                    generatingAI={generatingAI}
                   />
                   {formData.all_images.length > 0 && (
                     <div className="mt-3 space-y-3 p-3 bg-gray-50 rounded-lg border">
@@ -697,6 +712,9 @@ MEASUREMENT LABELS (only 2 labels, no other text):
                 <div className="flex gap-3 pt-4">
                   <Button type="submit" className="flex-1">
                     {editingProduct ? 'Update Product' : 'Create Product'}
+                  </Button>
+                  <Button type="button" variant="outline" onClick={handleSaveDraft} className="flex-1 text-gray-600">
+                    Save Draft
                   </Button>
                   <Button type="button" variant="outline" onClick={() => {
                     setIsAddingProduct(false);

@@ -3,10 +3,10 @@ import Cropper from 'react-easy-crop';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Card } from '@/components/ui/card';
-import { Upload, Crop, Trash2, Eye, EyeOff, MoveUp, MoveDown, Sparkles } from 'lucide-react';
+import { Upload, Crop, Trash2, Eye, EyeOff, MoveUp, MoveDown, Sparkles, Loader2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
-export default function ImageManager({ images = [], onChange, onGenerateAI }) {
+export default function ImageManager({ images = [], onChange, onGenerateAI, generatingAI = false }) {
   const [cropImage, setCropImage] = useState(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -187,10 +187,13 @@ export default function ImageManager({ images = [], onChange, onGenerateAI }) {
         <Button
           type="button"
           onClick={onGenerateAI}
+          disabled={generatingAI}
           className="gap-2 bg-blue-600"
         >
-          <Sparkles className="w-4 h-4" />
-          Generate AI Images
+          {generatingAI
+            ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating AI Images...</>
+            : <><Sparkles className="w-4 h-4" /> Generate AI Images</>
+          }
         </Button>
       )}
 
