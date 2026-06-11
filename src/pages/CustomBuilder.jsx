@@ -400,7 +400,7 @@ export default function CustomBuilder() {
                   {/* Brand image */}
                   {t.imageUrl &&
                   <div className="w-full overflow-hidden" style={{ height: 110 }}>
-                      <img src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/7bccb12fa_Square.png" alt={t.label} className="w-full h-full object-cover" />
+                      <img src="https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/ba9a4284f_Crugly.png" alt={t.label} className="w-full h-full object-cover" />
                     </div>
                   }
                   <div className="p-4 flex flex-col flex-1">
