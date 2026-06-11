@@ -50,37 +50,41 @@ export default function SquaresPreviewGenerator({ gridData, stencilDataUrl, sten
         ? `\n\nCUSTOMER INSTRUCTIONS: ${designInstructions.trim()}`
         : '';
 
-      // Build a precise text description of the grid layout row by row
-      const gridDescription = gridData.grid.map((row, r) => {
-        const rowDesc = row.map((color, c) => `(${c+1},${r+1})=${color}`).join(' ');
-        return `Row ${r+1} (top to bottom): ${rowDesc}`;
+      // Build unique color list with names for clearer AI instructions
+      const uniqueColors = [];
+      const seenColors = new Set();
+      gridData.grid.forEach(row => row.forEach(hex => {
+        if (!seenColors.has(hex)) {
+          seenColors.add(hex);
+          uniqueColors.push(hex);
+        }
+      }));
+
+      // Build column-by-column description (since columns are the dominant pattern)
+      const colDescriptions = Array.from({ length: gridData.cols }, (_, c) => {
+        const colColors = gridData.grid.map(row => row[c]);
+        // Check if all same color
+        const allSame = colColors.every(cc => cc === colColors[0]);
+        if (allSame) return `Column ${c+1} (from left): ALL tiles = ${colColors[0]}`;
+        return `Column ${c+1} (from left): ${colColors.map((cc, r) => `row${r+1}=${cc}`).join(', ')}`;
       }).join('\n');
 
       const paintColorDesc = stencilPaintColor
-        ? `${stencilPaintColorName || ''} (hex: ${stencilPaintColor})`
-        : 'the color as shown in the stencil image';
+        ? `${stencilPaintColorName || ''} (hex ${stencilPaintColor})`
+        : 'as shown in the stencil';
 
-      const prompt = `You are a photorealistic interior lifestyle photographer specializing in custom interlocking foam floor tile installations.
+      const prompt = `Photorealistic room photo showing custom interlocking foam floor tiles on a hardwood floor, modern interior, slight overhead angle showing all tiles.
 
-STYLE REFERENCE: Render this exactly like a real room lifestyle photo — the interlocking foam tiles are laid out on a hardwood or light floor inside a bright, modern room. The tiles sit flat on the floor with their characteristic puzzle-piece interlocking edges clearly visible between each tile. The seams show the raised/recessed jigsaw connector profile. The tile surface has a subtle dense foam texture (slightly matte, not shiny). This is the same style as the reference image of navy and cream interlocking foam tiles in a living room.
+TILE GRID: ${gridData.cols} columns wide × ${gridData.rows} rows tall. Each tile is 24"×24" foam with visible puzzle-piece interlocking seams.
 
-TILE SPECS: EVA foam interlocking puzzle tiles, exactly 24"×24" each. Puzzle-piece tab-and-slot edges interlock between all adjacent tiles. Outer perimeter edges are clean straight lines (border strips). Total installation: ${gridData.cols} tiles wide × ${gridData.rows} tiles tall = ${totalSqFt} sq ft.
+CRITICAL — EXACT TILE COLORS (follow pixel-perfectly, left-to-right, top-to-bottom):
+${colDescriptions}
 
-REFERENCE IMAGE 1: The EXACT color layout map — ${gridData.cols} columns × ${gridData.rows} rows. Each cell = one 24"×24" tile. Replicate this color pattern EXACTLY.
+The reference image shows the exact color grid — match it exactly. Column 1 is the LEFTMOST column, column ${gridData.cols} is the RIGHTMOST. Do not reorder or swap colors.
 
-EXACT TILE COLOR MAP — column 1=LEFT, row 1=TOP:
-${gridDescription}
+STENCIL DESIGN: Paint the artwork from reference image 2 continuously across all tiles in ${paintColorDesc}. The design spans the whole installation as one unified image.
 
-REFERENCE IMAGE 2: A stencil/logo. Paint it across the full installation as one unified continuous artwork in the color: ${paintColorDesc}.
-
-STRICT REQUIREMENTS:
-1. Exactly ${gridData.cols} complete tiles wide × ${gridData.rows} complete tiles tall — ZERO partial tiles at any edge.
-2. All tiles perfectly uniform 24"×24" squares, consistent perspective grid, no distortion.
-3. Every tile color matches the color map exactly — position-for-position, zero deviation.
-4. Interlocking puzzle-piece seam profile clearly visible between every tile.
-5. Stencil painted in ${paintColorDesc} continuously across all tiles as one artwork.
-6. Room lifestyle setting: bright modern interior, slight overhead-angled perspective showing the full floor installation.
-7. Photorealistic, no labels, no text, no watermarks.${extraInstructions}`;
+OUTPUT RULES: Photorealistic only. No text, labels, borders, or watermarks. Exactly ${gridData.cols}×${gridData.rows} complete tiles — no partial tiles.${extraInstructions}`;
 
       const result = await base44.integrations.Core.GenerateImage({
         prompt,
@@ -129,7 +133,7 @@ STRICT REQUIREMENTS:
               <Sparkles className="w-6 h-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" style={{ color: tierColor }} />
             </div>
             <div className="font-bold text-gray-700 mb-1">Rendering your tile layout…</div>
-            <div className="text-xs text-gray-400">Uploading grid &amp; generating AI preview</div>
+            <div className="text-xs text-gray-400">Uploading grid &amp; stencil, generating AI preview…</div>
           </div>
         )}
         {previewUrl && <img src={previewUrl} alt="AI Tile Preview" className="w-full object-contain" />}
