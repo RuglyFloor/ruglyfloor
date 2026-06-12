@@ -482,7 +482,7 @@ MEASUREMENT LABELS (only 2 labels, no other text):
               <DialogHeader>
                 <DialogTitle>{editingProduct ? 'Edit Product' : 'Add New Product'}</DialogTitle>
               </DialogHeader>
-              <form className="space-y-4" noValidate onSubmit={(e) => e.preventDefault()}>
+              <div className="space-y-4">
                 <div>
                   <Label>Product Name *</Label>
                   <Input
@@ -729,7 +729,7 @@ MEASUREMENT LABELS (only 2 labels, no other text):
                     Cancel
                   </Button>
                 </div>
-              </form>
+              </div>
             </DialogContent>
             </Dialog>
           </div>
