@@ -208,25 +208,12 @@ export default function ProductDetail() {
           <div className="space-y-6">
             <div>
               {/* Rug Type Brand Logo Image */}
-              {product.rug_type && (() => {
-                const brandImages = {
-                  Crugly: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/874535578_Crugly.png',
-                  Ruglux: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/778093650_RugLux.png',
-                  Rugly:  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/eadd56d42_Rugly.png',
-                  Square: 'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/beb1872d7_Square.png',
-                };
-                const img = brandImages[product.rug_type];
-                return img ? (
-                  <div className="mb-3">
-                    <img src={img} alt={product.rug_type} style={{height:48, borderRadius:8, objectFit:'contain'}} />
-                  </div>
-                ) : (
-                  <span className="inline-block px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-3"
-                    style={{ backgroundColor: rugTypeColor, color: rugTypeTextColor }}>
-                    {product.rug_type}
-                  </span>
-                );
-              })()}
+              {product.rug_type && (
+                <span className="inline-block px-4 py-1.5 rounded-full text-sm font-black uppercase tracking-widest mb-3"
+                  style={{ backgroundColor: rugTypeColor, color: rugTypeTextColor }}>
+                  {product.rug_type}
+                </span>
+              )}
               <h1 className="text-4xl font-bold text-gray-900 mb-3">{product.name}</h1>
               {product.size && (
                 <Badge variant="outline" className="text-lg px-4 py-1">
