@@ -215,7 +215,7 @@ export default function ProductDetail() {
                 </span>
               )}
               <h1 className="text-4xl font-bold text-gray-900 mb-3">{product.name}</h1>
-              {product.size && (
+              {product.size && product.size.trim() && (
                 <Badge variant="outline" className="text-lg px-4 py-1">
                   {product.size}
                 </Badge>
