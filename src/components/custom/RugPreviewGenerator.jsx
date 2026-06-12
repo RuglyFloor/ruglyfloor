@@ -37,37 +37,28 @@ export default function RugPreviewGenerator({ config, tier, sizeObj, BASE_COLORS
       };
       const sizeGuide = sizeScaleMap[sizeObj?.id] || `${sizeObj?.measurement || ''} rug`;
 
-      // Build reference image list: room scene + original customer image (best fidelity)
-      // Also upload stencil as a supplementary shape reference
-      const referenceUrls = [RUG_ROOM_IMAGE];
-      if (config.imageUrl) {
-        referenceUrls.push(config.imageUrl);
-      } else {
-        // Fallback: upload stencil if no original image URL
-        const res = await fetch(config.stencilDataUrl);
-        const blob = await res.blob();
-        const stencilFile = new File([blob], 'stencil.png', { type: 'image/png' });
-        const uploadResult = await base44.integrations.Core.UploadFile({ file: stencilFile });
-        referenceUrls.push(uploadResult.file_url);
-      }
-
-      const isCrugly = tier?.id === 'crugly' || tier?.label?.toLowerCase().includes('crugly');
-      const designStyle = isCrugly
-        ? `CRITICAL — 2-TONE ONLY: This is a Crugly stencil-paint rug. The entire design must be STRICTLY 2 colors only: solid ${config.baseColor} (${baseColorHex}) base and solid ${colorDescription} paint. NO gradients, NO shading, NO shadows within the design, NO mid-tones, NO anti-aliasing. Every pixel of the design is either fully the base color or fully the paint color — like a clean screen print or stencil. Flat and graphic.`
-        : `Paint the design in ${colorDescription} on a solid ${config.baseColor} (${baseColorHex}) background. The design should look hand-painted with subtle brush texture, not digitally printed.${secondPaintColorHex ? ` Use ${paintColorHex} for the main elements and ${secondPaintColorHex} for accents.` : ''}`;
+      // Always use the stencil canvas output as the design reference — this IS what gets painted on the rug.
+      // Never use the original photo — we physically cannot stencil a photo-realistic image.
+      const stencilRes = await fetch(config.stencilDataUrl);
+      const stencilBlob = await stencilRes.blob();
+      const stencilFile = new File([stencilBlob], 'stencil.png', { type: 'image/png' });
+      const stencilUpload = await base44.integrations.Core.UploadFile({ file: stencilFile });
+      const referenceUrls = [RUG_ROOM_IMAGE, stencilUpload.file_url];
 
       const prompt = `Photorealistic interior design photo. Place a custom hand-painted area rug on the floor of the room shown in image 1 (keep all room elements — furniture, walls, floor — exactly as they appear).
 
-THE RUG DESIGN:
-- The rug design comes from image 2 (the customer's uploaded artwork/photo). Reproduce that design AS-IS on the rug surface — same subject, same composition, same proportions. Do NOT invent or replace the design.
-- ${designStyle}
+THE RUG DESIGN (CRITICAL):
+- Image 2 is the EXACT stencil design that will be physically painted onto the rug. You MUST reproduce this stencil exactly as shown — same shapes, same silhouettes, same composition.
+- The rug base color is solid ${config.baseColor} (${baseColorHex}). The painted stencil design is in ${colorDescription}.
+- This is a hand-painted stencil rug. The design must look FLAT and PAINTED — like paint applied through a stencil. NO photorealism, NO gradients, NO shading, NO fur texture, NO 3D detail. Flat solid color shapes only, exactly matching the stencil outlines in image 2.
+- Do NOT add any detail that is not in the stencil. Do NOT make it look like a photograph or digital print. It must look like paint on fabric — because that is exactly what it is.${secondPaintColorHex ? ` Use ${paintColorHex} for the main stencil shapes and ${secondPaintColorHex} for secondary shapes.` : ''}
 
 RUG SIZE & PLACEMENT:
 - Rug size: ${sizeObj?.measurement || ''} (${sizeGuide})
 - Lies flat on the floor in correct perspective, occupying the appropriate proportion of the room floor
 - Subtle drop shadow around rug edges
 
-OUTPUT: A single photorealistic room photo with the designed rug clearly visible. No text, labels, watermarks, or borders.${extraInstructions}`;
+OUTPUT: A single photorealistic room photo with the stencil-painted rug clearly visible. No text, labels, watermarks, or borders.${extraInstructions}`;
 
       const result = await base44.integrations.Core.GenerateImage({
         prompt,
