@@ -91,6 +91,9 @@ function AdminProductsContent() {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
       setIsAddingProduct(false);
       resetForm();
+    },
+    onError: (err) => {
+      alert('❌ Failed to create product: ' + (err?.message || JSON.stringify(err)));
     }
   });
 
@@ -100,6 +103,9 @@ function AdminProductsContent() {
       queryClient.invalidateQueries({ queryKey: ['admin-products'] });
       setEditingProduct(null);
       resetForm();
+    },
+    onError: (err) => {
+      alert('❌ Failed to update product: ' + (err?.message || JSON.stringify(err)));
     }
   });
 
