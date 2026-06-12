@@ -465,13 +465,7 @@ MEASUREMENT LABELS (only 2 labels, no other text):
               <RefreshCw className={`w-4 h-4 ${syncingShopify === 'all' ? 'animate-spin' : ''}`} />
               {syncingShopify === 'all' ? 'Syncing...' : 'Sync All to Shopify'}
             </Button>
-            <Dialog open={isAddingProduct || editingProduct !== null} onOpenChange={(open) => {
-              if (!open) {
-                setIsAddingProduct(false);
-                setEditingProduct(null);
-                resetForm();
-              }
-            }}>
+            <Dialog open={isAddingProduct || editingProduct !== null}>
               <DialogTrigger asChild>
                 <Button onClick={() => setIsAddingProduct(true)} className="gap-2">
                   <Plus className="w-4 h-4" />
@@ -480,7 +474,14 @@ MEASUREMENT LABELS (only 2 labels, no other text):
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>{editingProduct ? 'Edit Product' : 'Add New Product'}</DialogTitle>
+                <DialogTitle className="flex items-center justify-between">
+                  {editingProduct ? 'Edit Product' : 'Add New Product'}
+                  <button
+                    type="button"
+                    className="text-gray-400 hover:text-gray-700 text-xl leading-none"
+                    onClick={() => { setIsAddingProduct(false); setEditingProduct(null); resetForm(); }}
+                  >✕</button>
+                </DialogTitle>
               </DialogHeader>
               <form className="space-y-4" noValidate onSubmit={(e) => e.preventDefault()}>
                 <div>
@@ -728,6 +729,7 @@ MEASUREMENT LABELS (only 2 labels, no other text):
                   }}>
                     Cancel
                   </Button>
+
                 </div>
               </form>
             </DialogContent>
