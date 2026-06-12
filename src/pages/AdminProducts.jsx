@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+
 import { Package, Plus, Edit, Trash2, RefreshCw, Upload } from 'lucide-react';
 import AdminProtected from '../components/AdminProtected';
 import ImageManager from '../components/admin/ImageManager';
@@ -471,24 +471,21 @@ MEASUREMENT LABELS (only 2 labels, no other text):
               <RefreshCw className={`w-4 h-4 ${syncingShopify === 'all' ? 'animate-spin' : ''}`} />
               {syncingShopify === 'all' ? 'Syncing...' : 'Sync All to Shopify'}
             </Button>
-            <Dialog open={isAddingProduct || editingProduct !== null} onOpenChange={(open) => {
-              if (!open) {
-                setIsAddingProduct(false);
-                setEditingProduct(null);
-                resetForm();
-              }
-            }}>
-              <DialogTrigger asChild>
-                <Button onClick={() => setIsAddingProduct(true)} className="gap-2">
-                  <Plus className="w-4 h-4" />
-                  Add New Product
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>{editingProduct ? 'Edit Product' : 'Add New Product'}</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
+            <Button onClick={() => setIsAddingProduct(true)} className="gap-2">
+              <Plus className="w-4 h-4" />
+              Add New Product
+            </Button>
+          </div>
+        </div>
+
+        {/* Inline Form Panel */}
+        {(isAddingProduct || editingProduct !== null) && (
+          <div className="mb-10 bg-white border-2 border-blue-400 rounded-2xl p-6 shadow-xl">
+            <div className="flex justify-between items-center mb-5">
+              <h2 className="text-2xl font-bold">{editingProduct ? 'Edit Product' : 'Add New Product'}</h2>
+              <button onClick={() => { setIsAddingProduct(false); setEditingProduct(null); resetForm(); }} className="text-gray-400 hover:text-gray-700 text-2xl font-bold">✕</button>
+            </div>
+            <div className="space-y-4">
                 <div>
                   <Label>Product Name *</Label>
                   <Input
@@ -736,10 +733,10 @@ MEASUREMENT LABELS (only 2 labels, no other text):
                   </Button>
                 </div>
               </div>
-            </DialogContent>
-            </Dialog>
           </div>
-        </div>
+        )}
+
+
 
         {isLoading ? (
           <div className="text-center py-12">Loading products...</div>
