@@ -6,6 +6,13 @@ const VIDEOS = [
   'https://media.base44.com/videos/public/695ded1a209dda33af9a1cf6/62467a756_FireflyCreateabackgroundvideoforawebsitethatallowspeopletopaintwhateverdesigntheywan.mp4',
 ];
 
+// start/end in seconds for each clip (null = use full duration)
+const CLIP_RANGES = [
+  { start: 0, end: 4 },      // PanAm rug: first ~4 seconds
+  { start: 1, end: null },   // Rooster rug: skip first 1 second
+  { start: 0, end: null },   // Last clip: full
+];
+
 export default function HeroSlideshow() {
   const videoRefs = useRef(VIDEOS.map(() => React.createRef()));
   const durationsRef = useRef([]);
@@ -22,9 +29,12 @@ export default function HeroSlideshow() {
   const onMetadata = (i) => {
     const v = videoRefs.current[i]?.current;
     if (!v) return;
-    durationsRef.current[i] = v.duration || 5;
+    const range = CLIP_RANGES[i];
+    const clipStart = range?.start ?? 0;
+    const clipEnd = range?.end ?? v.duration;
+    durationsRef.current[i] = Math.max(0.1, Math.min(clipEnd, v.duration) - clipStart);
     v.pause();
-    v.currentTime = 0;
+    v.currentTime = clipStart;
     loadedCount.current += 1;
     if (loadedCount.current === VIDEOS.length) setReady(true);
   };
@@ -67,7 +77,9 @@ export default function HeroSlideshow() {
       // Scrub active video — only seek if change is significant to reduce glitching
       const v = videoRefs.current[segIdx]?.current;
       if (v && v.duration) {
-        const target = segProgress * v.duration;
+        const range = CLIP_RANGES[segIdx];
+        const clipStart = range?.start ?? 0;
+        const target = clipStart + segProgress * durationsRef.current[segIdx];
         if (Math.abs(v.currentTime - target) > 0.05) {
           v.currentTime = target;
         }
