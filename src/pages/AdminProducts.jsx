@@ -482,7 +482,7 @@ MEASUREMENT LABELS (only 2 labels, no other text):
               <DialogHeader>
                 <DialogTitle>{editingProduct ? 'Edit Product' : 'Add New Product'}</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4" noValidate>
                 <div>
                   <Label>Product Name *</Label>
                   <Input
@@ -540,7 +540,6 @@ MEASUREMENT LABELS (only 2 labels, no other text):
                           }));
                         }}
                         placeholder="e.g. 5"
-                        required
                       />
                     </div>
                     <div>
@@ -560,7 +559,6 @@ MEASUREMENT LABELS (only 2 labels, no other text):
                           }));
                         }}
                         placeholder="e.g. 7"
-                        required
                       />
                     </div>
                   </div>
@@ -663,7 +661,7 @@ MEASUREMENT LABELS (only 2 labels, no other text):
                 {/* Rug Type — drives shipping, care, warranty, returns */}
                 <div>
                   <Label>Rug Type * <span className="text-xs text-gray-400 font-normal">(sets shipping, returns & care automatically)</span></Label>
-                  <Select value={formData.rug_type} onValueChange={handleRugTypeChange} required>
+                  <Select value={formData.rug_type} onValueChange={handleRugTypeChange}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select rug type..." />
                     </SelectTrigger>
