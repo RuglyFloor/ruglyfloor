@@ -34,6 +34,8 @@ export default function Cart() {
   const [couponValidation, setCouponValidation] = useState(null);
   const [validatingCoupon, setValidatingCoupon] = useState(false);
   const [useGuestCheckout, setUseGuestCheckout] = useState(false);
+  const [savedInfoAvailable, setSavedInfoAvailable] = useState(false);
+  const [savedInfoLoaded, setSavedInfoLoaded] = useState(false);
   const [taxRate, setTaxRate] = useState(0);
   const [finalSaleAcknowledged, setFinalSaleAcknowledged] = useState(false);
 
@@ -51,6 +53,8 @@ export default function Cart() {
         const parsed = JSON.parse(savedInfo);
         setCustomerInfo(parsed);
         setUseGuestCheckout(false);
+        setSavedInfoAvailable(true);
+        setSavedInfoLoaded(true);
       } catch (e) {
         console.error('Failed to load saved customer info');
       }
@@ -347,6 +351,29 @@ export default function Cart() {
           <p className="text-gray-600 text-base lg:text-lg">Review and checkout</p>
         </div>
 
+        {/* Free Shipping Progress Bar */}
+        {shippingCost > 0 && (
+          <div className="mb-4 rounded-xl border-2 border-blue-200 bg-blue-50 px-5 py-4">
+            <div className="flex justify-between items-center mb-2 text-sm font-semibold text-blue-800">
+              <span>🚚 Add more to get FREE shipping!</span>
+              <span>${Math.max(0, 150 - subtotal).toFixed(2)} away</span>
+            </div>
+            <div className="w-full bg-blue-200 rounded-full h-3">
+              <div
+                className="bg-blue-600 h-3 rounded-full transition-all duration-500"
+                style={{ width: `${Math.min(100, (subtotal / 150) * 100)}%` }}
+              />
+            </div>
+            <p className="text-xs text-blue-600 mt-1 text-center">Free shipping on orders over $150</p>
+          </div>
+        )}
+
+        {/* Social proof nudge */}
+        <div className="mb-4 rounded-xl border-2 border-amber-200 bg-amber-50 px-5 py-3 flex items-center gap-3 text-sm">
+          <span className="text-xl">🔥</span>
+          <span className="text-amber-800 font-medium">Your design is reserved for <strong>30 minutes</strong> — complete checkout to lock it in!</span>
+        </div>
+
         {/* Transparent pricing banner */}
         <div className="mb-6 rounded-xl border-2 border-gray-200 bg-gray-50 px-5 py-4 flex flex-wrap gap-6 items-center justify-center text-sm">
           <div className="flex items-center gap-2">
@@ -490,6 +517,22 @@ export default function Cart() {
               </div>
               
               <div className="space-y-4">
+                {savedInfoLoaded && (
+                  <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2 text-xs text-green-800">
+                    <span>✓</span>
+                    <span>Your info was auto-filled from your last order.</span>
+                    <button
+                      className="ml-auto text-red-500 underline font-semibold"
+                      onClick={() => {
+                        setCustomerInfo({ name: '', email: '', phone: '', street: '', city: '', state: '', zip: '', country: 'USA' });
+                        setSavedInfoLoaded(false);
+                        localStorage.removeItem('rugly_customer_info');
+                      }}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                )}
                 <div>
                   <Label className="text-sm font-semibold mb-2 block">Full Name *</Label>
                   <Input 
