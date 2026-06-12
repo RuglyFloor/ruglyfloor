@@ -482,7 +482,7 @@ MEASUREMENT LABELS (only 2 labels, no other text):
               <DialogHeader>
                 <DialogTitle>{editingProduct ? 'Edit Product' : 'Add New Product'}</DialogTitle>
               </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+              <form className="space-y-4" noValidate onSubmit={(e) => e.preventDefault()}>
                 <div>
                   <Label>Product Name *</Label>
                   <Input
@@ -708,7 +708,15 @@ MEASUREMENT LABELS (only 2 labels, no other text):
                 </div>
 
                 <div className="flex gap-3 pt-4">
-                  <Button type="submit" className="flex-1">
+                  <Button type="button" className="flex-1" onClick={() => {
+                    const data = buildSaveData(true);
+                    if (!data) return;
+                    if (editingProduct) {
+                      updateProductMutation.mutate({ id: editingProduct.id, data });
+                    } else {
+                      createProductMutation.mutate(data);
+                    }
+                  }}>
                     {editingProduct ? 'Update Product' : 'Create Product'}
                   </Button>
                   <Button type="button" variant="outline" onClick={handleSaveDraft} className="flex-1 text-gray-600">
