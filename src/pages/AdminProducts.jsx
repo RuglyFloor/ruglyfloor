@@ -690,7 +690,6 @@ MEASUREMENT LABELS (only 2 labels, no other text):
                     value={formData.backing}
                     onChange={(e) => setFormData(prev => ({ ...prev, backing: e.target.value }))}
                     placeholder="e.g., Non-slip rubber"
-                    required
                   />
                 </div>
 
