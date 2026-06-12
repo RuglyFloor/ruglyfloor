@@ -7,7 +7,7 @@ import { Lock } from 'lucide-react';
 import { createPageUrl } from '../utils';
 
 // SHA-256 hash of the admin password — never store plaintext here
-const ADMIN_PASSWORD_HASH = '7a3f2c1e9b4d8f6a0e5c2b7d4f1a8e3c9b6d2f5a0c3e7b1d4f8a2c5e9b3d6f0';
+const ADMIN_PASSWORD_HASH = '7c0f87d4b55b412b64de60c37e19ca21a8345b694a071323362dd56c21699c85';
 
 async function hashPassword(pw) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
