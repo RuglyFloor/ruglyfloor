@@ -36,7 +36,7 @@ export default function HeroSlideshow() {
     const lerp = (a, b, t) => a + (b - a) * t;
 
     const tick = () => {
-      currentRef.current = lerp(currentRef.current, targetRef.current, 0.07);
+      currentRef.current = lerp(currentRef.current, targetRef.current, 0.18);
       const progress = currentRef.current;
 
       const durations = durationsRef.current;
@@ -64,10 +64,13 @@ export default function HeroSlideshow() {
         setActiveIdx(segIdx);
       }
 
-      // Scrub active video
+      // Scrub active video — only seek if change is significant to reduce glitching
       const v = videoRefs.current[segIdx]?.current;
       if (v && v.duration) {
-        v.currentTime = segProgress * v.duration;
+        const target = segProgress * v.duration;
+        if (Math.abs(v.currentTime - target) > 0.05) {
+          v.currentTime = target;
+        }
       }
 
       rafRef.current = requestAnimationFrame(tick);
