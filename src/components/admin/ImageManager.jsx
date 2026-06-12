@@ -42,8 +42,28 @@ export default function ImageManager({ images = [], onChange, onGenerateAI, gene
   };
 
   const handleUpload = async (e) => {
-    const file = e.target.files[0];
-    await handleFileUpload(file);
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+    setUploading(true);
+    try {
+      const results = await Promise.all(
+        files.map(file => base44.integrations.Core.UploadFile({ file }))
+      );
+      const newImages = results.map(({ file_url }, idx) => ({
+        id: Date.now().toString() + idx,
+        url: file_url,
+        original_url: file_url,
+        selected: images.length === 0 && idx === 0,
+        order: images.length + idx,
+        source: 'upload'
+      }));
+      onChange([...images, ...newImages]);
+    } catch (error) {
+      alert('Failed to upload one or more images');
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
   };
 
   const handleDragOver = (e) => {
@@ -58,8 +78,27 @@ export default function ImageManager({ images = [], onChange, onGenerateAI, gene
   const handleDrop = async (e) => {
     e.preventDefault();
     setIsDragging(false);
-    const file = e.dataTransfer.files[0];
-    await handleFileUpload(file);
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    if (!files.length) return;
+    setUploading(true);
+    try {
+      const results = await Promise.all(
+        files.map(file => base44.integrations.Core.UploadFile({ file }))
+      );
+      const newImages = results.map(({ file_url }, idx) => ({
+        id: Date.now().toString() + idx,
+        url: file_url,
+        original_url: file_url,
+        selected: images.length === 0 && idx === 0,
+        order: images.length + idx,
+        source: 'upload'
+      }));
+      onChange([...images, ...newImages]);
+    } catch (error) {
+      alert('Failed to upload one or more images');
+    } finally {
+      setUploading(false);
+    }
   };
 
   const createCroppedImage = async (imageSrc, pixelCrop) => {
@@ -170,7 +209,7 @@ export default function ImageManager({ images = [], onChange, onGenerateAI, gene
       >
         <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
         <p className="text-sm font-semibold mb-1">
-          {uploading ? 'Uploading...' : 'Drop images here or click to upload'}
+          {uploading ? 'Uploading...' : 'Drop images here or click to upload (select multiple)'}
         </p>
         <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
         <input
