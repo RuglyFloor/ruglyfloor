@@ -1,128 +1,117 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-const VIDEO_1 = 'https://media.base44.com/videos/public/695ded1a209dda33af9a1cf6/60e0551e7_videoadrugly.mp4';
-const VIDEO_2 = 'https://media.base44.com/videos/public/695ded1a209dda33af9a1cf6/b782ef8fe_cam1.mp4';
-
-const IMAGE_SLIDES = [
-  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/841dec147_sample.png',
-  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/f5d0c9c07_ChicagoRug.png',
-  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/dafbd06eb_facebook-55b21f8e-e03e-4332-a760-c1559ddb9c4e.png',
-  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/76f6c7d08_ruglyexamples.png',
-  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/2fbbf4da3_example.png',
-  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/18cd45850_a9cf8460d_generated_image.png',
-  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/70c96ed3e_panam.png',
-  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/398b0dace_Firefly_GeminiFlash.png',
-  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/fe747ee77_ChicagoRug.png',
-  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/dc8b4fbf2_mad.png',
-  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/5a5f4e667_dog.png',
-  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/2cc78e2f5_panam.png',
-  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/9e314cac0_generated_image.png',
-  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/f7780a1d5_Firefly_mergetherugdesignsontothenewimagesimilardesignsthatmatchthesurroundings985409.png',
-  'https://media.base44.com/images/public/695ded1a209dda33af9a1cf6/0b83ca218_29fe852dc_generated_image.png',
-];
-
-const N = IMAGE_SLIDES.length;
-// Each slide: 2.5s visible + 1s fade = 3.5s per slide
-const VISIBLE = 2.5;  // seconds fully opaque
-const FADE = 1.0;     // seconds fade in/out
-const PER_SLIDE = VISIBLE + FADE;
-const TOTAL = N * PER_SLIDE;
-
-// Build one keyframe string per slide:
-// 0% invisible → fade in → hold → fade out → 0% invisible for the rest
-function buildKeyframes() {
-  return IMAGE_SLIDES.map((_, i) => {
-    const start = (i * PER_SLIDE) / TOTAL * 100;
-    const fadeInEnd = (i * PER_SLIDE + FADE) / TOTAL * 100;
-    const fadeOutStart = ((i + 1) * PER_SLIDE - FADE) / TOTAL * 100;
-    const end = ((i + 1) * PER_SLIDE) / TOTAL * 100;
-    const name = `heroSlide${i}`;
-    return `
-      @keyframes ${name} {
-        0%              { opacity: 0; transform: scale(1); }
-        ${start.toFixed(2)}%    { opacity: 0; transform: scale(1); }
-        ${fadeInEnd.toFixed(2)}% { opacity: 1; transform: scale(1.03); }
-        ${fadeOutStart.toFixed(2)}% { opacity: 1; transform: scale(1.06); }
-        ${end.toFixed(2)}%  { opacity: 0; transform: scale(1.08); }
-        100%            { opacity: 0; transform: scale(1.08); }
-      }
-    `;
-  }).join('\n');
-}
+// The main video to scrub through
+const SCRUB_VIDEO = 'https://media.base44.com/videos/public/695ded1a209dda33af9a1cf6/60e0551e7_videoadrugly.mp4';
 
 export default function HeroSlideshow() {
-  const [phase, setPhase] = useState('video1');
-  const [animKey, setAnimKey] = useState(0);
-  const video1Ref = useRef(null);
-  const video2Ref = useRef(null);
-  const endTimerRef = useRef(null);
+  const videoRef = useRef(null);
+  const containerRef = useRef(null);
+  const rafRef = useRef(null);
+  const targetProgressRef = useRef(0);
+  const currentProgressRef = useRef(0);
+  const [isReady, setIsReady] = useState(false);
+  const isMobile = useRef(false);
 
-  const handleVideo1End = () => setPhase('images');
-  const handleVideo2End = () => setPhase('video1');
-
+  // Detect mobile once on mount
   useEffect(() => {
-    if (phase === 'video1' && video1Ref.current) {
-      video1Ref.current.currentTime = 0;
-      video1Ref.current.play().catch(() => {});
-    }
-    if (phase === 'video2' && video2Ref.current) {
-      video2Ref.current.currentTime = 0;
-      video2Ref.current.play().catch(() => {});
-    }
-    if (phase === 'images') {
-      setAnimKey(k => k + 1);
-      // After all images finish, transition to video2
-      endTimerRef.current = setTimeout(() => {
-        setPhase('video2');
-      }, TOTAL * 1000);
-    }
-    return () => clearTimeout(endTimerRef.current);
-  }, [phase]);
+    isMobile.current = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ||
+      ('ontouchstart' in window && window.innerWidth < 1024);
+  }, []);
 
-  const css = buildKeyframes();
+  const handleMetadata = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    // Pause immediately — we drive it manually
+    v.pause();
+    v.currentTime = 0;
+    setIsReady(true);
+  };
+
+  // Smooth lerp loop — runs on rAF, eases current toward target
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+
+    const lerp = (a, b, t) => a + (b - a) * t;
+
+    const tick = () => {
+      if (v.duration) {
+        currentProgressRef.current = lerp(
+          currentProgressRef.current,
+          targetProgressRef.current,
+          0.06
+        );
+        v.currentTime = currentProgressRef.current * v.duration;
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, []);
+
+  // Desktop: mouse move → scrub
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (isMobile.current) return;
+      const progress = e.clientX / window.innerWidth;
+      targetProgressRef.current = Math.min(1, Math.max(0, progress));
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  // Mobile: scroll → scrub
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!isMobile.current) return;
+      const el = containerRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const viewH = window.innerHeight;
+      // progress 0 when hero is fully visible, 1 when hero is scrolled past
+      const scrolled = -rect.top;
+      const total = rect.height + viewH;
+      const progress = Math.min(1, Math.max(0, scrolled / total));
+      targetProgressRef.current = progress;
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
-    <div className="absolute inset-0 z-0 overflow-hidden">
-      <style>{css}</style>
-
-      {/* VIDEO 1 */}
-      <video
-        ref={video1Ref}
-        src={VIDEO_1}
-        muted
-        playsInline
-        onEnded={handleVideo1End}
-        className="absolute inset-0 w-full h-full object-cover"
-        style={{ display: phase === 'video1' ? 'block' : 'none' }}
-      />
-
-      {/* ALL IMAGES — each running its own precisely-timed keyframe */}
-      {phase === 'images' && IMAGE_SLIDES.map((src, i) => (
+    <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden">
+      {/* Subtle hint overlay on desktop */}
+      {isReady && !isMobile.current && (
         <div
-          key={`${animKey}-${i}`}
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 pointer-events-none"
           style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: `url(${src})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            opacity: 0,
-            willChange: 'opacity, transform',
-            animation: `heroSlide${i} ${TOTAL}s linear 1 forwards`,
+            color: 'rgba(255,255,255,0.55)',
+            fontSize: '0.7rem',
+            letterSpacing: '0.15em',
+            fontFamily: 'Barlow Condensed, sans-serif',
+            textTransform: 'uppercase',
           }}
-        />
-      ))}
+        >
+          ← Move mouse to explore →
+        </div>
+      )}
 
-      {/* VIDEO 2 */}
+      {/* Scrub video — always paused, driven by rAF */}
       <video
-        ref={video2Ref}
-        src={VIDEO_2}
+        ref={videoRef}
+        src={SCRUB_VIDEO}
         muted
         playsInline
-        onEnded={handleVideo2End}
+        preload="auto"
+        onLoadedMetadata={handleMetadata}
         className="absolute inset-0 w-full h-full object-cover"
-        style={{ display: phase === 'video2' ? 'block' : 'none' }}
+        style={{ opacity: isReady ? 1 : 0, transition: 'opacity 0.6s ease' }}
       />
+
+      {/* Dark fallback while loading */}
+      {!isReady && (
+        <div className="absolute inset-0 bg-gray-900" />
+      )}
     </div>
   );
 }
