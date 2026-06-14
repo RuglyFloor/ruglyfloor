@@ -104,7 +104,7 @@ export default function Home() {
         <HeroSlideshow />
         <div className="absolute inset-0 bg-black/50 z-10" />
 
-        <div className="max-w-6xl mx-auto text-left relative z-20 py-32">
+        <div className="max-w-6xl mx-auto text-center relative z-20 py-32">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/695ded1a209dda33af9a1cf6/7e922323a_RUGLYMASTERLOGO-61.png?width=448&quality=80"
             alt="RUGLY"
@@ -114,9 +114,9 @@ export default function Home() {
 
           <h2 className="text-3xl md:text-5xl font-bold mb-6 text-white">Your Rug. No Rules.
           </h2>
-          <p className="text-lg md:text-xl text-white mb-12 max-w-3xl">Upload a design and preview your custom rug in seconds
+          <p className="text-lg md:text-xl text-white mb-12 max-w-3xl mx-auto">Upload a design and preview your custom rug in seconds
           </p>
-          <div className="flex flex-col items-start gap-3">
+          <div className="flex flex-col items-center gap-3">
             <Link to={createPageUrl('CustomBuilder')}>
               <button className="bg-transparent border border-white text-white font-black px-12 py-6 hover:bg-white/10 transition-all tracking-wide" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '1.575rem', textShadow: '2px 2px 0 rgba(0,0,0,0.5), -1px -1px 0 rgba(0,0,0,0.5), 1px -1px 0 rgba(0,0,0,0.5), -1px 1px 0 rgba(0,0,0,0.5)' }}>
                 Start Designing
@@ -134,7 +134,7 @@ export default function Home() {
             </Link>
           </div>
           {/* Trust bar */}
-          <div className="mt-8 flex flex-wrap justify-start gap-4 md:gap-8 text-white/90 text-sm font-medium">
+          <div className="mt-8 flex flex-wrap justify-center gap-4 md:gap-8 text-white/90 text-sm font-medium">
             <span>✦ From $79</span>
             <span>✦ Preview before you pay</span>
             <span>✦ Upload your own design</span>
