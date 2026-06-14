@@ -122,13 +122,8 @@ export default function Home() {
                 Start Designing
               </button>
             </Link>
-            <Link to={createPageUrl('Commission')}>
-              <button className="bg-transparent border border-white/60 text-white/70 font-black px-7 py-2 hover:bg-white/10 hover:text-white/90 transition-all tracking-wide" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '0.95rem' }}>
-                Custom Quote / Commercial
-              </button>
-            </Link>
             <Link to={createPageUrl('Shop')}>
-              <button className="bg-white text-black font-black px-10 py-3 hover:bg-gray-100 transition-all tracking-wide mt-1" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '1.1rem' }}>
+              <button className="bg-white text-black font-black px-10 py-3 hover:bg-gray-100 transition-all tracking-wide" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '1.1rem' }}>
                 Shop Original Rugs →
               </button>
             </Link>
@@ -141,6 +136,15 @@ export default function Home() {
             <span>✦ Free shipping on Crugly & Squares</span>
             <span>✦ Local pickup available</span>
           </div>
+        </div>
+
+        {/* Bottom-left overlay: Interior Designers / Commercial */}
+        <div className="absolute bottom-6 left-6 z-20">
+          <Link to={createPageUrl('Commission')}>
+            <button className="bg-transparent border border-white/60 text-white/70 font-black px-5 py-2 hover:bg-white/10 hover:text-white/90 transition-all tracking-wide" style={{ fontFamily: 'Barlow Condensed, sans-serif', fontSize: '0.9rem' }}>
+              Interior Designers / Commercial
+            </button>
+          </Link>
         </div>
       </section>
 
