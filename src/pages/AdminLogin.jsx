@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Lock } from 'lucide-react';
 import { createPageUrl } from '../utils';
+import { base44 } from '@/api/base44Client';
 
 // SHA-256 hash of the admin password — never store plaintext here
 const ADMIN_PASSWORD_HASH = '5ae5e897673c83dda54c80d47c07920db651e4ab4ea57e57ff772bfe47c4afa8';
@@ -20,20 +21,35 @@ export default function AdminLogin() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (sessionStorage.getItem('rugly_admin_auth') === 'true') {
-      navigate(createPageUrl('AdminPortal'));
-    }
+    // Returning from Base44 login: if password was already verified and we're
+    // now authenticated, proceed to the portal.
+    (async () => {
+      if (sessionStorage.getItem('rugly_admin_auth') === 'true') {
+        const isAuth = await base44.auth.isAuthenticated().catch(() => false);
+        if (isAuth) {
+          navigate(createPageUrl('AdminPortal'));
+        }
+      }
+    })();
   }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     const hash = await hashPassword(password);
-    if (hash === ADMIN_PASSWORD_HASH) {
-      sessionStorage.setItem('rugly_admin_auth', 'true');
-      navigate(createPageUrl('AdminPortal'));
-    } else {
+    if (hash !== ADMIN_PASSWORD_HASH) {
       setError('Incorrect password');
       setPassword('');
+      return;
+    }
+    // Password OK — now make sure we have a real Base44 admin session,
+    // which is what the database requires to edit products.
+    sessionStorage.setItem('rugly_admin_auth', 'true');
+    const isAuth = await base44.auth.isAuthenticated().catch(() => false);
+    if (isAuth) {
+      navigate(createPageUrl('AdminPortal'));
+    } else {
+      // Send to Base44 hosted login, then come back here.
+      base44.auth.redirectToLogin(window.location.href);
     }
   };
 
@@ -67,6 +83,10 @@ export default function AdminLogin() {
             <Button type="submit" className="w-full">
               Access Admin Portal
             </Button>
+            <p className="text-xs text-gray-400 text-center">
+              If prompted, sign in with your admin account (info@ruglyfloor.com).
+              This is required to edit products.
+            </p>
           </form>
         </CardContent>
       </Card>
