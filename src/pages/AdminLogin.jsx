@@ -1,55 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Lock } from 'lucide-react';
-import { createPageUrl } from '../utils';
+import { Lock, Mail } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-
-// SHA-256 hash of the admin password — never store plaintext here
-const ADMIN_PASSWORD_HASH = '5ae5e897673c83dda54c80d47c07920db651e4ab4ea57e57ff772bfe47c4afa8';
-
-async function hashPassword(pw) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pw));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
+import { createPageUrl } from '../utils';
 
 export default function AdminLogin() {
-  const navigate = useNavigate();
+  const [email, setEmail] = useState('info@ruglyfloor.com');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Returning from Base44 login: if password was already verified and we're
-    // now authenticated, proceed to the portal.
+    // If already authenticated as admin, go straight to portal
     (async () => {
-      if (sessionStorage.getItem('rugly_admin_auth') === 'true') {
-        const isAuth = await base44.auth.isAuthenticated().catch(() => false);
-        if (isAuth) {
-          navigate(createPageUrl('AdminPortal'));
+      const isAuth = await base44.auth.isAuthenticated().catch(() => false);
+      if (isAuth) {
+        const user = await base44.auth.me().catch(() => null);
+        if (user?.role === 'admin') {
+          window.location.href = createPageUrl('AdminPortal');
         }
       }
     })();
-  }, [navigate]);
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const hash = await hashPassword(password);
-    if (hash !== ADMIN_PASSWORD_HASH) {
-      setError('Incorrect password');
-      setPassword('');
-      return;
-    }
-    // Password OK — now make sure we have a real Base44 admin session,
-    // which is what the database requires to edit products.
-    sessionStorage.setItem('rugly_admin_auth', 'true');
-    const isAuth = await base44.auth.isAuthenticated().catch(() => false);
-    if (isAuth) {
-      navigate(createPageUrl('AdminPortal'));
-    } else {
-      // Send to Base44 hosted login, then come back here.
-      base44.auth.redirectToLogin(window.location.href);
+    setLoading(true);
+    setError('');
+    try {
+      await base44.auth.loginViaEmailPassword(email, password);
+      const user = await base44.auth.me();
+      if (user?.role !== 'admin') {
+        await base44.auth.logout();
+        setError('This account does not have admin access.');
+        setLoading(false);
+        return;
+      }
+      sessionStorage.setItem('rugly_admin_auth', 'true');
+      window.location.href = createPageUrl('AdminPortal');
+    } catch (err) {
+      setError('Incorrect email or password.');
+      setLoading(false);
     }
   };
 
@@ -59,34 +52,35 @@ export default function AdminLogin() {
         <CardHeader>
           <CardTitle className="text-center flex items-center justify-center gap-2">
             <Lock className="w-6 h-6" />
-            Admin Access
+            Admin Login
           </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
-            <div>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <Input
-                type="password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setError('');
-                }}
-                placeholder="Enter admin password"
-                className="text-lg"
-                autoFocus
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Admin email"
+                className="pl-9"
+                required
               />
-              {error && (
-                <p className="text-red-600 text-sm mt-2">{error}</p>
-              )}
             </div>
-            <Button type="submit" className="w-full">
-              Access Admin Portal
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => { setPassword(e.target.value); setError(''); }}
+              placeholder="Password"
+              className="text-lg"
+              autoFocus
+              required
+            />
+            {error && <p className="text-red-600 text-sm">{error}</p>}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Signing in…' : 'Access Admin Portal'}
             </Button>
-            <p className="text-xs text-gray-400 text-center">
-              If prompted, sign in with your admin account (info@ruglyfloor.com).
-              This is required to edit products.
-            </p>
           </form>
         </CardContent>
       </Card>
